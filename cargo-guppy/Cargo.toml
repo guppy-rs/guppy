@@ -8,7 +8,7 @@ edition = "2018"
 [dependencies]
 camino = "1.0.9"
 # disable tracing integration since we don't use it
-color-eyre = { version = "0.6.1", default-features = false }
+color-eyre = { version = "0.6.2", default-features = false }
 clap = { version = "3.1.18", features = ["derive"] }
 dialoguer = "0.10.1"
 guppy = { version = "0.14.0", path = "../guppy", features = ["summaries"] }
