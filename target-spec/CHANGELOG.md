@@ -168,21 +168,21 @@ This was mistakenly published and was yanked.
 ## [0.1.0] - 2020-03-20
 - Initial release.
 
-[1.1.0]: https://github.com/facebookincubator/cargo-guppy/releases/tag/target-spec-1.1.0
-[1.0.2]: https://github.com/facebookincubator/cargo-guppy/releases/tag/target-spec-1.0.2
-[1.0.1]: https://github.com/facebookincubator/cargo-guppy/releases/tag/target-spec-1.0.1
-[1.0.0]: https://github.com/facebookincubator/cargo-guppy/releases/tag/target-spec-1.0.0
-[0.9.0]: https://github.com/facebookincubator/cargo-guppy/releases/tag/target-spec-0.9.0
-[0.8.0]: https://github.com/facebookincubator/cargo-guppy/releases/tag/target-spec-0.8.0
-[0.7.0]: https://github.com/facebookincubator/cargo-guppy/releases/tag/target-spec-0.7.0
-[0.6.1]: https://github.com/facebookincubator/cargo-guppy/releases/tag/target-spec-0.6.1
-[0.6.0]: https://github.com/facebookincubator/cargo-guppy/releases/tag/target-spec-0.6.0
-[0.5.0]: https://github.com/facebookincubator/cargo-guppy/releases/tag/target-spec-0.5.0
-[0.4.1]: https://github.com/facebookincubator/cargo-guppy/releases/tag/target-spec-0.4.1
-[0.4.0]: https://github.com/facebookincubator/cargo-guppy/releases/tag/target-spec-0.4.0
-[0.3.0]: https://github.com/facebookincubator/cargo-guppy/releases/tag/target-spec-0.3.0
-[0.2.4]: https://github.com/facebookincubator/cargo-guppy/releases/tag/target-spec-0.2.4
-[0.2.3]: https://github.com/facebookincubator/cargo-guppy/releases/tag/target-spec-0.2.3
-[0.2.1]: https://github.com/facebookincubator/cargo-guppy/releases/tag/target-spec-0.2.1
-[0.2.0]: https://github.com/facebookincubator/cargo-guppy/releases/tag/target-spec-0.2.0
-[0.1.0]: https://github.com/facebookincubator/cargo-guppy/releases/tag/target-spec-0.1.0
+[1.1.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-1.1.0
+[1.0.2]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-1.0.2
+[1.0.1]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-1.0.1
+[1.0.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-1.0.0
+[0.9.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-0.9.0
+[0.8.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-0.8.0
+[0.7.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-0.7.0
+[0.6.1]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-0.6.1
+[0.6.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-0.6.0
+[0.5.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-0.5.0
+[0.4.1]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-0.4.1
+[0.4.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-0.4.0
+[0.3.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-0.3.0
+[0.2.4]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-0.2.4
+[0.2.3]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-0.2.3
+[0.2.1]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-0.2.1
+[0.2.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-0.2.0
+[0.1.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-0.1.0
