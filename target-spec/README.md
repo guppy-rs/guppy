@@ -2,7 +2,7 @@
 
 [![target-spec on crates.io](https://img.shields.io/crates/v/target-spec)](https://crates.io/crates/target-spec)
 [![Documentation (latest release)](https://img.shields.io/badge/docs-latest-brightgreen.svg)](https://docs.rs/target-spec/)
-[![Documentation (main)](https://img.shields.io/badge/docs-main-purple)](https://facebookincubator.github.io/cargo-guppy/rustdoc/target_spec/)
+[![Documentation (main)](https://img.shields.io/badge/docs-main-purple)](https://guppy-rs.github.io/guppy/rustdoc/target_spec/)
 [![Changelog](https://img.shields.io/badge/changelog-latest-blue)](CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-Apache-green.svg)](../LICENSE-APACHE)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](../LICENSE-MIT)
