@@ -105,7 +105,7 @@ available.
 
 ### Fixed
 
-- Fixed compilation on platforms without target features ([#175](https://github.com/facebookincubator/cargo-guppy/issues/175)).
+- Fixed compilation on platforms without target features ([#175](https://github.com/guppy-rs/guppy/issues/175)).
 
 ## [0.4.0] - 2020-06-20
 

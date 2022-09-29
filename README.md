@@ -48,7 +48,7 @@ The core `guppy` code in this repository is considered **mostly complete** and t
 
 We're building a number of tools on top of guppy, and those are still are under **active development**. Tool requirements may cause further changes in the API, but the goal will be to avoid extensive overhauls.
 
-`guppy`'s simulation of Cargo builds is [extensively tested](https://github.com/facebookincubator/cargo-guppy/blob/main/internal-tools/cargo-compare/src/lib.rs) against upstream Cargo, and there are no known differences.
+`guppy`'s simulation of Cargo builds is [extensively tested](https://github.com/guppy-rs/guppy/blob/main/internal-tools/cargo-compare/src/lib.rs) against upstream Cargo, and there are no known differences.
 Comparison testing has found a number of bugs in upstream Cargo, for example:
 * [v2 resolver: different handling for inactive, optional dependencies based on how they're specified](https://github.com/rust-lang/cargo/issues/8316)
 * [v2 resolver: a proc macro being specified with the key "proc_macro" vs "proc-macro" causes different results](https://github.com/rust-lang/cargo/issues/8315)

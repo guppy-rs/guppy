@@ -36,10 +36,10 @@
 //! ```
 //!
 //! The `cargo-guppy` repository uses a workspace-hack crate managed by `cargo hakari`. [See the
-//! generated `Cargo.toml`.](https://github.com/facebookincubator/cargo-guppy/blob/main/workspace-hack/Cargo.toml)
+//! generated `Cargo.toml`.](https://github.com/guppy-rs/guppy/blob/main/workspace-hack/Cargo.toml)
 //!
 //! The `cargo-guppy` repository also has a number of fixtures that demonstrate Hakari's output.
-//! [Here is an example.](https://github.com/facebookincubator/cargo-guppy/blob/main/fixtures/guppy/hakari/metadata_guppy_869476c-1.toml)
+//! [Here is an example.](https://github.com/guppy-rs/guppy/blob/main/fixtures/guppy/hakari/metadata_guppy_869476c-1.toml)
 //!
 //! # How `hakari` works
 //!

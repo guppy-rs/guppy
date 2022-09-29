@@ -11,7 +11,7 @@
 //! # Examples
 //!
 //! The `cargo-guppy` repository uses a workspace-hack crate managed by `cargo hakari`. [See the
-//! generated `Cargo.toml`.](https://github.com/facebookincubator/cargo-guppy/blob/main/workspace-hack/Cargo.toml)
+//! generated `Cargo.toml`.](https://github.com/guppy-rs/guppy/blob/main/workspace-hack/Cargo.toml)
 //!
 //! # Platform support
 //!
@@ -114,7 +114,7 @@
 //! a warning message.
 //!
 //! For an example, see [this GitHub action used by
-//! `cargo-guppy`](https://github.com/facebookincubator/cargo-guppy/blob/main/.github/workflows/hakari.yml).
+//! `cargo-guppy`](https://github.com/guppy-rs/guppy/blob/main/.github/workflows/hakari.yml).
 //!
 //! All `cargo hakari` commands take a `--quiet` option to suppress output, though showing diff
 //! output in CI is often useful.
@@ -143,7 +143,7 @@
 //!
 //! If some dependencies are built with more than one feature set, this command will print out
 //! details about them. **This is always a bug**---if you encounter it, [a bug
-//! report](https://github.com/facebookincubator/cargo-guppy/issues/new) with more information would
+//! report](https://github.com/guppy-rs/guppy/issues/new) with more information would
 //! be greatly appreciated!
 //!
 //! ###

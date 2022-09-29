@@ -64,7 +64,7 @@ Support for [weak dependencies and namespaced features].
 
 ### Added
 
-* Experimental Windows support. There may still be bugs around path normalization: please [report them](https://github.com/facebookincubator/cargo-guppy/issues/new).
+* Experimental Windows support. There may still be bugs around path normalization: please [report them](https://github.com/guppy-rs/guppy/issues/new).
 
 ## [0.2.0] - 2021-02-03
 
