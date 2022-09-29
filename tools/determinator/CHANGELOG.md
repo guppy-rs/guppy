@@ -96,15 +96,15 @@ Initial release.
 * Path-based and package-based custom rules, including a default set of rules for files like `rust-toolchain` and `Cargo.lock`.
 * A `Paths0` wrapper to make it easier to retrieve changes from source control.
 
-[0.9.0]: https://github.com/facebookincubator/cargo-guppy/releases/tag/determinator-0.9.0
-[0.8.0]: https://github.com/facebookincubator/cargo-guppy/releases/tag/determinator-0.8.0
-[0.7.0]: https://github.com/facebookincubator/cargo-guppy/releases/tag/determinator-0.7.0
-[0.6.0]: https://github.com/facebookincubator/cargo-guppy/releases/tag/determinator-0.6.0
-[0.5.1]: https://github.com/facebookincubator/cargo-guppy/releases/tag/determinator-0.5.1
-[0.5.0]: https://github.com/facebookincubator/cargo-guppy/releases/tag/determinator-0.5.0
-[0.4.0]: https://github.com/facebookincubator/cargo-guppy/releases/tag/determinator-0.4.0
-[0.3.0]: https://github.com/facebookincubator/cargo-guppy/releases/tag/determinator-0.3.0
-[0.2.1]: https://github.com/facebookincubator/cargo-guppy/releases/tag/determinator-0.2.1
-[0.2.0]: https://github.com/facebookincubator/cargo-guppy/releases/tag/determinator-0.2.0
-[0.1.1]: https://github.com/facebookincubator/cargo-guppy/releases/tag/determinator-0.1.1
-[0.1.0]: https://github.com/facebookincubator/cargo-guppy/releases/tag/determinator-0.1.0
+[0.9.0]: https://github.com/guppy-rs/guppy/releases/tag/determinator-0.9.0
+[0.8.0]: https://github.com/guppy-rs/guppy/releases/tag/determinator-0.8.0
+[0.7.0]: https://github.com/guppy-rs/guppy/releases/tag/determinator-0.7.0
+[0.6.0]: https://github.com/guppy-rs/guppy/releases/tag/determinator-0.6.0
+[0.5.1]: https://github.com/guppy-rs/guppy/releases/tag/determinator-0.5.1
+[0.5.0]: https://github.com/guppy-rs/guppy/releases/tag/determinator-0.5.0
+[0.4.0]: https://github.com/guppy-rs/guppy/releases/tag/determinator-0.4.0
+[0.3.0]: https://github.com/guppy-rs/guppy/releases/tag/determinator-0.3.0
+[0.2.1]: https://github.com/guppy-rs/guppy/releases/tag/determinator-0.2.1
+[0.2.0]: https://github.com/guppy-rs/guppy/releases/tag/determinator-0.2.0
+[0.1.1]: https://github.com/guppy-rs/guppy/releases/tag/determinator-0.1.1
+[0.1.0]: https://github.com/guppy-rs/guppy/releases/tag/determinator-0.1.0

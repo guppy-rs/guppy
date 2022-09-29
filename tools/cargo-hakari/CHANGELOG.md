@@ -128,18 +128,18 @@ This was tagged, but never released due to
 
 Initial release.
 
-[0.9.14]: https://github.com/facebookincubator/cargo-guppy/releases/tag/cargo-hakari-0.9.14
-[0.9.13]: https://github.com/facebookincubator/cargo-guppy/releases/tag/cargo-hakari-0.9.13
-[0.9.12]: https://github.com/facebookincubator/cargo-guppy/releases/tag/cargo-hakari-0.9.12
-[0.9.11]: https://github.com/facebookincubator/cargo-guppy/releases/tag/cargo-hakari-0.9.11
-[0.9.10]: https://github.com/facebookincubator/cargo-guppy/releases/tag/cargo-hakari-0.9.10
-[0.9.9]: https://github.com/facebookincubator/cargo-guppy/releases/tag/cargo-hakari-0.9.9
-[0.9.8]: https://github.com/facebookincubator/cargo-guppy/releases/tag/cargo-hakari-0.9.8
-[0.9.7]: https://github.com/facebookincubator/cargo-guppy/releases/tag/cargo-hakari-0.9.7
-[0.9.6]: https://github.com/facebookincubator/cargo-guppy/releases/tag/cargo-hakari-0.9.6
-[0.9.5]: https://github.com/facebookincubator/cargo-guppy/releases/tag/cargo-hakari-0.9.5
-[0.9.4]: https://github.com/facebookincubator/cargo-guppy/releases/tag/cargo-hakari-0.9.4
-[0.9.3]: https://github.com/facebookincubator/cargo-guppy/releases/tag/cargo-hakari-0.9.3
-[0.9.2]: https://github.com/facebookincubator/cargo-guppy/releases/tag/cargo-hakari-0.9.2
-[0.9.1]: https://github.com/facebookincubator/cargo-guppy/releases/tag/cargo-hakari-0.9.1
-[0.9.0]: https://github.com/facebookincubator/cargo-guppy/releases/tag/cargo-hakari-0.9.0
+[0.9.14]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.14
+[0.9.13]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.13
+[0.9.12]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.12
+[0.9.11]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.11
+[0.9.10]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.10
+[0.9.9]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.9
+[0.9.8]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.8
+[0.9.7]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.7
+[0.9.6]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.6
+[0.9.5]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.5
+[0.9.4]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.4
+[0.9.3]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.3
+[0.9.2]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.2
+[0.9.1]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.1
+[0.9.0]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.0
