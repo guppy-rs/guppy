@@ -156,7 +156,7 @@
 //! | `-p backup-cli`                       | 13.57      | 5.51      | -59.40% |                                               |
 //! | **Total**                             | 163.44     | 130.50    | -20.15% |                                               |//!
 //!
-//! On the much smaller [cargo-guppy repository](https://github.com/facebookincubator/cargo-guppy),
+//! On the much smaller [cargo-guppy repository](https://github.com/guppy-rs/guppy),
 //! at revision 65e8c8d7, with the following `cargo build` commands in sequence:
 //!
 //! | Command                    | Before (s) | After (s) | Change  | Notes                                        |

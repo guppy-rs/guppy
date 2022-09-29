@@ -50,7 +50,7 @@ impl FromStr for HakariConfig {
 /// A `HakariBuilder` in serializable form. This forms the configuration file format for `hakari`.
 ///
 /// For an example, see the
-/// [cargo-hakari README](https://github.com/facebookincubator/cargo-guppy/tree/main/tools/hakari#configuration).
+/// [cargo-hakari README](https://github.com/guppy-rs/guppy/tree/main/tools/hakari#configuration).
 ///
 /// Requires the `cli-support` feature to be enabled.
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]

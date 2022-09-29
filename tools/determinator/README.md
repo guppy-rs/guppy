@@ -46,7 +46,7 @@ for package in determinator_set.affected_set.packages(DependencyDirection::Forwa
 
 * **Unix platforms**: The determinator works and is supported.
 * **Windows**: experimental support. There may still be bugs around path normalization: please
-  [report them](https://github.com/facebookincubator/cargo-guppy/issues/new)!
+  [report them](https://github.com/guppy-rs/guppy/issues/new)!
 
 ## How it works
 

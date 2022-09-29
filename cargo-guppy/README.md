@@ -14,7 +14,7 @@ A command-line frontend for `guppy`.
 you have `cargo` installed (preferably through [rustup](https://rustup.rs/)), then run:
 
 ```bash
-cargo install --git https://github.com/facebookincubator/cargo-guppy --branch main cargo-guppy
+cargo install --git https://github.com/guppy-rs/guppy --branch main cargo-guppy
 ```
 
 This will make the `cargo guppy` command available.
@@ -33,7 +33,7 @@ The list of commands is not currently stable and is subject to change.
 ### Diff commands
 
 * `diff`: perform a diff of two `cargo metadata` JSON outputs
-* `diff-summaries`: perform a diff of two [summaries](https://github.com/facebookincubator/cargo-guppy/tree/main/guppy-summaries)
+* `diff-summaries`: perform a diff of two [summaries](https://github.com/guppy-rs/guppy/tree/main/guppy-summaries)
 
 ### Workspace manipulations
 

@@ -185,7 +185,7 @@ Internal updates for `cargo-hakari 0.9.8`.
 
 ### Added
 
-* Experimental Windows support. There may still be bugs around path normalization: please [report them](https://github.com/facebookincubator/cargo-guppy/issues/new).
+* Experimental Windows support. There may still be bugs around path normalization: please [report them](https://github.com/guppy-rs/guppy/issues/new).
 
 ### Fixed
 

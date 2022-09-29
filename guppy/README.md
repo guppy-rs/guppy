@@ -53,7 +53,7 @@ which is essentially two `FeatureSet`s along with some more useful information.
   using the [`proptest`](https://altsysrq.github.io/proptest-book/intro.html) framework.
 * `rayon1`: Support for parallel iterators through [Rayon](docs.rs/rayon/1) (preliminary work
   so far, more parallel iterators to be added in the future).
-* `summaries`: Support for writing out [build summaries](https://github.com/facebookincubator/cargo-guppy/tree/main/guppy-summaries).
+* `summaries`: Support for writing out [build summaries](https://github.com/guppy-rs/guppy/tree/main/guppy-summaries).
 
 ## Examples
 
@@ -83,7 +83,7 @@ for link in package.direct_links() {
 ```
 
 For more examples, see
-[the `examples` directory](https://github.com/facebookincubator/cargo-guppy/tree/main/guppy/examples).
+[the `examples` directory](https://github.com/guppy-rs/guppy/tree/main/guppy/examples).
 
 ## Contributing
 
