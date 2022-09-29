@@ -8,7 +8,7 @@ on:
 
 jobs:
   target-spec-release:
-    if: github.repository_owner == 'facebookincubator' && startsWith(github.ref_name, 'target-spec-')
+    if: github.repository_owner == 'guppy-rs' && startsWith(github.ref_name, 'target-spec-')
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
@@ -24,7 +24,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   guppy-summaries-release:
-    if: github.repository_owner == 'facebookincubator' && startsWith(github.ref_name, 'guppy-summaries-')
+    if: github.repository_owner == 'guppy-rs' && startsWith(github.ref_name, 'guppy-summaries-')
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
@@ -41,7 +41,7 @@ jobs:
 
   guppy-release:
     # There's no regex filtering in if conditionals, so we need to use the first component of the version number.
-    if: github.repository_owner == 'facebookincubator' && startsWith(github.ref_name, 'guppy-0')
+    if: github.repository_owner == 'guppy-rs' && startsWith(github.ref_name, 'guppy-0')
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
@@ -57,7 +57,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   determinator-release:
-    if: github.repository_owner == 'facebookincubator' && startsWith(github.ref_name, 'determinator-')
+    if: github.repository_owner == 'guppy-rs' && startsWith(github.ref_name, 'determinator-')
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
@@ -73,7 +73,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   hakari-release:
-    if: github.repository_owner == 'facebookincubator' && startsWith(github.ref_name, 'hakari-')
+    if: github.repository_owner == 'guppy-rs' && startsWith(github.ref_name, 'hakari-')
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
@@ -89,7 +89,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   cargo-hakari-release:
-    if: github.repository_owner == 'facebookincubator' && startsWith(github.ref_name, 'cargo-hakari-')
+    if: github.repository_owner == 'guppy-rs' && startsWith(github.ref_name, 'cargo-hakari-')
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
