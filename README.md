@@ -1,6 +1,6 @@
 # cargo-guppy: track and query dependency graphs
 
-[![Build Status](https://github.com/facebookincubator/cargo-guppy/workflows/CI/badge.svg?branch=main)]((https://github.com/facebookincubator/cargo-guppy/actions?query=workflow%3ACI+branch%3Amain))
+[![Build Status](https://github.com/guppy-rs/guppy/workflows/CI/badge.svg?branch=main)]((https://github.com/guppy-rs/guppy/actions?query=workflow%3ACI+branch%3Amain))
 [![License](https://img.shields.io/badge/license-Apache-green.svg)](LICENSE-APACHE) [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE-MIT)
 
 This repository contains the source code for:
