@@ -6,7 +6,7 @@
 use std::{borrow::Cow, error, fmt};
 
 /// An error that happened during `target-spec` parsing or evaluation.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 #[non_exhaustive]
 pub enum Error {
     /// A `cfg()` expression was invalid and could not be parsed.
@@ -51,7 +51,7 @@ impl error::Error for Error {
 }
 
 /// An error returned in case a `TargetExpression` cannot be parsed.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct ExpressionParseError {
     inner: cfg_expr::ParseError,
 }
