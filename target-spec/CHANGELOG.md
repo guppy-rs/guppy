@@ -1,12 +1,14 @@
-
 # Changelog
 
-## Unreleased
+## [1.2.0] - 2022-09-30
 
 ### Changed
 
+- Repository location update.
 - Internal dependency updates.
 - MSRV updated to Rust 1.58.
+
+Thanks to [Carol Nichols](https://github.com/carols10cents) for her contributions to this release!
 
 ## [1.1.0] - 2022-08-30
 
@@ -175,6 +177,7 @@ This was mistakenly published and was yanked.
 ## [0.1.0] - 2020-03-20
 - Initial release.
 
+[1.2.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-1.2.0
 [1.1.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-1.1.0
 [1.0.2]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-1.0.2
 [1.0.1]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-1.0.1

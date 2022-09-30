@@ -1,10 +1,13 @@
 # Changelog
 
-## Unreleased
+## [0.10.2] - 2022-09-30
 
 ### Changed
 
+- Repository location update.
 - MSRV updated to Rust 1.58.
+
+Thanks to [Carol Nichols](https://github.com/carols10cents) for her contributions to this release!
 
 ## [0.10.1] - 2022-05-29
 
@@ -196,6 +199,8 @@ Internal updates for `cargo-hakari 0.9.8`.
 
 Initial release.
 
+[0.10.2]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.10.2
+[0.10.1]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.10.1
 [0.10.0]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.10.0
 [0.9.0]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.9.0
 [0.8.1]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.8.1

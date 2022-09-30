@@ -1,10 +1,13 @@
 # Changelog
 
-## Unreleased
+## [0.9.1] - 2022-09-30
 
 ### Changed
 
+- Repository location update.
 - MSRV updated to Rust 1.58.
+
+Thanks to [Carol Nichols](https://github.com/carols10cents) for her contributions to this release!
 
 ## [0.9.0] - 2022-03-14
 
@@ -96,6 +99,7 @@ Initial release.
 * Path-based and package-based custom rules, including a default set of rules for files like `rust-toolchain` and `Cargo.lock`.
 * A `Paths0` wrapper to make it easier to retrieve changes from source control.
 
+[0.9.1]: https://github.com/guppy-rs/guppy/releases/tag/determinator-0.9.1
 [0.9.0]: https://github.com/guppy-rs/guppy/releases/tag/determinator-0.9.0
 [0.8.0]: https://github.com/guppy-rs/guppy/releases/tag/determinator-0.8.0
 [0.7.0]: https://github.com/guppy-rs/guppy/releases/tag/determinator-0.7.0

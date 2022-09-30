@@ -269,7 +269,7 @@ dependencies = [
 
 [[package]]
 name = "cargo-hakari"
-version = "0.9.14"
+version = "0.9.15"
 dependencies = [
  "camino",
  "cfg-if",
@@ -679,7 +679,7 @@ checksum = "7e51694c5f8b91baf933e6429a3df4ff3e9f1160386d150790b97bef73337d1b"
 
 [[package]]
 name = "determinator"
-version = "0.9.0"
+version = "0.9.1"
 dependencies = [
  "camino",
  "cfg-if",
@@ -965,7 +965,7 @@ dependencies = [
 
 [[package]]
 name = "guppy"
-version = "0.14.2"
+version = "0.14.3"
 dependencies = [
  "camino",
  "cargo_metadata",
@@ -1018,7 +1018,7 @@ dependencies = [
 
 [[package]]
 name = "guppy-summaries"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "camino",
  "cfg-if",
@@ -1059,7 +1059,7 @@ dependencies = [
 
 [[package]]
 name = "hakari"
-version = "0.10.1"
+version = "0.10.2"
 dependencies = [
  "atomicwrites",
  "bimap",
@@ -2156,7 +2156,7 @@ checksum = "c02424087780c9b71cc96799eaeddff35af2bc513278cda5c99fc1f5d026d3c1"
 
 [[package]]
 name = "target-spec"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "cfg-expr",
  "guppy-workspace-hack",

@@ -1,10 +1,13 @@
 # Changelog
 
-## Unreleased
+## [0.14.3] - 2022-09-30
 
 ### Changed
 
+- Repository location update.
 - MSRV updated to Rust 1.58.
+
+Thanks to [Carol Nichols](https://github.com/carols10cents) for her contributions to this release!
 
 ## [0.14.2] - 2022-05-29
 
@@ -518,6 +521,7 @@ lazy_static = "0.2"
 ### Added
 - Initial release.
 
+[0.14.3]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.14.3
 [0.14.2]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.14.2
 [0.14.1]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.14.1
 [0.14.0]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.14.0

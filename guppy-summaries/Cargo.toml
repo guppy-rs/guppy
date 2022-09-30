@@ -1,6 +1,6 @@
 [package]
 name = "guppy-summaries"
-version = "0.7.0"
+version = "0.7.1"
 description = "Build summaries for Cargo, created by guppy."
 documentation = "https://docs.rs/guppy-summaries"
 repository = "https://github.com/guppy-rs/guppy"
@@ -8,7 +8,12 @@ authors = ["Rain <rain1@fb.com>"]
 license = "MIT OR Apache-2.0"
 readme = "README.md"
 keywords = ["cargo", "dependencies", "guppy", "summaries"]
-categories = ["config", "data-structures", "development-tools", "parser-implementations"]
+categories = [
+    "config",
+    "data-structures",
+    "development-tools",
+    "parser-implementations",
+]
 edition = "2021"
 exclude = [
     # Readme template that doesn't need to be included.

@@ -1,9 +1,10 @@
 # Changelog
 
-## Unreleased
+## [0.7.1] - 2022-09-30
 
 ### Changed
 
+- Repository location update.
 - MSRV updated to Rust 1.58.
 
 ## [0.7.0] - 2022-03-14
@@ -90,6 +91,7 @@ This is a minor breaking change that should not affect most consumers.
 
 Initial release.
 
+[0.7.1]: https://github.com/guppy-rs/guppy/releases/tag/guppy-summaries-0.7.1
 [0.7.0]: https://github.com/guppy-rs/guppy/releases/tag/guppy-summaries-0.7.0
 [0.6.1]: https://github.com/guppy-rs/guppy/releases/tag/guppy-summaries-0.6.1
 [0.6.0]: https://github.com/guppy-rs/guppy/releases/tag/guppy-summaries-0.6.0

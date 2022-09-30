@@ -1,6 +1,6 @@
 [package]
 name = "determinator"
-version = "0.9.0"
+version = "0.9.1"
 description = "Figure out which packages changed between two commits to a workspace."
 documentation = "https://docs.rs/determinator"
 authors = ["Rain <rain1@fb.com>"]
@@ -27,7 +27,7 @@ rust-version = "1.58"
 [dependencies]
 camino = "1.0.9"
 globset = "0.4.9"
-guppy = { version = "0.14.0", path = "../../guppy", features = [
+guppy = { version = "0.14.3", path = "../../guppy", features = [
     "rayon1",
     "summaries",
 ] }
