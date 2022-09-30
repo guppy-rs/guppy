@@ -52,7 +52,8 @@ For more advanced usage, see `Platform` and `TargetSpec`.
 
 The minimum supported Rust version (MSRV) is:
 * For target-spec 1.0.x: **Rust 1.54**.
-* For the version on the main branch (currently unreleased): **Rust 1.56**
+* For target-spec 1.1.x: **Rust 1.56**.
+* For the version on the main branch (currently unreleased): **Rust 1.58**
 
 Within the 1.x series, MSRV bumps will be accompanied by a minor version update.
 

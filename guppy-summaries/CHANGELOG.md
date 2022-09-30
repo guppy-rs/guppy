@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Changed
+
+- MSRV updated to Rust 1.58.
+
+## [0.7.0] - 2022-03-14
+
 ### Added
 
 - Support for optional dependencies, as part of guppy's support for [namespaced features]:
