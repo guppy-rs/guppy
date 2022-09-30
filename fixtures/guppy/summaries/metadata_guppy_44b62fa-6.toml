@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'armebv7r-none-eabi'
+triple = 'arm-unknown-linux-musleabihf'
 target-features = 'unknown'
 flags = ['bar', 'cargo_web']
 

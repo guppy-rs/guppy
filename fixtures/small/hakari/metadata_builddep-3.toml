@@ -6,7 +6,7 @@
 # unify-target-host = 'auto'
 # output-single-feature = false
 # dep-format-version = '2'
-# platforms = ['i686-unknown-linux-gnu', 's390x-unknown-linux-gnu']
+# platforms = ['i686-unknown-haiku', 'riscv64imac-unknown-none-elf']
 # [[traversal-excludes.ids]]
 # name = 'builddep'
 # version = '0.1.0'

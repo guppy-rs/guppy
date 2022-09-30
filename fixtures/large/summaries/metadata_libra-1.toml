@@ -7,11 +7,11 @@ include-dev = true
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'i686-unknown-linux-musl'
+triple = 'i686-unknown-linux-gnu'
 target-features = 'unknown'
 
 [metadata.target-platform]
-triple = 'aarch64-unknown-freebsd'
+triple = 'aarch64-pc-windows-gnullvm'
 target-features = ['sha', 'ssse3', 'xsaves']
 flags = ['abc', 'bar']
 [[metadata.omitted-packages.ids]]
@@ -989,6 +989,13 @@ status = 'transitive'
 features = []
 
 [[target-package]]
+name = 'kernel32-sys'
+version = '0.2.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
 name = 'libc'
 version = '0.2.62'
 crates-io = true
@@ -1045,7 +1052,7 @@ version = '0.5.6'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'getrandom', 'libc', 'mach_o_sys', 'use_os', 'winapi']
-optional-deps = ['getrandom', 'libc']
+optional-deps = ['getrandom', 'winapi']
 
 [[target-package]]
 name = 'mio'
@@ -1055,8 +1062,8 @@ status = 'transitive'
 features = ['default', 'with-deprecated']
 
 [[target-package]]
-name = 'mio-uds'
-version = '0.6.7'
+name = 'miow'
+version = '0.2.1'
 crates-io = true
 status = 'transitive'
 features = []
@@ -1221,7 +1228,6 @@ version = '0.4.6'
 crates-io = true
 status = 'transitive'
 features = ['default', 'libc', 'std']
-optional-deps = ['libc']
 
 [[target-package]]
 name = 'rand'
@@ -1229,7 +1235,7 @@ version = '0.5.6'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'cloudabi', 'default', 'fuchsia-cprng', 'libc', 'std', 'winapi']
-optional-deps = ['libc']
+optional-deps = ['winapi']
 
 [[target-package]]
 name = 'rand'
@@ -1394,7 +1400,6 @@ version = '0.16.9'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'dev_urandom_fallback', 'lazy_static', 'std']
-optional-deps = ['lazy_static']
 
 [[target-package]]
 name = 'rustc-demangle'
@@ -1625,7 +1630,7 @@ version = '0.2.0-alpha.6'
 crates-io = true
 status = 'transitive'
 features = ['async-traits', 'bytes', 'futures-sink-preview', 'iovec', 'libc', 'mio-uds', 'tcp', 'udp', 'uds']
-optional-deps = ['bytes', 'futures-sink-preview', 'iovec', 'libc', 'mio-uds']
+optional-deps = ['bytes', 'futures-sink-preview', 'iovec']
 
 [[target-package]]
 name = 'tokio-reactor'
@@ -1749,6 +1754,34 @@ features = []
 [[target-package]]
 name = 'want'
 version = '0.2.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'winapi'
+version = '0.2.8'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'winapi'
+version = '0.3.8'
+crates-io = true
+status = 'transitive'
+features = ['consoleapi', 'errhandlingapi', 'fileapi', 'handleapi', 'knownfolders', 'memoryapi', 'minwinbase', 'minwindef', 'ntdef', 'ntsecapi', 'ntstatus', 'objbase', 'processenv', 'processthreadsapi', 'profileapi', 'shlobj', 'std', 'sysinfoapi', 'timezoneapi', 'winbase', 'wincon', 'winerror', 'winnt', 'winsock2', 'ws2def', 'ws2ipdef', 'ws2tcpip', 'wtypesbase']
+
+[[target-package]]
+name = 'winapi-util'
+version = '0.1.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'ws2_32-sys'
+version = '0.2.1'
 crates-io = true
 status = 'transitive'
 features = []
@@ -2404,6 +2437,13 @@ features = []
 [[host-package]]
 name = 'which'
 version = '2.0.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'winapi-build'
+version = '0.1.1'
 crates-io = true
 status = 'transitive'
 features = []

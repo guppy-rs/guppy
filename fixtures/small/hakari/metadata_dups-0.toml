@@ -6,7 +6,7 @@
 # unify-target-host = 'auto'
 # output-single-feature = true
 # dep-format-version = '2'
-# platforms = ['mipsisa32r6el-unknown-linux-gnu', 'i686-uwp-windows-gnu']
+# platforms = ['mipsisa32r6el-unknown-linux-gnu', 'i686-unknown-uefi']
 # [[traversal-excludes.ids]]
 # name = 'bytes'
 # version = '0.3.0'

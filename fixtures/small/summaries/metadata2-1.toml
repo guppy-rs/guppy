@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'arm-unknown-linux-gnueabi'
+triple = 'arm-linux-androideabi'
 target-features = 'all'
 flags = ['abc', 'cargo_web']
 

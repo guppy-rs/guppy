@@ -7,12 +7,12 @@ include-dev = false
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'armv5te-unknown-linux-musleabi'
+triple = 'armv4t-unknown-linux-gnueabi'
 target-features = 'all'
 flags = ['foo']
 
 [metadata.target-platform]
-triple = 'aarch64-unknown-freebsd'
+triple = 'aarch64-pc-windows-gnullvm'
 target-features = 'all'
 flags = ['foo']
 [[metadata.omitted-packages.ids]]

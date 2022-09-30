@@ -7,11 +7,11 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'mipsel-sony-psp'
+triple = 'mips64el-unknown-linux-muslabi64'
 target-features = 'unknown'
 
 [metadata.target-platform]
-triple = 'armv6k-nintendo-3ds'
+triple = 'armv6-unknown-freebsd'
 target-features = 'unknown'
 flags = ['abc', 'bar']
 [[metadata.omitted-packages.ids]]

@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 's390x-unknown-linux-gnu'
+triple = 'riscv64imac-unknown-none-elf'
 target-features = ['avx', 'bmi2', 'rdrand', 'sse', 'sse2']
 flags = ['abc', 'test-flag']
 
@@ -1114,13 +1114,6 @@ version = '0.1.21'
 crates-io = true
 status = 'transitive'
 features = []
-
-[[host-package]]
-name = 'libc'
-version = '0.2.79'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
 
 [[host-package]]
 name = 'pkg-config'

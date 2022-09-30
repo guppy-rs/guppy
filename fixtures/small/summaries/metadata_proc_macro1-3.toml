@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'x86_64-pc-solaris'
+triple = 'x86_64-linux-android'
 target-features = []
 flags = ['abc']
 

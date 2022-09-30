@@ -10,7 +10,7 @@ initials-platform = 'host'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'x86_64-pc-windows-msvc'
+triple = 'x86_64-pc-windows-gnu'
 target-features = ['avx2']
 [[metadata.omitted-packages.ids]]
 name = 'namespaced-weak'

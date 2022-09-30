@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'armv7a-kmc-solid_asp3-eabihf'
+triple = 'armv7a-kmc-solid_asp3-eabi'
 target-features = ['aes', 'fma', 'sha', 'sse2', 'xsavec']
 
 [metadata.target-platform]

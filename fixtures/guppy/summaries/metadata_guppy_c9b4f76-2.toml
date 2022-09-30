@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'aarch64-unknown-linux-gnu'
+triple = 'aarch64-pc-windows-msvc'
 target-features = ['avx2', 'sha', 'sse2', 'sse3']
 flags = ['test-flag']
 [[metadata.omitted-packages.ids]]
@@ -151,7 +151,7 @@ version = '2.33.3'
 crates-io = true
 status = 'direct'
 features = ['ansi_term', 'atty', 'color', 'default', 'strsim', 'suggestions', 'vec_map']
-optional-deps = ['ansi_term', 'atty', 'strsim', 'vec_map']
+optional-deps = ['atty', 'strsim', 'vec_map']
 
 [[target-package]]
 name = 'criterion'
@@ -408,7 +408,7 @@ version = '0.4.19'
 crates-io = true
 status = 'transitive'
 features = ['clock', 'default', 'libc', 'oldtime', 'std', 'time', 'winapi']
-optional-deps = ['libc', 'time']
+optional-deps = ['libc', 'time', 'winapi']
 
 [[target-package]]
 name = 'combine'
@@ -423,7 +423,7 @@ version = '0.11.3'
 crates-io = true
 status = 'transitive'
 features = ['ansi-parsing', 'default', 'regex', 'unicode-width', 'winapi-util', 'windows-console-colors']
-optional-deps = ['regex', 'unicode-width']
+optional-deps = ['regex', 'unicode-width', 'winapi-util']
 
 [[target-package]]
 name = 'crates-io'
@@ -503,7 +503,6 @@ version = '0.4.33'
 crates-io = true
 status = 'transitive'
 features = ['default', 'http2', 'openssl-probe', 'openssl-sys', 'ssl']
-optional-deps = ['openssl-probe', 'openssl-sys']
 
 [[target-package]]
 name = 'curl-sys'
@@ -511,7 +510,7 @@ version = '0.4.36+curl-7.71.1'
 crates-io = true
 status = 'transitive'
 features = ['default', 'http2', 'libnghttp2-sys', 'openssl-sys', 'ssl']
-optional-deps = ['libnghttp2-sys', 'openssl-sys']
+optional-deps = ['libnghttp2-sys']
 
 [[target-package]]
 name = 'difference'
@@ -519,6 +518,13 @@ version = '2.0.0'
 crates-io = true
 status = 'transitive'
 features = ['default']
+
+[[target-package]]
+name = 'encode_unicode'
+version = '0.3.6'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
 
 [[target-package]]
 name = 'env_logger'
@@ -551,15 +557,8 @@ status = 'transitive'
 features = ['default', 'std']
 
 [[target-package]]
-name = 'foreign-types'
-version = '0.3.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'foreign-types-shared'
-version = '0.1.1'
+name = 'fwdansi'
+version = '1.1.0'
 crates-io = true
 status = 'transitive'
 features = []
@@ -577,7 +576,6 @@ version = '0.13.11'
 crates-io = true
 status = 'transitive'
 features = ['default', 'https', 'openssl-probe', 'openssl-sys', 'ssh', 'ssh_key_from_memory']
-optional-deps = ['openssl-probe', 'openssl-sys']
 
 [[target-package]]
 name = 'git2-curl'
@@ -718,7 +716,7 @@ version = '0.12.13+1.0.1'
 crates-io = true
 status = 'transitive'
 features = ['https', 'libssh2-sys', 'openssl-sys', 'ssh', 'ssh_key_from_memory']
-optional-deps = ['libssh2-sys', 'openssl-sys']
+optional-deps = ['libssh2-sys']
 
 [[target-package]]
 name = 'libnghttp2-sys'
@@ -785,6 +783,13 @@ status = 'transitive'
 features = ['default']
 
 [[target-package]]
+name = 'miow'
+version = '0.3.5'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
 name = 'num-integer'
 version = '0.1.43'
 crates-io = true
@@ -820,22 +825,8 @@ status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'openssl'
-version = '0.10.30'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'openssl-probe'
+name = 'output_vt100'
 version = '0.1.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'openssl-sys'
-version = '0.9.58'
 crates-io = true
 status = 'transitive'
 features = []
@@ -874,7 +865,7 @@ version = '0.7.3'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'getrandom', 'getrandom_package', 'libc', 'std']
-optional-deps = ['getrandom_package', 'libc']
+optional-deps = ['getrandom_package']
 
 [[target-package]]
 name = 'rand_chacha'
@@ -985,6 +976,13 @@ status = 'transitive'
 features = []
 
 [[target-package]]
+name = 'schannel'
+version = '0.1.19'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
 name = 'scopeguard'
 version = '1.1.0'
 crates-io = true
@@ -1071,13 +1069,6 @@ features = []
 [[target-package]]
 name = 'terminal_size'
 version = '0.1.13'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'termios'
-version = '0.3.2'
 crates-io = true
 status = 'transitive'
 features = []
@@ -1208,6 +1199,20 @@ crates-io = true
 status = 'transitive'
 features = []
 
+[[target-package]]
+name = 'winapi'
+version = '0.3.9'
+crates-io = true
+status = 'transitive'
+features = ['basetsd', 'consoleapi', 'errhandlingapi', 'fileapi', 'handleapi', 'ioapiset', 'jobapi', 'jobapi2', 'libloaderapi', 'lmcons', 'memoryapi', 'minschannel', 'minwinbase', 'minwindef', 'namedpipeapi', 'ntdef', 'ntstatus', 'processenv', 'processthreadsapi', 'profileapi', 'psapi', 'schannel', 'securitybaseapi', 'shellapi', 'shlobj', 'sspi', 'std', 'synchapi', 'sysinfoapi', 'timezoneapi', 'winbase', 'wincon', 'wincrypt', 'winerror', 'winnt', 'winsock2', 'winuser', 'ws2def', 'ws2ipdef', 'ws2tcpip']
+
+[[target-package]]
+name = 'winapi-util'
+version = '0.1.5'
+crates-io = true
+status = 'transitive'
+features = []
+
 [[host-package]]
 name = 'proptest-derive'
 version = '0.2.0'
@@ -1229,6 +1234,13 @@ crates-io = true
 status = 'transitive'
 features = ['jobserver', 'parallel']
 optional-deps = ['jobserver']
+
+[[host-package]]
+name = 'ctor'
+version = '0.1.16'
+crates-io = true
+status = 'transitive'
+features = []
 
 [[host-package]]
 name = 'heck'

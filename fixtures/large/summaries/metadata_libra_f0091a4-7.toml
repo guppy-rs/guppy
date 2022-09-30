@@ -7,11 +7,11 @@ include-dev = false
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 's390x-unknown-linux-gnu'
+triple = 'riscv64imac-unknown-none-elf'
 target-features = 'all'
 
 [metadata.target-platform]
-triple = 'armv7-unknown-linux-gnueabihf'
+triple = 'armv7-unknown-linux-gnueabi'
 target-features = 'unknown'
 [[metadata.omitted-packages.ids]]
 name = 'hyper'

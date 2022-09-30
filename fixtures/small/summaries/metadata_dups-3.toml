@@ -7,12 +7,12 @@ include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'x86_64-sun-solaris'
+triple = 'x86_64-pc-windows-msvc'
 target-features = 'all'
 flags = ['test-flag']
 
 [metadata.target-platform]
-triple = 'thumbv8m.main-none-eabihf'
+triple = 'thumbv8m.main-none-eabi'
 target-features = ['avx', 'sha', 'sse', 'xsaveopt']
 flags = ['flag-test', 'foo']
 

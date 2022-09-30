@@ -10,7 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'mips64-openwrt-linux-musl'
+triple = 'mips-unknown-linux-uclibc'
 target-features = 'unknown'
 flags = ['test-flag']
 [[metadata.omitted-packages.ids]]

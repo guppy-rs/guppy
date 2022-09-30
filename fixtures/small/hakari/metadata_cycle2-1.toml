@@ -6,7 +6,7 @@
 # unify-target-host = 'none'
 # output-single-feature = true
 # dep-format-version = '2'
-# platforms = ['armv7-unknown-linux-gnueabihf']
+# platforms = ['armv7-unknown-linux-gnueabi']
 # [[traversal-excludes.ids]]
 # name = 'lower-a'
 # version = '0.1.0'

@@ -6,7 +6,7 @@
 # unify-target-host = 'auto'
 # output-single-feature = false
 # dep-format-version = '2'
-# platforms = ['aarch64-pc-windows-msvc', 'x86_64-fortanix-unknown-sgx']
+# platforms = ['aarch64-linux-android', 'x86_64-apple-watchos-sim']
 # [[traversal-excludes.ids]]
 # name = 'criterion-plot'
 # version = '0.4.1'
@@ -172,21 +172,21 @@ toml = { version = "0.5" }
 ureq = { version = "0.11", features = ["cookie", "cookies", "json", "rustls", "serde_json", "tls", "webpki", "webpki-roots"] }
 x25519-dalek = { git = "https://github.com/calibra/x25519-dalek.git", branch = "fiat", default-features = false, features = ["fiat_u64_backend", "std", "u64_backend"] }
 
-[target.aarch64-pc-windows-msvc.dependencies]
+[target.aarch64-linux-android.dependencies]
 hyper = { version = "0.13", features = ["net2", "runtime", "stream", "tcp"] }
-tokio = { version = "0.2", default-features = false, features = ["winapi"] }
-winapi = { version = "0.3", default-features = false, features = ["consoleapi", "errhandlingapi", "fileapi", "handleapi", "impl-debug", "impl-default", "ioapiset", "knownfolders", "libloaderapi", "lmcons", "memoryapi", "minschannel", "minwinbase", "minwindef", "namedpipeapi", "ntdef", "ntsecapi", "ntstatus", "objbase", "processenv", "processthreadsapi", "profileapi", "schannel", "securitybaseapi", "shlobj", "sspi", "std", "synchapi", "sysinfoapi", "threadpoollegacyapiset", "timezoneapi", "winbase", "wincon", "wincrypt", "winerror", "winnt", "winreg", "winsock2", "winuser", "ws2def", "ws2ipdef", "ws2tcpip", "wtypesbase"] }
+libc = { version = "0.2", default-features = false, features = ["extra_traits"] }
 
-[target.aarch64-pc-windows-msvc.build-dependencies]
+[target.aarch64-linux-android.build-dependencies]
 hyper = { version = "0.13", features = ["net2", "runtime", "stream", "tcp"] }
-tokio = { version = "0.2", default-features = false, features = ["winapi"] }
-winapi = { version = "0.3", default-features = false, features = ["consoleapi", "errhandlingapi", "fileapi", "handleapi", "impl-debug", "impl-default", "ioapiset", "knownfolders", "libloaderapi", "lmcons", "memoryapi", "minschannel", "minwinbase", "minwindef", "namedpipeapi", "ntdef", "ntsecapi", "ntstatus", "objbase", "processenv", "processthreadsapi", "profileapi", "schannel", "securitybaseapi", "shlobj", "sspi", "std", "synchapi", "sysinfoapi", "threadpoollegacyapiset", "timezoneapi", "winbase", "wincon", "wincrypt", "winerror", "winnt", "winreg", "winsock2", "winuser", "ws2def", "ws2ipdef", "ws2tcpip", "wtypesbase"] }
+libc = { version = "0.2", default-features = false, features = ["extra_traits"] }
 
-[target.x86_64-fortanix-unknown-sgx.dependencies]
+[target.x86_64-apple-watchos-sim.dependencies]
 hyper = { version = "0.13", features = ["net2", "runtime", "stream", "tcp"] }
+libc = { version = "0.2", default-features = false, features = ["extra_traits"] }
 
-[target.x86_64-fortanix-unknown-sgx.build-dependencies]
+[target.x86_64-apple-watchos-sim.build-dependencies]
 hyper = { version = "0.13", features = ["net2", "runtime", "stream", "tcp"] }
+libc = { version = "0.2", default-features = false, features = ["extra_traits"] }
 
 ### END HAKARI SECTION
 

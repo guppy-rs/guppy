@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'i686-linux-android'
+triple = 'i686-apple-darwin'
 target-features = 'all'
 flags = ['abc']
 

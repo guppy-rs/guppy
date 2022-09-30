@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'mipsisa32r6-unknown-linux-gnu'
+triple = 'mipsel-unknown-none'
 target-features = []
 flags = ['foo']
 

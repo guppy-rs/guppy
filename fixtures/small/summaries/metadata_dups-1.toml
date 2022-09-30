@@ -10,7 +10,7 @@ initials-platform = 'host'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'aarch64-unknown-none'
+triple = 'aarch64-unknown-linux-musl'
 target-features = []
 flags = ['test-flag']
 

@@ -6,7 +6,7 @@
 # unify-target-host = 'auto'
 # output-single-feature = true
 # dep-format-version = '2'
-# platforms = ['aarch64-unknown-freebsd', 'i686-unknown-linux-musl', 'x86_64-unknown-linux-gnu']
+# platforms = ['aarch64-nintendo-switch-freestanding', 'i686-unknown-linux-gnu', 'x86_64-unknown-l4re-uclibc']
 # [[traversal-excludes.ids]]
 # name = 'cargo-compare'
 # version = '0.1.0'
@@ -141,17 +141,16 @@ unicode-xid-c65f7effa3be6d31 = { package = "unicode-xid", version = "0.1" }
 unicode-xid-6f8ce4dd05d13bba = { package = "unicode-xid", version = "0.2" }
 version_check = { version = "0.9", default-features = false }
 
-[target.aarch64-unknown-freebsd.dependencies]
+[target.aarch64-nintendo-switch-freestanding.dependencies]
+ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }
+rand_chacha = { version = "0.2", default-features = false, features = ["std"] }
+
+[target.i686-unknown-linux-gnu.dependencies]
 ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }
 rand_chacha = { version = "0.2", default-features = false, features = ["std"] }
 termios = { version = "0.3", default-features = false }
 
-[target.i686-unknown-linux-musl.dependencies]
-ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }
-rand_chacha = { version = "0.2", default-features = false, features = ["std"] }
-termios = { version = "0.3", default-features = false }
-
-[target.x86_64-unknown-linux-gnu.dependencies]
+[target.x86_64-unknown-l4re-uclibc.dependencies]
 ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }
 rand_chacha = { version = "0.2", default-features = false, features = ["std"] }
 termios = { version = "0.3", default-features = false }

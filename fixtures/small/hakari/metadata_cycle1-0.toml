@@ -6,7 +6,7 @@
 # unify-target-host = 'none'
 # output-single-feature = false
 # dep-format-version = '2'
-# platforms = ['wasm32-unknown-unknown', 'x86_64-apple-tvos']
+# platforms = ['wasm32-unknown-emscripten', 'x86_64-apple-ios-macabi']
 # [[traversal-excludes.ids]]
 # name = 'testcycles-base'
 # version = '0.1.0'

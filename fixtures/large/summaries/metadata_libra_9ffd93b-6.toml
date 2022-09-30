@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'arm-unknown-linux-musleabi'
+triple = 'arm-unknown-linux-gnueabihf'
 target-features = 'all'
 [[metadata.omitted-packages.ids]]
 name = 'Inflector'

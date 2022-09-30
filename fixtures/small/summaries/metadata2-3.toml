@@ -7,11 +7,11 @@ include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'riscv64gc-unknown-freebsd'
+triple = 'riscv32imc-unknown-none-elf'
 target-features = 'all'
 
 [metadata.target-platform]
-triple = 'riscv64gc-unknown-linux-musl'
+triple = 'riscv64gc-unknown-linux-gnu'
 target-features = ['sse4.2', 'xsaveopt', 'xsaves']
 flags = ['test-flag']
 [[metadata.omitted-packages.ids]]

@@ -12,7 +12,7 @@ target-features = ['avx2', 'sse3']
 flags = ['foo']
 
 [metadata.target-platform]
-triple = 'mips64-openwrt-linux-musl'
+triple = 'mips-unknown-linux-uclibc'
 target-features = 'unknown'
 
 [[metadata.features-only]]
