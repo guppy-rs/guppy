@@ -46,7 +46,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest, macos-latest, windows-latest ]
-        rust-version: [ 1.56, stable ]
+        rust-version: [ 1.58, stable ]
       fail-fast: false
     env:
       RUSTFLAGS: -D warnings
@@ -100,7 +100,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest, macos-latest, windows-latest ]
-        rust-version: [ 1.56, stable ]
+        rust-version: [ 1.58, stable ]
       fail-fast: false
     env:
       RUSTFLAGS: -D warnings
