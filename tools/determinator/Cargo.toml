@@ -25,18 +25,18 @@ include = [
 rust-version = "1.58"
 
 [dependencies]
-camino = "1.0.9"
+camino = "1.1.1"
 globset = "0.4.9"
 guppy = { version = "0.14.3", path = "../../guppy", features = [
     "rayon1",
     "summaries",
 ] }
-once_cell = "1.12.0"
+once_cell = "1.15.0"
 petgraph = { version = "0.6.2", default-features = false, features = [
     "graphmap",
 ] }
 rayon = "1.5.3"
-serde = { version = "1.0.137", features = ["derive"] }
+serde = { version = "1.0.147", features = ["derive"] }
 toml = "0.5.9"
 guppy-workspace-hack = { version = "0.1", path = "../../workspace-hack" }
 
