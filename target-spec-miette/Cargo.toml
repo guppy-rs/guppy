@@ -1,0 +1,17 @@
+[package]
+name = "target-spec-miette"
+version = "0.1.0"
+description = "Integrate target-spec errors with the miette library"
+documentation = "https://docs.rs/target-spec-miette"
+repository = "https://github.com/guppy-rs/guppy"
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+keywords = ["cargo", "targets", "platforms", "miette"]
+categories = ["development-tools"]
+edition = "2021"
+rust-version = "1.58"
+
+[dependencies]
+target-spec = { version = "1.2.0", path = "../target-spec" }
+miette = "5.3.0"
+guppy-workspace-hack = { version = "0.1", path = "../workspace-hack" }

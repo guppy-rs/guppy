@@ -11,6 +11,7 @@ members = [
     "internal-tools/fixture-manager",
     "internal-tools/proptest-ext",
     "target-spec",
+    "target-spec-miette",
     "tools/cargo-hakari",
     "tools/determinator",
     "tools/hakari",

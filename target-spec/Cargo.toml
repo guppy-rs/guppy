@@ -27,6 +27,7 @@ target-lexicon = { version = "0.12.4", features = ["std"] }
 guppy-workspace-hack = { version = "0.1", path = "../workspace-hack" }
 
 [dev-dependencies]
+test-case = "2.2.2"
 toml = "0.5.9"
 
 [features]
