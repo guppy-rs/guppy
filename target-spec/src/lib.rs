@@ -50,6 +50,11 @@
 //! * For target-spec 1.2.x: **Rust 1.58**.
 //!
 //! Within the 1.x series, MSRV bumps will be accompanied by a minor version update.
+//!
+//! ## Related crates
+//!
+//! To pretty-print target-spec errors, consider using the [miette](https://docs.rs/miette)
+//! diagnostic library with [target-spec-miette](https://crates.io/crates/target-spec-miette).
 
 #![warn(missing_docs)]
 #![forbid(unsafe_code)]

@@ -93,7 +93,7 @@ impl TargetExpression {
     /// that wasn't understood by `target-spec`.
     pub fn new(input: &str) -> Result<Self, Error> {
         let expr = Expression::parse(input)
-            .map_err(|err| Error::InvalidExpression(ExpressionParseError::new(err)))?;
+            .map_err(|err| Error::InvalidExpression(ExpressionParseError::new(input, err)))?;
         Ok(Self {
             inner: Arc::new(expr),
         })

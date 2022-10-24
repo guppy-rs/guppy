@@ -57,6 +57,11 @@ The minimum supported Rust version (MSRV) is:
 
 Within the 1.x series, MSRV bumps will be accompanied by a minor version update.
 
+### Related crates
+
+To pretty-print target-spec errors, consider using the [miette](https://docs.rs/miette)
+diagnostic library with [target-spec-miette](https://crates.io/crates/target-spec-miette).
+
 ## Contributing
 
 See the [CONTRIBUTING](../CONTRIBUTING.md) file for how to help out.
