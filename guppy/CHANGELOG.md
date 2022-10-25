@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.14.4] - 2022-10-05
+
+### Changed
+
+- Internal dependency update: `cargo_metadata` updated to 0.15.1.
+
 ## [0.14.3] - 2022-09-30
 
 ### Changed
@@ -521,6 +527,7 @@ lazy_static = "0.2"
 ### Added
 - Initial release.
 
+[0.14.4]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.14.4
 [0.14.3]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.14.3
 [0.14.2]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.14.2
 [0.14.1]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.14.1

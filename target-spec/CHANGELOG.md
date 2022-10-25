@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.1] - 2022-10-25
+
+### Added
+
+- `ExpressionParseError` now carries information about the reason a target expression couldn't be
+  parsed. This has been done to support pretty-printing via the new
+  [target-spec-miette](https://crates.io/crates/target-spec-miette) crate.
+
 ## [1.2.0] - 2022-09-30
 
 ### Changed
@@ -177,6 +185,7 @@ This was mistakenly published and was yanked.
 ## [0.1.0] - 2020-03-20
 - Initial release.
 
+[1.2.1]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-1.2.1
 [1.2.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-1.2.0
 [1.1.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-1.1.0
 [1.0.2]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-1.0.2
