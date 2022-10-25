@@ -15,12 +15,12 @@ jobs:
     env:
       RUSTFLAGS: -D warnings
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           components: rustfmt, clippy
-      - uses: Swatinem/rust-cache@c5ed9ba6b7e1bb8aff90d43acd2f0af4990fa57c
+      - uses: Swatinem/rust-cache@v2
       - name: Lint (clippy)
         uses: actions-rs/cargo@v1
         with:
@@ -51,12 +51,12 @@ jobs:
     env:
       RUSTFLAGS: -D warnings
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: ${{ matrix.rust-version }}
           override: true
-      - uses: Swatinem/rust-cache@c5ed9ba6b7e1bb8aff90d43acd2f0af4990fa57c
+      - uses: Swatinem/rust-cache@v2
 
       # Build all packages we care about one by one to ensure feature unification
       # doesn't happen.
@@ -105,12 +105,12 @@ jobs:
     env:
       RUSTFLAGS: -D warnings
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: ${{ matrix.rust-version }}
           override: true
-      - uses: Swatinem/rust-cache@c5ed9ba6b7e1bb8aff90d43acd2f0af4990fa57c
+      - uses: Swatinem/rust-cache@v2
       - name: Build
         uses: actions-rs/cargo@v1
         with:
@@ -142,11 +142,11 @@ jobs:
     env:
       RUSTDOCFLAGS: -D warnings
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-      - uses: Swatinem/rust-cache@c5ed9ba6b7e1bb8aff90d43acd2f0af4990fa57c
+      - uses: Swatinem/rust-cache@v2
       - name: Build rustdoc
         uses: actions-rs/cargo@v1
         with:
@@ -167,13 +167,13 @@ jobs:
       RUSTFLAGS: -D warnings
       PROPTEST_MULTIPLIER: 64
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions-rs/toolchain@v1
         with:
           # 1.60 is the cfg-expr version
           toolchain: 1.64.0
           override: true
-      - uses: Swatinem/rust-cache@c5ed9ba6b7e1bb8aff90d43acd2f0af4990fa57c
+      - uses: Swatinem/rust-cache@v2
       - name: Build and test
         uses: actions-rs/cargo@v1
         with:
@@ -186,13 +186,13 @@ jobs:
     env:
       RUSTFLAGS: -D warnings
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           target: aarch64-unknown-linux-gnu
           override: true
-      - uses: Swatinem/rust-cache@c5ed9ba6b7e1bb8aff90d43acd2f0af4990fa57c
+      - uses: Swatinem/rust-cache@v2
       - name: Build
         uses: actions-rs/cargo@v1
         with:
