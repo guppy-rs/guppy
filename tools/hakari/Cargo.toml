@@ -28,7 +28,7 @@ camino = "1.1.1"
 cfg-if = "1.0.0"
 debug-ignore = "1.0.3"
 diffy = "0.3.0"
-guppy = { version = "0.14.3", path = "../../guppy", features = ["rayon1"] }
+guppy = { version = "0.14.4", path = "../../guppy", features = ["rayon1"] }
 include_dir = { version = "0.7.3", features = ["glob"], optional = true }
 indenter = "0.3.3"
 itertools = "0.10.5"
