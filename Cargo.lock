@@ -235,7 +235,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "cargo",
- "clap 3.2.22",
+ "clap 3.2.23",
  "color-eyre",
  "diffus",
  "either",
@@ -254,7 +254,7 @@ name = "cargo-guppy"
 version = "0.1.0"
 dependencies = [
  "camino",
- "clap 3.2.22",
+ "clap 3.2.23",
  "color-eyre",
  "dialoguer",
  "guppy",
@@ -273,7 +273,7 @@ version = "0.9.15"
 dependencies = [
  "camino",
  "cfg-if",
- "clap 3.2.22",
+ "clap 3.2.23",
  "color-eyre",
  "dialoguer",
  "duct",
@@ -389,9 +389,9 @@ dependencies = [
 
 [[package]]
 name = "clap"
-version = "3.2.22"
+version = "3.2.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "86447ad904c7fb335a790c9d7fe3d0d971dc523b8ccd1561a520de9a85302750"
+checksum = "71655c45cb9845d3270c9d6df84ebe72b4dad3c2ba3f7023ad47c144e4e473a5"
 dependencies = [
  "atty",
  "bitflags",
@@ -401,7 +401,7 @@ dependencies = [
  "once_cell",
  "strsim 0.10.0",
  "termcolor",
- "textwrap 0.15.1",
+ "textwrap 0.16.0",
 ]
 
 [[package]]
@@ -1015,7 +1015,7 @@ dependencies = [
 name = "guppy-cmdlib"
 version = "0.1.0"
 dependencies = [
- "clap 3.2.22",
+ "clap 3.2.23",
  "color-eyre",
  "guppy",
  "guppy-workspace-hack",
@@ -1308,9 +1308,9 @@ checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
 
 [[package]]
 name = "libc"
-version = "0.2.135"
+version = "0.2.136"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "68783febc7782c6c5cb401fbda4de5a9898be1762314da0bb2c10ced61f18b0c"
+checksum = "55edcf6c0bb319052dea84732cf99db461780fd5e8d3eb46ab6ff312ab31f197"
 
 [[package]]
 name = "libgit2-sys"
@@ -2271,9 +2271,9 @@ dependencies = [
 
 [[package]]
 name = "textwrap"
-version = "0.15.1"
+version = "0.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "949517c0cf1bf4ee812e2e07e08ab448e3ae0d23472aee8a06c985f0c8815b16"
+checksum = "222a222a5bfe1bba4a77b45ec488a741b3cb8872e5e499451fd7d0129c9c7c3d"
 
 [[package]]
 name = "thiserror"
