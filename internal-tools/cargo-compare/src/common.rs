@@ -112,9 +112,10 @@ impl GuppyCargoCommon {
             // platform-specific filtering happens much later in the process.
             // Also, use activated_features_unverified since it's possible for a particular (package
             // ID, features for) combination to be missing.
-            if let Some(target_features) =
-                resolved_features.activated_features_unverified(pkg_id, FeaturesFor::NormalOrDev)
-            {
+            if let Some(target_features) = resolved_features.activated_features_unverified(
+                pkg_id,
+                FeaturesFor::NormalOrDevOrArtifactTarget(None),
+            ) {
                 target_map.insert(pkg_id.to_guppy(), target_features.to_guppy());
             }
             if let Some(host_features) =
