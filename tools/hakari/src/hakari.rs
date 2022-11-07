@@ -86,6 +86,8 @@ impl<'g> HakariBuilder<'g> {
 
     /// Returns the `PackageGraph` used to construct this `Hakari` instance.
     pub fn graph(&self) -> &'g PackageGraph {
+        // This is a spurious clippy lint on Rust 1.65.0
+        #[allow(clippy::explicit_auto_deref)]
         *self.graph
     }
 

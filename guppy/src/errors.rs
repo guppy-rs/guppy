@@ -63,7 +63,7 @@ pub enum Error {
         message: String,
 
         /// The summary for which the name wasn't recognized.
-        summary: crate::graph::summaries::ThirdPartySummary,
+        summary: Box<crate::graph::summaries::ThirdPartySummary>,
 
         /// The registry name that wasn't recognized.
         registry_name: String,

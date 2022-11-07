@@ -195,7 +195,7 @@ The latest version of the default rules is available
                 .expect("default rules should parse")
         });
 
-        &*DEFAULT_RULES
+        &DEFAULT_RULES
     }
 }
 

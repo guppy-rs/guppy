@@ -599,7 +599,7 @@ impl<'a> PackageMatcher<'a> {
                         None => {
                             return Err(Error::UnknownRegistryName {
                                 message: error_message.to_owned(),
-                                summary: tp_summary.clone(),
+                                summary: Box::new(tp_summary.clone()),
                                 registry_name: name.clone(),
                             });
                         }

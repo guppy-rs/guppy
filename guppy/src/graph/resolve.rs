@@ -304,7 +304,7 @@ impl<'g> PackageSet<'g> {
         direction: DependencyDirection,
         mut callback: impl FnMut(PackageMetadata<'g>) -> bool,
     ) -> Self {
-        let graph = self.graph;
+        let graph = *self.graph;
         let included: IxBitSet = self
             .packages(direction)
             .filter_map(move |package| {
@@ -316,7 +316,7 @@ impl<'g> PackageSet<'g> {
                 }
             })
             .collect();
-        Self::from_included(*graph, included)
+        Self::from_included(graph, included)
     }
 
     /// Partitions this `PackageSet` into two.
@@ -334,7 +334,7 @@ impl<'g> PackageSet<'g> {
         direction: DependencyDirection,
         mut callback: impl FnMut(PackageMetadata<'g>) -> bool,
     ) -> (Self, Self) {
-        let graph = self.graph;
+        let graph = *self.graph;
         let mut left = IxBitSet::with_capacity(self.core.included.len());
         let mut right = left.clone();
 
@@ -346,8 +346,8 @@ impl<'g> PackageSet<'g> {
             }
         });
         (
-            Self::from_included(*graph, left),
-            Self::from_included(*graph, right),
+            Self::from_included(graph, left),
+            Self::from_included(graph, right),
         )
     }
 
@@ -367,7 +367,7 @@ impl<'g> PackageSet<'g> {
         direction: DependencyDirection,
         mut callback: impl FnMut(PackageMetadata<'g>) -> Option<bool>,
     ) -> (Self, Self) {
-        let graph = self.graph;
+        let graph = *self.graph;
         let mut left = IxBitSet::with_capacity(self.core.included.len());
         let mut right = left.clone();
 
@@ -380,8 +380,8 @@ impl<'g> PackageSet<'g> {
             }
         });
         (
-            Self::from_included(*graph, left),
-            Self::from_included(*graph, right),
+            Self::from_included(graph, left),
+            Self::from_included(graph, right),
         )
     }
 
