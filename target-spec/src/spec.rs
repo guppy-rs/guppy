@@ -177,6 +177,14 @@ mod tests {
     }
 
     #[test]
+    fn test_target_abi() {
+        assert!(matches!(
+            TargetSpec::new("cfg(any(target_arch = \"wasm32\", target_abi = \"unknown\"))"),
+            Ok(TargetSpec::Expression(_))
+        ));
+    }
+
+    #[test]
     fn test_not() {
         assert!(matches!(
             TargetSpec::new("cfg(not(windows))"),
