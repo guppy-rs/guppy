@@ -686,7 +686,7 @@ checksum = "4b48b0b49e2f473c499ddcd133e78f0f2629aaa997ee61adadb2d1753e6af4cf"
 
 [[package]]
 name = "determinator"
-version = "0.9.1"
+version = "0.10.0"
 dependencies = [
  "camino",
  "cfg-if",
