@@ -149,7 +149,7 @@ impl FromStr for TargetExpression {
 mod tests {
     use super::*;
     use cfg_expr::{
-        targets::{Family, Os},
+        targets::{Abi, Arch, Family, Os},
         Predicate, TargetPredicate,
     };
 
@@ -178,10 +178,23 @@ mod tests {
 
     #[test]
     fn test_target_abi() {
-        assert!(matches!(
-            TargetSpec::new("cfg(any(target_arch = \"wasm32\", target_abi = \"unknown\"))"),
-            Ok(TargetSpec::Expression(_))
-        ));
+        let expr =
+            match TargetSpec::new("cfg(any(target_arch = \"wasm32\", target_abi = \"unknown\"))")
+                .unwrap()
+            {
+                TargetSpec::Triple(triple) => {
+                    panic!("expected expression, got triple: {:?}", triple)
+                }
+                TargetSpec::Expression(expr) => expr,
+            };
+
+        assert_eq!(
+            expr.inner.predicates().collect::<Vec<_>>(),
+            vec![
+                Predicate::Target(TargetPredicate::Arch(Arch("wasm32".into()))),
+                Predicate::Target(TargetPredicate::Abi(Abi("unknown".into()))),
+            ],
+        );
     }
 
     #[test]

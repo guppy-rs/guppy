@@ -170,8 +170,8 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions-rs/toolchain@v1
         with:
-          # 1.60 is the cfg-expr version
-          toolchain: 1.64.0
+          # 1.65 is the cfg-expr version
+          toolchain: 1.65.0
           override: true
       - uses: Swatinem/rust-cache@v2
       - name: Build and test
