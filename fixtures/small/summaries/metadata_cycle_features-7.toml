@@ -11,7 +11,7 @@ triple = 'x86_64-uwp-windows-gnu'
 target-features = 'all'
 
 [metadata.target-platform]
-triple = 'armv6-unknown-freebsd'
+triple = 'armv5te-unknown-linux-uclibceabi'
 target-features = 'all'
 
 [[target-package]]

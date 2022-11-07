@@ -11,7 +11,7 @@ triple = 'armv7a-kmc-solid_asp3-eabi'
 target-features = ['aes', 'fma', 'sha', 'sse2', 'xsavec']
 
 [metadata.target-platform]
-triple = 'mips64-unknown-linux-gnuabi64'
+triple = 'mips64-openwrt-linux-musl'
 target-features = 'all'
 [[metadata.omitted-packages.ids]]
 name = 'quote'

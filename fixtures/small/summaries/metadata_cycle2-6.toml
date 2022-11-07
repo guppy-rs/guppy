@@ -12,7 +12,7 @@ target-features = 'unknown'
 flags = ['bar', 'flag-test']
 
 [metadata.target-platform]
-triple = 'armv4t-unknown-linux-gnueabi'
+triple = 'armv4t-none-eabi'
 target-features = 'unknown'
 
 [[metadata.features-only]]

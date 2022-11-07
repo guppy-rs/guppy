@@ -6,7 +6,7 @@
 # unify-target-host = 'none'
 # output-single-feature = false
 # dep-format-version = '2'
-# platforms = ['i386-apple-ios', 'riscv32imac-unknown-xous-elf', 'armv5te-unknown-linux-gnueabi']
+# platforms = ['i386-apple-ios', 'riscv32imac-unknown-xous-elf', 'armv4t-unknown-linux-gnueabi']
 # [[traversal-excludes.ids]]
 # name = 'lazy_static'
 # version = '0.2.11'

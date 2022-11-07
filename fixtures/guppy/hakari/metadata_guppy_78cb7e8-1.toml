@@ -6,7 +6,7 @@
 # unify-target-host = 'none'
 # output-single-feature = false
 # dep-format-version = '2'
-# platforms = ['powerpc-wrs-vxworks', 'riscv64gc-unknown-linux-gnu', 'mipsel-unknown-none']
+# platforms = ['powerpc-wrs-vxworks-spe', 'riscv64gc-unknown-freebsd', 'mipsel-unknown-none']
 # [[traversal-excludes.ids]]
 # name = 'pathdiff'
 # version = '0.2.0'
@@ -59,16 +59,16 @@ proc-macro2 = { version = "1", features = ["proc-macro"] }
 quote = { version = "1", features = ["proc-macro"] }
 syn = { version = "1", features = ["clone-impls", "derive", "full", "parsing", "printing", "proc-macro", "quote", "visit"] }
 
-[target.powerpc-wrs-vxworks.dependencies]
+[target.powerpc-wrs-vxworks-spe.dependencies]
 libc = { version = "0.2", features = ["std"] }
 
-[target.powerpc-wrs-vxworks.build-dependencies]
+[target.powerpc-wrs-vxworks-spe.build-dependencies]
 libc = { version = "0.2", features = ["std"] }
 
-[target.riscv64gc-unknown-linux-gnu.dependencies]
+[target.riscv64gc-unknown-freebsd.dependencies]
 libc = { version = "0.2", features = ["std"] }
 
-[target.riscv64gc-unknown-linux-gnu.build-dependencies]
+[target.riscv64gc-unknown-freebsd.build-dependencies]
 libc = { version = "0.2", features = ["std"] }
 
 ### END HAKARI SECTION

@@ -6,7 +6,7 @@
 # unify-target-host = 'unify-if-both'
 # output-single-feature = true
 # dep-format-version = '2'
-# platforms = ['i686-pc-windows-msvc', 'armv4t-unknown-linux-gnueabi', 'powerpc-wrs-vxworks-spe']
+# platforms = ['i686-pc-windows-msvc', 'armebv7r-none-eabihf', 'powerpc-wrs-vxworks-spe']
 # [[traversal-excludes.ids]]
 # name = 'dep-a'
 # version = '0.1.0'

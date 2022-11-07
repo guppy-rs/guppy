@@ -10,7 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'aarch64-unknown-none'
+triple = 'aarch64-unknown-none-softfloat'
 target-features = 'all'
 flags = ['abc', 'cargo_web']
 

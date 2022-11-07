@@ -10,7 +10,7 @@ initials-platform = 'host'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'armv7-unknown-freebsd'
+triple = 'armv7-linux-androideabi'
 target-features = 'unknown'
 flags = ['test-flag']
 [[metadata.omitted-packages.ids]]

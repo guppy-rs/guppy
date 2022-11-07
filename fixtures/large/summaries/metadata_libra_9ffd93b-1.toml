@@ -7,12 +7,12 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'thumbv7m-none-eabi'
+triple = 'thumbv7em-none-eabihf'
 target-features = ['bmi2', 'rdrand', 'sse4.1']
 flags = ['bar', 'test-flag']
 
 [metadata.target-platform]
-triple = 'sparc64-unknown-openbsd'
+triple = 'sparc64-unknown-netbsd'
 target-features = 'unknown'
 flags = ['foo', 'test-flag']
 [[metadata.omitted-packages.ids]]

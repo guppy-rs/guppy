@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'x86_64-pc-windows-gnullvm'
+triple = 'x86_64-pc-windows-gnu'
 target-features = 'unknown'
 
 [metadata.target-platform]
@@ -2852,6 +2852,13 @@ features = []
 [[host-package]]
 name = 'winapi-util'
 version = '0.1.3'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'winapi-x86_64-pc-windows-gnu'
+version = '0.4.0'
 crates-io = true
 status = 'transitive'
 features = []
