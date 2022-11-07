@@ -6,7 +6,7 @@
 # unify-target-host = 'replicate-target-on-host'
 # output-single-feature = true
 # dep-format-version = '2'
-# platforms = ['x86_64-pc-windows-msvc', 'arm-unknown-linux-musleabi', 'armv7-unknown-linux-gnueabi']
+# platforms = ['x86_64-pc-windows-msvc', 'arm-unknown-linux-musleabihf', 'armv7-unknown-freebsd']
 # [[traversal-excludes.ids]]
 # name = 'netcore'
 # version = '0.1.0'
@@ -765,7 +765,7 @@ wincolor = { version = "1", default-features = false }
 winreg = { version = "0.6", default-features = false }
 ws2_32-sys = { version = "0.2", default-features = false }
 
-[target.arm-unknown-linux-musleabi.dependencies]
+[target.arm-unknown-linux-musleabihf.dependencies]
 ansi_term = { version = "0.11", default-features = false }
 c2-chacha = { version = "0.2", default-features = false, features = ["lazy_static", "simd", "std"] }
 lazy_static = { version = "1", default-features = false, features = ["spin", "spin_no_std"] }
@@ -778,7 +778,7 @@ tokio-uds = { version = "0.2", default-features = false }
 utf8parse = { version = "0.1", default-features = false }
 void = { version = "1", features = ["std"] }
 
-[target.arm-unknown-linux-musleabi.build-dependencies]
+[target.arm-unknown-linux-musleabihf.build-dependencies]
 ansi_term = { version = "0.11", default-features = false }
 c2-chacha = { version = "0.2", default-features = false, features = ["lazy_static", "simd", "std"] }
 lazy_static = { version = "1", default-features = false, features = ["spin", "spin_no_std"] }
@@ -791,7 +791,7 @@ tokio-uds = { version = "0.2", default-features = false }
 utf8parse = { version = "0.1", default-features = false }
 void = { version = "1", features = ["std"] }
 
-[target.armv7-unknown-linux-gnueabi.dependencies]
+[target.armv7-unknown-freebsd.dependencies]
 ansi_term = { version = "0.11", default-features = false }
 c2-chacha = { version = "0.2", default-features = false, features = ["lazy_static", "simd", "std"] }
 lazy_static = { version = "1", default-features = false, features = ["spin", "spin_no_std"] }
@@ -804,7 +804,7 @@ tokio-uds = { version = "0.2", default-features = false }
 utf8parse = { version = "0.1", default-features = false }
 void = { version = "1", features = ["std"] }
 
-[target.armv7-unknown-linux-gnueabi.build-dependencies]
+[target.armv7-unknown-freebsd.build-dependencies]
 ansi_term = { version = "0.11", default-features = false }
 c2-chacha = { version = "0.2", default-features = false, features = ["lazy_static", "simd", "std"] }
 lazy_static = { version = "1", default-features = false, features = ["spin", "spin_no_std"] }

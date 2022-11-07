@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'arm-unknown-linux-musleabihf'
+triple = 'arm64_32-apple-watchos'
 target-features = 'unknown'
 flags = ['bar', 'cargo_web']
 

@@ -6,7 +6,7 @@
 # unify-target-host = 'replicate-target-on-host'
 # output-single-feature = true
 # dep-format-version = '2'
-# platforms = ['i686-linux-android', 'riscv64gc-unknown-linux-musl']
+# platforms = ['i686-apple-darwin', 'riscv64gc-unknown-linux-musl']
 #
 # [traversal-excludes]
 # [[final-excludes.ids]]

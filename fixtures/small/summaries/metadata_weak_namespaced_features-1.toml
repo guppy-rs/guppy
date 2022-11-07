@@ -11,7 +11,7 @@ triple = 'mips-unknown-linux-musl'
 target-features = 'unknown'
 
 [metadata.target-platform]
-triple = 'arm-unknown-linux-gnueabihf'
+triple = 'arm-unknown-linux-musleabi'
 target-features = ['xsave', 'xsavec', 'xsaves']
 flags = ['bar', 'cargo_web']
 [[metadata.omitted-packages.ids]]

@@ -6,7 +6,7 @@
 # unify-target-host = 'auto'
 # output-single-feature = false
 # dep-format-version = '2'
-# platforms = ['powerpc-unknown-freebsd', 'x86_64-unknown-redox', 'aarch64-uwp-windows-msvc']
+# platforms = ['powerpc-unknown-freebsd', 'x86_64-unknown-redox', 'aarch64-wrs-vxworks']
 # [[traversal-excludes.ids]]
 # name = 'fixtures'
 # version = '0.1.0'
@@ -86,8 +86,11 @@ libc = { version = "0.2", features = ["std"] }
 [target.x86_64-unknown-redox.build-dependencies]
 libc = { version = "0.2", features = ["std"] }
 
-[target.aarch64-uwp-windows-msvc.dependencies]
-winapi = { version = "0.3", default-features = false, features = ["basetsd", "consoleapi", "errhandlingapi", "fileapi", "handleapi", "ioapiset", "jobapi", "jobapi2", "libloaderapi", "lmcons", "memoryapi", "minschannel", "minwinbase", "minwindef", "namedpipeapi", "ntdef", "ntstatus", "processenv", "processthreadsapi", "profileapi", "psapi", "schannel", "securitybaseapi", "shellapi", "shlobj", "sspi", "std", "synchapi", "sysinfoapi", "timezoneapi", "winbase", "wincon", "wincrypt", "winerror", "winnt", "winsock2", "winuser", "ws2def", "ws2ipdef", "ws2tcpip"] }
+[target.aarch64-wrs-vxworks.dependencies]
+libc = { version = "0.2", features = ["std"] }
+
+[target.aarch64-wrs-vxworks.build-dependencies]
+libc = { version = "0.2", features = ["std"] }
 
 ### END HAKARI SECTION
 

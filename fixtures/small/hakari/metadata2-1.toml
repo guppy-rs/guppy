@@ -6,7 +6,7 @@
 # unify-target-host = 'unify-if-both'
 # output-single-feature = false
 # dep-format-version = '2'
-# platforms = ['aarch64-apple-tvos', 'armv7-unknown-linux-uclibceabihf']
+# platforms = ['aarch64-apple-tvos', 'armv7-unknown-linux-uclibceabi']
 # [[traversal-excludes.ids]]
 # name = 'quote'
 # version = '1.0.2'

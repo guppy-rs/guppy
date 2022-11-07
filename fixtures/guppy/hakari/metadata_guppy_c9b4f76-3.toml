@@ -6,7 +6,7 @@
 # unify-target-host = 'auto'
 # output-single-feature = true
 # dep-format-version = '2'
-# platforms = ['aarch64-nintendo-switch-freestanding', 'i686-unknown-linux-gnu', 'x86_64-unknown-l4re-uclibc']
+# platforms = ['aarch64-nintendo-switch-freestanding', 'i686-unknown-haiku', 'x86_64-unknown-illumos']
 # [[traversal-excludes.ids]]
 # name = 'cargo-compare'
 # version = '0.1.0'
@@ -145,12 +145,12 @@ version_check = { version = "0.9", default-features = false }
 ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }
 rand_chacha = { version = "0.2", default-features = false, features = ["std"] }
 
-[target.i686-unknown-linux-gnu.dependencies]
+[target.i686-unknown-haiku.dependencies]
 ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }
 rand_chacha = { version = "0.2", default-features = false, features = ["std"] }
 termios = { version = "0.3", default-features = false }
 
-[target.x86_64-unknown-l4re-uclibc.dependencies]
+[target.x86_64-unknown-illumos.dependencies]
 ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }
 rand_chacha = { version = "0.2", default-features = false, features = ["std"] }
 termios = { version = "0.3", default-features = false }

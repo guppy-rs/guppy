@@ -12,7 +12,7 @@ target-features = 'all'
 flags = ['cargo_web', 'foo']
 
 [metadata.target-platform]
-triple = 'i686-linux-android'
+triple = 'i686-apple-darwin'
 target-features = 'unknown'
 flags = ['cargo_web', 'foo']
 [[metadata.omitted-packages.ids]]
