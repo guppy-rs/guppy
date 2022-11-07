@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.15.0] - 2022-11-07
+
+### Changed
+
+- `guppy::Error::UnknownRegistryName` now boxes the internal `summary` and is smaller as a result.
+
 ## [0.14.4] - 2022-10-05
 
 ### Changed
@@ -527,6 +533,7 @@ lazy_static = "0.2"
 ### Added
 - Initial release.
 
+[0.15.0]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.15.0
 [0.14.4]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.14.4
 [0.14.3]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.14.3
 [0.14.2]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.14.2

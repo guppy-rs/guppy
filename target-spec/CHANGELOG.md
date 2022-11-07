@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.2] - 2022-11-07
+
+### Updated
+
+Internal dependency `cfg-expr` updated to 0.12.0, enabling parsing of `target_abi`.
+
 ## [1.2.1] - 2022-10-25
 
 ### Added
@@ -183,8 +189,10 @@ This was mistakenly published and was yanked.
 - Switched to [`cfg-expr`](https://github.com/EmbarkStudios/cfg-expr) as the backend for `cfg()` expressions.
 
 ## [0.1.0] - 2020-03-20
+
 - Initial release.
 
+[1.2.2]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-1.2.2
 [1.2.1]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-1.2.1
 [1.2.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-1.2.0
 [1.1.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-1.1.0

@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.9.16] - 2022-11-07
+
+### Added
+
+- cargo-hakari now works with `cfg()` specifications that contain `target_abi` in them.
+
 ## [0.9.15] - 2022-09-30
 
 ### Changed
@@ -131,6 +137,7 @@ This was tagged, but never released due to
 
 Initial release.
 
+[0.9.16]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.16
 [0.9.15]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.15
 [0.9.14]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.14
 [0.9.13]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.13
