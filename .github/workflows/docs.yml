@@ -11,11 +11,8 @@ jobs:
     concurrency: ci-${{ github.ref }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: nightly
-          override: true
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@nightly
       - uses: Swatinem/rust-cache@v2
       - name: Build rustdoc
         # cargo-compare currently pulls in cargo which bloats build times massively
@@ -31,3 +28,4 @@ jobs:
         with:
           branch: gh-pages
           folder: target/gh-pages
+          single-commit: true
