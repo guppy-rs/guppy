@@ -87,7 +87,7 @@ jobs:
       - name: Build
         # Build all targets to ensure examples are built as well.
         # Exclude cargo-compare so that it only runs on the cfg-expr version below.
-        run: cargo build --all-targets --no-run --all-features --workspace --exclude cargo-compare
+        run: cargo test --no-run --all-targets --all-features --workspace --exclude cargo-compare
       - name: Run doctests
         run: cargo test --doc --all-features --workspace --exclude cargo-compare
       - name: Install latest nextest release
