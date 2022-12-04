@@ -677,9 +677,11 @@ impl<'g> Hakari<'g> {
                         {
                             let dep = feature_list.package();
                             let dep_id = dep.id();
+                            // This is "get or insert" because we could be adding whole new
+                            // dependencies here rather than just new features to existing
+                            // dependencies.
                             let v_mut = computed_map_build
-                                .get_mut(output_key.platform_idx, dep_id)
-                                .expect("full value should be present");
+                                .get_or_insert_mut(output_key.platform_idx, dep_id);
 
                             // Is it already present in the output?
                             let new_key = OutputKey {
@@ -997,12 +999,14 @@ impl<'g, 'b> ComputedMapBuild<'g, 'b> {
         self.computed_map.get(&(platform_idx, package_id))
     }
 
-    fn get_mut(
+    fn get_or_insert_mut(
         &mut self,
         platform_idx: Option<usize>,
         package_id: &'g PackageId,
-    ) -> Option<&mut ComputedValue<'g>> {
-        self.computed_map.get_mut(&(platform_idx, package_id))
+    ) -> &mut ComputedValue<'g> {
+        self.computed_map
+            .entry((platform_idx, package_id))
+            .or_default()
     }
 
     fn iter<'a>(
