@@ -16,21 +16,14 @@ jobs:
       RUSTFLAGS: -D warnings
     steps:
       - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: stable
           components: rustfmt, clippy
       - uses: Swatinem/rust-cache@v2
       - name: Lint (clippy)
-        uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: --all-features --all-targets
+        run: cargo clippy --all-features --all-targets
       - name: Lint (rustfmt)
-        uses: actions-rs/cargo@v1
-        with:
-          command: xfmt
-          args: --check
+        run: cargo xfmt --check
       - name: Install cargo readme
         uses: baptiste0928/cargo-install@v1
         with:
@@ -52,47 +45,28 @@ jobs:
       RUSTFLAGS: -D warnings
     steps:
       - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
+      - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.rust-version }}
-          override: true
       - uses: Swatinem/rust-cache@v2
 
       # Build all packages we care about one by one to ensure feature unification
       # doesn't happen.
       # Build all targets to ensure examples are built as well.
       - name: Build target-spec
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --all-targets --package target-spec
+        run: cargo build --all-targets --package target-spec
       - name: Build guppy-summaries
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --all-targets --package guppy-summaries
+        run: cargo build --all-targets --package guppy-summaries
       - name: Build guppy
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --all-targets --package guppy
+        run: cargo build --all-targets --package guppy
       - name: Build determinator
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --all-targets --package determinator
+        run: cargo build --all-targets --package determinator
       - name: Build hakari
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --all-targets --package hakari
+        run: cargo build --all-targets --package hakari
       - name: Install latest nextest release
         uses: taiki-e/install-action@nextest
       - name: Run tests for core crates
-        uses: actions-rs/cargo@v1
-        with:
-          command: nextest
-          args: run --package target-spec --package guppy-summaries --package guppy --package determinator --package hakari
+        run: cargo nextest run --package target-spec --package guppy-summaries --package guppy --package determinator --package hakari
 
   build-all-features:
     name: Build and test (all features)
@@ -106,31 +80,20 @@ jobs:
       RUSTFLAGS: -D warnings
     steps:
       - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
+      - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.rust-version }}
-          override: true
       - uses: Swatinem/rust-cache@v2
       - name: Build
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          # Build all targets to ensure examples are built as well.
-          # Exclude cargo-compare so that it only runs on the cfg-expr version below.
-          args: --all-targets --no-run --all-features --workspace --exclude cargo-compare
+        # Build all targets to ensure examples are built as well.
+        # Exclude cargo-compare so that it only runs on the cfg-expr version below.
+        run: cargo build --all-targets --no-run --all-features --workspace --exclude cargo-compare
       - name: Run doctests
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --doc --all-features --workspace --exclude cargo-compare
+        run: cargo test --doc --all-features --workspace --exclude cargo-compare
       - name: Install latest nextest release
         uses: taiki-e/install-action@nextest
       - name: Run all other tests
-        uses: actions-rs/cargo@v1
-        with:
-          command: nextest
-          # Exclude cargo-compare so that it only runs on the cfg-expr version below.
-          args: run --all-features --workspace --exclude cargo-compare
+        run: cargo nextest run --all-features --workspace --exclude cargo-compare
 
   build-rustdoc:
     name: Build documentation
@@ -143,16 +106,11 @@ jobs:
       RUSTDOCFLAGS: -D warnings
     steps:
       - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
+      - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       - name: Build rustdoc
-        uses: actions-rs/cargo@v1
-        with:
-          command: doc
-          # cargo-compare currently pulls in cargo which bloats build times massively
-          args: --all-features --workspace --exclude cargo-compare
+        # cargo-compare currently pulls in cargo which bloats build times massively
+        run: cargo doc --all-features --workspace --exclude cargo-compare
 
   test-extended:
     name: cargo-compare extended tests
@@ -168,17 +126,10 @@ jobs:
       PROPTEST_MULTIPLIER: 64
     steps:
       - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
-        with:
-          # 1.65 is the cfg-expr version
-          toolchain: 1.65.0
-          override: true
+      - uses: dtolnay/rust-toolchain@1.65.0
       - uses: Swatinem/rust-cache@v2
       - name: Build and test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --package cargo-compare --release
+        run: cargo test --package cargo-compare --release
 
   aarch64-build:
     runs-on: ubuntu-18.04
@@ -187,11 +138,9 @@ jobs:
       RUSTFLAGS: -D warnings
     steps:
       - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: stable
-          target: aarch64-unknown-linux-gnu
-          override: true
+          targets: aarch64-unknown-linux-gnu
       - uses: Swatinem/rust-cache@v2
       - name: Build
         uses: actions-rs/cargo@v1
