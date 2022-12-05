@@ -13,7 +13,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@nightly
-      - uses: Swatinem/rust-cache@v2
+      # Note: caching doesn't appear to work for rustdoc as of 2022-12-04, and we're exceeding cache
+      # sizes anyway
       - name: Build rustdoc
         # cargo-compare currently pulls in cargo which bloats build times massively
         run: |
