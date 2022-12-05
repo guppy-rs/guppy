@@ -22,7 +22,7 @@ fn main() {
     let features = out.join("");
 
     fs::write(
-        &dest_path,
+        dest_path,
         format!(
             "static CURRENT_TARGET: &str = \"{}\";\n\
             \n\

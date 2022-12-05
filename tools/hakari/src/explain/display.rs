@@ -21,7 +21,7 @@ impl<'g, 'a, 'explain> HakariExplainDisplay<'g, 'a, 'explain> {
     pub(super) fn new(explain: &'explain HakariExplain<'g, 'a>) -> Self {
         Self {
             explain,
-            styles: Box::new(Styles::default()),
+            styles: Box::default(),
         }
     }
 

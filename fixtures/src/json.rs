@@ -252,7 +252,7 @@ impl JsonFixture {
         .expect("diff of UTF-8 paths is UTF-8");
 
         // No symlinks in this repo, so normalize this path.
-        let workspace_path = normalize_assuming_no_symlinks(&workspace_path);
+        let workspace_path = normalize_assuming_no_symlinks(workspace_path);
 
         Self {
             name,

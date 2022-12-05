@@ -199,11 +199,7 @@ pub(crate) fn toml_name_map<'g>(
         } else {
             toml_name_map.insert(
                 Cow::Borrowed(name),
-                *packages
-                    .into_iter()
-                    .map(|(_k, v)| v)
-                    .next()
-                    .expect("at least 1 element"),
+                *packages.into_values().next().expect("at least 1 element"),
             );
         }
     }

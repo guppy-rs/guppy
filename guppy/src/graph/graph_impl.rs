@@ -547,7 +547,7 @@ impl<'g> Workspace<'g> {
     /// Returns an iterator over package IDs for workspace members. The package IDs will be returned
     /// in the same order as `members`, sorted by the path they're in.
     pub fn member_ids(&self) -> impl Iterator<Item = &'g PackageId> + ExactSizeIterator {
-        self.inner.members_by_path.iter().map(|(_path, id)| id)
+        self.inner.members_by_path.values()
     }
 
     /// Maps the given path to the corresponding workspace member.

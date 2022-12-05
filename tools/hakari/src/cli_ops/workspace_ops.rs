@@ -519,7 +519,7 @@ impl<'g, 'a, 'ops> WorkspaceOpsDisplay<'g, 'a, 'ops> {
     fn new(ops: &'ops WorkspaceOps<'g, 'a>) -> Self {
         Self {
             ops,
-            styles: Box::new(Styles::default()),
+            styles: Box::default(),
         }
     }
 

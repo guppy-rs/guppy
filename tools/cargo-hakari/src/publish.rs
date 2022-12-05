@@ -52,7 +52,7 @@ pub(crate) fn publish_hakari(
         "executing".style(output.styles.command),
         all_args
     );
-    let expression = cargo_cli.to_expression().dir(&abs_path);
+    let expression = cargo_cli.to_expression().dir(abs_path);
 
     match expression.run() {
         Ok(_) => remove_dep.finish(true),

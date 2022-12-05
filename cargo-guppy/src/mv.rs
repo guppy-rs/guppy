@@ -171,7 +171,7 @@ impl MvOptions {
                 );
                 // fs::rename behaves differently on Unix and Windows if the destination exists.
                 // But we don't expect it to, as the assertion above checks.
-                fs::rename(&abs_src, &abs_dest).wrap_err_with(|| {
+                fs::rename(abs_src, &abs_dest).wrap_err_with(|| {
                     eyre!("renaming {} to {} failed", src_dir, package_move.new_path)
                 })?;
                 done.insert(src_dir);

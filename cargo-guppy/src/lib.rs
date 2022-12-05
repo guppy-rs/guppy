@@ -72,8 +72,8 @@ pub fn cmd_diff(json: bool, old: &str, new: &str) -> Result<()> {
     let old_json = fs::read_to_string(old)?;
     let new_json = fs::read_to_string(new)?;
 
-    let old_graph = PackageGraph::from_json(&old_json)?;
-    let new_graph = PackageGraph::from_json(&new_json)?;
+    let old_graph = PackageGraph::from_json(old_json)?;
+    let new_graph = PackageGraph::from_json(new_json)?;
 
     let old_packages: Vec<_> = old_graph.packages().collect();
     let new_packages: Vec<_> = new_graph.packages().collect();

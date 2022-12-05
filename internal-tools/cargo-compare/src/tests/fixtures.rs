@@ -72,7 +72,7 @@ impl Fixture {
             // need to use the parent.)
             let relpath = pathdiff::diff_paths(&orig_workspace_dir, copy_from.parent().unwrap())
                 .expect("both paths are absolute");
-            let workspace_dir = temp_dir.path().join(&relpath);
+            let workspace_dir = temp_dir.path().join(relpath);
             let workspace_dir = workspace_dir.canonicalize().unwrap_or_else(|err| {
                 panic!(
                     "new workspace_dir {} canonicalized: {}",
@@ -85,7 +85,7 @@ impl Fixture {
             let mut open_opts = std::fs::OpenOptions::new();
             open_opts.append(true).write(true);
             let mut f = open_opts
-                .open(&workspace_manifest_path)
+                .open(workspace_manifest_path)
                 .expect("successfully opened Cargo.toml");
             let resolver_version = match resolver {
                 CargoResolverVersion::V1 | CargoResolverVersion::V1Install => "1",
