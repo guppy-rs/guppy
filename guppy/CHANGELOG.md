@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.15.1] - 2022-12-04
+
+### Added
+
+- Detailed documentation about dependency cycles in Cargo, as part of the [`Cycles`](https://docs.rs/guppy/latest/guppy/graph/struct.Cycles.html) struct. Thanks [Aria](https://github.com/Gankra) for writing it!
+
 ## [0.15.0] - 2022-11-07
 
 ### Changed
@@ -533,6 +539,7 @@ lazy_static = "0.2"
 ### Added
 - Initial release.
 
+[0.15.1]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.15.1
 [0.15.0]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.15.0
 [0.14.4]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.14.4
 [0.14.3]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.14.3

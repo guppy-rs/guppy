@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.11.1] - 2022-12-04
+
+### Fixed
+
+- Fixed a panic in rare circumstances ([#38]).
+
+[#38]: https://github.com/guppy-rs/guppy/issues/38
+
 ## [0.11.0] - 2022-11-07
 
 ### Changed
@@ -205,6 +213,7 @@ Internal updates for `cargo-hakari 0.9.8`.
 
 Initial release.
 
+[0.11.1]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.11.1
 [0.11.0]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.11.0
 [0.10.2]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.10.2
 [0.10.1]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.10.1
