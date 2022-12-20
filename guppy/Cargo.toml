@@ -43,14 +43,14 @@ pathdiff = { version = "0.2.1", features = ["camino"] }
 petgraph = { version = "0.6.2", default-features = false }
 proptest = { version = "1.0.0", optional = true }
 proptest-derive = { version = "0.3.0", optional = true }
-rayon = { version = "1.6.0", optional = true }
-semver = "1.0.14"
-serde = { version = "1.0.148", features = ["derive"] }
-serde_json = "1.0.89"
+rayon = { version = "1.6.1", optional = true }
+semver = "1.0.16"
+serde = { version = "1.0.151", features = ["derive"] }
+serde_json = "1.0.91"
 smallvec = "1.10.0"
 static_assertions = "1.1.0"
 target-spec = { version = "1.2.2", path = "../target-spec" }
-toml = { version = "0.5.9", optional = true, features = ["preserve_order"] }
+toml = { version = "0.5.10", optional = true, features = ["preserve_order"] }
 guppy-workspace-hack = { version = "0.1", path = "../workspace-hack" }
 
 [dev-dependencies]
