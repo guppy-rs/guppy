@@ -6,7 +6,7 @@
 # unify-target-host = 'replicate-target-on-host'
 # output-single-feature = true
 # dep-format-version = '2'
-# platforms = ['x86_64-pc-windows-msvc', 'arm-unknown-linux-musleabihf', 'armv7-unknown-freebsd']
+# platforms = ['x86_64-pc-windows-msvc', 'arm-unknown-linux-musleabihf', 'armv7-linux-androideabi']
 # [[traversal-excludes.ids]]
 # name = 'netcore'
 # version = '0.1.0'
@@ -791,9 +791,10 @@ tokio-uds = { version = "0.2", default-features = false }
 utf8parse = { version = "0.1", default-features = false }
 void = { version = "1", features = ["std"] }
 
-[target.armv7-unknown-freebsd.dependencies]
+[target.armv7-linux-androideabi.dependencies]
 ansi_term = { version = "0.11", default-features = false }
 c2-chacha = { version = "0.2", default-features = false, features = ["lazy_static", "simd", "std"] }
+get_if_addrs-sys = { version = "0.1", default-features = false }
 lazy_static = { version = "1", default-features = false, features = ["spin", "spin_no_std"] }
 mio-uds = { version = "0.6", default-features = false }
 nix = { version = "0.14", default-features = false }
@@ -804,9 +805,10 @@ tokio-uds = { version = "0.2", default-features = false }
 utf8parse = { version = "0.1", default-features = false }
 void = { version = "1", features = ["std"] }
 
-[target.armv7-unknown-freebsd.build-dependencies]
+[target.armv7-linux-androideabi.build-dependencies]
 ansi_term = { version = "0.11", default-features = false }
 c2-chacha = { version = "0.2", default-features = false, features = ["lazy_static", "simd", "std"] }
+get_if_addrs-sys = { version = "0.1", default-features = false }
 lazy_static = { version = "1", default-features = false, features = ["spin", "spin_no_std"] }
 mio-uds = { version = "0.6", default-features = false }
 nix = { version = "0.14", default-features = false }

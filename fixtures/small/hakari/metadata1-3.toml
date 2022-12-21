@@ -6,7 +6,7 @@
 # unify-target-host = 'auto'
 # output-single-feature = true
 # dep-format-version = '2'
-# platforms = ['x86_64-pc-windows-msvc', 'i686-pc-windows-gnu', 'armv7a-kmc-solid_asp3-eabi']
+# platforms = ['x86_64-pc-windows-msvc', 'i686-linux-android', 'armv7a-kmc-solid_asp3-eabi']
 # [[traversal-excludes.ids]]
 # name = 'bitflags'
 # version = '1.1.0'

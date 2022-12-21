@@ -6,7 +6,7 @@
 # unify-target-host = 'replicate-target-on-host'
 # output-single-feature = false
 # dep-format-version = '2'
-# platforms = ['x86_64-apple-tvos', 'armv7a-none-eabihf', 'armv7-unknown-netbsd-eabihf']
+# platforms = ['x86_64-apple-tvos', 'armv7a-none-eabi', 'armv7-unknown-linux-uclibceabihf']
 # [[traversal-excludes.ids]]
 # name = 'dev-user'
 # version = '0.1.0'

@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'mips-unknown-linux-gnu'
+triple = 'm68k-unknown-linux-gnu'
 target-features = 'all'
 flags = ['flag-test', 'foo']
 

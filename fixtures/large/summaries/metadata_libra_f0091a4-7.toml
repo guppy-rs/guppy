@@ -7,11 +7,11 @@ include-dev = false
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'riscv64gc-unknown-none-elf'
+triple = 'riscv64gc-unknown-openbsd'
 target-features = 'all'
 
 [metadata.target-platform]
-triple = 'armv7-unknown-freebsd'
+triple = 'armv7-linux-androideabi'
 target-features = 'unknown'
 [[metadata.omitted-packages.ids]]
 name = 'hyper'

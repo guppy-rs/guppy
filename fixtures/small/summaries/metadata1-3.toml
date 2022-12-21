@@ -10,7 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'sparc64-unknown-openbsd'
+triple = 'sparcv9-sun-solaris'
 target-features = 'all'
 [[metadata.omitted-packages.ids]]
 name = 'serde'

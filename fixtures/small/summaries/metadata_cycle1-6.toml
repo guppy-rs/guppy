@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'armv4t-none-eabi'
+triple = 'armv4t-unknown-linux-gnueabi'
 target-features = 'all'
 flags = ['foo']
 

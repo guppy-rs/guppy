@@ -6,7 +6,7 @@
 # unify-target-host = 'replicate-target-on-host'
 # output-single-feature = false
 # dep-format-version = '2'
-# platforms = ['wasm32-wasi', 'armv4t-unknown-linux-gnueabi', 'riscv64gc-unknown-openbsd']
+# platforms = ['wasm32-unknown-unknown', 'armv5te-none-eabi', 'riscv64gc-unknown-openbsd']
 # [[traversal-excludes.ids]]
 # name = 'builddep'
 # version = '0.1.0'

@@ -6,7 +6,7 @@
 # unify-target-host = 'replicate-target-on-host'
 # output-single-feature = true
 # dep-format-version = '2'
-# platforms = ['aarch64-apple-watchos-sim']
+# platforms = ['aarch64-fuchsia']
 #
 # [traversal-excludes]
 # [[final-excludes.ids]]
@@ -332,7 +332,7 @@ void = { version = "1", default-features = false }
 vte = { version = "0.3", default-features = false }
 walkdir = { version = "2", default-features = false }
 
-[target.aarch64-apple-watchos-sim.dependencies]
+[target.aarch64-fuchsia.dependencies]
 foreign-types = { version = "0.3", default-features = false }
 foreign-types-shared = { version = "0.1", default-features = false }
 openssl = { version = "0.10", default-features = false }
@@ -342,7 +342,7 @@ ppv-lite86 = { version = "0.2", default-features = false, features = ["std"] }
 rand_chacha = { version = "0.2", default-features = false, features = ["std"] }
 termios = { version = "0.3", default-features = false }
 
-[target.aarch64-apple-watchos-sim.build-dependencies]
+[target.aarch64-fuchsia.build-dependencies]
 foreign-types = { version = "0.3", default-features = false }
 foreign-types-shared = { version = "0.1", default-features = false }
 openssl = { version = "0.10", default-features = false }

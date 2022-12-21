@@ -6,7 +6,7 @@
 # unify-target-host = 'auto'
 # output-single-feature = false
 # dep-format-version = '2'
-# platforms = ['riscv64imac-unknown-none-elf', 'x86_64-apple-ios', 'mips64el-unknown-linux-gnuabi64']
+# platforms = ['s390x-unknown-linux-gnu', 'x86_64-apple-ios', 'mips64el-unknown-linux-gnuabi64']
 # [[traversal-excludes.ids]]
 # name = 'testcycles-base'
 # version = '0.1.0'

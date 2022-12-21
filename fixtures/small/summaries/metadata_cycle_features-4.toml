@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'x86_64-unknown-haiku'
+triple = 'x86_64-unknown-freebsd'
 target-features = 'all'
 flags = ['foo', 'test-flag']
 [[metadata.omitted-packages.ids]]

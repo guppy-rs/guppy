@@ -12,7 +12,7 @@ target-features = 'unknown'
 flags = ['bar', 'cargo_web']
 
 [metadata.target-platform]
-triple = 'msp430-none-elf'
+triple = 'nvptx64-nvidia-cuda'
 target-features = []
 flags = ['flag-test']
 

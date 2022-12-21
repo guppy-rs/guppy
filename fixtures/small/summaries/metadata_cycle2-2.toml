@@ -7,11 +7,11 @@ include-dev = false
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'riscv32imac-unknown-none-elf'
+triple = 'riscv32imac-unknown-xous-elf'
 target-features = 'unknown'
 
 [metadata.target-platform]
-triple = 'x86_64-unknown-none'
+triple = 'x86_64-unknown-netbsd'
 target-features = ['avx', 'bmi1']
 flags = ['cargo_web']
 [[metadata.omitted-packages.ids]]
