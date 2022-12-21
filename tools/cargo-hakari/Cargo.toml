@@ -25,7 +25,7 @@ clap = { version = "3.2.23", features = ["derive"] }
 color-eyre = { version = "0.6.2", default-features = false }
 dialoguer = "0.10.2"
 duct = "0.13.6"
-enable-ansi-support = "0.1.2"
+enable-ansi-support = "0.2.1"
 env_logger = "0.9.3"
 guppy = { version = "0.15.1", path = "../../guppy" }
 hakari = { version = "0.11.1", path = "../hakari", features = ["cli-support"] }
