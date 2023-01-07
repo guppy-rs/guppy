@@ -5,7 +5,7 @@
 # resolver = 'install'
 # unify-target-host = 'auto'
 # output-single-feature = false
-# dep-format-version = '2'
+# dep-format-version = '1'
 # platforms = ['s390x-unknown-linux-gnu', 'x86_64-apple-ios', 'mips64el-unknown-linux-gnuabi64']
 # [[traversal-excludes.ids]]
 # name = 'testcycles-base'

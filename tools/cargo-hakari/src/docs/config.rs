@@ -32,18 +32,26 @@
 //!
 //! ## dep-format-version
 //!
-//! The version of `workspace-hack = ...` lines in other `Cargo.toml` files to use.
+//! The format version to use
 //!
 //! Possible values:
-//! * *"1"*: `workspace-hack = { path = ...}`. (Note the lack of a trailing space.)
-//! * *"2"*: `workspace-hack = { version = "0.1", path = ... }`. This is required for the advanced
-//!   setup documented in the [Publishing](crate::publishing) section.
+//! * *"1"*: `workspace-hack = { path = ...}` in other `Cargo.toml` files. (Note the lack of a
+//!   trailing space.)
+//! * *"2"*: `workspace-hack = { version = "0.1", path = ... }` in other `Cargo.toml` files. This is
+//!   required for the advanced setup documented in the [Publishing](crate::publishing) section.
+//! * *"3"*: Elides build metadata from version strings in the workspace-hack's `Cargo.toml`. Cargo
+//!   warns if build metadata is added to version strings.
 //!
-//! Defaults to "1", but starting `cargo hakari 0.9.8`, `.config/hakari.toml` files created by
-//! `cargo hakari init` set it to "2".
+//! Defaults to "1", but
+//! - starting `cargo hakari 0.9.8`, `.config/hakari.toml` files created by
+//!   `cargo hakari init` set it to "2".
+//! - starting `cargo hakari 0.9.18`, `.config/hakari.toml` files created by
+//!   `cargo hakari init` set it to "3".
+//!
+//! In general, it is best to be on the latest version.
 //!
 //! ```toml
-//! dep-format-version = "2"
+//! dep-format-version = "3"
 //! ```
 //!
 //! ## platforms

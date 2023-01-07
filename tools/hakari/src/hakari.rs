@@ -502,9 +502,12 @@ impl Default for UnifyTargetHost {
     }
 }
 
-/// Version of `workspace-hack = ...` lines in other `Cargo.toml` files to use.
-#[derive(Copy, Clone, Debug, Eq, PartialEq)]
+/// Format version for hakari.
+///
+/// Older versions are kept around for backwards compatibility.
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 #[cfg_attr(feature = "cli-support", derive(serde::Deserialize, serde::Serialize))]
+#[cfg_attr(feature = "proptest1", derive(proptest_derive::Arbitrary))]
 #[non_exhaustive]
 pub enum DepFormatVersion {
     /// `workspace-hack = { path = ...}`. (Note the lack of a trailing space.)
@@ -517,6 +520,10 @@ pub enum DepFormatVersion {
     /// `cargo hakari 0.9.8`.
     #[cfg_attr(feature = "cli-support", serde(rename = "2"))]
     V2,
+
+    /// Elides build metadata. This was introduced in `cargo hakari 0.9.18`.
+    #[cfg_attr(feature = "cli-support", serde(rename = "3"))]
+    V3,
 }
 
 impl Default for DepFormatVersion {
@@ -584,7 +591,13 @@ impl<'g> Hakari<'g> {
         options: &HakariOutputOptions,
         out: impl fmt::Write,
     ) -> Result<(), TomlOutError> {
-        write_toml(&self.builder, &self.output_map, options, out)
+        write_toml(
+            &self.builder,
+            &self.output_map,
+            options,
+            self.builder.dep_format_version,
+            out,
+        )
     }
 
     /// Returns a map of dependency names as present in the workspace-hack's `Cargo.toml` to their
@@ -593,7 +606,7 @@ impl<'g> Hakari<'g> {
     /// Packages which have one version are present as their original names, while packages with
     /// more than one version have a hash appended to them.
     pub fn toml_name_map(&self) -> HashMap<Cow<'g, str>, PackageMetadata<'g>> {
-        toml_name_map(&self.output_map)
+        toml_name_map(&self.output_map, self.builder.dep_format_version)
     }
 
     /// Returns a `HakariExplain`, which can be used to print out why a specific package is

@@ -300,8 +300,11 @@ impl<'g, 'a> WorkspaceOp<'g, 'a> {
 
         // Pass in exact_versions = false because we don't want unnecessary churn in the unlikely
         // event that a published workspace-hack version has a minor bump in it.
-        let version_str = format!("{}", VersionDisplay::new(version, false));
-        if dep_format == DepFormatVersion::V2 {
+        let version_str = format!(
+            "{}",
+            VersionDisplay::new(version, false, dep_format < DepFormatVersion::V3)
+        );
+        if dep_format >= DepFormatVersion::V2 {
             itable.insert("version", version_str.into());
         }
 
@@ -671,21 +674,48 @@ mod tests {
 
     #[test]
     fn test_inline_table_for_add() {
-        let version: Version = "1.2.3".parse().unwrap();
-        let itable =
-            WorkspaceOp::inline_table_for_add(&version, DepFormatVersion::V1, "../../path".into());
-        assert_eq!(
-            format!("{}", itable),
-            "{ path = \"../../path\"}",
-            "dep format v1 matches"
-        );
+        let versions = vec![
+            ("1.2.3", "1", "1"),
+            ("1.2.3-a.1+g456", "1.2.3-a.1+g456", "1.2.3-a.1"),
+        ];
 
-        let itable =
-            WorkspaceOp::inline_table_for_add(&version, DepFormatVersion::V2, "../../path".into());
-        assert_eq!(
-            format!("{}", itable),
-            "{ version = \"1\", path = \"../../path\" }",
-            "dep format v2 matches"
-        );
+        for (version, version_str, version_str_v3) in versions {
+            let version: Version = version.parse().unwrap();
+            let itable = WorkspaceOp::inline_table_for_add(
+                &version,
+                DepFormatVersion::V1,
+                "../../path".into(),
+            );
+            assert_eq!(
+                itable.to_string(),
+                "{ path = \"../../path\"}",
+                "dep format v1 matches"
+            );
+
+            let itable = WorkspaceOp::inline_table_for_add(
+                &version,
+                DepFormatVersion::V2,
+                "../../path".into(),
+            );
+            assert_eq!(
+                itable.to_string(),
+                format!("{{ version = \"{}\", path = \"../../path\" }}", version_str),
+                "dep format v2 matches"
+            );
+
+            let itable = WorkspaceOp::inline_table_for_add(
+                &version,
+                DepFormatVersion::V3,
+                "../../path".into(),
+            );
+            assert_eq!(
+                itable.to_string(),
+                format!(
+                    "{{ version = \"{}\", path = \"../../path\" }}",
+                    version_str_v3
+                ),
+                "dep format v3 matches"
+            );
+        }
     }
 }

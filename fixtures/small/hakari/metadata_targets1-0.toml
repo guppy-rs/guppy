@@ -5,7 +5,7 @@
 # resolver = '2'
 # unify-target-host = 'none'
 # output-single-feature = true
-# dep-format-version = '2'
+# dep-format-version = '3'
 # platforms = ['aarch64-apple-ios-macabi', 'armv7-unknown-freebsd']
 # [[traversal-excludes.ids]]
 # name = 'dep-a'

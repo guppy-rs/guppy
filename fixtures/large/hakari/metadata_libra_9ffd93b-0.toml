@@ -5,7 +5,7 @@
 # resolver = '2'
 # unify-target-host = 'auto'
 # output-single-feature = false
-# dep-format-version = '2'
+# dep-format-version = '1'
 # platforms = ['aarch64-nintendo-switch-freestanding', 'x86_64-apple-watchos-sim']
 # [[traversal-excludes.ids]]
 # name = 'criterion-plot'

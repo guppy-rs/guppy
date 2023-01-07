@@ -5,7 +5,7 @@
 # resolver = 'install'
 # unify-target-host = 'none'
 # output-single-feature = false
-# dep-format-version = '2'
+# dep-format-version = '1'
 # platforms = ['hexagon-unknown-linux-musl', 'riscv32imac-unknown-xous-elf', 'armv4t-unknown-linux-gnueabi']
 # [[traversal-excludes.ids]]
 # name = 'lazy_static'

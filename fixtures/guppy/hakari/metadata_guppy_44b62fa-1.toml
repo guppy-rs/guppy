@@ -5,7 +5,7 @@
 # resolver = 'install'
 # unify-target-host = 'unify-if-both'
 # output-single-feature = false
-# dep-format-version = '2'
+# dep-format-version = '1'
 # platforms = []
 # [[traversal-excludes.ids]]
 # name = 'cargo-hakari'

@@ -8,6 +8,7 @@ use crate::summaries::HakariBuilderSummary;
 use crate::{
     hakari::{HakariBuilder, OutputMap},
     helpers::VersionDisplay,
+    DepFormatVersion,
 };
 use camino::Utf8PathBuf;
 use cfg_if::cfg_if;
@@ -177,6 +178,7 @@ pub enum TomlOutError {
 /// corresponding package metadatas.
 pub(crate) fn toml_name_map<'g>(
     output_map: &OutputMap<'g>,
+    dep_format: DepFormatVersion,
 ) -> HashMap<Cow<'g, str>, PackageMetadata<'g>> {
     let mut packages_by_name: HashMap<&'g str, HashMap<_, _>> = HashMap::new();
     for vals in output_map.values() {
@@ -193,7 +195,7 @@ pub(crate) fn toml_name_map<'g>(
         if packages.len() > 1 {
             // Make hashed names for each package.
             for (_, package) in packages {
-                let hashed_name = make_hashed_name(package);
+                let hashed_name = make_hashed_name(package, dep_format);
                 toml_name_map.insert(Cow::Owned(hashed_name), *package);
             }
         } else {
@@ -271,6 +273,7 @@ pub(crate) fn write_toml(
     builder: &HakariBuilder<'_>,
     output_map: &OutputMap<'_>,
     options: &HakariOutputOptions,
+    dep_format: DepFormatVersion,
     mut out: impl fmt::Write,
 ) -> Result<(), TomlOutError> {
     cfg_if! {
@@ -330,7 +333,7 @@ pub(crate) fn write_toml(
 
             let name: Cow<str> = if packages_by_name[dep.name()].len() > 1 {
                 itable.insert("package", dep.name().into());
-                make_hashed_name(dep).into()
+                make_hashed_name(dep, dep_format).into()
             } else {
                 dep.name().into()
             };
@@ -341,7 +344,11 @@ pub(crate) fn write_toml(
                     "version",
                     format!(
                         "{}",
-                        VersionDisplay::new(dep.version(), options.exact_versions)
+                        VersionDisplay::new(
+                            dep.version(),
+                            options.exact_versions,
+                            dep_format < DepFormatVersion::V3
+                        )
                     )
                     .into(),
                 );
@@ -412,7 +419,11 @@ pub(crate) fn write_toml(
                                 "version",
                                 format!(
                                     "{}",
-                                    VersionDisplay::new(dep.version(), options.exact_versions)
+                                    VersionDisplay::new(
+                                        dep.version(),
+                                        options.exact_versions,
+                                        dep_format < DepFormatVersion::V3
+                                    )
                                 )
                                 .into(),
                             );
@@ -463,11 +474,16 @@ pub(crate) fn write_toml(
 }
 
 /// Generate a unique, stable package name from the metadata.
-fn make_hashed_name(dep: &PackageMetadata<'_>) -> String {
+fn make_hashed_name(dep: &PackageMetadata<'_>, dep_format: DepFormatVersion) -> String {
     // Use a fixed seed to ensure stable hashes.
     let mut hasher = XxHash64::default();
     // Use the minimal version so that a bump from e.g. 0.2.5 to 0.2.6 doesn't change the hash.
-    let minimal_version = format!("{}", VersionDisplay::new(dep.version(), false));
+    let minimal_version = format!(
+        "{}",
+        // We use a slightly different hashing scheme for V3+ formats (this is more correct but we
+        // don't want to change hashes for folks on older versions.).
+        VersionDisplay::new(dep.version(), false, dep_format < DepFormatVersion::V3)
+    );
     minimal_version.hash(&mut hasher);
     dep.source().hash(&mut hasher);
     let hash = hasher.finish();
@@ -498,7 +514,7 @@ mod tests {
             let mut names_seen: BTreeMap<String, PackageMetadata<'_>> = BTreeMap::new();
             let graph = fixture.graph();
             for package in graph.resolve_all().packages(DependencyDirection::Forward) {
-                match names_seen.entry(make_hashed_name(&package)) {
+                match names_seen.entry(make_hashed_name(&package, DepFormatVersion::V3)) {
                     Entry::Vacant(entry) => {
                         entry.insert(package);
                     }
