@@ -5,7 +5,7 @@
 # resolver = '1'
 # unify-target-host = 'unify-if-both'
 # output-single-feature = true
-# dep-format-version = '2'
+# dep-format-version = '3'
 # platforms = ['arm64_32-apple-watchos', 'armv7-unknown-netbsd-eabihf', 'aarch64-unknown-redox']
 # [[traversal-excludes.ids]]
 # name = 'build-user'

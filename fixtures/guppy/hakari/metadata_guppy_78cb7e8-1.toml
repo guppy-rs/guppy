@@ -5,7 +5,7 @@
 # resolver = '1'
 # unify-target-host = 'none'
 # output-single-feature = false
-# dep-format-version = '2'
+# dep-format-version = '1'
 # platforms = ['powerpc-wrs-vxworks-spe', 'riscv64gc-unknown-linux-gnu', 'mipsel-unknown-none']
 # [[traversal-excludes.ids]]
 # name = 'pathdiff'

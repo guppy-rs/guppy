@@ -5,7 +5,7 @@
 # resolver = '1'
 # unify-target-host = 'replicate-target-on-host'
 # output-single-feature = true
-# dep-format-version = '2'
+# dep-format-version = '1'
 # platforms = ['riscv32imc-unknown-none-elf']
 # [[traversal-excludes.ids]]
 # name = 'csv-core'

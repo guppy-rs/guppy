@@ -40,6 +40,7 @@ impl<'g> HakariBuilder<'g> {
             hash_set(graph.prop010_id_strategy(), 0..8),
             any::<UnifyTargetHost>(),
             any::<bool>(),
+            any::<DepFormatVersion>(),
         )
             .prop_map(
                 move |(
@@ -50,6 +51,7 @@ impl<'g> HakariBuilder<'g> {
                     final_excludes,
                     unify_target_host,
                     output_single_feature,
+                    dep_format_version,
                 )| {
                     let mut builder = HakariBuilder::new(graph, hakari_id)
                         .expect("HakariBuilder::new returned an error");
@@ -66,7 +68,7 @@ impl<'g> HakariBuilder<'g> {
                         .add_final_excludes(final_excludes)
                         .expect("final excludes obtained from PackageGraph should work")
                         .set_unify_target_host(unify_target_host)
-                        .set_dep_format_version(DepFormatVersion::V2)
+                        .set_dep_format_version(dep_format_version)
                         .set_output_single_feature(output_single_feature);
                     builder
                 },
