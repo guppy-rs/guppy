@@ -39,8 +39,11 @@
 //!   trailing space.)
 //! * *"2"*: `workspace-hack = { version = "0.1", path = ... }` in other `Cargo.toml` files. This is
 //!   required for the advanced setup documented in the [Publishing](crate::publishing) section.
-//! * *"3"*: Elides build metadata from version strings in the workspace-hack's `Cargo.toml`. Cargo
-//!   warns if build metadata is added to version strings.
+//! * *"3"*: Has the following changes:
+//!   - Simplifies workspace-hack output by eliding private and other non-root features from its
+//!     `Cargo.toml`.
+//!   - Elides build metadata from version strings in the workspace-hack's `Cargo.toml`. (Cargo
+//!     warns if build metadata is added to version strings.)
 //!
 //! Defaults to "1", but
 //! - starting `cargo hakari 0.9.8`, `.config/hakari.toml` files created by
