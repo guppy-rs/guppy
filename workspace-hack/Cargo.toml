@@ -16,7 +16,6 @@ repository = "https://github.com/guppy-rs/guppy"
 
 ### BEGIN HAKARI SECTION
 [dependencies]
-bstr = { version = "0.2.17", features = ["lazy_static", "regex-automata", "serde", "serde1", "serde1-nostd", "std", "unicode"] }
 clap = { version = "2.34.0", features = ["ansi_term", "atty", "color", "strsim", "suggestions", "vec_map"] }
 indexmap = { version = "1.9.2", default-features = false, features = ["std"] }
 libc = { version = "0.2.139", features = ["std"] }

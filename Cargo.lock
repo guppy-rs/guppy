@@ -1040,7 +1040,6 @@ dependencies = [
 name = "guppy-workspace-hack"
 version = "0.1.0"
 dependencies = [
- "bstr 0.2.17",
  "clap 2.34.0",
  "indexmap",
  "libc",
