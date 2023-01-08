@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.9.18] - 2023-01-08
+
+### Added
+
+Introduced a new `dep-format-version`, version 3, with these changes:
+
+* Always elide build metadata from version strings (e.g. with the semver string `5.4.0+g7f361a3`, don't show the bit after the + sign). Thanks [Nikhil Benesch](https://github.com/guppy-rs/guppy/pull/57) for your first contribution!
+* Remove private features from the workspace-hack's Cargo.toml. This should simplify the output greatly.
+
+### Changed
+
+- MSRV updated to Rust 1.62.
+- Builtin target platforms updated to Rust 1.66.
+
 ## [0.9.17] - 2022-12-04
 
 ### Fixed
@@ -145,6 +159,7 @@ This was tagged, but never released due to
 
 Initial release.
 
+[0.9.18]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.18
 [0.9.17]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.17
 [0.9.16]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.16
 [0.9.15]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.15

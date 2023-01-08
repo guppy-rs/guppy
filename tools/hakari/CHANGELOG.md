@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## [0.12.0] - 2023-01-08
 
 ### Added
 
@@ -227,6 +227,7 @@ Internal updates for `cargo-hakari 0.9.8`.
 
 Initial release.
 
+[0.12.0]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.12.0
 [0.11.1]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.11.1
 [0.11.0]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.11.0
 [0.10.2]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.10.2

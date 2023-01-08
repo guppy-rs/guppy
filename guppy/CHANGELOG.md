@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## [0.15.2] - 2023-01-08
 
 ### Changed
 
@@ -545,6 +545,7 @@ lazy_static = "0.2"
 ### Added
 - Initial release.
 
+[0.15.2]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.15.2
 [0.15.1]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.15.1
 [0.15.0]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.15.0
 [0.14.4]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.14.4
