@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.3.1] - 2023-01-08
+
+### Added
+
+Added note to readme about MSRV for target-spec 1.3.x.
+
 ## [1.3.0] - 2023-01-08
 
 ### Changed
@@ -199,6 +205,7 @@ This was mistakenly published and was yanked.
 
 - Initial release.
 
+[1.3.1]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-1.3.1
 [1.3.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-1.3.0
 [1.2.2]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-1.2.2
 [1.2.1]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-1.2.1
