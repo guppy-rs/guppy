@@ -17,7 +17,7 @@ use hakari::{
     cli_ops::{HakariInit, WorkspaceOps},
     diffy::PatchFormatter,
     summaries::{HakariConfig, DEFAULT_CONFIG_PATH, FALLBACK_CONFIG_PATH},
-    HakariBuilder, HakariCargoToml, HakariOutputOptions, TomlOutError,
+    DepFormatVersion, HakariBuilder, HakariCargoToml, HakariOutputOptions, TomlOutError,
 };
 use log::{error, info};
 use owo_colors::OwoColorize;
@@ -313,7 +313,20 @@ impl CommandWithBuilder {
                     .read_toml()
                     .expect("hakari-package must be specified")?;
 
-                write_to_cargo_toml(existing_toml, &toml_out, diff, output)
+                let exit_code =
+                    write_to_cargo_toml(existing_toml, &toml_out, diff, output.clone())?;
+                if hakari.builder().dep_format_version() < DepFormatVersion::latest() {
+                    info!(
+                        "new hakari format version available: {} (current: {})\n\
+                        (add or update `dep-format-version = \"3\"` in {}, then run \
+                        `cargo hakari generate && cargo hakari manage-deps`)",
+                        DepFormatVersion::latest(),
+                        hakari.builder().dep_format_version(),
+                        "hakari.toml".style(output.styles.config_path),
+                    );
+                }
+
+                Ok(exit_code)
             }
             CommandWithBuilder::Verify => match builder.verify() {
                 Ok(()) => {

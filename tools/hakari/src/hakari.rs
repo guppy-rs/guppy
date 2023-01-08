@@ -526,9 +526,27 @@ pub enum DepFormatVersion {
     V3,
 }
 
+impl DepFormatVersion {
+    /// Returns the highest format version supported by this version of `cargo hakari`.
+    #[inline]
+    pub fn latest() -> Self {
+        DepFormatVersion::V3
+    }
+}
+
 impl Default for DepFormatVersion {
     fn default() -> Self {
         DepFormatVersion::V1
+    }
+}
+
+impl fmt::Display for DepFormatVersion {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            DepFormatVersion::V1 => write!(f, "1"),
+            DepFormatVersion::V2 => write!(f, "2"),
+            DepFormatVersion::V3 => write!(f, "3"),
+        }
     }
 }
 

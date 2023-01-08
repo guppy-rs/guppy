@@ -11,7 +11,7 @@ resolver = "2"
 
 # Version of `workspace-hack = ...` lines in other `Cargo.toml` files to use.
 # See https://docs.rs/cargo-hakari/latest/cargo_hakari/config#dep-format-version for more.
-dep-format-version = "3"
+dep-format-version = "2"
 
 # Add triples corresponding to platforms commonly used by developers here.
 # https://doc.rust-lang.org/rustc/platform-support.html
