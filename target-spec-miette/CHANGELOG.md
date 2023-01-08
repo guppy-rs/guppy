@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- MSRV updated to Rust 1.62.
+
 ## [0.1.0] - 2022-10-25
 
 Initial release with support for miette 5.

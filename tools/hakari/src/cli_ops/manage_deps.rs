@@ -37,7 +37,7 @@ impl<'g> HakariBuilder<'g> {
                     (Some(_), false) => Some(false),
                     (Some(link), true) => match self.dep_format_version {
                         DepFormatVersion::V1 => None,
-                        DepFormatVersion::V2 => needs_update_v2(hakari_package, link).then(|| true),
+                        DepFormatVersion::V2 => needs_update_v2(hakari_package, link).then_some(true),
                     },
                     (None, false) => None,
                 }
