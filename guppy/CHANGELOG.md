@@ -2,6 +2,10 @@
 
 ## [0.15.2] - 2023-01-08
 
+### Added
+
+- `PackageMetadata::to_feature_set` converts a single package to a `FeatureSet`.
+
 ### Changed
 
 - MSRV updated to Rust 1.62.
