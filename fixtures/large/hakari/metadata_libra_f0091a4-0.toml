@@ -67,74 +67,74 @@
 # crates-io = true
 
 [dependencies]
-backtrace = { version = "0.3", features = ["backtrace-sys", "dbghelp", "dladdr", "libbacktrace", "libunwind", "serde", "serialize-serde", "std"] }
-byteorder = { version = "1", features = ["i128", "std"] }
+backtrace = { version = "0.3", features = ["serialize-serde"] }
+byteorder = { version = "1", features = ["i128"] }
 bytes = { version = "0.4", default-features = false, features = ["either"] }
-chrono = { version = "0.4", features = ["clock", "serde", "std", "time"] }
-clap = { version = "2", features = ["ansi_term", "atty", "color", "strsim", "suggestions", "vec_map"] }
-curve25519-dalek = { git = "https://github.com/calibra/curve25519-dalek.git", branch = "fiat", default-features = false, features = ["alloc", "curve25519-fiat", "fiat_u64_backend", "std", "u64_backend"] }
+chrono = { version = "0.4", features = ["serde"] }
+clap = { version = "2" }
+curve25519-dalek = { git = "https://github.com/calibra/curve25519-dalek.git", branch = "fiat", default-features = false, features = ["fiat_u64_backend", "std", "u64_backend"] }
 digest = { version = "0.8", default-features = false, features = ["std"] }
 ed25519-dalek = { git = "https://github.com/calibra/ed25519-dalek.git", branch = "fiat", default-features = false, features = ["fiat_u64_backend", "serde", "std", "u64_backend"] }
-either = { version = "1", features = ["use_std"] }
-failure = { version = "0.1", features = ["backtrace", "derive", "failure_derive", "std"] }
-futures = { version = "0.3", features = ["alloc", "async-await", "compat", "executor", "futures-executor", "io-compat", "std"] }
-futures-channel = { version = "0.3", features = ["alloc", "futures-sink", "sink", "std"] }
-futures-core = { version = "0.3", features = ["alloc", "std"] }
-futures-sink = { version = "0.3", features = ["alloc", "std"] }
-futures-util = { version = "0.3", features = ["alloc", "async-await", "async-await-macro", "channel", "compat", "futures-channel", "futures-io", "futures-macro", "futures-sink", "futures_01", "io", "io-compat", "memchr", "proc-macro-hack", "proc-macro-nested", "sink", "slab", "std", "tokio-io"] }
+either = { version = "1" }
+failure = { version = "0.1" }
+futures = { version = "0.3", features = ["io-compat"] }
+futures-channel = { version = "0.3", features = ["sink"] }
+futures-core = { version = "0.3" }
+futures-sink = { version = "0.3" }
+futures-util = { version = "0.3", features = ["channel", "io-compat", "sink"] }
 getrandom = { version = "0.1", default-features = false, features = ["std"] }
-itoa = { version = "0.4", features = ["std"] }
-libc = { version = "0.2", features = ["extra_traits", "std"] }
+itoa = { version = "0.4" }
+libc = { version = "0.2", features = ["extra_traits"] }
 log = { version = "0.4", default-features = false, features = ["std"] }
-memchr = { version = "2", features = ["libc", "std", "use_std"] }
+memchr = { version = "2", features = ["libc", "use_std"] }
 num-integer = { version = "0.1", default-features = false, features = ["std"] }
-num-traits = { version = "0.2", features = ["std"] }
-petgraph = { version = "0.5", features = ["graphmap", "matrix_graph", "stable_graph"] }
-rand-3b31131e45eafb45 = { package = "rand", version = "0.6", features = ["alloc", "i128_support", "rand_os", "std"] }
-rand-ca01ad9e24f5d932 = { package = "rand", version = "0.7", features = ["alloc", "getrandom", "getrandom_package", "libc", "rand_pcg", "small_rng", "std"] }
+num-traits = { version = "0.2" }
+petgraph = { version = "0.5" }
+rand-3b31131e45eafb45 = { package = "rand", version = "0.6", features = ["i128_support"] }
+rand-ca01ad9e24f5d932 = { package = "rand", version = "0.7", features = ["small_rng"] }
 rand_core = { version = "0.3", default-features = false, features = ["alloc", "std"] }
-regex-syntax = { version = "0.6", features = ["unicode", "unicode-age", "unicode-bool", "unicode-case", "unicode-gencat", "unicode-perl", "unicode-script", "unicode-segment"] }
-reqwest = { version = "0.10", default-features = false, features = ["__tls", "blocking", "hyper-rustls", "json", "rustls", "rustls-tls", "serde_json", "tokio-rustls", "webpki-roots"] }
-rustls = { version = "0.16", features = ["dangerous_configuration", "log", "logging"] }
-rusty-fork = { version = "0.2", features = ["timeout", "wait-timeout"] }
-serde = { version = "1", features = ["derive", "rc", "serde_derive", "std"] }
-sha2 = { version = "0.8", features = ["std"] }
-sha3 = { version = "0.8", features = ["std"] }
-slog = { version = "2", features = ["max_level_debug", "max_level_trace", "release_max_level_debug", "std"] }
-subtle = { version = "2", features = ["i128", "std"] }
-tokio = { version = "0.2", features = ["blocking", "dns", "fnv", "fs", "full", "futures-core", "io-driver", "io-std", "io-util", "iovec", "lazy_static", "libc", "macros", "memchr", "mio", "mio-named-pipes", "mio-uds", "net", "num_cpus", "process", "rt-core", "rt-threaded", "rt-util", "signal", "signal-hook-registry", "slab", "stream", "sync", "tcp", "time", "tokio-macros", "udp", "uds", "winapi"] }
+regex-syntax = { version = "0.6" }
+reqwest = { version = "0.10", default-features = false, features = ["blocking", "json", "rustls-tls"] }
+rustls = { version = "0.16", features = ["dangerous_configuration"] }
+rusty-fork = { version = "0.2" }
+serde = { version = "1", features = ["derive", "rc"] }
+sha2 = { version = "0.8" }
+sha3 = { version = "0.8" }
+slog = { version = "2", features = ["max_level_debug", "max_level_trace", "release_max_level_debug"] }
+subtle = { version = "2" }
+tokio = { version = "0.2", features = ["full"] }
 toml = { version = "0.5" }
-ureq = { version = "0.11", features = ["cookie", "cookies", "json", "rustls", "serde_json", "tls", "webpki", "webpki-roots"] }
+ureq = { version = "0.11", features = ["json"] }
 x25519-dalek = { git = "https://github.com/calibra/x25519-dalek.git", branch = "fiat", default-features = false, features = ["fiat_u64_backend", "std", "u64_backend"] }
 zeroize = { version = "1", default-features = false, features = ["alloc", "zeroize_derive"] }
 
 [build-dependencies]
-byteorder = { version = "1", features = ["i128", "std"] }
-cc = { version = "1", default-features = false, features = ["jobserver", "parallel"] }
-clap = { version = "2", features = ["ansi_term", "atty", "color", "strsim", "suggestions", "vec_map"] }
+byteorder = { version = "1", features = ["i128"] }
+cc = { version = "1", default-features = false, features = ["parallel"] }
+clap = { version = "2" }
 digest = { version = "0.8", default-features = false, features = ["std"] }
-either = { version = "1", features = ["use_std"] }
+either = { version = "1" }
 getrandom = { version = "0.1", default-features = false, features = ["std"] }
-libc = { version = "0.2", features = ["extra_traits", "std"] }
+libc = { version = "0.2", features = ["extra_traits"] }
 log = { version = "0.4", default-features = false, features = ["std"] }
-memchr = { version = "2", features = ["std", "use_std"] }
-petgraph = { version = "0.5", features = ["graphmap", "matrix_graph", "stable_graph"] }
-proc-macro2 = { version = "0.4", features = ["proc-macro"] }
-quote = { version = "0.6", features = ["proc-macro"] }
-rand-ca01ad9e24f5d932 = { package = "rand", version = "0.7", features = ["alloc", "getrandom", "getrandom_package", "libc", "rand_pcg", "small_rng", "std"] }
+memchr = { version = "2", features = ["use_std"] }
+petgraph = { version = "0.5" }
+proc-macro2 = { version = "0.4" }
+quote = { version = "0.6" }
+rand-ca01ad9e24f5d932 = { package = "rand", version = "0.7", features = ["small_rng"] }
 rand_core = { version = "0.3", default-features = false, features = ["alloc", "std"] }
 regex-syntax = { version = "0.6", default-features = false, features = ["unicode-age", "unicode-bool", "unicode-case", "unicode-gencat", "unicode-perl", "unicode-script", "unicode-segment"] }
-serde = { version = "1", features = ["derive", "rc", "serde_derive", "std"] }
-subtle = { version = "2", features = ["i128", "std"] }
-syn-3575ec1268b04181 = { package = "syn", version = "0.15", features = ["clone-impls", "derive", "extra-traits", "full", "parsing", "printing", "proc-macro", "quote", "visit"] }
-syn-dff4ba8e3ae991db = { package = "syn", version = "1", features = ["clone-impls", "derive", "extra-traits", "fold", "full", "parsing", "printing", "proc-macro", "quote", "visit", "visit-mut"] }
+serde = { version = "1", features = ["derive", "rc"] }
+subtle = { version = "2" }
+syn-3575ec1268b04181 = { package = "syn", version = "0.15", features = ["extra-traits", "full", "visit"] }
+syn-dff4ba8e3ae991db = { package = "syn", version = "1", features = ["extra-traits", "fold", "full", "visit", "visit-mut"] }
 toml = { version = "0.5" }
 
 [target.powerpc-unknown-linux-musl.dependencies]
-hyper = { version = "0.13", features = ["net2", "runtime", "stream", "tcp"] }
+hyper = { version = "0.13" }
 
 [target.sparcv9-sun-solaris.dependencies]
-hyper = { version = "0.13", features = ["net2", "runtime", "stream", "tcp"] }
+hyper = { version = "0.13" }
 
 ### END HAKARI SECTION
 

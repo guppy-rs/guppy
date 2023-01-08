@@ -15,7 +15,7 @@
 # [final-excludes]
 
 [dependencies]
-bytes = { version = "0.5", features = ["serde", "std"] }
+bytes = { version = "0.5", features = ["serde"] }
 dep-a = { path = "/Users/fakeuser/local/testcrates/testcrate-targets/../dep-a", default-features = false, features = ["bar", "baz", "foo", "quux"] }
 lazy_static-dff4ba8e3ae991db = { package = "lazy_static", version = "1", default-features = false }
 

@@ -57,7 +57,7 @@
 # source = 'git+https://github.com/BurntSushi/walkdir?tag=2.2.9#7c7013259eb9db400b3e5c7bc60330ca08068826'
 
 [dependencies]
-datatest = { version = "0.4", features = ["region", "unsafe_test_runner"] }
+datatest = { version = "0.4", features = ["unsafe_test_runner"] }
 
 ### END HAKARI SECTION
 

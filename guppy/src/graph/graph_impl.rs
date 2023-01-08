@@ -30,6 +30,8 @@ use std::{
     iter::FromIterator,
 };
 
+use super::feature::{FeatureFilter, FeatureSet};
+
 /// A graph of packages and dependencies between them, parsed from metadata returned by `cargo
 /// metadata`.
 ///
@@ -732,6 +734,12 @@ impl<'g> PackageMetadata<'g> {
     pub fn to_package_set(&self) -> PackageSet<'g> {
         let included: IxBitSet = iter::once(self.package_ix()).collect();
         PackageSet::from_included(self.graph, included)
+    }
+
+    /// Creates a `FeatureSet` that consists of all features in the package that match the given
+    /// named filter.
+    pub fn to_feature_set(&self, features: impl FeatureFilter<'g>) -> FeatureSet<'g> {
+        self.to_package_set().to_feature_set(features)
     }
 
     // ---

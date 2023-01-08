@@ -13,7 +13,7 @@ use guppy::{
     errors::TargetSpecError,
     graph::{
         cargo::{BuildPlatform, CargoOptions, CargoResolverVersion, CargoSet, InitialsPlatform},
-        feature::{FeatureId, FeatureLabel, FeatureSet, StandardFeatures},
+        feature::{named_feature_filter, FeatureId, FeatureLabel, FeatureSet, StandardFeatures},
         DependencyDirection, PackageGraph, PackageMetadata,
     },
     platform::{Platform, PlatformSpec, TargetFeatures},
@@ -736,7 +736,11 @@ impl<'g> Hakari<'g> {
         }
 
         let computed_map = computed_map_build.computed_map;
-        let output_map = map_build.finish(&builder.final_excludes);
+        let output_map = map_build.finish(
+            &builder.final_excludes,
+            builder.dep_format_version,
+            builder.output_single_feature,
+        );
 
         Self {
             builder,
@@ -1392,28 +1396,41 @@ impl<'g> OutputMapBuild<'g> {
         })
     }
 
-    fn finish(mut self, final_excludes: &HashSet<&'g PackageId>) -> OutputMap<'g> {
+    fn finish(
+        mut self,
+        final_excludes: &HashSet<&'g PackageId>,
+        dep_format: DepFormatVersion,
+        output_single_feature: bool,
+    ) -> OutputMap<'g> {
         // Remove all features that are already unified in the "always" set.
         for &build_platform in BuildPlatform::VALUES {
             let always_key = OutputKey {
                 platform_idx: None,
                 build_platform,
             };
-            // Temporarily remove the set to avoid &mut issues.
 
-            let always_map = match self.output_map.remove(&always_key) {
+            // Temporarily remove the set to avoid &mut issues.
+            let mut always_map = match self.output_map.remove(&always_key) {
                 Some(always_map) => always_map,
                 None => {
-                    // No packages unified for the always set.
+                    // No features unified for the always set.
                     continue;
                 }
             };
+
+            if dep_format >= DepFormatVersion::V3 {
+                Self::filter_root_features(&mut always_map, output_single_feature);
+            }
 
             for (key, inner_map) in &mut self.output_map {
                 // Treat the host and target maps as separate.
                 if key.build_platform != build_platform {
                     continue;
                 }
+                if dep_format >= DepFormatVersion::V3 {
+                    Self::filter_root_features(inner_map, output_single_feature);
+                }
+
                 for (package_id, (_always_package, always_features)) in &always_map {
                     let (package, remaining_features) = {
                         let (package, features) = match inner_map.get(package_id) {
@@ -1448,6 +1465,53 @@ impl<'g> OutputMapBuild<'g> {
         });
 
         self.output_map
+    }
+
+    /// Removes all features from the map that aren't at the root of the provided feature graph.
+    ///
+    /// Many crates have a notion of public and private features. Private features are not
+    /// intended to be used by consumers of the crate, and are only used by the crate itself.
+    ///
+    /// As a heuristic, we assume that all root features are public.
+    ///
+    /// There aren't any platform-related considerations here, because internal feature dependencies
+    /// aren't platform-specific.
+    fn filter_root_features(
+        inner_map: &mut BTreeMap<&'g PackageId, (PackageMetadata<'g>, BTreeSet<&'g str>)>,
+        output_single_feature: bool,
+    ) {
+        inner_map.retain(|_, (package, features)| {
+            let feature_set = package.to_feature_set(named_feature_filter(
+                StandardFeatures::None,
+                features.iter().copied(),
+            ));
+
+            let root_features: BTreeSet<_> = feature_set
+                .root_ids(DependencyDirection::Forward)
+                .filter_map(|f| match f.label() {
+                    FeatureLabel::Named(name) => Some(name),
+                    FeatureLabel::Base => None,
+                    FeatureLabel::OptionalDependency(name) => {
+                        debug_assert!(
+                            false,
+                            "root features must be named or base, found optional dependency {}",
+                            name,
+                        );
+                        None
+                    }
+                })
+                .collect();
+
+            if root_features.is_empty() {
+                // No features left -- remove it from the map if output_single_feature is false. If
+                // it's true, then we might be tracking a feature set that was originally provided
+                // as empty to us.
+                output_single_feature && features.is_empty()
+            } else {
+                *features = root_features;
+                true
+            }
+        });
     }
 }
 
