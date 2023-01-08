@@ -28,7 +28,7 @@ impl<'g> HakariBuilder<'g> {
     /// Panics if:
     /// * there are no packages in this `PackageGraph`, or
     /// * `hakari_id` is specified but it isn't known to the graph, or isn't in the workspace.
-    pub fn prop010_strategy(
+    pub fn proptest1_strategy(
         graph: &'g PackageGraph,
         hakari_id_strategy: impl Strategy<Value = Option<&'g PackageId>> + 'g,
     ) -> impl Strategy<Value = HakariBuilder<'g>> + 'g {
@@ -89,8 +89,10 @@ mod test {
         for (&name, fixture) in JsonFixture::all_fixtures() {
             let graph = fixture.graph();
             let workspace = graph.workspace();
-            let strategy =
-                HakariBuilder::prop010_strategy(graph, option::of(workspace.prop010_id_strategy()));
+            let strategy = HakariBuilder::proptest1_strategy(
+                graph,
+                option::of(workspace.prop010_id_strategy()),
+            );
             proptest!(|(builder in strategy)| {
                 let summary = builder.to_summary().unwrap_or_else(|err| {
                     panic!("for fixture {}, builder -> summary conversion failed: {}", name, err);
@@ -112,8 +114,10 @@ mod test {
         for (&name, fixture) in JsonFixture::all_fixtures() {
             let graph = fixture.graph();
             let workspace = graph.workspace();
-            let strategy =
-                HakariBuilder::prop010_strategy(graph, option::of(workspace.prop010_id_strategy()));
+            let strategy = HakariBuilder::proptest1_strategy(
+                graph,
+                option::of(workspace.prop010_id_strategy()),
+            );
             proptest!(|(builder in strategy, queries in vec(graph.prop010_id_strategy(), 0..64))| {
                 // Ensure that the hakari package is omitted.
                 if let Some(package) = builder.hakari_package() {
