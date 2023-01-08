@@ -48,15 +48,16 @@ mod tests {
     #[test]
     fn min_version() {
         let versions = vec![
-            ("1.4.0", "1"),
-            ("2.8.0", "2"),
-            ("0.4.2", "0.4"),
-            ("0.0.7", "0.0.7"),
-            ("1.4.0-b1", "1.4.0-b1"),
-            ("4.2.3+g456", "4"),
+            ("1.4.0", "1", "1.4.0"),
+            ("2.8.0", "2", "2.8.0"),
+            ("0.4.2", "0.4", "0.4.2"),
+            ("0.0.7", "0.0.7", "0.0.7"),
+            ("1.4.0-b1", "1.4.0-b1", "1.4.0-b1"),
+            ("2.8.0-a.1+v123", "2.8.0-a.1+v123", "2.8.0-a.1+v123"),
+            ("4.2.3+g456", "4", "4.2.3+g456"),
         ];
 
-        for (version_str, min) in versions {
+        for (version_str, min, exact) in versions {
             let version = Version::parse(version_str).expect("valid version");
             let version_req = VersionReq::parse(min).expect("valid version req");
             assert!(
@@ -66,10 +67,7 @@ mod tests {
                 version
             );
             assert_eq!(&format!("{}", VersionDisplay::new(&version, false)), min);
-            assert_eq!(
-                &format!("{}", VersionDisplay::new(&version, true)),
-                version_str
-            );
+            assert_eq!(&format!("{}", VersionDisplay::new(&version, true)), exact);
         }
     }
 
