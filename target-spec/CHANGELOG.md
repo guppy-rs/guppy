@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- Internal dependency `cfg-expr` updated to 0.13.0, updating builtin targets to Rust 1.66.
+- MSRV updated to Rust 1.62.
+
 ## [1.2.2] - 2022-11-07
 
 ### Updated

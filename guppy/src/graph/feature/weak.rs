@@ -85,7 +85,7 @@ where
                     }
                     SingleBufferState::Accepted => {
                         // Weak link, but package already accepted.
-                        Either::Left((self.accept_fn)(link).then(|| edge_ref))
+                        Either::Left((self.accept_fn)(link).then_some(edge_ref))
                     }
                 }
             }
@@ -107,7 +107,7 @@ where
                                     .into_iter()
                                     .filter_map(|(link, edge_ref)| {
                                         // Filter buffered links.
-                                        (self.accept_fn)(link).then(|| edge_ref)
+                                        (self.accept_fn)(link).then_some(edge_ref)
                                     })
                                     .collect();
                                 edge_refs.push(edge_ref);

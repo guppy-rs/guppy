@@ -9,7 +9,7 @@ readme = "README.md"
 keywords = ["cargo", "targets", "platforms", "miette"]
 categories = ["development-tools"]
 edition = "2021"
-rust-version = "1.58"
+rust-version = "1.62"
 
 [dependencies]
 target-spec = { version = "1.2.2", path = "../target-spec" }
