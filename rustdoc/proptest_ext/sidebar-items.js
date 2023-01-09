@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["ValueGenerator","Context for generating single values out of strategies."]]};

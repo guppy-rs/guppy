@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":[["unix","Unix-only extensions, for sending signals."]],"struct":[["SharedChild",""]]};

@@ -1,0 +1,199 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="This library provides `eyre::Report`, a trait object based error handling type for easy idiomatic error handling and reporting in Rust applications."><meta name="keywords" content="rust, rustlang, rust-lang, eyre"><title>eyre - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-04897efae0a76fcd.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-bc1b32400f872ddb.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="logo-container" href="../eyre/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><h2></h2></nav><nav class="sidebar"><a class="logo-container" href="../eyre/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><h2 class="location"><a href="#">Crate eyre</a></h2><div class="sidebar-elems"><ul class="block"><li class="version">Version 0.6.8</li><li><a id="all-types" href="all.html">All Items</a></li></ul><section><ul class="block"><li><a href="#reexports">Re-exports</a></li><li><a href="#macros">Macros</a></li><li><a href="#structs">Structs</a></li><li><a href="#traits">Traits</a></li><li><a href="#functions">Functions</a></li><li><a href="#types">Type Definitions</a></li></ul></section></div></nav><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1 class="fqn">Crate <a class="mod" href="#">eyre</a><button id="copy-path" onclick="copy_path(this)" title="Copy item path to clipboard"><img src="../static.files/clipboard-7571035ce49a181d.svg" width="19" height="18" alt="Copy item path"></button></h1><span class="out-of-band"><a class="srclink" href="../src/eyre/lib.rs.html#1-1241">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="rustdoc-toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>This library provides <a href="https://docs.rs/eyre/*/eyre/struct.Report.html"><code>eyre::Report</code></a>, a trait object based
+error handling type for easy idiomatic error handling and reporting in Rust
+applications.</p>
+<p>This crate is a fork of <a href="https://github.com/dtolnay/anyhow"><code>anyhow</code></a>  with a support for customized
+error reports. For more details on customization checkout the docs on
+<a href="https://docs.rs/eyre/*/eyre/trait.EyreHandler.html"><code>eyre::EyreHandler</code></a>.</p>
+<h3 id="custom-report-handlers"><a href="#custom-report-handlers">Custom Report Handlers</a></h3>
+<p>The heart of this crate is it’s ability to swap out the Handler type to change
+what information is carried alongside errors and how the end report is
+formatted. This crate is meant to be used alongside companion crates that
+customize it’s behavior. Below is a list of known crates that export report
+handlers for eyre and short summaries of what features they provide.</p>
+<ul>
+<li><a href="https://github.com/yaahc/stable-eyre"><code>stable-eyre</code></a>: Switches the backtrace type from <code>std</code>’s to <code>backtrace-rs</code>’s
+so that it can be captured on stable. The report format is identical to
+<code>DefaultHandler</code>’s report format.</li>
+<li><a href="https://github.com/yaahc/color-eyre"><code>color-eyre</code></a>: Captures a <code>backtrace::Backtrace</code> and a
+<code>tracing_error::SpanTrace</code>. Provides a <code>Section</code> trait for attaching warnings
+and suggestions to error reports. The end report is then pretty printed with
+the help of <a href="https://github.com/athre0z/color-backtrace"><code>color-backtrace</code></a>, <a href="https://github.com/yaahc/color-spantrace"><code>color-spantrace</code></a>, and <code>ansi_term</code>. Check
+out the README on <a href="https://github.com/yaahc/color-eyre"><code>color-eyre</code></a> for details on the report format.</li>
+<li><a href="https://github.com/yaahc/simple-eyre"><code>simple-eyre</code></a>: A minimal <code>EyreHandler</code> that captures no additional
+information, for when you do not wish to capture <code>Backtrace</code>s with errors.</li>
+<li><a href="https://github.com/yaahc/jane-eyre"><code>jane-eyre</code></a>: A report handler crate that exists purely for the pun.
+Currently just re-exports <code>color-eyre</code>.</li>
+</ul>
+<h3 id="usage-recommendations-and-stability-considerations"><a href="#usage-recommendations-and-stability-considerations">Usage Recommendations and Stability Considerations</a></h3>
+<p><strong>We recommend users do not re-export types from this library as part their
+own public API for libraries with external users.</strong> The main reason for this
+is that it will make your library API break if we ever bump the major version
+number on eyre and your users upgrade the eyre version they use in their
+application code before you upgrade your own eyre dep version<sup id="fnref1"><a href="#fn1">1</a></sup>.</p>
+<p>However, even beyond this API stability hazard, there are other good reasons
+to avoid using <code>eyre::Report</code> as your public error type.</p>
+<ul>
+<li>You export an undocumented error interface that is otherwise still
+accessible via downcast, making it hard for users to react to specific
+errors while not preventing them from depending on details you didn’t mean
+to make part of your public API.
+<ul>
+<li>This in turn makes the error types of all libraries you use a part of
+your public API as well, and makes changing any of those libraries into an
+undetectable runtime breakage.</li>
+</ul>
+</li>
+<li>If many of your errors are constructed from strings you encourage your
+users to use string comparision for reacting to specific errors which is
+brittle and turns updating error messages into a potentially undetectable
+runtime breakage.</li>
+</ul>
+<h3 id="details"><a href="#details">Details</a></h3>
+<ul>
+<li>
+<p>Use <code>Result&lt;T, eyre::Report&gt;</code>, or equivalently <code>eyre::Result&lt;T&gt;</code>, as the
+return type of any fallible function.</p>
+<p>Within the function, use <code>?</code> to easily propagate any error that implements the
+<code>std::error::Error</code> trait.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>eyre::Result;
+
+<span class="kw">fn </span>get_cluster_info() -&gt; <span class="prelude-ty">Result</span>&lt;ClusterMap&gt; {
+    <span class="kw">let </span>config = std::fs::read_to_string(<span class="string">&quot;cluster.json&quot;</span>)<span class="question-mark">?</span>;
+    <span class="kw">let </span>map: ClusterMap = serde_json::from_str(<span class="kw-2">&amp;</span>config)<span class="question-mark">?</span>;
+    <span class="prelude-val">Ok</span>(map)
+}</code></pre></div>
+</li>
+<li>
+<p>Wrap a lower level error with a new error created from a message to help the
+person troubleshooting understand what the chain of failures that occured. A
+low-level error like “No such file or directory” can be annoying to debug
+without more information about what higher level step the application was in
+the middle of.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>eyre::{WrapErr, <span class="prelude-ty">Result</span>};
+
+<span class="kw">fn </span>main() -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+    ...
+    it.detach().wrap_err(<span class="string">&quot;Failed to detach the important thing&quot;</span>)<span class="question-mark">?</span>;
+
+    <span class="kw">let </span>content = std::fs::read(path)
+        .wrap_err_with(|| <span class="macro">format!</span>(<span class="string">&quot;Failed to read instrs from {}&quot;</span>, path))<span class="question-mark">?</span>;
+    ...
+}</code></pre></div>
+<div class="example-wrap"><pre class="language-console"><code>Error: Failed to read instrs from ./path/to/instrs.json
+
+Caused by:
+    No such file or directory (os error 2)
+</code></pre></div></li>
+<li>
+<p>Downcasting is supported and can be by value, by shared reference, or by
+mutable reference as needed.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="comment">// If the error was caused by redaction, then return a
+// tombstone instead of the content.
+</span><span class="kw">match </span>root_cause.downcast_ref::&lt;DataStoreError&gt;() {
+    <span class="prelude-val">Some</span>(DataStoreError::Censored(<span class="kw">_</span>)) =&gt; <span class="prelude-val">Ok</span>(Poll::Ready(REDACTED_CONTENT)),
+    <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(error),
+}</code></pre></div>
+</li>
+<li>
+<p>If using the nightly channel, a backtrace is captured and printed with the
+error if the underlying error type does not already provide its own. In order
+to see backtraces, they must be enabled through the environment variables
+described in <a href="https://doc.rust-lang.org/std/backtrace/index.html#environment-variables"><code>std::backtrace</code></a>:</p>
+<ul>
+<li>If you want panics and errors to both have backtraces, set
+<code>RUST_BACKTRACE=1</code>;</li>
+<li>If you want only errors to have backtraces, set <code>RUST_LIB_BACKTRACE=1</code>;</li>
+<li>If you want only panics to have backtraces, set <code>RUST_BACKTRACE=1</code> and
+<code>RUST_LIB_BACKTRACE=0</code>.</li>
+</ul>
+<p>The tracking issue for this feature is <a href="https://github.com/rust-lang/rust/issues/53487">rust-lang/rust#53487</a>.</p>
+</li>
+<li>
+<p>Eyre works with any error type that has an impl of <code>std::error::Error</code>,
+including ones defined in your crate. We do not bundle a <code>derive(Error)</code> macro
+but you can write the impls yourself or use a standalone macro like
+<a href="https://github.com/dtolnay/thiserror">thiserror</a>.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>thiserror::Error;
+
+<span class="attr">#[derive(Error, Debug)]
+</span><span class="kw">pub enum </span>FormatError {
+    <span class="attr">#[error(<span class="string">&quot;Invalid header (expected {expected:?}, got {found:?})&quot;</span>)]
+    </span>InvalidHeader {
+        expected: String,
+        found: String,
+    },
+    <span class="attr">#[error(<span class="string">&quot;Missing attribute: {0}&quot;</span>)]
+    </span>MissingAttribute(String),
+}</code></pre></div>
+</li>
+<li>
+<p>One-off error messages can be constructed using the <code>eyre!</code> macro, which
+supports string interpolation and produces an <code>eyre::Report</code>.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">eyre!</span>(<span class="string">&quot;Missing attribute: {}&quot;</span>, missing));</code></pre></div>
+</li>
+<li>
+<p>On newer versions of the compiler (e.g. 1.58 and later) this macro also
+supports format args captures.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">eyre!</span>(<span class="string">&quot;Missing attribute: {missing}&quot;</span>));</code></pre></div>
+</li>
+</ul>
+<h3 id="no-std-support"><a href="#no-std-support">No-std support</a></h3>
+<p><strong>NOTE</strong>: tests are currently broken for <code>no_std</code> so I cannot guarantee that
+everything works still. I’m waiting for upstream fixes to be merged rather than
+fixing them myself, so bear with me.</p>
+<p>In no_std mode, the same API is almost all available and works the same way. To
+depend on Eyre in no_std mode, disable our default enabled “std” feature in
+Cargo.toml. A global allocator is required.</p>
+<div class="example-wrap"><pre class="language-toml"><code>[dependencies]
+eyre = { version = &quot;0.6&quot;, default-features = false }
+</code></pre></div>
+<p>Since the <code>?</code>-based error conversions would normally rely on the
+<code>std::error::Error</code> trait which is only available through std, no_std mode will
+require an explicit <code>.map_err(Report::msg)</code> when working with a non-Eyre error
+type inside a function that returns Eyre’s error type.</p>
+<h3 id="comparison-to-failure"><a href="#comparison-to-failure">Comparison to failure</a></h3>
+<p>The <code>eyre::Report</code> type works something like <code>failure::Error</code>, but unlike
+failure ours is built around the standard library’s <code>std::error::Error</code> trait
+rather than a separate trait <code>failure::Fail</code>. The standard library has adopted
+the necessary improvements for this to be possible as part of <a href="https://github.com/rust-lang/rfcs/blob/master/text/2504-fix-error.md">RFC 2504</a>.</p>
+<h3 id="comparison-to-thiserror"><a href="#comparison-to-thiserror">Comparison to thiserror</a></h3>
+<p>Use <code>eyre</code> if you don’t think you’ll do anything with an error other than
+report it. This is common in application code. Use <code>thiserror</code> if you think
+you need an error type that can be handled via match or reported. This is
+common in library crates where you don’t know how your users will handle
+your errors.</p>
+<h3 id="compatibility-with-anyhow"><a href="#compatibility-with-anyhow">Compatibility with <code>anyhow</code></a></h3>
+<p>This crate does its best to be usable as a drop in replacement of <code>anyhow</code> and
+vice-versa by <code>re-exporting</code> all of the renamed APIs with the names used in
+<code>anyhow</code>, though there are some differences still.</p>
+<h5 id="context-and-option"><a href="#context-and-option"><code>Context</code> and <code>Option</code></a></h5>
+<p>As part of renaming <code>Context</code> to <code>WrapErr</code> we also intentionally do not
+implement <code>WrapErr</code> for <code>Option</code>. This decision was made because <code>wrap_err</code>
+implies that you’re creating a new error that saves the old error as its
+<code>source</code>. With <code>Option</code> there is no source error to wrap, so <code>wrap_err</code> ends up
+being somewhat meaningless.</p>
+<p>Instead <code>eyre</code> intends for users to use the combinator functions provided by
+<code>std</code> for converting <code>Option</code>s to <code>Result</code>s. So where you would write this with
+anyhow:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>anyhow::Context;
+
+<span class="kw">let </span>opt: <span class="prelude-ty">Option</span>&lt;()&gt; = <span class="prelude-val">None</span>;
+<span class="kw">let </span>result = opt.context(<span class="string">&quot;new error message&quot;</span>);</code></pre></div>
+<p>With <code>eyre</code> we want users to write:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>eyre::{eyre, <span class="prelude-ty">Result</span>};
+
+<span class="kw">let </span>opt: <span class="prelude-ty">Option</span>&lt;()&gt; = <span class="prelude-val">None</span>;
+<span class="kw">let </span>result: <span class="prelude-ty">Result</span>&lt;()&gt; = opt.ok_or_else(|| <span class="macro">eyre!</span>(<span class="string">&quot;new error message&quot;</span>));</code></pre></div>
+<p><strong>NOTE</strong>: However, to help with porting we do provide a <code>ContextCompat</code> trait which
+implements <code>context</code> for options which you can import to make existing
+<code>.context</code> calls compile.</p>
+<div class="footnotes"><hr><ol><li id="fn1"><p>example and explanation of breakage https://github.com/yaahc/eyre/issues/30#issuecomment-647650361&nbsp;<a href="#fnref1">↩</a></p></li></ol></div></div></details><h2 id="reexports" class="small-section-header"><a href="#reexports">Re-exports</a></h2><div class="item-table"><div class="item-row"><div class="item-left import-item" id="reexport.Error"><code>pub use <a class="struct" href="struct.Report.html" title="struct eyre::Report">Report</a> as Error;</code></div></div><div class="item-row"><div class="item-left import-item" id="reexport.Context"><code>pub use <a class="trait" href="trait.WrapErr.html" title="trait eyre::WrapErr">WrapErr</a> as Context;</code></div></div></div><h2 id="macros" class="small-section-header"><a href="#macros">Macros</a></h2><div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="macro" href="macro.anyhow.html" title="eyre::anyhow macro">anyhow</a></div><div class="item-right docblock-short">Construct an ad-hoc error from a string.</div></div><div class="item-row"><div class="item-left module-item"><a class="macro" href="macro.bail.html" title="eyre::bail macro">bail</a></div><div class="item-right docblock-short">Return early with an error.</div></div><div class="item-row"><div class="item-left module-item"><a class="macro" href="macro.ensure.html" title="eyre::ensure macro">ensure</a></div><div class="item-right docblock-short">Return early with an error if a condition is not satisfied.</div></div><div class="item-row"><div class="item-left module-item"><a class="macro" href="macro.eyre.html" title="eyre::eyre macro">eyre</a></div><div class="item-right docblock-short">Construct an ad-hoc error from a string.</div></div><div class="item-row"><div class="item-left module-item"><a class="macro" href="macro.format_err.html" title="eyre::format_err macro">format_err</a></div><div class="item-right docblock-short">Construct an ad-hoc error from a string.</div></div></div><h2 id="structs" class="small-section-header"><a href="#structs">Structs</a></h2><div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.Chain.html" title="eyre::Chain struct">Chain</a></div><div class="item-right docblock-short">Iterator of a chain of source errors.</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.DefaultHandler.html" title="eyre::DefaultHandler struct">DefaultHandler</a></div><div class="item-right docblock-short">The default provided error report handler for <code>eyre::Report</code>.</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.InstallError.html" title="eyre::InstallError struct">InstallError</a></div><div class="item-right docblock-short">Error indicating that <code>set_hook</code> was unable to install the provided ErrorHook</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.Report.html" title="eyre::Report struct">Report</a></div><div class="item-right docblock-short">The core error reporting type of the library, a wrapper around a dynamic error reporting type.</div></div></div><h2 id="traits" class="small-section-header"><a href="#traits">Traits</a></h2><div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.ContextCompat.html" title="eyre::ContextCompat trait">ContextCompat</a></div><div class="item-right docblock-short">Provides the <code>context</code> method for <code>Option</code> when porting from <code>anyhow</code></div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.EyreHandler.html" title="eyre::EyreHandler trait">EyreHandler</a></div><div class="item-right docblock-short">Error Report Handler trait for customizing <code>eyre::Report</code></div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.WrapErr.html" title="eyre::WrapErr trait">WrapErr</a></div><div class="item-right docblock-short">Provides the <code>wrap_err</code> method for <code>Result</code>.</div></div></div><h2 id="functions" class="small-section-header"><a href="#functions">Functions</a></h2><div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.set_hook.html" title="eyre::set_hook fn">set_hook</a></div><div class="item-right docblock-short">Install the provided error hook for constructing EyreHandlers when converting
+Errors to Reports</div></div></div><h2 id="types" class="small-section-header"><a href="#types">Type Definitions</a></h2><div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="type" href="type.Result.html" title="eyre::Result type">Result</a></div><div class="item-right docblock-short">type alias for <code>Result&lt;T, Report&gt;</code></div></div></div></section></div></main><div id="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="eyre" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.0-nightly (cc47b0699 2023-01-08)" data-search-js="search-181581080540673f.js" data-settings-js="settings-bebeae96e00e4617.js" data-settings-css="settings-58836c674e2f7bd2.css" ></div></body></html>

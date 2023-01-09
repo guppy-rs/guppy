@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["VerifyErrors","Context for errors returned by [`HakariBuilder::verify`]."],["VerifyErrorsDisplay","A display formatter for [`VerifyErrors`]."]]};

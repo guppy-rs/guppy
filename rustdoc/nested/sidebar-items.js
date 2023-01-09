@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["Iter","An iterator over `Nested` elements"],["Nested","A two dimensional collection with minimal allocation"]],"trait":[["Collection","A `Collection` trait to expose basic required fn for `Nested` to work properly"]],"type":[["Item","A `Nested` item when `T: Collection`"],["ZString","A `Nested<String>`"],["ZVec","A `Nested<Vec<T>>`"]]};

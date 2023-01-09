@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":[["Offset","A parsed TOML time offset"]],"struct":[["Date","A parsed TOML date value"],["Datetime","A parsed TOML datetime value"],["DatetimeParseError","Error returned from parsing a `Datetime` in the `FromStr` implementation."],["Time","A parsed TOML time value"]]};

@@ -1,0 +1,90 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Builds plain, automatically-aligned tables of monospaced text. This is basically what you want if you are implementing `ls`."><meta name="keywords" content="rust, rustlang, rust-lang, tabular"><title>tabular - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-04897efae0a76fcd.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-bc1b32400f872ddb.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="logo-container" href="../tabular/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><h2></h2></nav><nav class="sidebar"><a class="logo-container" href="../tabular/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><h2 class="location"><a href="#">Crate tabular</a></h2><div class="sidebar-elems"><ul class="block"><li class="version">Version 0.2.0</li><li><a id="all-types" href="all.html">All Items</a></li></ul><section><ul class="block"><li><a href="#macros">Macros</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#types">Type Definitions</a></li></ul></section></div></nav><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1 class="fqn">Crate <a class="mod" href="#">tabular</a><button id="copy-path" onclick="copy_path(this)" title="Copy item path to clipboard"><img src="../static.files/clipboard-7571035ce49a181d.svg" width="19" height="18" alt="Copy item path"></button></h1><span class="out-of-band"><a class="srclink" href="../src/tabular/lib.rs.html#4-188">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="rustdoc-toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Builds plain, automatically-aligned tables of monospaced text.
+This is basically what you want if you are implementing <code>ls</code>.</p>
+<h2 id="example"><a href="#example">Example</a></h2>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>tabular::{Table, Row};
+<span class="kw">use </span>std::path::Path;
+
+<span class="kw">fn </span>ls(dir: <span class="kw-2">&amp;</span>Path) -&gt; ::std::io::Result&lt;()&gt; {
+    <span class="kw">let </span><span class="kw-2">mut </span>table = Table::new(<span class="string">&quot;{:&gt;}  {:&lt;}{:&lt;}  {:&lt;}&quot;</span>);
+    <span class="kw">for </span>entry_result <span class="kw">in </span>::std::fs::read_dir(dir)<span class="question-mark">? </span>{
+        <span class="kw">let </span>entry    = entry_result<span class="question-mark">?</span>;
+        <span class="kw">let </span>metadata = entry.metadata()<span class="question-mark">?</span>;
+
+        table.add_row(Row::new()
+             .with_cell(metadata.len())
+             .with_cell(<span class="kw">if </span>metadata.permissions().readonly() {<span class="string">&quot;r&quot;</span>} <span class="kw">else </span>{<span class="string">&quot;&quot;</span>})
+             .with_cell(<span class="kw">if </span>metadata.is_dir() {<span class="string">&quot;d&quot;</span>} <span class="kw">else </span>{<span class="string">&quot;&quot;</span>})
+             .with_cell(entry.path().display()));
+    }
+
+    <span class="macro">print!</span>(<span class="string">&quot;{}&quot;</span>, table);
+
+    <span class="prelude-val">Ok</span>(())
+}
+
+ls(Path::new(<span class="kw-2">&amp;</span><span class="string">&quot;target&quot;</span>)).unwrap();</code></pre></div>
+<p>produces something like</p>
+<div class="example-wrap"><pre class="language-text"><code>1198     target/.rustc_info.json
+1120  d  target/doc
+ 192  d  target/package
+1056  d  target/debug
+</code></pre></div><h2 id="other-features"><a href="#other-features">Other features</a></h2>
+<ul>
+<li>
+<p>The <a href="struct.Table.html#method.with_heading" title="Table::with_heading"><code>Table::with_heading</code></a> and <a href="struct.Table.html#method.add_heading" title="Table::add_heading"><code>Table::add_heading</code></a> methods add
+lines that span all columns.</p>
+</li>
+<li>
+<p>The <a href="macro.row.html" title="row!"><code>row!</code></a> macro builds a row with a fixed number of columns
+using less syntax.</p>
+</li>
+<li>
+<p>The <a href="struct.Table.html#method.set_line_end" title="Table::set_line_end"><code>Table::set_line_end</code></a> method allows changing the line ending
+to include a carriage return (or whatever you want).</p>
+</li>
+<li>
+<p>With the <code>ansi-cell</code> feature enabled, the <a href="struct.Row.html#method.with_ansi_cell" title="Row::with_ansi_cell"><code>Row::with_ansi_cell</code></a> and <a href="struct.Row.html#method.add_ansi_cell" title="Row::add_ansi_cell"><code>Row::add_ansi_cell</code></a>
+methods can be used to add cells with ANSI color codes, and still have their widths be
+computed correctly.</p>
+</li>
+</ul>
+<h3 id="usage"><a href="#usage">Usage</a></h3>
+<p>It’s on <a href="https://crates.io/crates/tabular">crates.io</a>, so you can add</p>
+<div class="example-wrap"><pre class="language-toml"><code>[dependencies]
+tabular = &quot;0.2.0&quot;
+</code></pre></div>
+<p>to your <code>Cargo.toml</code>.</p>
+<h3 id="features"><a href="#features">Features</a></h3>
+<ul>
+<li>
+<p><code>unicode-width</code>: enabled by default; depends on the
+<a href="https://crates.io/crates/unicode-width">unicode-width</a> crate.</p>
+<p>With the <code>unicode-width</code> feature enabled, default alignment is based on
+[Unicode Standard Annex #11], with characters in the Ambiguous category considered to
+be 1 column wide.</p>
+<p>Without it, default alignment is based on the count of the <code>std::str::Chars</code> iterator.</p>
+</li>
+<li>
+<p><code>ansi-cell</code>: disabled by default; depends on the
+<a href="https://crates.io/crates/strip-ansi-escapes">strip-ansi-escapes</a> crate.
+Provides the <code>with_ansi_cell</code> and <code>add_ansi_cell</code> methods.</p>
+</li>
+</ul>
+<h3 id="minimum-supported-rust-version"><a href="#minimum-supported-rust-version">Minimum supported Rust version</a></h3>
+<p>The minimum supported Rust version (MSRV) of this crate is <strong>Rust 1.46.0</strong>.
+The MSRV may be bumped in a patch release.</p>
+<h2 id="see-also"><a href="#see-also">See also</a></h2>
+<p>You may also want:</p>
+<ul>
+<li>
+<p><a href="https://crates.io/crates/text-tables">text-tables</a> – This is more automatic
+than tabular. You give it an array of arrays, it renders a nice table with borders.
+Tabular doesn’t do borders.</p>
+</li>
+<li>
+<p><a href="https://crates.io/crates/prettytable-rs">prettytable</a> — This has an API more
+similar to tabular’s in terms of building a table, but it does a lot more, including,
+color, borders, and CSV import.</p>
+</li>
+</ul>
+</div></details><h2 id="macros" class="small-section-header"><a href="#macros">Macros</a></h2><div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="macro" href="macro.row.html" title="tabular::row macro">row</a></div><div class="item-right docblock-short">A macro for building a <a href="struct.Row.html"><code>Row</code></a>.</div></div><div class="item-row"><div class="item-left module-item"><a class="macro" href="macro.table.html" title="tabular::table macro">table</a></div><div class="item-right docblock-short">A macro for building a <a href="struct.Row.html"><code>Table</code></a>.</div></div></div><h2 id="structs" class="small-section-header"><a href="#structs">Structs</a></h2><div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.Row.html" title="tabular::Row struct">Row</a></div><div class="item-right docblock-short">Type for building a <a href="struct.Table.html"><code>Table</code></a> row.</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.Table.html" title="tabular::Table struct">Table</a></div><div class="item-right docblock-short">Builder type for constructing a formatted table.</div></div></div><h2 id="enums" class="small-section-header"><a href="#enums">Enums</a></h2><div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="enum" href="enum.Error.html" title="tabular::Error enum">Error</a></div><div class="item-right docblock-short">Errors from parsing the table format string.</div></div></div><h2 id="types" class="small-section-header"><a href="#types">Type Definitions</a></h2><div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="type" href="type.Result.html" title="tabular::Result type">Result</a></div><div class="item-right docblock-short">Type alias specializing <code>std::result::Result</code> with this crate’s <a href="error.Error.html"><code>Error</code></a> enum.</div></div></div></section></div></main><div id="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="tabular" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.0-nightly (cc47b0699 2023-01-08)" data-search-js="search-181581080540673f.js" data-settings-js="settings-bebeae96e00e4617.js" data-settings-css="settings-58836c674e2f7bd2.css" ></div></body></html>

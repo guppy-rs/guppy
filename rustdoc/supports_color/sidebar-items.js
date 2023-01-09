@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":[["Stream","possible stream sources"]],"fn":[["on","Returns a [ColorLevel] if a [Stream] supports terminal colors."],["on_cached","Returns a [ColorLevel] if a [Stream] supports terminal colors, caching the result to be returned from then on."]],"struct":[["ColorLevel","Color level support details."]]};

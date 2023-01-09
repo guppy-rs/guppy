@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"trait":[["ChildExt","Extension methods for the standard `std::process::Child` type."]]};

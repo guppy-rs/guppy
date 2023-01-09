@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["ExpressionParseDiagnostic","A wrapper around [`ExpressionParseError`] that implements [`Diagnostic`]."],["TripleParseDiagnostic","A wrapper around [`TripleParseError`] that implements [`Diagnostic`]."]],"trait":[["IntoMietteDiagnostic","Extension trait that converts errors into a [`miette::Diagnostic`]."]]};

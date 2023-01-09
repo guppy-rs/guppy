@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":[["Format","The set of supported formats for indentation"]],"fn":[["indented","Helper function for creating a default indenter"]],"struct":[["Indented","Helper struct for efficiently indenting multi line display implementations"]],"type":[["Inserter","A callback for `Format::Custom` used to insert indenation after a new line"]]};

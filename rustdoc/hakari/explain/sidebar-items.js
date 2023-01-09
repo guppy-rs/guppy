@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["HakariExplain","The result of a Hakari explain query."],["HakariExplainDisplay","A display formatter for [`HakariExplain`]."]]};

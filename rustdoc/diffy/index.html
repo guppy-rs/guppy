@@ -1,0 +1,141 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Tools for finding and manipulating differences between files"><meta name="keywords" content="rust, rustlang, rust-lang, diffy"><title>diffy - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-04897efae0a76fcd.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-bc1b32400f872ddb.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="logo-container" href="../diffy/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><h2></h2></nav><nav class="sidebar"><a class="logo-container" href="../diffy/index.html"><img class="rust-logo" src="../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><h2 class="location"><a href="#">Crate diffy</a></h2><div class="sidebar-elems"><ul class="block"><li class="version">Version 0.3.0</li><li><a id="all-types" href="all.html">All Items</a></li></ul><section><ul class="block"><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#functions">Functions</a></li></ul></section></div></nav><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1 class="fqn">Crate <a class="mod" href="#">diffy</a><button id="copy-path" onclick="copy_path(this)" title="Copy item path to clipboard"><img src="../static.files/clipboard-7571035ce49a181d.svg" width="19" height="18" alt="Copy item path"></button></h1><span class="out-of-band"><a class="srclink" href="../src/diffy/lib.rs.html#1-225">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="rustdoc-toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Tools for finding and manipulating differences between files</p>
+<h3 id="overview"><a href="#overview">Overview</a></h3>
+<p>This library is intended to be a collection of tools used to find and
+manipulate differences between files inspired by <a href="http://www.xmailserver.org/xdiff-lib.html">LibXDiff</a> and <a href="https://www.gnu.org/software/diffutils/">GNU
+Diffutils</a>. Version control systems like <a href="https://git-scm.com/">Git</a> and <a href="https://www.mercurial-scm.org/">Mercurial</a> generally
+communicate differences between two versions of a file using a <code>diff</code> or
+<code>patch</code>.</p>
+<p>The current diff implementation is based on the <a href="http://www.xmailserver.org/diff2.pdf">Myers’ diff algorithm</a>.</p>
+<h3 id="utf-8-and-non-utf-8"><a href="#utf-8-and-non-utf-8">UTF-8 and Non-UTF-8</a></h3>
+<p>This library has support for working with both utf8 and non-utf8 texts.
+Most of the API’s have two different variants, one for working with utf8
+<code>str</code> texts (e.g. <a href="fn.create_patch.html"><code>create_patch</code></a>) and one for working with bytes <code>[u8]</code>
+which may or may not be utf8 (e.g. <a href="fn.create_patch_bytes.html"><code>create_patch_bytes</code></a>).</p>
+<h3 id="creating-a-patch"><a href="#creating-a-patch">Creating a Patch</a></h3>
+<p>A <a href="struct.Patch.html"><code>Patch</code></a> between two texts can be created by doing the following:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>diffy::create_patch;
+
+<span class="kw">let </span>original = <span class="string">&quot;The Way of Kings\nWords of Radiance\n&quot;</span>;
+<span class="kw">let </span>modified = <span class="string">&quot;The Way of Kings\nWords of Radiance\nOathbringer\n&quot;</span>;
+
+<span class="kw">let </span>patch = create_patch(original, modified);</code></pre></div>
+<p>A <a href="struct.Patch.html"><code>Patch</code></a> can the be output in the <a href="https://en.wikipedia.org/wiki/Diff#Unified_format">Unified Format</a> either by using its
+<a href="https://doc.rust-lang.org/stable/std/fmt/trait.Display.html"><code>Display</code></a> impl or by using a <a href="struct.PatchFormatter.html"><code>PatchFormatter</code></a> to output the diff with
+color.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="comment">// Without color
+</span><span class="macro">print!</span>(<span class="string">&quot;{}&quot;</span>, patch);
+
+<span class="comment">// With color
+</span><span class="kw">let </span>f = PatchFormatter::new().with_color();
+<span class="macro">print!</span>(<span class="string">&quot;{}&quot;</span>, f.fmt_patch(<span class="kw-2">&amp;</span>patch));</code></pre></div>
+<div class="example-wrap"><pre class="language-console"><code>--- original
++++ modified
+@@ -1,2 +1,3 @@
+ The Way of Kings
+ Words of Radiance
++Oathbringer
+</code></pre></div><h3 id="applying-a-patch"><a href="#applying-a-patch">Applying a Patch</a></h3>
+<p>Once you have a <a href="struct.Patch.html"><code>Patch</code></a> you can apply it to a base image in order to
+recover the new text. Each hunk will be applied to the base image in
+sequence. Similarly to GNU <code>patch</code>, this implementation can detect when
+line numbers specified in the patch are incorrect and will attempt to find
+the correct place to apply each hunk by iterating forward and backward
+from the given position until all context lines from a hunk match the base
+image.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>diffy::{apply, Patch};
+
+<span class="kw">let </span>s = <span class="string">&quot;\
+--- a/skybreaker-ideals
++++ b/skybreaker-ideals
+@@ -10,6 +10,8 @@
+ First:
+     Life before death,
+     strength before weakness,
+     journey before destination.
+ Second:
+-    I will put the law before all else.
++    I swear to seek justice,
++    to let it guide me,
++    until I find a more perfect Ideal.
+&quot;</span>;
+
+<span class="kw">let </span>patch = Patch::from_str(s).unwrap();
+
+<span class="kw">let </span>base_image = <span class="string">&quot;\
+First:
+    Life before death,
+    strength before weakness,
+    journey before destination.
+Second:
+    I will put the law before all else.
+&quot;</span>;
+
+<span class="kw">let </span>expected = <span class="string">&quot;\
+First:
+    Life before death,
+    strength before weakness,
+    journey before destination.
+Second:
+    I swear to seek justice,
+    to let it guide me,
+    until I find a more perfect Ideal.
+&quot;</span>;
+
+<span class="macro">assert_eq!</span>(apply(base_image, <span class="kw-2">&amp;</span>patch).unwrap(), expected);</code></pre></div>
+<h3 id="performing-a-three-way-merge"><a href="#performing-a-three-way-merge">Performing a Three-way Merge</a></h3>
+<p>Two files <code>A</code> and <code>B</code> can be merged together given a common ancestor or
+original file <code>O</code> to produce a file <code>C</code> similarly to how <a href="https://en.wikipedia.org/wiki/Diff3">diff3</a>
+performs a three-way merge.</p>
+<div class="example-wrap"><pre class="language-console"><code>    --- A ---
+  /           \
+ /             \
+O               C
+ \             /
+  \           /
+    --- B ---
+</code></pre></div>
+<p>If files <code>A</code> and <code>B</code> modified different regions of the original file <code>O</code>
+(or the same region in the same way) then the files can be merged without
+conflict.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>diffy::merge;
+
+<span class="kw">let </span>original = <span class="string">&quot;the final empire\nThe Well of Ascension\nThe hero of ages\n&quot;</span>;
+<span class="kw">let </span>a = <span class="string">&quot;The Final Empire\nThe Well of Ascension\nThe Hero of Ages\n&quot;</span>;
+<span class="kw">let </span>b = <span class="string">&quot;The Final Empire\nThe Well of Ascension\nThe hero of ages\n&quot;</span>;
+<span class="kw">let </span>expected = <span class="string">&quot;\
+The Final Empire
+The Well of Ascension
+The Hero of Ages
+&quot;</span>;
+
+<span class="macro">assert_eq!</span>(merge(original, a, b).unwrap(), expected);</code></pre></div>
+<p>If both files <code>A</code> and <code>B</code> modified the same region of the original file
+<code>O</code> (and those modifications are different), it would result in a conflict
+as it is not clear which modifications should be used in the merged
+result.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>diffy::merge;
+
+<span class="kw">let </span>original = <span class="string">&quot;The Final Empire\nThe Well of Ascension\nThe hero of ages\n&quot;</span>;
+<span class="kw">let </span>a = <span class="string">&quot;The Final Empire\nThe Well of Ascension\nThe Hero of Ages\nSecret History\n&quot;</span>;
+<span class="kw">let </span>b = <span class="string">&quot;The Final Empire\nThe Well of Ascension\nThe hero of ages\nThe Alloy of Law\n&quot;</span>;
+<span class="kw">let </span>expected = <span class="string">&quot;\
+The Final Empire
+The Well of Ascension
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; ours
+The Hero of Ages
+Secret History
+||||||| original
+The hero of ages
+=======
+The hero of ages
+The Alloy of Law
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; theirs
+&quot;</span>;
+
+<span class="macro">assert_eq!</span>(merge(original, a, b).unwrap_err(), expected);</code></pre></div>
+</div></details><h2 id="structs" class="small-section-header"><a href="#structs">Structs</a></h2><div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.ApplyError.html" title="diffy::ApplyError struct">ApplyError</a></div><div class="item-right docblock-short">An error returned when <a href="fn.apply.html"><code>apply</code></a>ing a <code>Patch</code> fails</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.DiffOptions.html" title="diffy::DiffOptions struct">DiffOptions</a></div><div class="item-right docblock-short">A collection of options for modifying the way a diff is performed</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.Hunk.html" title="diffy::Hunk struct">Hunk</a></div><div class="item-right docblock-short">Represents a group of differing lines between two files</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.HunkRange.html" title="diffy::HunkRange struct">HunkRange</a></div><div class="item-right docblock-short">The range of lines in a file for a particular <code>Hunk</code>.</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.MergeOptions.html" title="diffy::MergeOptions struct">MergeOptions</a></div><div class="item-right docblock-short">A collection of options for modifying the way a merge is performed</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.ParsePatchError.html" title="diffy::ParsePatchError struct">ParsePatchError</a></div><div class="item-right docblock-short">An error returned when parsing a <code>Patch</code> using <a href="struct.Patch.html#method.from_str"><code>Patch::from_str</code></a> fails</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.Patch.html" title="diffy::Patch struct">Patch</a></div><div class="item-right docblock-short">Representation of all the differences between two files</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.PatchFormatter.html" title="diffy::PatchFormatter struct">PatchFormatter</a></div><div class="item-right docblock-short">Struct used to adjust the formatting of a <code>Patch</code></div></div></div><h2 id="enums" class="small-section-header"><a href="#enums">Enums</a></h2><div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="enum" href="enum.ConflictStyle.html" title="diffy::ConflictStyle enum">ConflictStyle</a></div><div class="item-right docblock-short">Style used when rendering a conflict</div></div><div class="item-row"><div class="item-left module-item"><a class="enum" href="enum.Line.html" title="diffy::Line enum">Line</a></div><div class="item-right docblock-short">A line in either the old file, new file, or both.</div></div></div><h2 id="functions" class="small-section-header"><a href="#functions">Functions</a></h2><div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.apply.html" title="diffy::apply fn">apply</a></div><div class="item-right docblock-short">Apply a <code>Patch</code> to a base image</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.apply_bytes.html" title="diffy::apply_bytes fn">apply_bytes</a></div><div class="item-right docblock-short">Apply a non-utf8 <code>Patch</code> to a base image</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.create_patch.html" title="diffy::create_patch fn">create_patch</a></div><div class="item-right docblock-short">Create a patch between two texts.</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.create_patch_bytes.html" title="diffy::create_patch_bytes fn">create_patch_bytes</a></div><div class="item-right docblock-short">Create a patch between two potentially non-utf8 texts</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.merge.html" title="diffy::merge fn">merge</a></div><div class="item-right docblock-short">Merge two files given a common ancestor.</div></div><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.merge_bytes.html" title="diffy::merge_bytes fn">merge_bytes</a></div><div class="item-right docblock-short">Perform a 3-way merge between potentially non-utf8 texts</div></div></div></section></div></main><div id="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="diffy" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.0-nightly (cc47b0699 2023-01-08)" data-search-js="search-181581080540673f.js" data-settings-js="settings-bebeae96e00e4617.js" data-settings-css="settings-58836c674e2f7bd2.css" ></div></body></html>

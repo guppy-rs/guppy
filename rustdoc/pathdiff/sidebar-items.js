@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["diff_paths","Construct a relative path from a provided base directory path to the provided path."],["diff_utf8_paths","Construct a relative UTF-8 path from a provided base directory path to the provided path."]]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["DisplayFeatures","A pretty-printer for a list of features."],["FeatureList","A sorted, deduplicated list of features from a single package."],["IntoIter","An owned iterator over a `FeatureList`."],["Iter","A borrowed iterator over a `FeatureList`."]]};

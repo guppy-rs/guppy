@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":[["TINFLStatus","Return status codes."]],"fn":[["decompress_slice_iter_to_slice","Decompress one or more source slices from an iterator into the output slice."]],"mod":[["core","Streaming decompression functionality."],["stream","Extra streaming decompression functionality."]]};

@@ -1,0 +1,63 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Publishing a package to `crates.io` or other registries."><meta name="keywords" content="rust, rustlang, rust-lang, publishing"><title>cargo_hakari::publishing - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-04897efae0a76fcd.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/main-bc1b32400f872ddb.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="logo-container" href="../../cargo_hakari/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><h2></h2></nav><nav class="sidebar"><a class="logo-container" href="../../cargo_hakari/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><h2 class="location"><a href="#">Module publishing</a></h2><div class="sidebar-elems"></div></nav><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1 class="fqn">Module <a href="../index.html">cargo_hakari</a>::<wbr><a class="mod" href="#">publishing</a><button id="copy-path" onclick="copy_path(this)" title="Copy item path to clipboard"><img src="../../static.files/clipboard-7571035ce49a181d.svg" width="19" height="18" alt="Copy item path"></button></h1><span class="out-of-band"><a class="srclink" href="../../src/cargo_hakari/docs/publishing.rs.html#4-106">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="rustdoc-toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Publishing a package to <code>crates.io</code> or other registries.</p>
+<p><em>This section can be ignored if your workspace doesn’t publish any crates to registries.</em></p>
+<p>Many projects using <code>cargo hakari</code> may wish to publish their crates to <code>crates.io</code> or other
+registries. However, if you attempt to publish a crate from a Hakari-managed workspace,
+<code>cargo publish</code> may reject it for containing the local-only workspace-hack dependency.</p>
+<p><code>cargo hakari</code> provides two ways to handle this.</p>
+<h2 id="a-temporarily-remove-the-workspace-hack-dependency-before-publishing"><a href="#a-temporarily-remove-the-workspace-hack-dependency-before-publishing">A. Temporarily remove the workspace-hack dependency before publishing</a></h2>
+<p>Simply run:</p>
+<div class="example-wrap"><pre class="language-sh"><code>cargo hakari publish -p &lt;crate&gt;
+</code></pre></div>
+<p>This command temporarily removes the dependency on the <code>workspace-hack</code> before publishing the
+crate. The dependency will be re-added afterwards, unless the command is interrupted with
+ctrl-C (in which case you can use <code>cargo hakari manage-deps</code> to finish the job.)</p>
+<p>This works out of the box. However, it has the downside of requiring <code>cargo hakari publish</code>.
+If you don’t have control over the commands run while publishing the package, it won’t be
+possible to use this method.</p>
+<h2 id="b-publish-your-own-workspace-hack-crate-to-the-registry"><a href="#b-publish-your-own-workspace-hack-crate-to-the-registry">B. Publish your own workspace-hack crate to the registry</a></h2>
+<p>This method preserves workspace-hack dependencies in <code>Cargo.toml</code>s by targeting a stub
+crate on the registry.</p>
+<h3 id="1-ensure-the-local-crate-is-unique-on-the-registry"><a href="#1-ensure-the-local-crate-is-unique-on-the-registry">1. Ensure the local crate is unique on the registry</a></h3>
+<p>Rename it to something unique if necessary.</p>
+<blockquote>
+<p><strong>TIP:</strong> On Unix platforms, to rename <code>workspace-hack</code> to <code>my-workspace-hack</code> in other
+<code>Cargo.toml</code> files: run this from the root of the workspace:</p>
+<div class="example-wrap"><pre class="language-sh"><code>git ls-files | grep Cargo.toml | xargs perl -p -i -e &#39;s/^workspace-hack = /my-workspace-hack = /&#39;
+</code></pre></div>
+<p>If not in the context of a Git repository, run:</p>
+<div class="example-wrap"><pre class="language-sh"><code>find . -name Cargo.toml | xargs perl -p -i -e &#39;s/^workspace-hack = /my-workspace-hack = /&#39;`
+</code></pre></div></blockquote>
+<p>Remember to update <code>.config/hakari.toml</code> (or <code>.guppy/hakari.toml</code>) with the new name.</p>
+<p>The rest of this section assumes the crate is called <code>my-workspace-hack</code>.</p>
+<h3 id="2-ensure-dep-format-version--2-is-set-in-confighakaritoml"><a href="#2-ensure-dep-format-version--2-is-set-in-confighakaritoml">2. Ensure <code>dep-format-version = &quot;2&quot;</code> is set in <code>.config/hakari.toml</code></a></h3>
+<p><code>dep-format-version = &quot;2&quot;</code> adds the <code>version</code> field to the <code>my-workspace-hack = ...</code> lines in
+other <code>Cargo.toml</code> files. <code>cargo publish</code> uses the <code>version</code> field to recognize published
+dependencies.</p>
+<p>This option is new in cargo-hakari 0.9.8. Configuration files created by older versions of
+cargo-hakari may not have this option set.</p>
+<p>Ensure that this option is present in <code>.config/hakari.toml</code>:</p>
+<div class="example-wrap"><pre class="language-toml"><code>dep-format-version = &quot;2&quot;
+</code></pre></div>
+<p>Then run <code>cargo hakari manage-deps</code> to update the <code>workspace-hack = ...</code> lines.</p>
+<hr />
+<p>After performing the above actions, simply run <code>cargo publish</code> as usual to publish the crate.</p>
+<h3 id="3-set-options-in-the-workspace-hacks-cargotoml"><a href="#3-set-options-in-the-workspace-hacks-cargotoml">3. Set options in the workspace-hack’s <code>Cargo.toml</code></a></h3>
+<p>In <code>my-workspace-hack</code>’s <code>Cargo.toml</code> file, set the <code>package.publish</code> option to anything other
+than <code>false</code>. This enables its publication.</p>
+<div class="example-wrap"><pre class="language-toml"><code>[package]
+publish = true  # to allow publishing to any registry
+## or
+publish = [&quot;crates-io&quot;]  # to allow publishing to crates.io only
+</code></pre></div>
+<p>While you’re here, you may also wish to set other options like <code>repository</code> or <code>homepage</code>.</p>
+<h3 id="4-temporarily-disable-the-workspace-hack-crate"><a href="#4-temporarily-disable-the-workspace-hack-crate">4. Temporarily disable the workspace-hack crate</a></h3>
+<p><strong>This step is really important.</strong> Not doing it will cause the full dependency set in the
+workspace-hack to be published, which is not what you want.</p>
+<p>Run <code>cargo hakari disable</code> to disable the workspace-hack crate`.</p>
+<h3 id="5-publish-the-stub-workspace-hack-crate"><a href="#5-publish-the-stub-workspace-hack-crate">5. Publish the stub workspace-hack crate</a></h3>
+<p>Run <code>cargo publish -p my-workspace-hack --allow-dirty</code> to publish the crate to <code>crates.io</code>.
+For other registries, use the <code>--registry</code> flag.</p>
+<h3 id="6-re-enable-the-workspace-hack-crate"><a href="#6-re-enable-the-workspace-hack-crate">6. Re-enable the workspace-hack crate</a></h3>
+<p>Run <code>cargo hakari generate</code> to restore the workspace-hack’s contents. You can also use your
+source control system’s commands to do so, such as with <code>git restore</code>.</p>
+</div></details></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="cargo_hakari" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.0-nightly (cc47b0699 2023-01-08)" data-search-js="search-181581080540673f.js" data-settings-js="settings-bebeae96e00e4617.js" data-settings-css="settings-58836c674e2f7bd2.css" ></div></body></html>

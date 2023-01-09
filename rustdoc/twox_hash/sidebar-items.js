@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":[["xxh3","The in-progress XXH3 algorithm."]],"struct":[["XxHash32","Calculates the 32-bit hash. Care should be taken when using this hash."],["XxHash64","Calculates the 64-bit hash."]],"type":[["XxHash","A backwards compatibility type alias. Consider directly using `XxHash64` instead."]]};
