@@ -302,8 +302,8 @@ jobs:
     name: Publish cargo-hakari to crates.io
     if: github.repository_owner == 'guppy-rs' && startsWith(github.ref_name, 'cargo-hakari-')
     needs:
-      - cargo-nextest-release
-      - build-cargo-nextest-binaries
+      - cargo-hakari-release
+      - build-cargo-hakari-binaries
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

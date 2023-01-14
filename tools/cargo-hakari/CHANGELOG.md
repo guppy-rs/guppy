@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.9.19-rc.1] - 2023-01-14
+## [0.9.19-rc.2] - 2023-01-14
 
 This is a test release.
 
@@ -163,7 +163,7 @@ This was tagged, but never released due to
 
 Initial release.
 
-[0.9.19-rc.1]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.19-rc.1
+[0.9.19-rc.2]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.19-rc.2
 [0.9.18]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.18
 [0.9.17]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.17
 [0.9.16]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.16
