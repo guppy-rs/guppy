@@ -315,6 +315,6 @@ jobs:
           crate: cargo-release
           version: =0.21.4
           locked: true
-    - run: ./scripts/cargo-release-publish.sh
-      env:
-        CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+      - run: ./scripts/cargo-release-publish.sh
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
