@@ -22,9 +22,10 @@ jobs:
         with:
           toolchain: stable
       - name: Install cargo-hakari
-        uses: taiki-e/install-action@v2
+        uses: baptiste0928/cargo-install@v1
         with:
-          tool: cargo-hakari@0.9.19-rc.5
+          crate: cargo-hakari
+          version: 0.9
       - name: Check workspace-hack Cargo.toml is up-to-date
         uses: actions-rs/cargo@v1
         with:
