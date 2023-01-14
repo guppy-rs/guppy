@@ -25,18 +25,30 @@ generated `Cargo.toml`.](https://github.com/guppy-rs/guppy/blob/main/workspace-h
 
 ## Installation
 
-All of the below commands take options that control their behavior.
+### Release binaries
 
-To install, run:
+Release binaries are available on [GitHub
+Releases](https://github.com/guppy-rs/guppy/releases?q=cargo-hakari&expanded=true), via [`cargo
+binstall`](https://github.com/cargo-bins/cargo-binstall):
 
 ```sh
-cargo install cargo-hakari
+cargo binstall cargo-hakari
 ```
 
-To update, run:
+In GitHub Actions CI, use [`taiki-e/install-action`](https://github.com/taiki-e/install-action),
+which uses `cargo binstall` under the hood:
 
 ```sh
-cargo install --force cargo-hakari
+- name: Install latest nextest release
+  uses: taiki-e/install-action@nextest
+```
+
+### Installing from source
+
+To install or update `cargo-hakari`, run:
+
+```sh
+cargo install cargo-hakari --locked
 ```
 
 If `$HOME/.cargo/bin` is in your `PATH`, the `cargo hakari` command will be available.
