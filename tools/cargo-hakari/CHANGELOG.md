@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.9.20] - 2023-01-14
+
+### Fixed
+
+Fixed install instructions.
+
 ## [0.9.19] - 2023-01-14
 
 ### Added
@@ -9,7 +15,15 @@ Release binaries are now available on GitHub Releases for quicker installation l
 You can install release binaries:
 
 - using `cargo binstall` with `cargo binstall cargo-hakari`
-- in GitHub Actions CI, using `taiki-e/install-action@cargo-hakari`
+- in GitHub Actions CI, using:
+
+  ```yml
+  - name: Install cargo-hakari
+    uses: taiki-e/install-action@v2
+    with:
+      tool: cargo-hakari
+  ```
+
 
 ## [0.9.18] - 2023-01-08
 
@@ -170,6 +184,7 @@ This was tagged, but never released due to
 
 Initial release.
 
+[0.9.20]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.20
 [0.9.19]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.19
 [0.9.18]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.18
 [0.9.17]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.17
