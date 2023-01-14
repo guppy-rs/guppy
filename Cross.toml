@@ -1,0 +1,3 @@
+[target.x86_64-unknown-freebsd]
+# Pull in a fix for https://github.com/cross-rs/cross/pull/1166
+image = "ghcr.io/cross-rs/x86_64-unknown-freebsd:edge"
