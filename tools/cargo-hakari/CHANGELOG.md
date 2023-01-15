@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.9.21] - 2023-01-14
+
+### Fixed
+
+Update README.md with fixed install instructions.
+
 ## [0.9.20] - 2023-01-14
 
 ### Fixed
@@ -184,6 +190,7 @@ This was tagged, but never released due to
 
 Initial release.
 
+[0.9.21]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.21
 [0.9.20]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.20
 [0.9.19]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.19
 [0.9.18]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.18

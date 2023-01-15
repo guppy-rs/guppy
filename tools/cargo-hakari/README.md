@@ -38,9 +38,11 @@ cargo binstall cargo-hakari
 In GitHub Actions CI, use [`taiki-e/install-action`](https://github.com/taiki-e/install-action),
 which uses `cargo binstall` under the hood:
 
-```sh
-- name: Install latest nextest release
-  uses: taiki-e/install-action@nextest
+```yml
+- name: Install cargo-hakari
+  uses: taiki-e/install-action@v2
+   with:
+     tool: cargo-hakari
 ```
 
 ### Installing from source
