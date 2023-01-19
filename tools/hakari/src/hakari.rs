@@ -524,13 +524,21 @@ pub enum DepFormatVersion {
     /// Elides build metadata. This was introduced in `cargo hakari 0.9.18`.
     #[cfg_attr(feature = "cli-support", serde(rename = "3"))]
     V3,
+
+    /// Sorts dependency names alphabetically. This was introduced in `cargo hakari 0.9.22`.
+    ///
+    /// (Dependency names were usually produced in sorted order before V4, but there are
+    /// some edge cases where they weren't: see [issue
+    /// #65](https://github.com/guppy-rs/guppy/issues/65).
+    #[cfg_attr(feature = "cli-support", serde(rename = "4"))]
+    V4,
 }
 
 impl DepFormatVersion {
     /// Returns the highest format version supported by this version of `cargo hakari`.
     #[inline]
     pub fn latest() -> Self {
-        DepFormatVersion::V3
+        DepFormatVersion::V4
     }
 }
 
@@ -546,6 +554,7 @@ impl fmt::Display for DepFormatVersion {
             DepFormatVersion::V1 => write!(f, "1"),
             DepFormatVersion::V2 => write!(f, "2"),
             DepFormatVersion::V3 => write!(f, "3"),
+            DepFormatVersion::V4 => write!(f, "4"),
         }
     }
 }

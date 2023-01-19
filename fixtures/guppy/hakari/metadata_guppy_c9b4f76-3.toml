@@ -5,7 +5,7 @@
 # resolver = 'install'
 # unify-target-host = 'auto'
 # output-single-feature = true
-# dep-format-version = '2'
+# dep-format-version = '3'
 # platforms = ['aarch64-nintendo-switch-freestanding', 'i686-unknown-haiku', 'x86_64-unknown-illumos']
 # [[traversal-excludes.ids]]
 # name = 'cargo-compare'
@@ -36,27 +36,27 @@
 
 [dependencies]
 ansi_term = { version = "0.11", default-features = false }
-anyhow = { version = "1", features = ["std"] }
+anyhow = { version = "1" }
 ascii = { version = "0.9", default-features = false, features = ["std"] }
 assert_matches = { version = "1", default-features = false }
 atty = { version = "0.2", default-features = false }
 bitflags = { version = "1" }
-bstr = { version = "0.2", features = ["lazy_static", "regex-automata", "serde", "serde1", "serde1-nostd", "std", "unicode"] }
+bstr = { version = "0.2", features = ["serde1"] }
 byteorder = { version = "1", default-features = false, features = ["std"] }
 cargo_metadata = { version = "0.11" }
-cast = { version = "0.2", features = ["std"] }
+cast = { version = "0.2" }
 cfg-expr = { version = "0.4" }
 cfg-if = { version = "0.1", default-features = false }
-chrono = { version = "0.4", features = ["clock", "libc", "oldtime", "std", "time", "winapi"] }
-clap = { version = "2", features = ["ansi_term", "atty", "color", "strsim", "suggestions", "vec_map"] }
-combine = { version = "3", features = ["std"] }
-console = { version = "0.11", features = ["ansi-parsing", "regex", "unicode-width", "winapi-util", "windows-console-colors"] }
+chrono = { version = "0.4" }
+clap = { version = "2" }
+combine = { version = "3" }
+console = { version = "0.11" }
 criterion = { version = "0.3" }
 criterion-plot = { version = "0.4", default-features = false }
 crossbeam-channel = { version = "0.4", default-features = false }
 crossbeam-deque = { version = "0.7", default-features = false }
-crossbeam-epoch = { version = "0.8", features = ["lazy_static", "std"] }
-crossbeam-utils = { version = "0.7", features = ["lazy_static", "std"] }
+crossbeam-epoch = { version = "0.8" }
+crossbeam-utils = { version = "0.7" }
 csv = { version = "1", default-features = false }
 csv-core = { version = "0.1" }
 dialoguer = { version = "0.6", default-features = false }
@@ -68,27 +68,27 @@ getrandom = { version = "0.1", default-features = false, features = ["std"] }
 half = { version = "1", default-features = false }
 hashbrown = { version = "0.9", default-features = false, features = ["raw"] }
 indexmap = { version = "1", default-features = false }
-itertools-c38e5c1d305a1b54 = { package = "itertools", version = "0.8", features = ["use_std"] }
-itertools-274715c4dabd11b0 = { package = "itertools", version = "0.9", features = ["use_std"] }
-itoa = { version = "0.4", features = ["std"] }
+itertools-c38e5c1d305a1b54 = { package = "itertools", version = "0.8" }
+itertools-274715c4dabd11b0 = { package = "itertools", version = "0.9" }
+itoa = { version = "0.4" }
 lazy_static = { version = "1", default-features = false }
-libc = { version = "0.2", features = ["std"] }
+libc = { version = "0.2" }
 linked-hash-map = { version = "0.5", default-features = false }
 maybe-uninit = { version = "2", default-features = false }
-memchr = { version = "2", default-features = false, features = ["std", "use_std"] }
+memchr = { version = "2", default-features = false, features = ["use_std"] }
 memoffset = { version = "0.5" }
 nested = { version = "0.1", default-features = false }
 num-integer = { version = "0.1", default-features = false }
-num-traits = { version = "0.2", features = ["std"] }
+num-traits = { version = "0.2" }
 num_cpus = { version = "1", default-features = false }
-once_cell = { version = "1", features = ["std"] }
+once_cell = { version = "1" }
 oorandom = { version = "11", default-features = false }
 pathdiff = { version = "0.2", default-features = false }
 petgraph = { version = "0.5", default-features = false }
 plotters = { version = "0.2", default-features = false, features = ["area_series", "line_series", "svg"] }
 pretty_assertions = { version = "0.6", default-features = false }
-rand = { version = "0.7", features = ["alloc", "getrandom", "getrandom_package", "libc", "std"] }
-rand_core = { version = "0.5", default-features = false, features = ["alloc", "getrandom", "std"] }
+rand = { version = "0.7" }
+rand_core = { version = "0.5", default-features = false, features = ["std"] }
 rayon = { version = "1", default-features = false }
 rayon-core = { version = "1", default-features = false }
 regex = { version = "1", default-features = false, features = ["std"] }
@@ -99,9 +99,9 @@ ryu = { version = "1", default-features = false }
 scopeguard = { version = "1", default-features = false }
 semver-93f6ce9d446188ac = { package = "semver", version = "0.10", features = ["serde"] }
 semver-parser = { version = "0.7", default-features = false }
-serde = { version = "1", features = ["derive", "serde_derive", "std"] }
-serde_cbor = { version = "0.11", features = ["std"] }
-serde_json = { version = "1", features = ["std"] }
+serde = { version = "1", features = ["derive"] }
+serde_cbor = { version = "0.11" }
+serde_json = { version = "1" }
 smallvec = { version = "1", default-features = false }
 strsim = { version = "0.8", default-features = false }
 structopt = { version = "0.3" }
@@ -122,20 +122,20 @@ walkdir = { version = "2", default-features = false }
 [build-dependencies]
 autocfg = { version = "1", default-features = false }
 heck = { version = "0.3", default-features = false }
-proc-macro-error = { version = "1", features = ["syn", "syn-error"] }
+proc-macro-error = { version = "1" }
 proc-macro-error-attr = { version = "1", default-features = false }
-proc-macro2-9fbad63c4bcf4a8f = { package = "proc-macro2", version = "0.4", features = ["proc-macro"] }
-proc-macro2-dff4ba8e3ae991db = { package = "proc-macro2", version = "1", features = ["proc-macro"] }
+proc-macro2-9fbad63c4bcf4a8f = { package = "proc-macro2", version = "0.4" }
+proc-macro2-dff4ba8e3ae991db = { package = "proc-macro2", version = "1" }
 proptest-derive = { version = "0.2", default-features = false }
-quote-3b31131e45eafb45 = { package = "quote", version = "0.6", features = ["proc-macro"] }
-quote-dff4ba8e3ae991db = { package = "quote", version = "1", features = ["proc-macro"] }
+quote-3b31131e45eafb45 = { package = "quote", version = "0.6" }
+quote-dff4ba8e3ae991db = { package = "quote", version = "1" }
 rustc_version = { version = "0.2", default-features = false }
 semver-274715c4dabd11b0 = { package = "semver", version = "0.9" }
 semver-parser = { version = "0.7", default-features = false }
 serde_derive = { version = "1" }
 structopt-derive = { version = "0.4", default-features = false }
-syn-3575ec1268b04181 = { package = "syn", version = "0.15", features = ["clone-impls", "derive", "extra-traits", "full", "parsing", "printing", "proc-macro", "quote", "visit"] }
-syn-dff4ba8e3ae991db = { package = "syn", version = "1", features = ["clone-impls", "derive", "full", "parsing", "printing", "proc-macro", "quote", "visit"] }
+syn-3575ec1268b04181 = { package = "syn", version = "0.15", features = ["extra-traits", "full", "visit"] }
+syn-dff4ba8e3ae991db = { package = "syn", version = "1", features = ["full", "visit"] }
 unicode-segmentation = { version = "1", default-features = false }
 unicode-xid-c65f7effa3be6d31 = { package = "unicode-xid", version = "0.1" }
 unicode-xid-6f8ce4dd05d13bba = { package = "unicode-xid", version = "0.2" }

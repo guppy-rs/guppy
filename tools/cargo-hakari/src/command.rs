@@ -317,12 +317,12 @@ impl CommandWithBuilder {
                     write_to_cargo_toml(existing_toml, &toml_out, diff, output.clone())?;
                 if hakari.builder().dep_format_version() < DepFormatVersion::latest() {
                     info!(
-                        "new hakari format version available: {} (current: {})\n\
-                        (add or update `dep-format-version = \"3\"` in {}, then run \
+                        "new hakari format version available: {latest} (current: {})\n\
+                        (add or update `dep-format-version = \"{latest}\"` in {}, then run \
                         `cargo hakari generate && cargo hakari manage-deps`)",
-                        DepFormatVersion::latest(),
                         hakari.builder().dep_format_version(),
                         "hakari.toml".style(output.styles.config_path),
+                        latest = DepFormatVersion::latest(),
                     );
                 }
 

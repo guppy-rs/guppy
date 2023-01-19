@@ -461,6 +461,10 @@ pub(crate) fn write_toml(
 
             dep_table.insert(name.as_ref(), Item::Value(Value::InlineTable(itable)));
         }
+
+        if dep_format >= DepFormatVersion::V4 {
+            dep_table.sort_values();
+        }
     }
 
     // Match formatting with older versions of hakari: if the document is non-empty, print out a

@@ -5,7 +5,7 @@
 # resolver = 'install'
 # unify-target-host = 'auto'
 # output-single-feature = true
-# dep-format-version = '2'
+# dep-format-version = '3'
 # platforms = ['powerpc-unknown-openbsd', 'mipsisa64r6el-unknown-linux-gnuabi64', 'i686-unknown-netbsd']
 # [[traversal-excludes.ids]]
 # name = 'builddep'

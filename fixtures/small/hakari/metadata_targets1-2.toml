@@ -5,7 +5,7 @@
 # resolver = '1'
 # unify-target-host = 'unify-if-both'
 # output-single-feature = true
-# dep-format-version = '2'
+# dep-format-version = '3'
 # platforms = ['i686-pc-windows-msvc', 'armv4t-none-eabi', 'powerpc-wrs-vxworks-spe']
 # [[traversal-excludes.ids]]
 # name = 'dep-a'
@@ -22,8 +22,8 @@
 # crates-io = true
 
 [dependencies]
-bytes = { version = "0.5", features = ["serde", "std"] }
-serde = { version = "1", features = ["std"] }
+bytes = { version = "0.5", features = ["serde"] }
+serde = { version = "1" }
 
 [target.i686-pc-windows-msvc.dependencies]
 lazy_static = { version = "0.1", default-features = false }

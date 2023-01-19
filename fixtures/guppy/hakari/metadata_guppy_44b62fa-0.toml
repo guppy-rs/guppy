@@ -5,7 +5,7 @@
 # resolver = '1'
 # unify-target-host = 'unify-if-both'
 # output-single-feature = false
-# dep-format-version = '2'
+# dep-format-version = '3'
 # platforms = ['powerpc-wrs-vxworks-spe', 'thumbv7em-none-eabihf']
 # [[traversal-excludes.ids]]
 # name = 'cargo-compare'
