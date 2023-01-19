@@ -5,7 +5,7 @@
 # resolver = '1'
 # unify-target-host = 'auto'
 # output-single-feature = true
-# dep-format-version = '3'
+# dep-format-version = '4'
 # platforms = []
 #
 # [traversal-excludes]

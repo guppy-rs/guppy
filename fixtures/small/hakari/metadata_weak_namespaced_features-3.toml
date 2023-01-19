@@ -5,7 +5,7 @@
 # resolver = '2'
 # unify-target-host = 'replicate-target-on-host'
 # output-single-feature = true
-# dep-format-version = '2'
+# dep-format-version = '3'
 # platforms = ['sparc64-unknown-netbsd', 'riscv32imc-esp-espidf', 'powerpc64le-unknown-linux-gnu']
 # [[traversal-excludes.ids]]
 # name = 'arrayvec'

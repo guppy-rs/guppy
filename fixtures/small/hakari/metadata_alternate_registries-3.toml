@@ -5,7 +5,7 @@
 # resolver = 'install'
 # unify-target-host = 'replicate-target-on-host'
 # output-single-feature = false
-# dep-format-version = '3'
+# dep-format-version = '4'
 # platforms = ['powerpc64-unknown-freebsd']
 # [[traversal-excludes.ids]]
 # name = 'proc-macro2'

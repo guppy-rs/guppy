@@ -5,7 +5,7 @@
 # resolver = '2'
 # unify-target-host = 'replicate-target-on-host'
 # output-single-feature = true
-# dep-format-version = '3'
+# dep-format-version = '4'
 # platforms = ['aarch64-fuchsia']
 #
 # [traversal-excludes]
@@ -76,8 +76,8 @@ idna = { version = "0.2", default-features = false }
 ignore = { version = "0.4", default-features = false }
 im-rc = { version = "15", default-features = false }
 indexmap = { version = "1", default-features = false }
-itertools-c38e5c1d305a1b54 = { package = "itertools", version = "0.8" }
 itertools-274715c4dabd11b0 = { package = "itertools", version = "0.9" }
+itertools-c38e5c1d305a1b54 = { package = "itertools", version = "0.8" }
 itoa = { version = "0.4" }
 jobserver = { version = "0.1", default-features = false }
 lazy_static = { version = "1", default-features = false }
@@ -228,8 +228,8 @@ idna = { version = "0.2", default-features = false }
 ignore = { version = "0.4", default-features = false }
 im-rc = { version = "15", default-features = false }
 indexmap = { version = "1", default-features = false }
-itertools-c38e5c1d305a1b54 = { package = "itertools", version = "0.8" }
 itertools-274715c4dabd11b0 = { package = "itertools", version = "0.9" }
+itertools-c38e5c1d305a1b54 = { package = "itertools", version = "0.8" }
 itoa = { version = "0.4" }
 jobserver = { version = "0.1", default-features = false }
 lazy_static = { version = "1", default-features = false }
@@ -286,8 +286,8 @@ rusty-fork = { version = "0.3", default-features = false, features = ["timeout"]
 ryu = { version = "1", default-features = false }
 same-file = { version = "1", default-features = false }
 scopeguard = { version = "1", default-features = false }
-semver-93f6ce9d446188ac = { package = "semver", version = "0.10", features = ["serde"] }
 semver-274715c4dabd11b0 = { package = "semver", version = "0.9" }
+semver-93f6ce9d446188ac = { package = "semver", version = "0.10", features = ["serde"] }
 semver-parser = { version = "0.7", default-features = false }
 serde = { version = "1", features = ["derive"] }
 serde_cbor = { version = "0.11" }
@@ -321,8 +321,8 @@ unicode-bidi = { version = "0.3" }
 unicode-normalization = { version = "0.1" }
 unicode-segmentation = { version = "1", default-features = false }
 unicode-width = { version = "0.1" }
-unicode-xid-c65f7effa3be6d31 = { package = "unicode-xid", version = "0.1" }
 unicode-xid-6f8ce4dd05d13bba = { package = "unicode-xid", version = "0.2" }
+unicode-xid-c65f7effa3be6d31 = { package = "unicode-xid", version = "0.1" }
 unreachable = { version = "1", default-features = false }
 url = { version = "2", default-features = false }
 utf8parse = { version = "0.1", default-features = false }

@@ -50,6 +50,8 @@
 //!   `cargo hakari init` set it to "2".
 //! - starting `cargo hakari 0.9.18`, `.config/hakari.toml` files created by
 //!   `cargo hakari init` set it to "3".
+//! - starting `cargo hakari 0.9.22`, `.config/hakari.toml` files created by
+//!   `cargo hakari init` set it to "4".
 //!
 //! In general, it is best to be on the latest version.
 //!
