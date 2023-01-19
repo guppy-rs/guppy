@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.13.1] - 2023-01-14
+
+### Fixed
+
+The default template for `hakari.toml` now specifies `dep-format-version = "4"`.
+
 ## [0.13.0] - 2023-01-14
 
 ### Added
@@ -236,6 +242,8 @@ Internal updates for `cargo-hakari 0.9.8`.
 
 Initial release.
 
+[0.13.1]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.13.1
+[0.13.0]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.13.0
 [0.12.0]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.12.0
 [0.11.1]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.11.1
 [0.11.0]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.11.0

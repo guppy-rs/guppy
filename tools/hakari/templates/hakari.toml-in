@@ -2,8 +2,8 @@
 
 hakari-package = "%PACKAGE_NAME%"
 
-# Format version for hakari's output. Version 3 requires cargo-hakari 0.9.18 or above.
-dep-format-version = "3"
+# Format version for hakari's output. Version 4 requires cargo-hakari 0.9.22 or above.
+dep-format-version = "4"
 
 # Setting workspace.resolver = "2" in the root Cargo.toml is HIGHLY recommended.
 # Hakari works much better with the new feature resolver.
