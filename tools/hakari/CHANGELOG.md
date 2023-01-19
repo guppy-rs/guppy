@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.13.0] - 2023-01-14
+
+### Added
+
+Introduced a new `dep-format-version`, version 4, with a change to always sort outputs alphabetically. This
+matches the order produced by [cargo-sort](https://crates.io/crates/cargo-sort) ([#65]).
+
+[#65]: https://github.com/guppy-rs/guppy/issues/65
+
 ## [0.12.0] - 2023-01-08
 
 ### Added
