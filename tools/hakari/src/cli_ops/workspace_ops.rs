@@ -391,8 +391,12 @@ fn canonical_rel_path(path: &Utf8Path, base: &Utf8Path) -> Result<Utf8PathBuf, A
         .map_err(|err| ApplyError::io("error reading path", &abs_path, err))?;
     let canonical_path = Utf8PathBuf::try_from(canonical_path)
         .map_err(|_| ApplyError::misc("canonical path is invalid UTF-8", &abs_path))?;
+    let canonical_base = base.canonicalize()
+        .map_err(|err| ApplyError::io("error reading path", &base, err))?;
+    let canonical_base = Utf8PathBuf::try_from(canonical_base)
+        .map_err(|_| ApplyError::misc("canonical base path is invalid UTF-8", &base))?;
     canonical_path
-        .strip_prefix(base)
+        .strip_prefix(canonical_base)
         .map_err(|_| {
             // This can happen under some symlink scenarios.
             ApplyError::misc(
