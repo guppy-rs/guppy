@@ -49,6 +49,7 @@
 //! * For target-spec 1.1.x: **Rust 1.56**.
 //! * For target-spec 1.2.x: **Rust 1.58**.
 //! * For target-spec 1.3.x: **Rust 1.62**.
+//! * For target-spec 1.4.x: **Rust 1.66**.
 //!
 //! Within the 1.x series, MSRV bumps will be accompanied by a minor version update.
 //!

@@ -6,6 +6,10 @@
 
 Canonicalize paths correctly on Windows ([#70]).
 
+### Changed
+
+MSRV updated to Rust 1.66.
+
 [#70]: https://github.com/guppy-rs/guppy/pull/70
 
 ## [0.13.1] - 2023-01-14
