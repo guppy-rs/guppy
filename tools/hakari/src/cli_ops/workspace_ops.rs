@@ -9,10 +9,7 @@ use guppy::{
     Version,
 };
 use owo_colors::{OwoColorize, Style};
-use std::{
-    borrow::Cow, cmp::Ordering, collections::BTreeMap, convert::TryFrom, error, fmt, fs, io,
-    io::Write,
-};
+use std::{borrow::Cow, cmp::Ordering, collections::BTreeMap, error, fmt, fs, io, io::Write};
 use toml_edit::{
     Array, Document, Formatted, InlineTable, Item, Table, TableLike, TomlError, Value,
 };
@@ -51,8 +48,16 @@ impl<'g, 'a> WorkspaceOps<'g, 'a> {
     ///
     /// Returns an error if any operations failed to complete.
     pub fn apply(&self) -> Result<(), ApplyError> {
+        let workspace_root = self.graph.workspace().root();
+        let canonical_workspace_root = workspace_root.canonicalize_utf8().map_err(|error| {
+            ApplyError::io(
+                "unable to canonicalize workspace root",
+                workspace_root.to_owned(),
+                error,
+            )
+        })?;
         for op in &self.ops {
-            op.apply(self.graph.workspace().root())?;
+            op.apply(&canonical_workspace_root)?;
         }
         Ok(())
     }
@@ -79,26 +84,26 @@ pub(crate) enum WorkspaceOp<'g, 'a> {
 }
 
 impl<'g, 'a> WorkspaceOp<'g, 'a> {
-    fn apply(&self, workspace_root: &Utf8Path) -> Result<(), ApplyError> {
+    fn apply(&self, canonical_workspace_root: &Utf8Path) -> Result<(), ApplyError> {
         match self {
             WorkspaceOp::NewCrate {
                 crate_path,
                 files,
                 root_files,
             } => {
-                Self::create_new_crate(workspace_root, crate_path, files)?;
+                Self::create_new_crate(canonical_workspace_root, crate_path, files)?;
                 // Now that the crate has been created, we can canonicalize it.
-                let crate_path = canonical_rel_path(crate_path, workspace_root)?;
+                let crate_path = canonical_rel_path(crate_path, canonical_workspace_root)?;
 
                 for (rel_path, contents) in root_files {
-                    let abs_path = workspace_root.join(rel_path.as_ref());
+                    let abs_path = canonical_workspace_root.join(rel_path.as_ref());
                     let parent = abs_path.parent().expect("abs path should have a parent");
                     std::fs::create_dir_all(parent)
                         .map_err(|err| ApplyError::io("error creating directories", parent, err))?;
                     write_contents(contents, &abs_path)?;
                 }
 
-                Self::add_to_root_toml(workspace_root, &crate_path)
+                Self::add_to_root_toml(canonical_workspace_root, &crate_path)
             }
             WorkspaceOp::AddDependency {
                 name,
@@ -107,7 +112,7 @@ impl<'g, 'a> WorkspaceOp<'g, 'a> {
                 dep_format,
                 add_to,
             } => {
-                let crate_path = canonical_rel_path(crate_path, workspace_root)?;
+                let crate_path = canonical_rel_path(crate_path, canonical_workspace_root)?;
                 for package in add_to.packages(DependencyDirection::Reverse) {
                     Self::add_to_cargo_toml(name, version, &crate_path, *dep_format, package)?;
                 }
@@ -383,20 +388,21 @@ fn with_forward_slashes(path: &Utf8Path) -> Utf8PathBuf {
 // Path functions
 // ---
 
-fn canonical_rel_path(path: &Utf8Path, base: &Utf8Path) -> Result<Utf8PathBuf, ApplyError> {
-    let abs_path = base.join(path);
+fn canonical_rel_path(
+    path: &Utf8Path,
+    canonical_base: &Utf8Path,
+) -> Result<Utf8PathBuf, ApplyError> {
+    let abs_path = canonical_base.join(path);
     // Canonicalize the path now to remove .. etc.
     let canonical_path = abs_path
-        .canonicalize()
-        .map_err(|err| ApplyError::io("error reading path", &abs_path, err))?;
-    let canonical_path = Utf8PathBuf::try_from(canonical_path)
-        .map_err(|_| ApplyError::misc("canonical path is invalid UTF-8", &abs_path))?;
+        .canonicalize_utf8()
+        .map_err(|err| ApplyError::io("error canonicalizing path", &abs_path, err))?;
     canonical_path
-        .strip_prefix(base)
+        .strip_prefix(canonical_base)
         .map_err(|_| {
             // This can happen under some symlink scenarios.
             ApplyError::misc(
-                format!("canonical path is not within base path {}", base),
+                format!("canonical path is not within base path {}", canonical_base),
                 &abs_path,
             )
         })

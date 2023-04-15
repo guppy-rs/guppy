@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.13.2] - 2023-04-15
+
+### Fixed
+
+Canonicalize paths correctly on Windows ([#70]).
+
+[#70]: https://github.com/guppy-rs/guppy/pull/70
+
 ## [0.13.1] - 2023-01-14
 
 ### Fixed
@@ -242,6 +250,7 @@ Internal updates for `cargo-hakari 0.9.8`.
 
 Initial release.
 
+[0.13.2]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.13.2
 [0.13.1]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.13.1
 [0.13.0]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.13.0
 [0.12.0]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.12.0

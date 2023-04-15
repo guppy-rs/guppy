@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.9.24] - 2023-04-15
+
+### Fixed
+
+Canonicalize paths correctly on Windows ([#70]).
+
 ## [0.9.23] - 2023-01-18
 
 ### Added
@@ -203,6 +209,7 @@ This was tagged, but never released due to
 
 Initial release.
 
+[0.9.24]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.24
 [0.9.23]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.23
 [0.9.22]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.22
 [0.9.21]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.21
