@@ -509,11 +509,13 @@ impl Default for UnifyTargetHost {
 #[cfg_attr(feature = "cli-support", derive(serde::Deserialize, serde::Serialize))]
 #[cfg_attr(feature = "proptest1", derive(proptest_derive::Arbitrary))]
 #[non_exhaustive]
+#[derive(Default)]
 pub enum DepFormatVersion {
     /// `workspace-hack = { path = ...}`. (Note the lack of a trailing space.)
     ///
     /// This was used until `cargo hakari 0.9.6`.
     #[cfg_attr(feature = "cli-support", serde(rename = "1"))]
+    #[default]
     V1,
 
     /// `workspace-hack = { version = "0.1", path = ... }`. This was introduced in
@@ -539,12 +541,6 @@ impl DepFormatVersion {
     #[inline]
     pub fn latest() -> Self {
         DepFormatVersion::V4
-    }
-}
-
-impl Default for DepFormatVersion {
-    fn default() -> Self {
-        DepFormatVersion::V1
     }
 }
 

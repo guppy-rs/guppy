@@ -15,7 +15,7 @@ keywords = [
     "guppy",
 ]
 categories = ["development-tools"]
-rust-version = "1.62"
+rust-version = "1.66"
 
 [package.metadata.docs.rs]
 all-features = true

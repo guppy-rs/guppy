@@ -5,7 +5,7 @@ use std::fmt;
 
 /// An "opaque" identifier for a package.
 #[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-#[allow(clippy::derive_hash_xor_eq)] // safe because the same PartialEq impl is used everywhere
+#[allow(clippy::derived_hash_with_manual_eq)] // safe because the same PartialEq impl is used everywhere
 pub struct PackageId {
     /// The underlying string representation of an ID.
     repr: Box<str>,

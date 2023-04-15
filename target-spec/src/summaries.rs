@@ -71,10 +71,12 @@ impl PlatformSummary {
 /// Requires the `summaries` feature to be enabled.
 #[derive(Clone, Debug, Eq, PartialEq)]
 #[non_exhaustive]
+#[derive(Default)]
 pub enum TargetFeaturesSummary {
     /// The target features are unknown.
     ///
     /// This is the default.
+    #[default]
     Unknown,
     /// Only match the specified features.
     Features(BTreeSet<String>),
@@ -107,13 +109,6 @@ impl TargetFeaturesSummary {
                 TargetFeatures::Features(features)
             }
         }
-    }
-}
-
-impl Default for TargetFeaturesSummary {
-    #[inline]
-    fn default() -> Self {
-        TargetFeaturesSummary::Unknown
     }
 }
 

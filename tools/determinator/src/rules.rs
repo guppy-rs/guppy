@@ -255,6 +255,7 @@ pub struct PathRule {
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Deserialize, Serialize)]
 #[serde(rename_all = "kebab-case")]
 #[non_exhaustive]
+#[derive(Default)]
 pub enum DeterminatorPostRule {
     /// Skip all further processing of this path.
     ///
@@ -267,6 +268,7 @@ pub enum DeterminatorPostRule {
     /// ```toml
     /// post-rule = "skip"
     /// ```
+    #[default]
     Skip,
 
     /// Skip rule processing but continue attempting to match the changed path to the nearest
@@ -291,12 +293,6 @@ pub enum DeterminatorPostRule {
     /// post-rule = "fallthrough"
     /// ```
     Fallthrough,
-}
-
-impl Default for DeterminatorPostRule {
-    fn default() -> Self {
-        DeterminatorPostRule::Skip
-    }
 }
 
 /// Package-based rules for the determinator.

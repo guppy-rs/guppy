@@ -15,7 +15,7 @@ keywords = [
     "guppy",
 ]
 categories = ["development-tools::cargo-plugins"]
-rust-version = "1.62"
+rust-version = "1.66"
 
 [dependencies]
 camino = "1.1.4"

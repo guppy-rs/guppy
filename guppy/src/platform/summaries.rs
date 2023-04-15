@@ -8,7 +8,7 @@ pub use target_spec::summaries::{PlatformSummary, TargetFeaturesSummary};
 /// A serializable version of [`PlatformSpec`].
 ///
 /// Requires the `summaries` feature to be enabled.
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq, Default)]
 pub enum PlatformSpecSummary {
     /// The intersection of all platforms.
     ///
@@ -100,6 +100,7 @@ pub enum PlatformSpecSummary {
     /// let spec: PlatformSpecSummary = toml::from_str(r#"spec = "any""#).unwrap();
     /// assert_eq!(spec, PlatformSpecSummary::Any);
     /// ```
+    #[default]
     Any,
 }
 
@@ -131,13 +132,6 @@ impl PlatformSpecSummary {
     /// Returns true if `self` is `PlatformSpecSummary::Any`.
     pub fn is_any(&self) -> bool {
         matches!(self, PlatformSpecSummary::Any)
-    }
-}
-
-impl Default for PlatformSpecSummary {
-    #[inline]
-    fn default() -> Self {
-        PlatformSpecSummary::Any
     }
 }
 
