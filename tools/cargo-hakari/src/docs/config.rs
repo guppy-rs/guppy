@@ -44,6 +44,8 @@
 //!     `Cargo.toml`.
 //!   - Elides build metadata from version strings in the workspace-hack's `Cargo.toml`. (Cargo
 //!     warns if build metadata is added to version strings.)
+//! * *"4"*: Fixes dependency name sorting in the workspace-hack's `Cargo.toml` to always be
+//!   alphabetical. Previously, dependencies would sometimes not be sorted correctly.
 //!
 //! Defaults to "1", but
 //! - starting `cargo hakari 0.9.8`, `.config/hakari.toml` files created by
@@ -56,7 +58,7 @@
 //! In general, it is best to be on the latest version.
 //!
 //! ```toml
-//! dep-format-version = "3"
+//! dep-format-version = "4"
 //! ```
 //!
 //! ## platforms
