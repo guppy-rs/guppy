@@ -6,7 +6,7 @@
 # unify-target-host = 'auto'
 # output-single-feature = true
 # dep-format-version = '3'
-# platforms = ['aarch64-nintendo-switch-freestanding', 'i686-unknown-haiku', 'x86_64-unknown-illumos']
+# platforms = ['aarch64-pc-windows-gnullvm', 'i686-unknown-freebsd', 'x86_64-unknown-hermit']
 # [[traversal-excludes.ids]]
 # name = 'cargo-compare'
 # version = '0.1.0'
@@ -141,19 +141,26 @@ unicode-xid-c65f7effa3be6d31 = { package = "unicode-xid", version = "0.1" }
 unicode-xid-6f8ce4dd05d13bba = { package = "unicode-xid", version = "0.2" }
 version_check = { version = "0.9", default-features = false }
 
-[target.aarch64-nintendo-switch-freestanding.dependencies]
+[target.aarch64-pc-windows-gnullvm.dependencies]
+encode_unicode = { version = "0.3" }
+output_vt100 = { version = "0.1", default-features = false }
 ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }
 rand_chacha = { version = "0.2", default-features = false, features = ["std"] }
+winapi = { version = "0.3", default-features = false, features = ["consoleapi", "errhandlingapi", "fileapi", "handleapi", "minwinbase", "minwindef", "ntdef", "processenv", "profileapi", "std", "sysinfoapi", "timezoneapi", "winbase", "wincon", "winerror", "winnt", "winuser"] }
+winapi-util = { version = "0.1", default-features = false }
 
-[target.i686-unknown-haiku.dependencies]
+[target.aarch64-pc-windows-gnullvm.build-dependencies]
+ctor = { version = "0.1", default-features = false }
+
+[target.i686-unknown-freebsd.dependencies]
 ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }
 rand_chacha = { version = "0.2", default-features = false, features = ["std"] }
 termios = { version = "0.3", default-features = false }
 
-[target.x86_64-unknown-illumos.dependencies]
+[target.x86_64-unknown-hermit.dependencies]
+hermit-abi = { version = "0.1" }
 ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }
 rand_chacha = { version = "0.2", default-features = false, features = ["std"] }
-termios = { version = "0.3", default-features = false }
 
 ### END HAKARI SECTION
 

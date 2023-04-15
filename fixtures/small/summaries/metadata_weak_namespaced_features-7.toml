@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'i586-unknown-linux-musl'
+triple = 'i586-unknown-linux-gnu'
 target-features = 'all'
 flags = ['abc']
 

@@ -6,7 +6,7 @@
 # unify-target-host = 'unify-if-both'
 # output-single-feature = true
 # dep-format-version = '3'
-# platforms = ['i686-pc-windows-msvc', 'armv4t-none-eabi', 'powerpc-wrs-vxworks-spe']
+# platforms = ['i686-pc-windows-gnu', 'armebv7r-none-eabihf', 'powerpc-wrs-vxworks-spe']
 # [[traversal-excludes.ids]]
 # name = 'dep-a'
 # version = '0.1.0'
@@ -25,7 +25,7 @@
 bytes = { version = "0.5", features = ["serde"] }
 serde = { version = "1" }
 
-[target.i686-pc-windows-msvc.dependencies]
+[target.i686-pc-windows-gnu.dependencies]
 lazy_static = { version = "0.1", default-features = false }
 
 ### END HAKARI SECTION

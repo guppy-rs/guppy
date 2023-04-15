@@ -10,7 +10,7 @@ initials-platform = 'host'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'x86_64-pc-solaris'
+triple = 'x86_64-pc-nto-qnx710'
 target-features = ['avx2']
 [[metadata.omitted-packages.ids]]
 name = 'namespaced-weak'

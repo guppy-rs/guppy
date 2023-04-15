@@ -10,7 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'armv7r-none-eabihf'
+triple = 'armv7r-none-eabi'
 target-features = 'all'
 [[metadata.omitted-packages.ids]]
 name = 'testcrate'

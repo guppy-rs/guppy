@@ -6,7 +6,7 @@
 # unify-target-host = 'replicate-target-on-host'
 # output-single-feature = true
 # dep-format-version = '2'
-# platforms = ['aarch64-unknown-freebsd', 'armv7-apple-ios']
+# platforms = ['aarch64-unknown-fuchsia', 'armv6k-nintendo-3ds']
 #
 # [traversal-excludes]
 # [[final-excludes.ids]]

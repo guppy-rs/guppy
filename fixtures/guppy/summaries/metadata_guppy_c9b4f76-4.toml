@@ -10,7 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'aarch64-linux-android'
+triple = 'aarch64-nintendo-switch-freestanding'
 target-features = 'unknown'
 flags = ['abc']
 [[metadata.omitted-packages.ids]]
@@ -226,13 +226,6 @@ status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'libc'
-version = '0.2.79'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
-
-[[target-package]]
 name = 'num-traits'
 version = '0.2.12'
 crates-io = true
@@ -259,7 +252,7 @@ version = '0.7.3'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'getrandom', 'getrandom_package', 'libc', 'std']
-optional-deps = ['getrandom_package', 'libc']
+optional-deps = ['getrandom_package']
 
 [[target-package]]
 name = 'rand_chacha'

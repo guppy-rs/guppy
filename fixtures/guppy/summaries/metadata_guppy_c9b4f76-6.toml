@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'i586-unknown-linux-gnu'
+triple = 'i586-pc-windows-msvc'
 target-features = 'all'
 
 [metadata.target-platform]

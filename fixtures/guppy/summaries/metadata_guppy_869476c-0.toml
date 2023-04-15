@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'x86_64-unknown-uefi'
+triple = 'x86_64-unknown-redox'
 target-features = 'all'
 flags = ['cargo_web']
 
@@ -466,7 +466,7 @@ version = '0.7.3'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'getrandom', 'getrandom_package', 'libc', 'std']
-optional-deps = ['getrandom_package']
+optional-deps = ['getrandom_package', 'libc']
 
 [[host-package]]
 name = 'rand_chacha'
@@ -486,6 +486,13 @@ optional-deps = ['getrandom']
 [[host-package]]
 name = 'rand_xorshift'
 version = '0.2.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'redox_syscall'
+version = '0.1.57'
 crates-io = true
 status = 'transitive'
 features = []
@@ -580,6 +587,13 @@ features = []
 [[host-package]]
 name = 'terminal_size'
 version = '0.1.13'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'termios'
+version = '0.3.2'
 crates-io = true
 status = 'transitive'
 features = []

@@ -7,12 +7,12 @@ include-dev = false
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'arm64_32-apple-watchos'
+triple = 'arm-unknown-linux-musleabihf'
 target-features = 'unknown'
 flags = ['bar', 'cargo_web']
 
 [metadata.target-platform]
-triple = 'nvptx64-nvidia-cuda'
+triple = 'msp430-none-elf'
 target-features = []
 flags = ['flag-test']
 

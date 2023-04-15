@@ -12,7 +12,7 @@ target-features = 'unknown'
 flags = ['flag-test']
 
 [metadata.target-platform]
-triple = 'i686-unknown-openbsd'
+triple = 'i686-unknown-netbsd'
 target-features = ['aes', 'sse3', 'ssse3', 'xsave']
 flags = ['flag-test']
 [[metadata.omitted-packages.ids]]

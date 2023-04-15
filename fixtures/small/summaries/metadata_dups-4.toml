@@ -12,7 +12,7 @@ target-features = 'unknown'
 flags = ['cargo_web']
 
 [metadata.target-platform]
-triple = 'x86_64-pc-windows-msvc'
+triple = 'x86_64-pc-windows-gnullvm'
 target-features = 'all'
 [[metadata.omitted-packages.ids]]
 name = 'lazy_static'

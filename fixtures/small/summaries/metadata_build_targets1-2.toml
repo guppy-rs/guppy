@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'riscv64gc-unknown-freebsd'
+triple = 'riscv32imc-unknown-none-elf'
 target-features = 'all'
 [[metadata.omitted-packages.ids]]
 name = 'testcrate'

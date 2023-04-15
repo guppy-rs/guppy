@@ -10,7 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'powerpc-unknown-freebsd'
+triple = 'nvptx64-nvidia-cuda'
 target-features = 'all'
 flags = ['test-flag']
 [[metadata.omitted-packages.ids]]

@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'armv7-wrs-vxworks-eabihf'
+triple = 'armv7-unknown-netbsd-eabihf'
 target-features = ['aes', 'fma', 'sha', 'sse2', 'xsavec']
 
 [metadata.target-platform]

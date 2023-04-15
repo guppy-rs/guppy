@@ -11,7 +11,7 @@ triple = 'mips64el-unknown-linux-muslabi64'
 target-features = 'unknown'
 
 [metadata.target-platform]
-triple = 'armv5te-unknown-linux-uclibceabi'
+triple = 'armv5te-unknown-linux-musleabi'
 target-features = 'unknown'
 flags = ['abc', 'bar']
 [[metadata.omitted-packages.ids]]

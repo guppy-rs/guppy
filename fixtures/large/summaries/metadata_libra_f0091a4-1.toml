@@ -7,12 +7,12 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'x86_64-unknown-l4re-uclibc'
+triple = 'x86_64-unknown-hermit'
 target-features = ['avx', 'sse3']
 flags = ['abc', 'test-flag']
 
 [metadata.target-platform]
-triple = 'riscv64gc-unknown-linux-musl'
+triple = 'riscv64gc-unknown-linux-gnu'
 target-features = 'unknown'
 flags = ['bar', 'test-flag']
 [[metadata.omitted-packages.ids]]
@@ -1094,6 +1094,13 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'hermit-abi'
+version = '0.1.6'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[host-package]]
 name = 'hex_fmt'
 version = '0.3.0'
 crates-io = true
@@ -1212,13 +1219,6 @@ version = '0.6.21'
 crates-io = true
 status = 'transitive'
 features = ['default', 'with-deprecated']
-
-[[host-package]]
-name = 'mio-uds'
-version = '0.6.7'
-crates-io = true
-status = 'transitive'
-features = []
 
 [[host-package]]
 name = 'multimap'
@@ -1648,13 +1648,6 @@ features = []
 [[host-package]]
 name = 'sha3'
 version = '0.8.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'signal-hook-registry'
-version = '1.2.0'
 crates-io = true
 status = 'transitive'
 features = []

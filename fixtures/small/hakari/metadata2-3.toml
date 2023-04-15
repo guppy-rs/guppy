@@ -6,7 +6,7 @@
 # unify-target-host = 'auto'
 # output-single-feature = true
 # dep-format-version = '3'
-# platforms = ['aarch64-uwp-windows-msvc', 'mipsel-sony-psp', 'riscv32gc-unknown-linux-gnu']
+# platforms = ['aarch64-unknown-uefi', 'mipsel-sony-psp', 'powerpc64le-unknown-linux-musl']
 # [[traversal-excludes.ids]]
 # name = 'quote'
 # version = '1.0.2'
@@ -61,10 +61,6 @@ proc-macro2 = { version = "1" }
 syn = { version = "1", features = ["fold", "full"] }
 unicode-xid = { version = "0.2" }
 version_check = { version = "0.9", default-features = false }
-
-[target.aarch64-uwp-windows-msvc.dependencies]
-winapi = { version = "0.3", default-features = false, features = ["consoleapi", "errhandlingapi", "fileapi", "minwindef", "processenv", "std", "winbase", "wincon", "winerror", "winnt"] }
-winapi-util = { version = "0.1", default-features = false }
 
 ### END HAKARI SECTION
 

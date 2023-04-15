@@ -11,7 +11,7 @@ triple = 'x86_64-uwp-windows-gnu'
 target-features = 'all'
 
 [metadata.target-platform]
-triple = 'armv5te-unknown-linux-musleabi'
+triple = 'armv5te-unknown-linux-gnueabi'
 target-features = 'all'
 
 [[target-package]]

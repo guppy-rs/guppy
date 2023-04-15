@@ -6,7 +6,7 @@
 # unify-target-host = 'auto'
 # output-single-feature = true
 # dep-format-version = '3'
-# platforms = ['powerpc-unknown-openbsd', 'mipsisa64r6el-unknown-linux-gnuabi64', 'i686-unknown-netbsd']
+# platforms = ['powerpc-unknown-netbsd', 'mipsisa64r6-unknown-linux-gnuabi64', 'i686-unknown-linux-musl']
 # [[traversal-excludes.ids]]
 # name = 'builddep'
 # version = '0.1.0'

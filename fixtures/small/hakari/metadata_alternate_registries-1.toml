@@ -6,7 +6,7 @@
 # unify-target-host = 'unify-if-both'
 # output-single-feature = true
 # dep-format-version = '2'
-# platforms = ['i686-unknown-openbsd', 'arm64_32-apple-watchos']
+# platforms = ['i686-unknown-openbsd', 'arm-unknown-linux-musleabihf']
 #
 # [traversal-excludes]
 # [[final-excludes.ids]]

@@ -6,7 +6,7 @@
 # unify-target-host = 'none'
 # output-single-feature = false
 # dep-format-version = '4'
-# platforms = ['armv7r-none-eabi', 'powerpc64le-unknown-linux-musl', 'powerpc64-unknown-linux-musl']
+# platforms = ['armv7a-none-eabihf', 'powerpc64le-unknown-linux-gnu', 'powerpc64-unknown-linux-gnu']
 #
 # [traversal-excludes]
 # [[final-excludes.ids]]
