@@ -13,7 +13,7 @@ publish = false
 clap = { version = "3.2.23", features = ["derive"] }
 color-eyre = { version = "0.6.2", default-features = false }
 guppy = { path = "../guppy" }
-proptest = { version = "1.0.0", optional = true }
+proptest = { version = "1.1.0", optional = true }
 guppy-workspace-hack = { version = "0.1", path = "../workspace-hack" }
 
 [features]
