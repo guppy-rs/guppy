@@ -33,13 +33,18 @@ toml = { version = "0.5.11", features = ["preserve_order"] }
 [build-dependencies]
 proc-macro2 = { version = "1.0.56" }
 quote = { version = "1.0.26" }
-syn = { version = "1.0.109", features = ["extra-traits", "full"] }
+syn-dff4ba8e3ae991db = { package = "syn", version = "1.0.109", features = ["extra-traits", "full"] }
+syn-f595c2ba2a3f28df = { package = "syn", version = "2.0.15", features = ["full"] }
 
 [target.x86_64-unknown-linux-gnu.dependencies]
+io-lifetimes = { version = "1.0.10" }
 libc = { version = "0.2.141", default-features = false, features = ["extra_traits"] }
+rustix = { version = "0.37.11", features = ["fs", "termios"] }
 
 [target.x86_64-apple-darwin.dependencies]
+io-lifetimes = { version = "1.0.10" }
 libc = { version = "0.2.141", default-features = false, features = ["extra_traits"] }
+rustix = { version = "0.37.11", features = ["fs", "termios"] }
 
 [target.x86_64-pc-windows-msvc.dependencies]
 winapi = { version = "0.3.9", default-features = false, features = ["consoleapi", "errhandlingapi", "fileapi", "handleapi", "minwinbase", "minwindef", "processenv", "std", "synchapi", "winbase", "wincon", "winerror", "winnt", "winuser"] }

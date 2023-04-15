@@ -254,7 +254,7 @@ enum CommandWithBuilder {
         package: String,
 
         /// Arguments to pass through to `cargo publish`.
-        #[clap(multiple_values = true)]
+        #[clap(num_args = 0..)]
         pass_through: Vec<String>,
     },
 

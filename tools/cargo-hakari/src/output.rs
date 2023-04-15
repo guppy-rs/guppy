@@ -1,7 +1,7 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-use clap::Parser;
+use clap::{Parser, ValueEnum};
 use env_logger::fmt::Formatter;
 use log::{Level, LevelFilter, Record};
 use owo_colors::{OwoColorize, Stream, Style};
@@ -32,9 +32,9 @@ pub(crate) struct OutputOpts {
     /// Produce color output
     #[clap(
         long,
+        value_enum,
         global = true,
-        default_value = "auto",
-        possible_values = &["auto", "always", "never"],
+        default_value_t = Color::Auto,
     )]
     pub(crate) color: Color,
 }
@@ -121,7 +121,7 @@ fn stderr_supports_color() -> bool {
     }
 }
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, ValueEnum)]
 #[must_use]
 pub enum Color {
     Auto,

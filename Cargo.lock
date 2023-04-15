@@ -341,7 +341,7 @@ version = "0.9.23"
 dependencies = [
  "camino",
  "cfg-if",
- "clap 3.2.23",
+ "clap 4.2.2",
  "color-eyre",
  "dialoguer",
  "duct",
@@ -455,7 +455,7 @@ checksum = "71655c45cb9845d3270c9d6df84ebe72b4dad3c2ba3f7023ad47c144e4e473a5"
 dependencies = [
  "atty",
  "bitflags",
- "clap_derive",
+ "clap_derive 3.2.18",
  "clap_lex 0.2.4",
  "indexmap",
  "once_cell",
@@ -471,6 +471,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9b802d85aaf3a1cdb02b224ba472ebdea62014fccfcb269b95a4d76443b5ee5a"
 dependencies = [
  "clap_builder",
+ "clap_derive 4.2.0",
+ "once_cell",
 ]
 
 [[package]]
@@ -497,6 +499,18 @@ dependencies = [
  "proc-macro2 1.0.56",
  "quote 1.0.26",
  "syn 1.0.109",
+]
+
+[[package]]
+name = "clap_derive"
+version = "4.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3f9644cd56d6b87dbe899ef8b053e331c0637664e9e21a33dfcdc36093f5c5c4"
+dependencies = [
+ "heck 0.4.1",
+ "proc-macro2 1.0.56",
+ "quote 1.0.26",
+ "syn 2.0.15",
 ]
 
 [[package]]
@@ -1194,6 +1208,7 @@ version = "0.1.0"
 dependencies = [
  "clap 2.34.0",
  "indexmap",
+ "io-lifetimes",
  "libc",
  "log",
  "memchr",
@@ -1204,9 +1219,11 @@ dependencies = [
  "quote 1.0.26",
  "regex",
  "regex-syntax",
+ "rustix",
  "serde",
  "serde_json",
  "syn 1.0.109",
+ "syn 2.0.15",
  "toml",
  "winapi",
  "windows-sys 0.42.0",
