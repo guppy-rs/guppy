@@ -134,7 +134,7 @@ jobs:
         run: cargo test --package cargo-compare --release
 
   aarch64-build:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     name: Cross-compile to aarch64
     env:
       RUSTFLAGS: -D warnings

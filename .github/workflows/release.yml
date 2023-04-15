@@ -10,7 +10,7 @@ jobs:
   target-spec-release:
     # There's no regex filtering in if conditionals, so we need to use the first component of the version number.
     if: github.repository_owner == 'guppy-rs' && startsWith(github.ref_name, 'target-spec-1')
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
@@ -39,7 +39,7 @@ jobs:
 
   target-spec-miette-release:
     if: github.repository_owner == 'guppy-rs' && startsWith(github.ref_name, 'target-spec-miette-')
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
@@ -68,7 +68,7 @@ jobs:
 
   guppy-summaries-release:
     if: github.repository_owner == 'guppy-rs' && startsWith(github.ref_name, 'guppy-summaries-')
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
@@ -98,7 +98,7 @@ jobs:
   guppy-release:
     # There's no regex filtering in if conditionals, so we need to use the first component of the version number.
     if: github.repository_owner == 'guppy-rs' && startsWith(github.ref_name, 'guppy-0')
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
@@ -127,7 +127,7 @@ jobs:
 
   determinator-release:
     if: github.repository_owner == 'guppy-rs' && startsWith(github.ref_name, 'determinator-')
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
@@ -156,7 +156,7 @@ jobs:
 
   hakari-release:
     if: github.repository_owner == 'guppy-rs' && startsWith(github.ref_name, 'hakari-')
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
@@ -185,7 +185,7 @@ jobs:
 
   cargo-hakari-release:
     if: github.repository_owner == 'guppy-rs' && startsWith(github.ref_name, 'cargo-hakari-')
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
