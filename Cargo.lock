@@ -318,7 +318,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "cargo",
- "clap 3.2.23",
+ "clap 4.2.2",
  "color-eyre",
  "diffus",
  "either",
@@ -337,7 +337,7 @@ name = "cargo-guppy"
 version = "0.1.0"
 dependencies = [
  "camino",
- "clap 3.2.23",
+ "clap 4.2.2",
  "color-eyre",
  "dialoguer",
  "guppy",
@@ -457,26 +457,9 @@ dependencies = [
  "atty",
  "bitflags",
  "strsim 0.8.0",
- "textwrap 0.11.0",
+ "textwrap",
  "unicode-width",
  "vec_map",
-]
-
-[[package]]
-name = "clap"
-version = "3.2.23"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "71655c45cb9845d3270c9d6df84ebe72b4dad3c2ba3f7023ad47c144e4e473a5"
-dependencies = [
- "atty",
- "bitflags",
- "clap_derive 3.2.18",
- "clap_lex 0.2.4",
- "indexmap",
- "once_cell",
- "strsim 0.10.0",
- "termcolor",
- "textwrap 0.16.0",
 ]
 
 [[package]]
@@ -486,7 +469,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9b802d85aaf3a1cdb02b224ba472ebdea62014fccfcb269b95a4d76443b5ee5a"
 dependencies = [
  "clap_builder",
- "clap_derive 4.2.0",
+ "clap_derive",
  "once_cell",
 ]
 
@@ -499,21 +482,8 @@ dependencies = [
  "anstream",
  "anstyle",
  "bitflags",
- "clap_lex 0.4.1",
+ "clap_lex",
  "strsim 0.10.0",
-]
-
-[[package]]
-name = "clap_derive"
-version = "3.2.18"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ea0c8bce528c4be4da13ea6fead8965e95b6073585a2f05204bd8f4119f82a65"
-dependencies = [
- "heck 0.4.1",
- "proc-macro-error",
- "proc-macro2 1.0.56",
- "quote 1.0.26",
- "syn 1.0.109",
 ]
 
 [[package]]
@@ -526,15 +496,6 @@ dependencies = [
  "proc-macro2 1.0.56",
  "quote 1.0.26",
  "syn 2.0.15",
-]
-
-[[package]]
-name = "clap_lex"
-version = "0.2.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2850f2f5a82cbf437dd5af4d49848fbdfc27c157c3d010345776f952765261c5"
-dependencies = [
- "os_str_bytes",
 ]
 
 [[package]]
@@ -1102,7 +1063,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "camino",
- "clap 2.34.0",
+ "clap 4.2.2",
  "fixtures",
  "guppy",
  "guppy-cmdlib",
@@ -1316,7 +1277,7 @@ dependencies = [
 name = "guppy-cmdlib"
 version = "0.1.0"
 dependencies = [
- "clap 3.2.23",
+ "clap 4.2.2",
  "color-eyre",
  "guppy",
  "guppy-workspace-hack",
@@ -1343,7 +1304,7 @@ dependencies = [
 name = "guppy-workspace-hack"
 version = "0.1.0"
 dependencies = [
- "clap 2.34.0",
+ "clap 4.2.2",
  "indexmap",
  "io-lifetimes",
  "libc",
@@ -1969,12 +1930,6 @@ dependencies = [
  "libc",
  "windows-sys 0.45.0",
 ]
-
-[[package]]
-name = "os_str_bytes"
-version = "6.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ceedf44fb00f2d1984b0bc98102627ce622e083e49a5bacdb3e514fa4238e267"
 
 [[package]]
 name = "output_vt100"
@@ -2825,12 +2780,6 @@ checksum = "d326610f408c7a4eb6f51c37c330e496b08506c9457c9d34287ecc38809fb060"
 dependencies = [
  "unicode-width",
 ]
-
-[[package]]
-name = "textwrap"
-version = "0.16.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "222a222a5bfe1bba4a77b45ec488a741b3cb8872e5e499451fd7d0129c9c7c3d"
 
 [[package]]
 name = "thiserror"
