@@ -93,7 +93,7 @@ jobs:
       - name: Install latest nextest release
         uses: taiki-e/install-action@nextest
       - name: Run all other tests
-        run: cargo nextest run --all-features --workspace --exclude cargo-compare
+        run: cargo nextest run --all-targets --all-features --workspace --exclude cargo-compare
 
   build-rustdoc:
     name: Build documentation
