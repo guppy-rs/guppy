@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'i686-uwp-windows-msvc'
+triple = 'i686-uwp-windows-gnu'
 target-features = 'unknown'
 flags = ['cargo_web']
 

@@ -6,7 +6,7 @@
 # unify-target-host = 'auto'
 # output-single-feature = true
 # dep-format-version = '3'
-# platforms = ['aarch64-pc-windows-gnullvm', 'i686-unknown-freebsd', 'x86_64-unknown-hermit']
+# platforms = ['aarch64-pc-windows-gnullvm', 'i686-pc-windows-msvc', 'x86_64-unknown-haiku']
 # [[traversal-excludes.ids]]
 # name = 'cargo-compare'
 # version = '0.1.0'
@@ -152,15 +152,21 @@ winapi-util = { version = "0.1", default-features = false }
 [target.aarch64-pc-windows-gnullvm.build-dependencies]
 ctor = { version = "0.1", default-features = false }
 
-[target.i686-unknown-freebsd.dependencies]
+[target.i686-pc-windows-msvc.dependencies]
+encode_unicode = { version = "0.3" }
+output_vt100 = { version = "0.1", default-features = false }
+ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }
+rand_chacha = { version = "0.2", default-features = false, features = ["std"] }
+winapi = { version = "0.3", default-features = false, features = ["consoleapi", "errhandlingapi", "fileapi", "handleapi", "minwinbase", "minwindef", "ntdef", "processenv", "profileapi", "std", "sysinfoapi", "timezoneapi", "winbase", "wincon", "winerror", "winnt", "winuser"] }
+winapi-util = { version = "0.1", default-features = false }
+
+[target.i686-pc-windows-msvc.build-dependencies]
+ctor = { version = "0.1", default-features = false }
+
+[target.x86_64-unknown-haiku.dependencies]
 ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }
 rand_chacha = { version = "0.2", default-features = false, features = ["std"] }
 termios = { version = "0.3", default-features = false }
-
-[target.x86_64-unknown-hermit.dependencies]
-hermit-abi = { version = "0.1" }
-ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }
-rand_chacha = { version = "0.2", default-features = false, features = ["std"] }
 
 ### END HAKARI SECTION
 

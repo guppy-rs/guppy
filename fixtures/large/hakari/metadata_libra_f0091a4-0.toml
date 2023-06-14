@@ -6,7 +6,7 @@
 # unify-target-host = 'none'
 # output-single-feature = false
 # dep-format-version = '3'
-# platforms = ['powerpc-unknown-linux-musl', 'sparcv9-sun-solaris']
+# platforms = ['powerpc-unknown-linux-gnuspe', 'sparc64-unknown-openbsd']
 # [[traversal-excludes.ids]]
 # name = 'arrayref'
 # version = '0.3.6'
@@ -130,10 +130,10 @@ syn-3575ec1268b04181 = { package = "syn", version = "0.15", features = ["extra-t
 syn-dff4ba8e3ae991db = { package = "syn", version = "1", features = ["extra-traits", "fold", "full", "visit", "visit-mut"] }
 toml = { version = "0.5" }
 
-[target.powerpc-unknown-linux-musl.dependencies]
+[target.powerpc-unknown-linux-gnuspe.dependencies]
 hyper = { version = "0.13" }
 
-[target.sparcv9-sun-solaris.dependencies]
+[target.sparc64-unknown-openbsd.dependencies]
 hyper = { version = "0.13" }
 
 ### END HAKARI SECTION

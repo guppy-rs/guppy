@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'mips64el-unknown-linux-muslabi64'
+triple = 'mips64el-unknown-linux-gnuabi64'
 target-features = 'unknown'
 
 [metadata.target-platform]

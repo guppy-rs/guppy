@@ -6,7 +6,7 @@
 # unify-target-host = 'replicate-target-on-host'
 # output-single-feature = false
 # dep-format-version = '2'
-# platforms = ['mipsisa64r6-unknown-linux-gnuabi64', 'aarch64-apple-tvos', 'thumbv8m.main-none-eabihf']
+# platforms = ['mipsisa32r6-unknown-linux-gnu', 'aarch64-apple-watchos-sim', 'thumbv8m.main-none-eabi']
 # [[traversal-excludes.ids]]
 # name = 'lower-b'
 # version = '0.1.0'

@@ -7,12 +7,12 @@ include-dev = false
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'wasm64-unknown-unknown'
+triple = 'wasm32-wasi'
 target-features = 'unknown'
 flags = ['cargo_web']
 
 [metadata.target-platform]
-triple = 'riscv32gc-unknown-linux-musl'
+triple = 'riscv32gc-unknown-linux-gnu'
 target-features = []
 flags = ['foo']
 [[metadata.omitted-packages.ids]]

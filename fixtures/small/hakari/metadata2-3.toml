@@ -6,7 +6,7 @@
 # unify-target-host = 'auto'
 # output-single-feature = true
 # dep-format-version = '3'
-# platforms = ['aarch64-unknown-uefi', 'mipsel-sony-psp', 'powerpc64le-unknown-linux-musl']
+# platforms = ['aarch64-unknown-uefi', 'mips64el-unknown-linux-muslabi64', 'powerpc64le-unknown-linux-gnu']
 # [[traversal-excludes.ids]]
 # name = 'quote'
 # version = '1.0.2'

@@ -7,11 +7,11 @@ include-dev = true
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'i686-unknown-haiku'
+triple = 'i686-unknown-freebsd'
 target-features = 'unknown'
 
 [metadata.target-platform]
-triple = 'aarch64-pc-windows-gnullvm'
+triple = 'aarch64-pc-windows-msvc'
 target-features = ['sha', 'ssse3', 'xsaves']
 flags = ['abc', 'bar']
 [[metadata.omitted-packages.ids]]

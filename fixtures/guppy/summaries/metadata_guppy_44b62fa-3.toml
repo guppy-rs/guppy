@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'mipsel-unknown-none'
+triple = 'mipsel-unknown-linux-uclibc'
 target-features = ['sse2', 'sse3']
 flags = ['abc', 'cargo_web']
 

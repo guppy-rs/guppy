@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'riscv64gc-unknown-linux-musl'
+triple = 'riscv64gc-unknown-linux-gnu'
 target-features = 'all'
 flags = ['foo']
 

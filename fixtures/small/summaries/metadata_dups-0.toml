@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'x86_64-apple-ios-macabi'
+triple = 'x86_64-apple-ios'
 target-features = 'all'
 flags = ['bar']
 
