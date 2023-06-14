@@ -16,35 +16,35 @@ repository = "https://github.com/guppy-rs/guppy"
 
 ### BEGIN HAKARI SECTION
 [dependencies]
-clap = { version = "4.3.0", features = ["derive"] }
-clap_builder = { version = "4.3.0", default-features = false, features = ["color", "help", "std", "suggestions", "usage"] }
+clap = { version = "4.3.3", features = ["derive"] }
+clap_builder = { version = "4.3.3", default-features = false, features = ["color", "help", "std", "suggestions", "usage"] }
 indexmap = { version = "1.9.3", default-features = false, features = ["std"] }
-libc = { version = "0.2.144" }
-log = { version = "0.4.18", default-features = false, features = ["std"] }
+libc = { version = "0.2.146" }
+log = { version = "0.4.19", default-features = false, features = ["std"] }
 memchr = { version = "2.5.0" }
 num-traits = { version = "0.2.15", features = ["libm"] }
 owo-colors = { version = "3.5.0", default-features = false, features = ["supports-colors"] }
 petgraph = { version = "0.6.3", default-features = false, features = ["graphmap"] }
-regex = { version = "1.8.3", default-features = false, features = ["perf", "std"] }
-serde = { version = "1.0.163", features = ["alloc", "derive"] }
+regex = { version = "1.8.4", default-features = false, features = ["perf", "std"] }
+serde = { version = "1.0.164", features = ["alloc", "derive"] }
 serde_json = { version = "1.0.96", features = ["unbounded_depth"] }
 toml = { version = "0.5.11", features = ["preserve_order"] }
 
 [build-dependencies]
-proc-macro2 = { version = "1.0.59" }
+proc-macro2 = { version = "1.0.60" }
 quote = { version = "1.0.28" }
 syn-dff4ba8e3ae991db = { package = "syn", version = "1.0.109", features = ["extra-traits", "full"] }
 syn-f595c2ba2a3f28df = { package = "syn", version = "2.0.18", features = ["full"] }
 
 [target.x86_64-unknown-linux-gnu.dependencies]
 io-lifetimes = { version = "1.0.11" }
-libc = { version = "0.2.144", default-features = false, features = ["extra_traits"] }
-rustix = { version = "0.37.19", features = ["fs", "termios"] }
+libc = { version = "0.2.146", default-features = false, features = ["extra_traits"] }
+rustix = { version = "0.37.20", features = ["fs", "termios"] }
 
 [target.x86_64-apple-darwin.dependencies]
 io-lifetimes = { version = "1.0.11" }
-libc = { version = "0.2.144", default-features = false, features = ["extra_traits"] }
-rustix = { version = "0.37.19", features = ["fs", "termios"] }
+libc = { version = "0.2.146", default-features = false, features = ["extra_traits"] }
+rustix = { version = "0.37.20", features = ["fs", "termios"] }
 
 [target.x86_64-pc-windows-msvc.dependencies]
 winapi = { version = "0.3.9", default-features = false, features = ["consoleapi", "errhandlingapi", "fileapi", "handleapi", "minwinbase", "minwindef", "processenv", "std", "synchapi", "winbase", "wincon", "winerror", "winnt", "winuser"] }
