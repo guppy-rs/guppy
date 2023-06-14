@@ -1385,7 +1385,7 @@ dependencies = [
  "toml",
  "winapi",
  "windows-sys 0.42.0",
- "windows-sys 0.45.0",
+ "windows-sys 0.48.0",
 ]
 
 [[package]]
