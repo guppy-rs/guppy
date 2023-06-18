@@ -39,10 +39,6 @@ impl IntoMietteDiagnostic for TargetSpecError {
             Self::UnknownTargetTriple(error) | Self::UnknownPlatformTriple(error) => {
                 Box::new(error.into_diagnostic())
             }
-            #[allow(deprecated)]
-            Self::UnknownPredicate(error) => Box::<dyn Diagnostic + Send + Sync + 'static>::from(
-                format!("unknown predicate: {error}"),
-            ),
             other => Box::<dyn Diagnostic + Send + Sync + 'static>::from(other.to_string()),
         }
     }

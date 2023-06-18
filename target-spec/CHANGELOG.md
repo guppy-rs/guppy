@@ -8,6 +8,10 @@
 
 ### Changed
 
+### Removed
+
+- Removed deprecated `Error::UnknownPredicate` variant.
+
 ## [1.4.0] - 2023-04-15
 
 ### Changed
