@@ -173,11 +173,14 @@ impl fmt::Display for ExpressionParseErrorKind {
 
 /// An error returned while parsing a single target.
 ///
-/// This is caused by a triple not being understood by either `cfg-expr` or `target-lexicon`.
+/// This is produced when both of the following are true:
+///
+/// 1. The triple is not in the builtin set.
+/// 2. If heuristic parsing is enabled, it failed.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct TripleParseError {
     triple_str: Cow<'static, str>,
-    lexicon_err: cfg_expr::target_lexicon::ParseError,
+    kind: TripleParseErrorKind,
 }
 
 impl TripleParseError {
@@ -187,7 +190,14 @@ impl TripleParseError {
     ) -> Self {
         Self {
             triple_str,
-            lexicon_err,
+            kind: TripleParseErrorKind::Lexicon(lexicon_err),
+        }
+    }
+
+    pub(crate) fn new_strict(triple_str: Cow<'static, str>) -> Self {
+        Self {
+            triple_str,
+            kind: TripleParseErrorKind::LexiconDisabled,
         }
     }
 
@@ -205,7 +215,37 @@ impl fmt::Display for TripleParseError {
 
 impl error::Error for TripleParseError {
     fn source(&self) -> Option<&(dyn error::Error + 'static)> {
-        Some(&self.lexicon_err)
+        Some(&self.kind)
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+enum TripleParseErrorKind {
+    Lexicon(cfg_expr::target_lexicon::ParseError),
+    LexiconDisabled,
+}
+
+impl fmt::Display for TripleParseErrorKind {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Lexicon(_) => write!(
+                f,
+                "triple not in builtin platforms and heuristic parsing failed"
+            ),
+            Self::LexiconDisabled => write!(
+                f,
+                "triple not in builtin platforms and heuristic parsing disabled"
+            ),
+        }
+    }
+}
+
+impl error::Error for TripleParseErrorKind {
+    fn source(&self) -> Option<&(dyn error::Error + 'static)> {
+        match self {
+            Self::Lexicon(error) => Some(error),
+            Self::LexiconDisabled => None,
+        }
     }
 }
 

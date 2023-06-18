@@ -4,6 +4,7 @@
 
 ### Added
 
+- Added `new_strict` methods to `Platform` and `Triple`, to disable heuristic target parsing.
 - Added support for custom platforms, under the optional `custom` feature.
 
 ### Changed

@@ -14,8 +14,11 @@ use std::{borrow::Cow, cmp::Ordering, hash, str::FromStr};
 ///
 /// A `Triple` may be constructed through `new` or the `FromStr` implementation.
 ///
-/// Every [`Platform`](crate::Platform) has one of these, and an evaluation
+/// Every standard [`Platform`](crate::Platform) has one of these, and an evaluation
 /// [`TargetSpec`](crate::TargetSpec) may be backed by one of these as well.
+///
+/// If a triple isn't found in the builtin list, [`Triple::new`] attempts to heuristically determine
+/// its behavior based on the string. To disable these heuristics, use [`Triple::new_strict`].
 ///
 /// # Examples
 ///
@@ -36,6 +39,15 @@ impl Triple {
     /// Creates a new `Triple` from a triple string.
     pub fn new(triple_str: impl Into<Cow<'static, str>>) -> Result<Self, TripleParseError> {
         let inner = TripleInner::new(triple_str.into())?;
+        Ok(Self { inner })
+    }
+
+    /// Creates a new `Triple` from a triple string.
+    ///
+    /// This constructor only consults the builtin platform table, and does not attempt to
+    /// heuristically determine the platform's characteristics based on the triple string.
+    pub fn new_strict(triple_str: impl Into<Cow<'static, str>>) -> Result<Self, TripleParseError> {
+        let inner = TripleInner::new_strict(triple_str.into())?;
         Ok(Self { inner })
     }
 
@@ -97,6 +109,13 @@ impl TripleInner {
             }),
             Err(lexicon_err) => Err(TripleParseError::new(triple_str, lexicon_err)),
         }
+    }
+
+    fn new_strict(triple_str: Cow<'static, str>) -> Result<Self, TripleParseError> {
+        if let Some(target_info) = get_builtin_target_by_triple(&triple_str) {
+            return Ok(TripleInner::Builtin(target_info));
+        }
+        Err(TripleParseError::new_strict(triple_str))
     }
 
     fn from_borrowed_str(triple_str: &str) -> Result<Self, TripleParseError> {
