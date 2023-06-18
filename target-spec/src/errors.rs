@@ -15,8 +15,7 @@ pub enum Error {
     UnknownTargetTriple(TripleParseError),
     /// The provided platform triple was unknown.
     UnknownPlatformTriple(TripleParseError),
-    /// An error occurred while parsing a custom platform specification.
-    #[cfg(feature = "custom")]
+    /// An error occurred while creating a custom platform.
     CustomPlatformCreate(CustomPlatformCreateError),
 }
 
@@ -28,7 +27,6 @@ impl fmt::Display for Error {
             Error::UnknownPlatformTriple(_) => {
                 write!(f, "unknown platform triple")
             }
-            #[cfg(feature = "custom")]
             Error::CustomPlatformCreate(_) => {
                 write!(f, "error creating custom platform")
             }
@@ -42,7 +40,6 @@ impl error::Error for Error {
             Error::InvalidExpression(err) => Some(err),
             Error::UnknownTargetTriple(err) => Some(err),
             Error::UnknownPlatformTriple(err) => Some(err),
-            #[cfg(feature = "custom")]
             Error::CustomPlatformCreate(err) => Some(err),
         }
     }
@@ -258,45 +255,50 @@ impl error::Error for TripleParseErrorKind {
     }
 }
 
-#[cfg(feature = "custom")]
-mod custom_errors {
-    use std::{error, fmt};
+/// An error returned while creating a custom platform.
+#[derive(Debug)]
+#[non_exhaustive]
+pub enum CustomPlatformCreateError {
+    #[cfg(feature = "custom")]
+    /// An error occurred while deserializing serde data.
+    Deserialize {
+        /// The specified triple.
+        triple: String,
 
-    /// An error returned while creating a custom platform.
-    #[derive(Debug)]
-    #[non_exhaustive]
-    pub enum CustomPlatformCreateError {
-        /// An error occurred while deserializing serde data.
-        Deserialize {
-            /// The specified triple.
-            triple: String,
+        /// The deserialization error that occurred.
+        error: serde_json::Error,
+    },
 
-            /// The deserialization error that occurred.
-            error: serde_json::Error,
-        },
-    }
+    /// A custom platform was asked to be created, but the `custom` feature is currently disabled.
+    ///
+    /// Currently, this can only happen if a custom platform is deserialized from a
+    /// [`PlatformSummary`](crate::summaries::PlatformSummary),
+    Unavailable,
+}
 
-    impl fmt::Display for CustomPlatformCreateError {
-        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-            match self {
-                Self::Deserialize { triple, .. } => {
-                    write!(f, "error deserializing custom target JSON for `{triple}`")
-                }
+impl fmt::Display for CustomPlatformCreateError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            #[cfg(feature = "custom")]
+            Self::Deserialize { triple, .. } => {
+                write!(f, "error deserializing custom target JSON for `{triple}`")
             }
-        }
-    }
-
-    impl error::Error for CustomPlatformCreateError {
-        fn source(&self) -> Option<&(dyn error::Error + 'static)> {
-            match self {
-                Self::Deserialize { error, .. } => Some(error),
+            Self::Unavailable => {
+                write!(f, "custom platform currently unavailable")
             }
         }
     }
 }
 
-#[cfg(feature = "custom")]
-pub use custom_errors::*;
+impl error::Error for CustomPlatformCreateError {
+    fn source(&self) -> Option<&(dyn error::Error + 'static)> {
+        match self {
+            #[cfg(feature = "custom")]
+            Self::Deserialize { error, .. } => Some(error),
+            Self::Unavailable => None,
+        }
+    }
+}
 
 #[cfg(test)]
 mod tests {

@@ -8,16 +8,13 @@ use std::borrow::Cow;
 use cfg_expr::targets::{
     Abi, Arch, Env, Families, Family, HasAtomic, HasAtomics, Os, TargetInfo, Triple, Vendor,
 };
-use serde::{de::Error, Deserialize, Deserializer};
+use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize, Serialize, Eq, Hash, Ord, PartialEq, PartialOrd)]
 #[serde(rename_all = "kebab-case")]
 pub(crate) struct TargetDefinition {
     arch: String,
-    #[serde(
-        rename = "target-pointer-width",
-        deserialize_with = "deserialize_pointer_width"
-    )]
+    #[serde(rename = "target-pointer-width", with = "target_pointer_width")]
     pointer_width: u8,
 
     // These parameters are not used by target-spec but are mandatory in Target, so we require them
@@ -88,18 +85,31 @@ impl TargetDefinition {
     }
 }
 
-fn deserialize_pointer_width<'de, D>(deserializer: D) -> Result<u8, D::Error>
-where
-    D: Deserializer<'de>,
-{
-    // Pointer width is specified as a string.
-    let string = String::deserialize(deserializer)?;
-    string
-        .parse::<u8>()
-        .map_err(|error| D::Error::custom(format!("error parsing as integer: {error}")))
+mod target_pointer_width {
+    use serde::{de::Error, Deserialize, Deserializer, Serializer};
+
+    pub(super) fn deserialize<'de, D>(deserializer: D) -> Result<u8, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        // Pointer width is specified as a string.
+        let string = String::deserialize(deserializer)?;
+        string
+            .parse::<u8>()
+            .map_err(|error| D::Error::custom(format!("error parsing as integer: {error}")))
+    }
+
+    pub(super) fn serialize<S>(value: &u8, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_str(&value.to_string())
+    }
 }
 
-#[derive(Copy, Clone, Debug, Deserialize, Default)]
+#[derive(
+    Copy, Clone, Debug, Deserialize, Serialize, Default, Eq, Hash, Ord, PartialEq, PartialOrd,
+)]
 #[serde(rename_all = "kebab-case")]
 enum Endian {
     #[default]
@@ -116,7 +126,9 @@ impl Endian {
     }
 }
 
-#[derive(Copy, Clone, Debug, Deserialize, Default)]
+#[derive(
+    Copy, Clone, Debug, Deserialize, Serialize, Default, Eq, Hash, Ord, PartialEq, PartialOrd,
+)]
 #[serde(rename_all = "kebab-case")]
 enum PanicStrategy {
     #[default]
@@ -163,9 +175,15 @@ mod tests {
         let all_targets: AllTargets = serde_json::from_slice(&output.stdout)
             .expect("deserializing all-target-specs-json succeeded");
         for (triple, target_def) in all_targets.0 {
+            eprintln!("*** testing {triple}");
             // Just make sure this doesn't panic. (If this becomes fallible in the future, then this
             // shouldn't return an error either.)
-            target_def.into_target_info(triple.into());
+            target_def.clone().into_target_info(triple.into());
+            let json =
+                serde_json::to_string(&target_def).expect("target def serialized successfully");
+            eprintln!("* minified json: {json}");
+            let target_def_2 = serde_json::from_str(&json).expect("target def 2 deserialized");
+            assert_eq!(target_def, target_def_2, "matches");
         }
     }
 }
