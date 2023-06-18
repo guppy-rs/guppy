@@ -51,6 +51,7 @@ pub enum PlatformSpecSummary {
     /// let spec: PlatformSpecSummary = serde_json::from_str(r#""x86_64-unknown-linux-gnu""#).unwrap();
     /// assert_eq!(spec, PlatformSpecSummary::Platform(PlatformSummary {
     ///     triple: "x86_64-unknown-linux-gnu".to_owned(),
+    ///     custom_json: None,
     ///     target_features: TargetFeaturesSummary::Unknown,
     ///     flags: BTreeSet::new(),
     /// }));
@@ -69,6 +70,7 @@ pub enum PlatformSpecSummary {
     /// "#).unwrap();
     /// assert_eq!(spec, PlatformSpecSummary::Platform(PlatformSummary {
     ///     triple: "x86_64-unknown-linux-gnu".to_owned(),
+    ///     custom_json: None,
     ///     target_features: TargetFeaturesSummary::Features(BTreeSet::new()),
     ///     flags: BTreeSet::new(),
     /// }));
@@ -167,15 +169,16 @@ mod serde_impl {
             D: Deserializer<'de>,
         {
             match PlatformSpecSummaryDeserialize::deserialize(deserializer)? {
-                PlatformSpecSummaryDeserialize::String(s)
-                | PlatformSpecSummaryDeserialize::Spec { spec: s } => {
-                    match s.as_str() {
+                PlatformSpecSummaryDeserialize::String(spec)
+                | PlatformSpecSummaryDeserialize::Spec { spec } => {
+                    match spec.as_str() {
                         "always" => Ok(PlatformSpecSummary::Always),
                         "any" => Ok(PlatformSpecSummary::Any),
                         _ => {
                             // TODO: expression parsing would go here
                             Ok(PlatformSpecSummary::Platform(PlatformSummary {
-                                triple: s,
+                                triple: spec,
+                                custom_json: None,
                                 target_features: TargetFeaturesSummary::default(),
                                 flags: BTreeSet::default(),
                             }))
@@ -184,10 +187,12 @@ mod serde_impl {
                 }
                 PlatformSpecSummaryDeserialize::PlatformFull {
                     triple,
+                    custom_json,
                     target_features,
                     flags,
                 } => Ok(PlatformSpecSummary::Platform(PlatformSummary {
                     triple,
+                    custom_json,
                     target_features,
                     flags,
                 })),
@@ -207,6 +212,8 @@ mod serde_impl {
             // TODO: there doesn't appear to be any way to defer to the PlatformSummary
             // deserializer, so copy-paste its logic here. Find a better way?
             triple: String,
+            #[serde(default)]
+            custom_json: Option<String>,
             #[serde(default)]
             target_features: TargetFeaturesSummary,
             #[serde(skip_serializing_if = "BTreeSet::is_empty", default)]

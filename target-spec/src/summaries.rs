@@ -33,6 +33,9 @@ pub struct PlatformSummary {
     /// The platform triple.
     pub triple: String,
 
+    /// JSON for custom platforms.
+    pub custom_json: Option<String>,
+
     /// The target features used.
     pub target_features: TargetFeaturesSummary,
 
@@ -46,6 +49,7 @@ impl PlatformSummary {
     pub fn new(platform: &Platform) -> Self {
         Self {
             triple: platform.triple_str().to_string(),
+            custom_json: platform.custom_json().map(|s| s.to_owned()),
             target_features: TargetFeaturesSummary::new(platform.target_features()),
             flags: platform.flags().map(|flag| flag.to_string()).collect(),
         }
@@ -55,10 +59,27 @@ impl PlatformSummary {
     ///
     /// Returns an `Error` if the platform was unknown.
     pub fn to_platform(&self) -> Result<Platform, Error> {
-        let mut platform = Platform::new(
-            self.triple.to_owned(),
-            self.target_features.to_target_features(),
-        )?;
+        #[allow(unused_variables)] // in some feature branches, json isn't used
+        let mut platform = if let Some(json) = &self.custom_json {
+            #[cfg(not(feature = "custom"))]
+            return Err(Error::CustomPlatformCreate(
+                crate::errors::CustomPlatformCreateError::Unavailable,
+            ));
+
+            #[cfg(feature = "custom")]
+            Platform::new_custom(
+                self.triple.to_owned(),
+                json,
+                self.target_features.to_target_features(),
+            )
+            .map_err(Error::CustomPlatformCreate)?
+        } else {
+            Platform::new(
+                self.triple.to_owned(),
+                self.target_features.to_target_features(),
+            )?
+        };
+
         platform.add_flags(self.flags.iter().cloned());
         Ok(platform)
     }
@@ -125,15 +146,18 @@ mod platform_impl {
             match d {
                 PlatformSummaryDeserialize::String(triple) => Ok(PlatformSummary {
                     triple,
+                    custom_json: None,
                     target_features: TargetFeaturesSummary::default(),
                     flags: BTreeSet::default(),
                 }),
                 PlatformSummaryDeserialize::Full {
                     triple,
+                    custom_json,
                     target_features,
                     flags,
                 } => Ok(PlatformSummary {
                     triple,
+                    custom_json,
                     target_features,
                     flags,
                 }),
@@ -148,6 +172,8 @@ mod platform_impl {
         #[serde(rename_all = "kebab-case")]
         Full {
             triple: String,
+            #[serde(default)]
+            custom_json: Option<String>,
             /// The target features used.
             #[serde(default)]
             target_features: TargetFeaturesSummary,
@@ -226,6 +252,7 @@ mod tests {
             r#"platform = "x86_64-unknown-linux-gnu""#,
             PlatformSummary {
                 triple: "x86_64-unknown-linux-gnu".into(),
+                custom_json: None,
                 target_features: TargetFeaturesSummary::Unknown,
                 flags: BTreeSet::new(),
             },
@@ -234,6 +261,7 @@ mod tests {
             r#"platform = { triple = "x86_64-unknown-linux-gnu" }"#,
             PlatformSummary {
                 triple: "x86_64-unknown-linux-gnu".into(),
+                custom_json: None,
                 target_features: TargetFeaturesSummary::Unknown,
                 flags: BTreeSet::new(),
             },
@@ -242,6 +270,7 @@ mod tests {
             r#"platform = { triple = "x86_64-unknown-linux-gnu", target-features = "unknown" }"#,
             PlatformSummary {
                 triple: "x86_64-unknown-linux-gnu".into(),
+                custom_json: None,
                 target_features: TargetFeaturesSummary::Unknown,
                 flags: BTreeSet::new(),
             },
@@ -250,6 +279,7 @@ mod tests {
             r#"platform = { triple = "x86_64-unknown-linux-gnu", target-features = "all" }"#,
             PlatformSummary {
                 triple: "x86_64-unknown-linux-gnu".into(),
+                custom_json: None,
                 target_features: TargetFeaturesSummary::All,
                 flags: BTreeSet::new(),
             },
@@ -258,7 +288,23 @@ mod tests {
             r#"platform = { triple = "x86_64-unknown-linux-gnu", target-features = [] }"#,
             PlatformSummary {
                 triple: "x86_64-unknown-linux-gnu".into(),
+                custom_json: None,
                 target_features: TargetFeaturesSummary::Features(BTreeSet::new()),
+                flags: BTreeSet::new(),
+            },
+        ));
+
+        let custom_json = r#"{"arch":"x86_64","target-pointer-width":"64","llvm-target":"x86_64-unknown-haiku","data-layout":"e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16:32:64-S128","os":"haiku","abi":null,"env":null,"vendor":null,"families":[],"endian":"little","min-atomic-width":null,"max-atomic-width":64,"panic-strategy":"unwind"}"#;
+        let toml = format!(
+            r#"platform = {{ triple = "x86_64-unknown-haiku", custom-json = '{custom_json}' }}"#
+        );
+
+        valid.push((
+            &toml,
+            PlatformSummary {
+                triple: "x86_64-unknown-haiku".into(),
+                custom_json: Some(custom_json.to_owned()),
+                target_features: TargetFeaturesSummary::Unknown,
                 flags: BTreeSet::new(),
             },
         ));
@@ -269,6 +315,7 @@ mod tests {
             r#"platform = { triple = "x86_64-unknown-linux-gnu", flags = ["cargo_web"] }"#,
             PlatformSummary {
                 triple: "x86_64-unknown-linux-gnu".into(),
+                custom_json: None,
                 target_features: TargetFeaturesSummary::Unknown,
                 flags,
             },
@@ -284,6 +331,32 @@ mod tests {
             let actual_2: Wrapper = toml::from_str(&serialized)
                 .unwrap_or_else(|err| panic!("serialized input: {} is valid: {}", input, err));
             assert_eq!(actual, actual_2, "for input: {}", input);
+
+            // Check that custom JSON functionality works.
+            if actual.platform.custom_json.is_some() {
+                #[cfg(feature = "custom")]
+                {
+                    let platform = actual
+                        .platform
+                        .to_platform()
+                        .expect("custom platform parsed successfully");
+                    assert!(platform.is_custom(), "this is a custom platform");
+                }
+
+                #[cfg(not(feature = "custom"))]
+                {
+                    use crate::errors::CustomPlatformCreateError;
+
+                    let error = actual
+                        .platform
+                        .to_platform()
+                        .expect_err("custom platforms are disabled");
+                    assert!(matches!(
+                        error,
+                        Error::CustomPlatformCreate(CustomPlatformCreateError::Unavailable)
+                    ));
+                }
+            }
         }
     }
 }

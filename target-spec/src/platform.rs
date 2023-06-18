@@ -100,15 +100,23 @@ impl Platform {
         use crate::custom::TargetDefinition;
 
         let triple_str = triple_str.into();
-        let target_json: TargetDefinition = serde_json::from_str(json).map_err(|error| {
+        let target_def: TargetDefinition = serde_json::from_str(&json).map_err(|error| {
             crate::errors::CustomPlatformCreateError::Deserialize {
                 triple: triple_str.to_string(),
                 error,
             }
         })?;
-        let target_info = target_json.into_target_info(triple_str);
+        #[cfg(feature = "summaries")]
+        let minified_json =
+            serde_json::to_string(&target_def).expect("serialization is infallible");
+
+        let target_info = target_def.into_target_info(triple_str);
         Ok(Self {
-            kind: PlatformKind::Custom(target_info),
+            kind: PlatformKind::Custom {
+                target_info,
+                #[cfg(feature = "summaries")]
+                json: minified_json,
+            },
             target_features,
             flags: BTreeSet::new(),
         })
@@ -170,6 +178,11 @@ impl Platform {
     pub(crate) fn matches(&self, tp: &TargetPredicate) -> bool {
         self.kind.matches(tp)
     }
+
+    #[cfg(feature = "summaries")]
+    pub(crate) fn custom_json(&self) -> Option<&str> {
+        self.kind.custom_json()
+    }
 }
 
 #[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
@@ -179,7 +192,12 @@ enum PlatformKind {
 
     /// A custom platform.
     #[cfg(feature = "custom")]
-    Custom(cfg_expr::targets::TargetInfo),
+    Custom {
+        target_info: cfg_expr::targets::TargetInfo,
+        // The JSON is only needed if summaries are enabled.
+        #[cfg(feature = "summaries")]
+        json: String,
+    },
 }
 
 impl PlatformKind {
@@ -190,11 +208,12 @@ impl PlatformKind {
             Self::Custom { .. } => None,
         }
     }
+
     fn triple_str(&self) -> &str {
         match self {
             Self::Standard(triple) => triple.as_str(),
             #[cfg(feature = "custom")]
-            Self::Custom(target) => target.triple.as_str(),
+            Self::Custom { target_info, .. } => target_info.triple.as_str(),
         }
     }
 
@@ -202,7 +221,9 @@ impl PlatformKind {
         match self {
             Self::Standard(triple) => triple.matches(tp),
             #[cfg(feature = "custom")]
-            Self::Custom(target) => cfg_expr::expr::TargetMatcher::matches(target, tp),
+            Self::Custom { target_info, .. } => {
+                cfg_expr::expr::TargetMatcher::matches(target_info, tp)
+            }
         }
     }
 
@@ -210,7 +231,7 @@ impl PlatformKind {
         match self {
             Self::Standard(_) => true,
             #[cfg(feature = "custom")]
-            Self::Custom(_) => false,
+            Self::Custom { .. } => false,
         }
     }
 
@@ -218,7 +239,16 @@ impl PlatformKind {
         match self {
             Self::Standard(_) => false,
             #[cfg(feature = "custom")]
-            Self::Custom(_) => true,
+            Self::Custom { .. } => true,
+        }
+    }
+
+    #[cfg(feature = "summaries")]
+    fn custom_json(&self) -> Option<&str> {
+        match self {
+            Self::Standard(_) => None,
+            #[cfg(feature = "custom")]
+            Self::Custom { json, .. } => Some(json),
         }
     }
 }
