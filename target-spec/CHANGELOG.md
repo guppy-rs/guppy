@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- Added support for custom platforms, under the optional `custom` feature.
+
+### Changed
+
 ## [1.4.0] - 2023-04-15
 
 ### Changed

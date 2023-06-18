@@ -112,7 +112,7 @@ impl TargetExpression {
     pub fn eval(&self, platform: &Platform) -> Option<bool> {
         self.inner.eval(|pred| {
             match pred {
-                Predicate::Target(target) => Some(platform.triple().matches(target)),
+                Predicate::Target(target) => Some(platform.matches(target)),
                 Predicate::TargetFeature(feature) => platform.target_features().matches(feature),
                 Predicate::Test | Predicate::DebugAssertions | Predicate::ProcMacro => {
                     // Known families that always evaluate to false. See

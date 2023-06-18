@@ -221,6 +221,46 @@ impl error::Error for TripleParseError {
     }
 }
 
+#[cfg(feature = "custom")]
+mod custom_errors {
+    use std::{error, fmt};
+
+    /// An error returned while creating a custom platform.
+    #[derive(Debug)]
+    #[non_exhaustive]
+    pub enum CustomPlatformError {
+        /// An error occurred while deserializing serde data.
+        Deserialize {
+            /// The specified triple.
+            triple: String,
+
+            /// The deserialization error that occurred.
+            error: serde_json::Error,
+        },
+    }
+
+    impl fmt::Display for CustomPlatformError {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            match self {
+                Self::Deserialize { triple, .. } => {
+                    write!(f, "error deserializing custom target JSON for `{triple}`")
+                }
+            }
+        }
+    }
+
+    impl error::Error for CustomPlatformError {
+        fn source(&self) -> Option<&(dyn error::Error + 'static)> {
+            match self {
+                Self::Deserialize { error, .. } => Some(error),
+            }
+        }
+    }
+}
+
+#[cfg(feature = "custom")]
+pub use custom_errors::*;
+
 #[cfg(test)]
 mod tests {
     use super::*;
