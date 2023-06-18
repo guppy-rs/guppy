@@ -4,7 +4,8 @@
 
 ### Changed
 
-- MSRV updated to Rust 1.62.
+- Updated to target-spec 2.
+- MSRV updated to Rust 1.66.
 
 ## [0.1.0] - 2022-10-25
 
