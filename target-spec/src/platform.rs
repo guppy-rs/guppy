@@ -20,8 +20,11 @@ include!(concat!(env!("OUT_DIR"), "/current_platform.rs"));
 ///   standard platform since it is recognized by Rust.
 ///
 ///   All [builtin platforms](https://doc.rust-lang.org/nightly/rustc/platform-support.html) are
-///   standard platforms, and if a platform isn't builtin, target-spec attempts to heuristically
-///   determine the characteristics of the platform based on the triple string.
+///   standard platforms.
+///
+///   By default, if a platform isn't builtin, target-spec attempts to heuristically determine the
+///   characteristics of the platform based on the triple string. (Use the
+///   [`new_strict`](Self::new_strict) constructor to disable this.)
 ///
 /// * **Custom platforms:** These platforms are specified via both a triple string and a JSON file
 ///   in the format [defined by
@@ -44,6 +47,18 @@ impl Platform {
         target_features: TargetFeatures,
     ) -> Result<Self, Error> {
         let triple = Triple::new(triple_str.into()).map_err(Error::UnknownPlatformTriple)?;
+        Ok(Self::from_triple(triple, target_features))
+    }
+
+    /// Creates a new standard `Platform` from the given triple and target features.
+    ///
+    /// This constructor only consults the builtin platform table, and does not attempt to
+    /// heuristically determine the platform's characteristics based on the triple string.
+    pub fn new_strict(
+        triple_str: impl Into<Cow<'static, str>>,
+        target_features: TargetFeatures,
+    ) -> Result<Self, Error> {
+        let triple = Triple::new_strict(triple_str.into()).map_err(Error::UnknownPlatformTriple)?;
         Ok(Self::from_triple(triple, target_features))
     }
 
