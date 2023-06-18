@@ -6,7 +6,7 @@
 use std::{borrow::Cow, error, fmt};
 
 /// An error that happened during `target-spec` parsing or evaluation.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Debug)]
 #[non_exhaustive]
 pub enum Error {
     /// A `cfg()` expression was invalid and could not be parsed.
@@ -15,6 +15,9 @@ pub enum Error {
     UnknownTargetTriple(TripleParseError),
     /// The provided platform triple was unknown.
     UnknownPlatformTriple(TripleParseError),
+    /// An error occurred while parsing a custom platform specification.
+    #[cfg(feature = "custom")]
+    CustomPlatformCreate(CustomPlatformCreateError),
 }
 
 impl fmt::Display for Error {
@@ -24,6 +27,10 @@ impl fmt::Display for Error {
             Error::UnknownTargetTriple(_) => write!(f, "unknown target triple"),
             Error::UnknownPlatformTriple(_) => {
                 write!(f, "unknown platform triple")
+            }
+            #[cfg(feature = "custom")]
+            Error::CustomPlatformCreate(_) => {
+                write!(f, "error creating custom platform")
             }
         }
     }
@@ -35,6 +42,8 @@ impl error::Error for Error {
             Error::InvalidExpression(err) => Some(err),
             Error::UnknownTargetTriple(err) => Some(err),
             Error::UnknownPlatformTriple(err) => Some(err),
+            #[cfg(feature = "custom")]
+            Error::CustomPlatformCreate(err) => Some(err),
         }
     }
 }
@@ -256,7 +265,7 @@ mod custom_errors {
     /// An error returned while creating a custom platform.
     #[derive(Debug)]
     #[non_exhaustive]
-    pub enum CustomPlatformError {
+    pub enum CustomPlatformCreateError {
         /// An error occurred while deserializing serde data.
         Deserialize {
             /// The specified triple.
@@ -267,7 +276,7 @@ mod custom_errors {
         },
     }
 
-    impl fmt::Display for CustomPlatformError {
+    impl fmt::Display for CustomPlatformCreateError {
         fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
             match self {
                 Self::Deserialize { triple, .. } => {
@@ -277,7 +286,7 @@ mod custom_errors {
         }
     }
 
-    impl error::Error for CustomPlatformError {
+    impl error::Error for CustomPlatformCreateError {
         fn source(&self) -> Option<&(dyn error::Error + 'static)> {
             match self {
                 Self::Deserialize { error, .. } => Some(error),

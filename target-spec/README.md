@@ -31,13 +31,13 @@ use target_spec::eval;
 
 // Evaluate Rust-like `#[cfg]` syntax.
 let cfg_target = "cfg(all(unix, target_arch = \"x86_64\"))";
-assert_eq!(eval(cfg_target, "x86_64-unknown-linux-gnu"), Ok(Some(true)));
-assert_eq!(eval(cfg_target, "i686-unknown-linux-gnu"), Ok(Some(false)));
-assert_eq!(eval(cfg_target, "x86_64-pc-windows-msvc"), Ok(Some(false)));
+assert_eq!(eval(cfg_target, "x86_64-unknown-linux-gnu").unwrap(), Some(true));
+assert_eq!(eval(cfg_target, "i686-unknown-linux-gnu").unwrap(), Some(false));
+assert_eq!(eval(cfg_target, "x86_64-pc-windows-msvc").unwrap(), Some(false));
 
 // Evaluate a full target-triple.
-assert_eq!(eval("x86_64-unknown-linux-gnu", "x86_64-unknown-linux-gnu"), Ok(Some(true)));
-assert_eq!(eval("x86_64-unknown-linux-gnu", "x86_64-pc-windows-msvc"), Ok(Some(false)));
+assert_eq!(eval("x86_64-unknown-linux-gnu", "x86_64-unknown-linux-gnu").unwrap(), Some(true));
+assert_eq!(eval("x86_64-unknown-linux-gnu", "x86_64-pc-windows-msvc").unwrap(), Some(false));
 ```
 
 For more advanced usage, see `Platform` and `TargetSpec`.
@@ -55,13 +55,9 @@ For more advanced usage, see `Platform` and `TargetSpec`.
 ### Minimum supported Rust version
 
 The minimum supported Rust version (MSRV) is:
-* For target-spec 1.0.x: **Rust 1.54**.
-* For target-spec 1.1.x: **Rust 1.56**.
-* For target-spec 1.2.x: **Rust 1.58**.
-* For target-spec 1.3.x: **Rust 1.62**.
-* For target-spec 1.4.x: **Rust 1.66**.
+* For target-spec 2.0.x: **Rust 1.66**.
 
-Within the 1.x series, MSRV bumps will be accompanied by a minor version update.
+Within the 2.x series, MSRV bumps will be accompanied by a minor version update.
 
 ### Related crates
 

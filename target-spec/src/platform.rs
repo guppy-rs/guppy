@@ -96,12 +96,12 @@ impl Platform {
         triple_str: impl Into<Cow<'static, str>>,
         json: &str,
         target_features: TargetFeatures,
-    ) -> Result<Self, crate::errors::CustomPlatformError> {
+    ) -> Result<Self, crate::errors::CustomPlatformCreateError> {
         use crate::custom::TargetDefinition;
 
         let triple_str = triple_str.into();
         let target_json: TargetDefinition = serde_json::from_str(json).map_err(|error| {
-            crate::errors::CustomPlatformError::Deserialize {
+            crate::errors::CustomPlatformCreateError::Deserialize {
                 triple: triple_str.to_string(),
                 error,
             }
