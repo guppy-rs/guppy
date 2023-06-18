@@ -47,11 +47,11 @@ impl Triple {
 
     /// Evaluates this triple against the given platform.
     ///
-    /// This simply compares `self` against the `Triple` the platform is based on, ignoring
-    /// target features and flags.
+    /// This simply compares `self`'s string representation against the `Triple` the platform is
+    /// based on, ignoring target features and flags.
     #[inline]
     pub fn eval(&self, platform: &Platform) -> bool {
-        self == platform.triple()
+        self.as_str() == platform.triple_str()
     }
 
     // Use cfg-expr's target matcher.

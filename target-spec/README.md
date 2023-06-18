@@ -9,8 +9,8 @@
 
 Evaluate `Cargo.toml` target specifications against platform triples.
 
-Cargo supports
-[platform-specific dependencies](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#platform-specific-dependencies).
+Cargo supports [platform-specific
+dependencies](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#platform-specific-dependencies).
 These dependencies can be specified in one of two ways:
 
 ```toml
@@ -23,8 +23,8 @@ native = { path = "native/x86_64" }
 winhttp = "0.4.0"
 ```
 
-`target-spec` provides the `eval` API which can be used to figure out whether such a
-dependency will be included on a particular platform.
+`target-spec` provides the `eval` API which can be used to figure out whether such a dependency
+will be included on a particular platform.
 
 ```rust
 use target_spec::eval;
@@ -44,7 +44,11 @@ For more advanced usage, see `Platform` and `TargetSpec`.
 
 ### Optional features
 
-* **`summaries`**: Adds the `summaries` module to enable serialization of `Platform` and `TargetFeatures`.
+* **`custom`**: Adds support for [custom
+  targets](https://docs.rust-embedded.org/embedonomicon/custom-target.html) via
+  `Platform::new_custom`.
+* **`summaries`**: Adds the `summaries` module to enable serialization of `Platform` and
+  `TargetFeatures`.
 * **`proptest1`**: Enables support for property-based testing of `Platform` and
   `TargetFeatures` using `proptest`.
 

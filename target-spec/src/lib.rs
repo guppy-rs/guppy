@@ -3,8 +3,8 @@
 
 //! Evaluate `Cargo.toml` target specifications against platform triples.
 //!
-//! Cargo supports
-//! [platform-specific dependencies](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#platform-specific-dependencies).
+//! Cargo supports [platform-specific
+//! dependencies](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#platform-specific-dependencies).
 //! These dependencies can be specified in one of two ways:
 //!
 //! ```toml
@@ -17,8 +17,8 @@
 //! winhttp = "0.4.0"
 //! ```
 //!
-//! `target-spec` provides the `eval` API which can be used to figure out whether such a
-//! dependency will be included on a particular platform.
+//! `target-spec` provides the `eval` API which can be used to figure out whether such a dependency
+//! will be included on a particular platform.
 //!
 //! ```rust
 //! use target_spec::eval;
@@ -38,7 +38,11 @@
 //!
 //! ## Optional features
 //!
-//! * **`summaries`**: Adds the [`summaries`] module to enable serialization of [`Platform`] and [`TargetFeatures`].
+//! * **`custom`**: Adds support for [custom
+//!   targets](https://docs.rust-embedded.org/embedonomicon/custom-target.html) via
+//!   [`Platform::new_custom`].
+//! * **`summaries`**: Adds the [`summaries`] module to enable serialization of [`Platform`] and
+//!   [`TargetFeatures`].
 //! * **`proptest1`**: Enables support for property-based testing of [`Platform`] and
 //!   [`TargetFeatures`] using [`proptest`].
 //!
@@ -62,6 +66,8 @@
 #![forbid(unsafe_code)]
 #![cfg_attr(doc_cfg, feature(doc_cfg, doc_auto_cfg))]
 
+#[cfg(feature = "custom")]
+mod custom;
 pub mod errors;
 mod platform;
 #[cfg(feature = "proptest1")]
