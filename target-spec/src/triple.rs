@@ -47,7 +47,7 @@ use std::{borrow::Cow, cmp::Ordering, hash, str::FromStr};
 /// // This is not a valid triple.
 /// let err = Triple::new("cannot-be-known").unwrap_err();
 /// ```
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq, PartialOrd, Ord, Hash)]
 pub struct Triple {
     inner: TripleInner,
 }
@@ -319,41 +319,54 @@ impl TripleInner {
             TripleInner::Lexicon { .. } => None,
         }
     }
-}
 
-// ---
-// Trait impls
-//
-// These impls only use the `triple_str`, which is valid because the triple is a pure
-// function of the `triple_str`.
-// ---
-
-impl PartialEq for Triple {
-    #[inline]
-    fn eq(&self, other: &Self) -> bool {
-        self.as_str().eq(other.as_str())
+    fn project(&self) -> TripleInnerProjected<'_> {
+        match self {
+            TripleInner::Builtin(target_info) => {
+                TripleInnerProjected::Builtin(target_info.triple.as_str())
+            }
+            #[cfg(feature = "custom")]
+            TripleInner::Custom { target_info, .. } => TripleInnerProjected::Custom(target_info),
+            TripleInner::Lexicon { triple_str, .. } => TripleInnerProjected::Lexicon(&triple_str),
+        }
     }
 }
 
-impl Eq for Triple {}
+/// This implementation is used for trait impls.
+#[derive(Eq, PartialEq, PartialOrd, Ord, Hash)]
+enum TripleInnerProjected<'a> {
+    // Don't need anything else for builtin and lexicon since it's a pure function of the input.
+    Builtin(&'a str),
+    #[cfg(feature = "custom")]
+    Custom(&'a TargetInfo),
+    Lexicon(&'a str),
+}
 
-impl PartialOrd for Triple {
+impl PartialEq for TripleInner {
+    fn eq(&self, other: &Self) -> bool {
+        self.project().eq(&other.project())
+    }
+}
+
+impl Eq for TripleInner {}
+
+impl PartialOrd for TripleInner {
     #[inline]
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        self.as_str().partial_cmp(other.as_str())
+        self.project().partial_cmp(&other.project())
     }
 }
 
-impl Ord for Triple {
+impl Ord for TripleInner {
     #[inline]
     fn cmp(&self, other: &Self) -> Ordering {
-        self.as_str().cmp(other.as_str())
+        self.project().cmp(&other.project())
     }
 }
 
-impl hash::Hash for Triple {
+impl hash::Hash for TripleInner {
     fn hash<H: hash::Hasher>(&self, state: &mut H) {
-        hash::Hash::hash(self.as_str(), state);
+        hash::Hash::hash(&self.project(), state);
     }
 }
 

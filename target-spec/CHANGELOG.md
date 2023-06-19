@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.0.1] - 2023-06-19
+
+### Fixed
+
+- `Triple`'s `Eq`, `PartialEq`, `Ord`, `PartialOrd` and `Hash` now take into account custom platforms.
+
 ## [2.0.0] - 2023-06-19
 
 ### Added
@@ -246,6 +252,7 @@ This was mistakenly published and was yanked.
 
 - Initial release.
 
+[2.0.1]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-2.0.1
 [2.0.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-2.0.0
 [1.4.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-1.4.0
 [1.3.1]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-1.3.1
