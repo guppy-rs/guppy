@@ -207,7 +207,7 @@ mod serde_impl {
             // TODO: there doesn't appear to be any way to defer to the PlatformSummary
             // deserializer, so copy-paste its logic here. Find a better way?
             triple: String,
-            #[serde(default)]
+            #[serde(skip_serializing_if = "Option::is_none", default)]
             custom_json: Option<String>,
             #[serde(default)]
             target_features: TargetFeaturesSummary,

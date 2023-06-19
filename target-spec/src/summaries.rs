@@ -35,6 +35,7 @@ pub struct PlatformSummary {
     pub triple: String,
 
     /// JSON for custom platforms.
+    #[serde(skip_serializing_if = "Option::is_none", default)]
     pub custom_json: Option<String>,
 
     /// The target features used.
