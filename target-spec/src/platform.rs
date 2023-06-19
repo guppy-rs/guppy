@@ -1,8 +1,6 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-use cfg_expr::TargetPredicate;
-
 use crate::{Error, Triple};
 use std::{borrow::Cow, collections::BTreeSet, ops::Deref};
 
@@ -15,9 +13,9 @@ include!(concat!(env!("OUT_DIR"), "/current_platform.rs"));
 ///
 /// `target-spec` recognizes two kinds of platforms:
 ///
-/// * **Standard platforms:** These platforms are only specified by their triple string, either
-///   directly or via a [`Triple`]. For example, the platform `x86_64-unknown-linux-gnu` is a
-///   standard platform since it is recognized by Rust.
+/// * **Standard platforms:** These platforms are only specified by their triple string. For
+///   example, the platform `x86_64-unknown-linux-gnu` is a standard platform since it is recognized
+///   by Rust as a tier 1 platform.
 ///
 ///   All [builtin platforms](https://doc.rust-lang.org/nightly/rustc/platform-support.html) are
 ///   standard platforms.
@@ -33,7 +31,7 @@ include!(concat!(env!("OUT_DIR"), "/current_platform.rs"));
 #[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 #[must_use]
 pub struct Platform {
-    kind: PlatformKind,
+    triple: Triple,
     target_features: TargetFeatures,
     flags: BTreeSet<Cow<'static, str>>,
 }
@@ -75,7 +73,7 @@ impl Platform {
         let triple = Triple::new(CURRENT_TARGET).map_err(Error::UnknownPlatformTriple)?;
         let target_features = TargetFeatures::features(CURRENT_TARGET_FEATURES.iter().copied());
         Ok(Self {
-            kind: PlatformKind::Standard(triple),
+            triple,
             target_features,
             flags: BTreeSet::new(),
         })
@@ -84,7 +82,7 @@ impl Platform {
     /// Creates a new standard platform from a `Triple` and target features.
     pub fn from_triple(triple: Triple, target_features: TargetFeatures) -> Self {
         Self {
-            kind: PlatformKind::Standard(triple),
+            triple,
             target_features,
             flags: BTreeSet::new(),
         }
@@ -96,27 +94,10 @@ impl Platform {
         triple_str: impl Into<Cow<'static, str>>,
         json: &str,
         target_features: TargetFeatures,
-    ) -> Result<Self, crate::errors::CustomPlatformCreateError> {
-        use crate::custom::TargetDefinition;
-
-        let triple_str = triple_str.into();
-        let target_def: TargetDefinition = serde_json::from_str(json).map_err(|error| {
-            crate::errors::CustomPlatformCreateError::Deserialize {
-                triple: triple_str.to_string(),
-                error: error.into(),
-            }
-        })?;
-        #[cfg(feature = "summaries")]
-        let minified_json =
-            serde_json::to_string(&target_def).expect("serialization is infallible");
-
-        let target_info = Box::new(target_def.into_target_info(triple_str));
+    ) -> Result<Self, Error> {
+        let triple = Triple::new_custom(triple_str, json).map_err(Error::CustomPlatformCreate)?;
         Ok(Self {
-            kind: PlatformKind::Custom {
-                target_info,
-                #[cfg(feature = "summaries")]
-                json: minified_json,
-            },
+            triple,
             target_features,
             flags: BTreeSet::new(),
         })
@@ -135,7 +116,7 @@ impl Platform {
 
     /// Returns the target triple string for this platform.
     pub fn triple_str(&self) -> &str {
-        self.kind.triple_str()
+        self.triple.as_str()
     }
 
     /// Returns the set of flags enabled for this platform.
@@ -149,8 +130,57 @@ impl Platform {
     }
 
     /// Returns true if this is a standard platform.
+    ///
+    /// A standard platform can be either builtin, or heuristically determined.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use target_spec::{Platform, TargetFeatures};
+    ///
+    /// // x86_64-unknown-linux-gnu is Linux x86_64.
+    /// let platform = Platform::new("x86_64-unknown-linux-gnu", TargetFeatures::Unknown).unwrap();
+    /// assert!(platform.is_standard());
+    /// ```
     pub fn is_standard(&self) -> bool {
-        self.kind.is_standard()
+        self.triple.is_standard()
+    }
+
+    /// Returns true if this is a builtin platform.
+    ///
+    /// All builtin platforms are standard, but not all standard platforms are builtin.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use target_spec::{Platform, TargetFeatures};
+    ///
+    /// // x86_64-unknown-linux-gnu is Linux x86_64, which is a Rust tier 1 platform.
+    /// let platform = Platform::new("x86_64-unknown-linux-gnu", TargetFeatures::Unknown).unwrap();
+    /// assert!(platform.is_builtin());
+    /// ```
+    pub fn is_builtin(&self) -> bool {
+        self.triple.is_builtin()
+    }
+
+    /// Returns true if this is a heuristically determined platform.
+    ///
+    /// All heuristically determined platforms are standard, but most of the time, standard
+    /// platforms are builtin.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use target_spec::{Platform, TargetFeatures};
+    ///
+    /// // armv5te-apple-darwin is not a real platform, but target-spec can heuristically
+    /// // guess at its characteristics.
+    /// let platform = Platform::new("armv5te-apple-darwin", TargetFeatures::Unknown).unwrap();
+    /// assert!(platform.is_heuristic());
+    /// ```
+
+    pub fn is_heuristic(&self) -> bool {
+        self.triple.is_heuristic()
     }
 
     /// Returns true if this is a custom platform.
@@ -158,14 +188,12 @@ impl Platform {
     /// This is always available, but if the `custom` feature isn't turned on this always returns
     /// false.
     pub fn is_custom(&self) -> bool {
-        self.kind.is_custom()
+        self.triple.is_custom()
     }
 
-    /// Returns the underlying [`Triple`] if this is a standard platform.
-    ///
-    /// Returns `None` if this is a custom platform.
-    pub fn triple(&self) -> Option<&Triple> {
-        self.kind.triple()
+    /// Returns the underlying [`Triple`].
+    pub fn triple(&self) -> &Triple {
+        &self.triple
     }
 
     /// Returns the set of target features for this platform.
@@ -173,83 +201,9 @@ impl Platform {
         &self.target_features
     }
 
-    // Use cfg-expr's target matcher.
-    #[inline]
-    pub(crate) fn matches(&self, tp: &TargetPredicate) -> bool {
-        self.kind.matches(tp)
-    }
-
     #[cfg(feature = "summaries")]
     pub(crate) fn custom_json(&self) -> Option<&str> {
-        self.kind.custom_json()
-    }
-}
-
-#[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-enum PlatformKind {
-    /// A standard platform.
-    Standard(Triple),
-
-    /// A custom platform.
-    #[cfg(feature = "custom")]
-    Custom {
-        target_info: Box<cfg_expr::targets::TargetInfo>,
-        // The JSON is only needed if summaries are enabled.
-        #[cfg(feature = "summaries")]
-        json: String,
-    },
-}
-
-impl PlatformKind {
-    fn triple(&self) -> Option<&Triple> {
-        match self {
-            Self::Standard(triple) => Some(triple),
-            #[cfg(feature = "custom")]
-            Self::Custom { .. } => None,
-        }
-    }
-
-    fn triple_str(&self) -> &str {
-        match self {
-            Self::Standard(triple) => triple.as_str(),
-            #[cfg(feature = "custom")]
-            Self::Custom { target_info, .. } => target_info.triple.as_str(),
-        }
-    }
-
-    fn matches(&self, tp: &TargetPredicate) -> bool {
-        match self {
-            Self::Standard(triple) => triple.matches(tp),
-            #[cfg(feature = "custom")]
-            Self::Custom { target_info, .. } => {
-                cfg_expr::expr::TargetMatcher::matches(&**target_info, tp)
-            }
-        }
-    }
-
-    fn is_standard(&self) -> bool {
-        match self {
-            Self::Standard(_) => true,
-            #[cfg(feature = "custom")]
-            Self::Custom { .. } => false,
-        }
-    }
-
-    fn is_custom(&self) -> bool {
-        match self {
-            Self::Standard(_) => false,
-            #[cfg(feature = "custom")]
-            Self::Custom { .. } => true,
-        }
-    }
-
-    #[cfg(feature = "summaries")]
-    fn custom_json(&self) -> Option<&str> {
-        match self {
-            Self::Standard(_) => None,
-            #[cfg(feature = "custom")]
-            Self::Custom { json, .. } => Some(json),
-        }
+        self.triple.custom_json()
     }
 }
 

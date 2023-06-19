@@ -14,11 +14,28 @@ use std::{borrow::Cow, cmp::Ordering, hash, str::FromStr};
 ///
 /// A `Triple` may be constructed through `new` or the `FromStr` implementation.
 ///
-/// Every standard [`Platform`](crate::Platform) has one of these, and an evaluation
+/// Every [`Platform`](crate::Platform) has one of these, and an evaluation
 /// [`TargetSpec`](crate::TargetSpec) may be backed by one of these as well.
 ///
-/// If a triple isn't found in the builtin list, [`Triple::new`] attempts to heuristically determine
-/// its behavior based on the string. To disable these heuristics, use [`Triple::new_strict`].
+/// # Standard and custom platforms
+///
+/// `target-spec` recognizes two kinds of platforms:
+///
+/// * **Standard platforms:** These platforms are only specified by their triple string, either
+///   directly or via a [`Triple`]. For example, the platform `x86_64-unknown-linux-gnu` is a
+///   standard platform since it is recognized by Rust.
+///
+///   All [builtin platforms](https://doc.rust-lang.org/nightly/rustc/platform-support.html) are
+///   standard platforms.
+///
+///   By default, if a platform isn't builtin, target-spec attempts to heuristically determine the
+///   characteristics of the platform based on the triple string. (Use the
+///   [`new_strict`](Self::new_strict) constructor to disable this.)
+///
+/// * **Custom platforms:** These platforms are specified via both a triple string and a JSON file
+///   in the format [defined by
+///   Rust](https://docs.rust-embedded.org/embedonomicon/custom-target.html). Custom platforms are
+///   used for targets not recognized by Rust.
 ///
 /// # Examples
 ///
@@ -51,10 +68,99 @@ impl Triple {
         Ok(Self { inner })
     }
 
+    /// Creates a new custom `Triple` from the given triple string and JSON specification.
+    #[cfg(feature = "custom")]
+    pub fn new_custom(
+        triple_str: impl Into<Cow<'static, str>>,
+        json: &str,
+    ) -> Result<Self, crate::errors::CustomTripleCreateError> {
+        use crate::custom::TargetDefinition;
+
+        let triple_str = triple_str.into();
+        let target_def: TargetDefinition = serde_json::from_str(json).map_err(|error| {
+            crate::errors::CustomTripleCreateError::Deserialize {
+                triple: triple_str.to_string(),
+                error: error.into(),
+            }
+        })?;
+        #[cfg(feature = "summaries")]
+        let minified_json =
+            serde_json::to_string(&target_def).expect("serialization is infallible");
+
+        let target_info = Box::new(target_def.into_target_info(triple_str));
+        Ok(Self {
+            inner: TripleInner::Custom {
+                target_info,
+                #[cfg(feature = "summaries")]
+                json: minified_json,
+            },
+        })
+    }
+
     /// Returns the string corresponding to this triple.
     #[inline]
     pub fn as_str(&self) -> &str {
         self.inner.as_str()
+    }
+
+    /// Returns true if this is a triple corresponding to a standard platform.
+    ///
+    /// A standard platform can be either builtin, or heuristically determined.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use target_spec::Triple;
+    ///
+    /// // x86_64-unknown-linux-gnu is Linux x86_64.
+    /// let platform = Triple::new("x86_64-unknown-linux-gnu").unwrap();
+    /// assert!(platform.is_standard());
+    /// ```
+    pub fn is_standard(&self) -> bool {
+        self.inner.is_standard()
+    }
+
+    /// Returns true if this is a triple corresponding to a builtin platform.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use target_spec::Triple;
+    ///
+    /// // x86_64-unknown-linux-gnu is Linux x86_64, which is a Rust tier 1 platform.
+    /// let triple = Triple::new("x86_64-unknown-linux-gnu").unwrap();
+    /// assert!(triple.is_builtin());
+    /// ```
+    #[inline]
+    pub fn is_builtin(&self) -> bool {
+        self.inner.is_builtin()
+    }
+
+    /// Returns true if this triple was heuristically determined.
+    ///
+    /// All heuristically determined platforms are standard, but most of the time, standard
+    /// platforms are builtin.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use target_spec::Triple;
+    ///
+    /// // armv5te-apple-darwin is not a real platform, but target-spec can heuristically
+    /// // guess at its characteristics.
+    /// let triple = Triple::new("armv5te-apple-darwin").unwrap();
+    /// assert!(triple.is_heuristic());
+    /// ```
+    pub fn is_heuristic(&self) -> bool {
+        self.inner.is_heuristic()
+    }
+
+    /// Returns true if this is a custom platform.
+    ///
+    /// This is always available, but if the `custom` feature isn't turned on this always returns
+    /// false.
+    pub fn is_custom(&self) -> bool {
+        self.inner.is_custom()
     }
 
     /// Evaluates this triple against the given platform.
@@ -70,6 +176,11 @@ impl Triple {
     #[inline]
     pub(crate) fn matches(&self, tp: &TargetPredicate) -> bool {
         self.inner.matches(tp)
+    }
+
+    #[cfg(feature = "summaries")]
+    pub(crate) fn custom_json(&self) -> Option<&str> {
+        self.inner.custom_json()
     }
 }
 
@@ -87,6 +198,16 @@ impl FromStr for Triple {
 enum TripleInner {
     /// Prefer the builtin representation as it's more accurate.
     Builtin(&'static TargetInfo),
+
+    /// A custom triple.
+    #[cfg(feature = "custom")]
+    Custom {
+        target_info: Box<cfg_expr::targets::TargetInfo>,
+        // The JSON is only needed if summaries are enabled.
+        #[cfg(feature = "summaries")]
+        json: String,
+    },
+
     /// Fall back to the lexicon representation.
     Lexicon {
         triple_str: Cow<'static, str>,
@@ -137,9 +258,45 @@ impl TripleInner {
         }
     }
 
+    fn is_standard(&self) -> bool {
+        match self {
+            TripleInner::Builtin(_) | TripleInner::Lexicon { .. } => true,
+            #[cfg(feature = "custom")]
+            TripleInner::Custom { .. } => false,
+        }
+    }
+
+    fn is_builtin(&self) -> bool {
+        match self {
+            TripleInner::Builtin(_) => true,
+            TripleInner::Lexicon { .. } => false,
+            #[cfg(feature = "custom")]
+            TripleInner::Custom { .. } => false,
+        }
+    }
+
+    fn is_heuristic(&self) -> bool {
+        match self {
+            TripleInner::Builtin(_) => false,
+            TripleInner::Lexicon { .. } => true,
+            #[cfg(feature = "custom")]
+            TripleInner::Custom { .. } => false,
+        }
+    }
+
+    fn is_custom(&self) -> bool {
+        match self {
+            TripleInner::Builtin(_) | TripleInner::Lexicon { .. } => false,
+            #[cfg(feature = "custom")]
+            TripleInner::Custom { .. } => true,
+        }
+    }
+
     fn as_str(&self) -> &str {
         match self {
             TripleInner::Builtin(target_info) => target_info.triple.as_str(),
+            #[cfg(feature = "custom")]
+            TripleInner::Custom { target_info, .. } => target_info.triple.as_str(),
             TripleInner::Lexicon { triple_str, .. } => triple_str,
         }
     }
@@ -147,7 +304,19 @@ impl TripleInner {
     fn matches(&self, tp: &TargetPredicate) -> bool {
         match self {
             TripleInner::Builtin(target_info) => target_info.matches(tp),
+            #[cfg(feature = "custom")]
+            TripleInner::Custom { target_info, .. } => target_info.matches(tp),
             TripleInner::Lexicon { lexicon_triple, .. } => lexicon_triple.matches(tp),
+        }
+    }
+
+    #[cfg(feature = "summaries")]
+    pub(crate) fn custom_json(&self) -> Option<&str> {
+        match self {
+            TripleInner::Builtin(_) => None,
+            #[cfg(feature = "custom")]
+            TripleInner::Custom { json, .. } => Some(json),
+            TripleInner::Lexicon { .. } => None,
         }
     }
 }
@@ -210,6 +379,10 @@ mod tests {
             TripleInner::Lexicon { lexicon_triple, .. } => lexicon_triple,
             TripleInner::Builtin(_) => {
                 panic!("should not have been able to parse x86_64-pc-darwin as a builtin");
+            }
+            #[cfg(feature = "custom")]
+            TripleInner::Custom { .. } => {
+                panic!("not a custom platform")
             }
         };
         assert_eq!(
