@@ -9,7 +9,7 @@ on:
 jobs:
   target-spec-release:
     # There's no regex filtering in if conditionals, so we need to use the first component of the version number.
-    if: github.repository_owner == 'guppy-rs' && startsWith(github.ref_name, 'target-spec-1')
+    if: github.repository_owner == 'guppy-rs' && startsWith(github.ref_name, 'target-spec-2')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
