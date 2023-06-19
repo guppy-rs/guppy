@@ -100,7 +100,7 @@ impl Platform {
         use crate::custom::TargetDefinition;
 
         let triple_str = triple_str.into();
-        let target_def: TargetDefinition = serde_json::from_str(&json).map_err(|error| {
+        let target_def: TargetDefinition = serde_json::from_str(json).map_err(|error| {
             crate::errors::CustomPlatformCreateError::Deserialize {
                 triple: triple_str.to_string(),
                 error,
@@ -110,7 +110,7 @@ impl Platform {
         let minified_json =
             serde_json::to_string(&target_def).expect("serialization is infallible");
 
-        let target_info = target_def.into_target_info(triple_str);
+        let target_info = Box::new(target_def.into_target_info(triple_str));
         Ok(Self {
             kind: PlatformKind::Custom {
                 target_info,
@@ -193,7 +193,7 @@ enum PlatformKind {
     /// A custom platform.
     #[cfg(feature = "custom")]
     Custom {
-        target_info: cfg_expr::targets::TargetInfo,
+        target_info: Box<cfg_expr::targets::TargetInfo>,
         // The JSON is only needed if summaries are enabled.
         #[cfg(feature = "summaries")]
         json: String,
@@ -222,7 +222,7 @@ impl PlatformKind {
             Self::Standard(triple) => triple.matches(tp),
             #[cfg(feature = "custom")]
             Self::Custom { target_info, .. } => {
-                cfg_expr::expr::TargetMatcher::matches(target_info, tp)
+                cfg_expr::expr::TargetMatcher::matches(&**target_info, tp)
             }
         }
     }
