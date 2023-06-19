@@ -22,6 +22,10 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - name: Lint (clippy)
         run: cargo clippy --all-features --all-targets
+      - name: Install cargo-hack
+        uses: taiki-e/install-action@cargo-hack
+      - name: Clippy feature powerset for target-spec
+        run: cargo hack --feature-powerset --package target-spec clippy
       - name: Lint (rustfmt)
         run: cargo xfmt --check
       - name: Install cargo readme
@@ -67,6 +71,10 @@ jobs:
         uses: taiki-e/install-action@nextest
       - name: Run tests for core crates
         run: cargo nextest run --package target-spec --package guppy-summaries --package guppy --package determinator --package hakari
+      - name: Install cargo-hack
+        uses: taiki-e/install-action@cargo-hack
+      - name: Check feature powerset for target-spec
+        run: cargo hack --feature-powerset --package target-spec nextest run
 
   build-all-features:
     name: Build and test (all features)
