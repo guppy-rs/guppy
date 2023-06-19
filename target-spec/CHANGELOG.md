@@ -4,13 +4,24 @@
 
 ### Added
 
-- Added `new_strict` methods to `Platform` and `Triple`, to disable heuristic target parsing.
+#### Custom platforms
+
+Added support for custom triples and platforms via [JSON specifications](https://docs.rust-embedded.org/embedonomicon/custom-target.html):
+
 - Added support for custom triples and platforms, under the optional `custom` feature.
 - New methods on `Platform` and `Triple`:
   - `is_standard`: returns true if this is a standard platform (builtin or heuristic).
   - `is_custom`: returns true if this is a custom platform.
   - `is_builtin`: returns true if this is a builtin platform.
   - `is_heuristic`: returns true if this platform was determined heuristically.
+
+#### Other additions
+
+Added `new_strict` methods to `Platform` and `Triple`, to disable heuristic target parsing.
+
+### Changed
+
+- Internal dependency `cfg-expr` updated to 0.15.2, updating builtin targets to Rust 1.70.
 
 ### Removed
 
