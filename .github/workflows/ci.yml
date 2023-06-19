@@ -122,8 +122,6 @@ jobs:
         run: cargo doc --all-features --workspace --exclude cargo-compare
 
   test-extended:
-    # Temporarily disabled due to issue found as https://github.com/EmbarkStudios/cfg-expr/pull/61.
-    if: false
     name: cargo-compare extended tests
     runs-on: ${{ matrix.os }}
     strategy:
