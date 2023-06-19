@@ -17,7 +17,7 @@ Added support for custom triples and platforms via [JSON specifications](https:/
 
 #### Other additions
 
-Added `new_strict` methods to `Platform` and `Triple`, to disable heuristic target parsing.
+- Added `new_strict` methods to `Platform` and `Triple`, to disable heuristic target parsing.
 
 ### Fixed
 
@@ -26,6 +26,8 @@ Added `new_strict` methods to `Platform` and `Triple`, to disable heuristic targ
 ### Changed
 
 - Internal dependency `cfg-expr` updated to 0.15.3, updating builtin targets to Rust 1.70.
+- `PlatformSummary` is now non-exhaustive.
+- `PlatformSummary::new` now creates a new `PlatformSummary` from a triple string. (The old `PlatformSummary::new` has been renamed to `PlatformSummary::from_platform`).
 
 ### Removed
 

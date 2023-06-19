@@ -18,7 +18,7 @@ impl Platform {
     /// Requires the `summaries` feature to be enabled.
     #[inline]
     pub fn to_summary(&self) -> PlatformSummary {
-        PlatformSummary::new(self)
+        PlatformSummary::from_platform(self)
     }
 }
 
@@ -29,6 +29,7 @@ impl Platform {
 /// Requires the `summaries` feature to be enabled.
 #[derive(Clone, Debug, Eq, PartialEq, Serialize)]
 #[serde(rename_all = "kebab-case")]
+#[non_exhaustive]
 pub struct PlatformSummary {
     /// The platform triple.
     pub triple: String,
@@ -45,8 +46,46 @@ pub struct PlatformSummary {
 }
 
 impl PlatformSummary {
+    /// Creates a new `PlatformSummary` with the provided triple and default options.
+    ///
+    /// The default options are:
+    ///
+    /// * `custom_json` is set to None.
+    /// * `target_features` is set to [`TargetFeaturesSummary::Unknown`].
+    /// * `flags` is empty.
+    pub fn new(triple_str: impl Into<String>) -> Self {
+        Self {
+            triple: triple_str.into(),
+            custom_json: None,
+            target_features: TargetFeaturesSummary::Unknown,
+            flags: BTreeSet::new(),
+        }
+    }
+
+    /// If this represents a custom platform, sets the target definition JSON for it.
+    ///
+    /// For more about target definition JSON, see [Creating a custom
+    /// target](https://docs.rust-embedded.org/embedonomicon/custom-target.html) on the Rust
+    /// Embedonomicon.
+    pub fn with_custom_json(mut self, custom_json: impl Into<String>) -> Self {
+        self.custom_json = Some(custom_json.into());
+        self
+    }
+
+    /// Sets the target features for this platform.
+    pub fn with_target_features(mut self, target_features: TargetFeaturesSummary) -> Self {
+        self.target_features = target_features;
+        self
+    }
+
+    /// Adds flags for this platform.
+    pub fn with_added_flags(mut self, flags: impl IntoIterator<Item = impl Into<String>>) -> Self {
+        self.flags.extend(flags.into_iter().map(|flag| flag.into()));
+        self
+    }
+
     /// Creates a new `PlatformSummary` instance from a platform.
-    pub fn new(platform: &Platform) -> Self {
+    pub fn from_platform(platform: &Platform) -> Self {
         Self {
             triple: platform.triple_str().to_string(),
             custom_json: platform.custom_json().map(|s| s.to_owned()),
@@ -369,7 +408,7 @@ mod proptests {
     proptest! {
         #[test]
         fn summary_roundtrip(platform in Platform::strategy(any::<TargetFeatures>())) {
-            let summary = PlatformSummary::new(&platform);
+            let summary = PlatformSummary::from_platform(&platform);
             let serialized = toml::ser::to_string(&summary).expect("serialization succeeded");
 
             let deserialized: PlatformSummary = toml::from_str(&serialized).expect("deserialization succeeded");

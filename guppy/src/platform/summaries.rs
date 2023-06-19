@@ -49,12 +49,10 @@ pub enum PlatformSpecSummary {
     /// # use target_spec::summaries::TargetFeaturesSummary;
     /// # use std::collections::BTreeSet;
     /// let spec: PlatformSpecSummary = serde_json::from_str(r#""x86_64-unknown-linux-gnu""#).unwrap();
-    /// assert_eq!(spec, PlatformSpecSummary::Platform(PlatformSummary {
-    ///     triple: "x86_64-unknown-linux-gnu".to_owned(),
-    ///     custom_json: None,
-    ///     target_features: TargetFeaturesSummary::Unknown,
-    ///     flags: BTreeSet::new(),
-    /// }));
+    /// assert_eq!(
+    ///     spec,
+    ///     PlatformSpecSummary::Platform(PlatformSummary::new("x86_64-unknown-linux-gnu")),
+    /// );
     /// ```
     ///
     /// Deserialize a target map.
@@ -68,12 +66,13 @@ pub enum PlatformSpecSummary {
     /// target-features = []
     /// flags = []
     /// "#).unwrap();
-    /// assert_eq!(spec, PlatformSpecSummary::Platform(PlatformSummary {
-    ///     triple: "x86_64-unknown-linux-gnu".to_owned(),
-    ///     custom_json: None,
-    ///     target_features: TargetFeaturesSummary::Features(BTreeSet::new()),
-    ///     flags: BTreeSet::new(),
-    /// }));
+    /// assert_eq!(
+    ///     spec,
+    ///     PlatformSpecSummary::Platform(
+    ///         PlatformSummary::new("x86_64-unknown-linux-gnu")
+    ///             .with_target_features(TargetFeaturesSummary::Features(BTreeSet::new()))
+    ///     )
+    /// );
     /// ```
     Platform(PlatformSummary),
 
@@ -176,12 +175,7 @@ mod serde_impl {
                         "any" => Ok(PlatformSpecSummary::Any),
                         _ => {
                             // TODO: expression parsing would go here
-                            Ok(PlatformSpecSummary::Platform(PlatformSummary {
-                                triple: spec,
-                                custom_json: None,
-                                target_features: TargetFeaturesSummary::default(),
-                                flags: BTreeSet::default(),
-                            }))
+                            Ok(PlatformSpecSummary::Platform(PlatformSummary::new(spec)))
                         }
                     }
                 }
@@ -190,12 +184,13 @@ mod serde_impl {
                     custom_json,
                     target_features,
                     flags,
-                } => Ok(PlatformSpecSummary::Platform(PlatformSummary {
-                    triple,
-                    custom_json,
-                    target_features,
-                    flags,
-                })),
+                } => {
+                    let mut summary = PlatformSummary::new(triple);
+                    summary.custom_json = custom_json;
+                    summary.target_features = target_features;
+                    summary.flags = flags;
+                    Ok(PlatformSpecSummary::Platform(summary))
+                }
             }
         }
     }
