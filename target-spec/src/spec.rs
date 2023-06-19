@@ -44,10 +44,13 @@ pub enum TargetSpec {
 
 impl TargetSpec {
     /// Creates a new target from a string.
+    ///
+    /// This constructor covers many, but not all, cases. To customize target spec construction, use
+    /// [`Self::looks_like_expression`].
     pub fn new(input: impl Into<Cow<'static, str>>) -> Result<Self, Error> {
         let input = input.into();
 
-        if input.starts_with("cfg(") {
+        if Self::looks_like_expression(&input) {
             Ok(TargetSpec::Expression(TargetExpression::new(&input)?))
         } else {
             match Triple::new(input) {
@@ -55,6 +58,34 @@ impl TargetSpec {
                 Err(parse_err) => Err(Error::UnknownTargetTriple(parse_err)),
             }
         }
+    }
+
+    /// Returns true if the input resembles a target expression.
+    ///
+    /// This simply checks that the input begins with `"cfg("`.
+    ///
+    /// # Examples
+    ///
+    /// `looks_like_expression` can be used to customize target spec construction. For example, it
+    /// can be used to resolve custom targets:
+    ///
+    /// ```
+    /// use target_spec::{Error, TargetExpression, TargetSpec, Triple};
+    ///
+    /// # #[cfg(feature = "custom")]
+    /// fn make_target_spec(input: &str) -> Result<TargetSpec, Error> {
+    ///     if TargetSpec::looks_like_expression(input) {
+    ///         Ok(TargetSpec::Expression(TargetExpression::new(&input)?))
+    ///     } else {
+    ///         let json = "{}";  // perform custom target resolution here
+    ///         let triple = Triple::new_custom(input.to_owned(), json)
+    ///             .map_err(Error::CustomTripleCreate)?;
+    ///         Ok(TargetSpec::Triple(triple))
+    ///     }
+    /// }
+    /// ```
+    pub fn looks_like_expression(input: &str) -> bool {
+        input.starts_with("cfg(")
     }
 
     /// Evaluates this specification against the given platform.
