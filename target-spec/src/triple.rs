@@ -327,7 +327,7 @@ impl TripleInner {
             }
             #[cfg(feature = "custom")]
             TripleInner::Custom { target_info, .. } => TripleInnerProjected::Custom(target_info),
-            TripleInner::Lexicon { triple_str, .. } => TripleInnerProjected::Lexicon(&triple_str),
+            TripleInner::Lexicon { triple_str, .. } => TripleInnerProjected::Lexicon(triple_str),
         }
     }
 }
