@@ -15,8 +15,11 @@ pub enum Error {
     UnknownTargetTriple(TripleParseError),
     /// The provided platform triple was unknown.
     UnknownPlatformTriple(TripleParseError),
+    /// An error occurred while creating a custom triple (in the position that a `cfg()` expression
+    /// would be).
+    CustomTripleCreate(CustomTripleCreateError),
     /// An error occurred while creating a custom platform.
-    CustomPlatformCreate(CustomPlatformCreateError),
+    CustomPlatformCreate(CustomTripleCreateError),
 }
 
 impl fmt::Display for Error {
@@ -27,6 +30,7 @@ impl fmt::Display for Error {
             Error::UnknownPlatformTriple(_) => {
                 write!(f, "unknown platform triple")
             }
+            Error::CustomTripleCreate(_) => write!(f, "error creating custom triple"),
             Error::CustomPlatformCreate(_) => {
                 write!(f, "error creating custom platform")
             }
@@ -40,6 +44,7 @@ impl error::Error for Error {
             Error::InvalidExpression(err) => Some(err),
             Error::UnknownTargetTriple(err) => Some(err),
             Error::UnknownPlatformTriple(err) => Some(err),
+            Error::CustomTripleCreate(err) => Some(err),
             Error::CustomPlatformCreate(err) => Some(err),
         }
     }
@@ -258,7 +263,7 @@ impl error::Error for TripleParseErrorKind {
 /// An error returned while creating a custom platform.
 #[derive(Clone, Debug)]
 #[non_exhaustive]
-pub enum CustomPlatformCreateError {
+pub enum CustomTripleCreateError {
     #[cfg(feature = "custom")]
     /// An error occurred while deserializing serde data.
     Deserialize {
@@ -276,7 +281,7 @@ pub enum CustomPlatformCreateError {
     Unavailable,
 }
 
-impl fmt::Display for CustomPlatformCreateError {
+impl fmt::Display for CustomTripleCreateError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             #[cfg(feature = "custom")]
@@ -290,7 +295,7 @@ impl fmt::Display for CustomPlatformCreateError {
     }
 }
 
-impl error::Error for CustomPlatformCreateError {
+impl error::Error for CustomTripleCreateError {
     fn source(&self) -> Option<&(dyn error::Error + 'static)> {
         match self {
             #[cfg(feature = "custom")]

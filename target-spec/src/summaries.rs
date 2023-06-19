@@ -63,7 +63,7 @@ impl PlatformSummary {
         let mut platform = if let Some(json) = &self.custom_json {
             #[cfg(not(feature = "custom"))]
             return Err(Error::CustomPlatformCreate(
-                crate::errors::CustomPlatformCreateError::Unavailable,
+                crate::errors::CustomTripleCreateError::Unavailable,
             ));
 
             #[cfg(feature = "custom")]
@@ -71,8 +71,7 @@ impl PlatformSummary {
                 self.triple.to_owned(),
                 json,
                 self.target_features.to_target_features(),
-            )
-            .map_err(Error::CustomPlatformCreate)?
+            )?
         } else {
             Platform::new(
                 self.triple.to_owned(),
@@ -345,7 +344,7 @@ mod tests {
 
                 #[cfg(not(feature = "custom"))]
                 {
-                    use crate::errors::CustomPlatformCreateError;
+                    use crate::errors::CustomTripleCreateError;
 
                     let error = actual
                         .platform
@@ -353,7 +352,7 @@ mod tests {
                         .expect_err("custom platforms are disabled");
                     assert!(matches!(
                         error,
-                        Error::CustomPlatformCreate(CustomPlatformCreateError::Unavailable)
+                        Error::CustomPlatformCreate(CustomTripleCreateError::Unavailable)
                     ));
                 }
             }

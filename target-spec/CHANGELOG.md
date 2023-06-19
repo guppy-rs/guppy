@@ -5,13 +5,17 @@
 ### Added
 
 - Added `new_strict` methods to `Platform` and `Triple`, to disable heuristic target parsing.
-- Added support for custom platforms, under the optional `custom` feature.
-
-### Changed
+- Added support for custom triples and platforms, under the optional `custom` feature.
+- New methods on `Platform` and `Triple`:
+  - `is_standard`: returns true if this is a standard platform (builtin or heuristic).
+  - `is_custom`: returns true if this is a custom platform.
+  - `is_builtin`: returns true if this is a builtin platform.
+  - `is_heuristic`: returns true if this platform was determined heuristically.
 
 ### Removed
 
 - Removed deprecated `Error::UnknownPredicate` variant.
+- `Error` no longer implements `Eq` or `PartialEq` due to one of its variants now containing `serde_json::Error`.
 
 ## [1.4.0] - 2023-04-15
 
