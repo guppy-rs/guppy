@@ -103,7 +103,7 @@ impl Platform {
         let target_def: TargetDefinition = serde_json::from_str(json).map_err(|error| {
             crate::errors::CustomPlatformCreateError::Deserialize {
                 triple: triple_str.to_string(),
-                error,
+                error: error.into(),
             }
         })?;
         #[cfg(feature = "summaries")]

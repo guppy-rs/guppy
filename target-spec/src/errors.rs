@@ -6,7 +6,7 @@
 use std::{borrow::Cow, error, fmt};
 
 /// An error that happened during `target-spec` parsing or evaluation.
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 #[non_exhaustive]
 pub enum Error {
     /// A `cfg()` expression was invalid and could not be parsed.
@@ -256,7 +256,7 @@ impl error::Error for TripleParseErrorKind {
 }
 
 /// An error returned while creating a custom platform.
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 #[non_exhaustive]
 pub enum CustomPlatformCreateError {
     #[cfg(feature = "custom")]
@@ -266,7 +266,7 @@ pub enum CustomPlatformCreateError {
         triple: String,
 
         /// The deserialization error that occurred.
-        error: serde_json::Error,
+        error: std::sync::Arc<serde_json::Error>,
     },
 
     /// A custom platform was asked to be created, but the `custom` feature is currently disabled.
