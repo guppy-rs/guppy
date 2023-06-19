@@ -7,7 +7,7 @@ publish = false
 
 [dependencies]
 anyhow = "1.0.71"
-cargo = "0.69.1"
+cargo = "0.71.0"
 clap = { version = "3.2.25", features = ["derive"] }
 color-eyre = { version = "0.6.2", default-features = false }
 diffus = "0.10.0"
