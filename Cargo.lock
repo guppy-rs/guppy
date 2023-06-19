@@ -1938,6 +1938,7 @@ dependencies = [
  "quote 1.0.28",
  "regex",
  "rustix",
+ "semver",
  "serde",
  "serde_json",
  "syn 1.0.109",
