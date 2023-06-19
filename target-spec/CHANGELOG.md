@@ -19,9 +19,13 @@ Added support for custom triples and platforms via [JSON specifications](https:/
 
 Added `new_strict` methods to `Platform` and `Triple`, to disable heuristic target parsing.
 
+### Fixed
+
+- `target_os = "none"` is now correctly handled.
+
 ### Changed
 
-- Internal dependency `cfg-expr` updated to 0.15.2, updating builtin targets to Rust 1.70.
+- Internal dependency `cfg-expr` updated to 0.15.3, updating builtin targets to Rust 1.70.
 
 ### Removed
 
