@@ -27,7 +27,7 @@ rust-version = "1.66"
 [dependencies]
 camino = "1.1.4"
 globset = "0.4.10"
-guppy = { version = "0.15.2", path = "../../guppy", features = [
+guppy = { version = "0.16.0", path = "../../guppy", features = [
     "rayon1",
     "summaries",
 ] }
