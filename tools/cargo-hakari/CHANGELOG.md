@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.9.25] - 2023-06-19
+
+### Fixed
+
+- `target_os = "none"` is now correctly evaluated.
+
+### Changed
+
+- MSRV updated to Rust 1.66.
+- Builtin platforms updated to Rust 1.70.
+
 ## [0.9.24] - 2023-04-15
 
 ### Fixed
@@ -209,6 +220,7 @@ This was tagged, but never released due to
 
 Initial release.
 
+[0.9.25]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.25
 [0.9.24]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.24
 [0.9.23]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.23
 [0.9.22]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.22

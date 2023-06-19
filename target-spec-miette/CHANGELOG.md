@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## [0.2.0] - 2023-06-19
 
 ### Changed
 
@@ -11,4 +11,5 @@
 
 Initial release with support for miette 5.
 
+[0.2.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-miette-0.2.0
 [0.1.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-miette-0.1.0
