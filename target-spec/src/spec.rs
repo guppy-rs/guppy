@@ -5,7 +5,38 @@ use crate::{errors::ExpressionParseError, Error, Platform, Triple};
 use cfg_expr::{Expression, Predicate};
 use std::{borrow::Cow, str::FromStr, sync::Arc};
 
-/// A parsed target specification or triple, as found in a `Cargo.toml` file.
+/// A parsed target specification or triple string, as found in a `Cargo.toml` file.
+///
+/// ## Expressions and triple strings
+///
+/// Cargo supports [platform-specific
+/// dependencies](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#platform-specific-dependencies).
+/// These dependencies can be specified in one of two ways:
+///
+/// ```toml
+/// # 1. As Rust-like `#[cfg]` syntax.
+/// [target.'cfg(all(unix, target_arch = "x86_64"))'.dependencies]
+/// native = { path = "native/x86_64" }
+///
+/// # 2. Listing out the full target triple.
+/// [target.x86_64-pc-windows-gnu.dependencies]
+/// winhttp = "0.4.0"
+/// ```
+///
+/// ### The `cfg()` syntax
+///
+/// The first [`cfg()` syntax](https://doc.rust-lang.org/reference/conditional-compilation.html) is
+/// represented via the [`TargetSpec::Expression`] variant. This variant represents an arbitrary
+/// expression against certain properties of the target. To evaluate a [`Platform`] against this
+/// variant, `target-spec` builds an expression tree (currently via
+/// [`cfg-expr`](https://github.com/EmbarkStudios/cfg-expr)).
+///
+/// ### Plain string syntax
+///
+/// The second syntax, listing just the name of a platform, is represented via the
+/// [`TargetSpec::TripleString`] variant. In target-spec's model, the contained data is arbitrary
+/// and used only for string comparisons. For example,
+/// `TargetSpec::TripleString("x86_64-pc-windows-gnu")` will match
 ///
 /// ## Examples
 ///
@@ -31,61 +62,80 @@ use std::{borrow::Cow, str::FromStr, sync::Arc};
 /// ```
 #[derive(Clone, Debug)]
 pub enum TargetSpec {
-    /// An exact target parsed from a triple.
-    ///
-    /// Parsed from strings like `"i686-pc-windows-gnu"`.
-    Triple(Triple),
-
     /// A complex expression.
     ///
     /// Parsed from strings like `"cfg(any(windows, target_arch = \"x86_64\"))"`.
     Expression(TargetExpression),
+
+    /// A plain string representing a triple.
+    ///
+    /// This string hasn't been validated because it may represent a custom platform. To validate
+    /// this string, use [`Self::is_known`].
+    TripleString(Cow<'static, str>),
 }
 
 impl TargetSpec {
-    /// Creates a new target from a string.
-    ///
-    /// This constructor covers many, but not all, cases. To customize target spec construction, use
-    /// [`Self::looks_like_expression`].
+    /// Creates a new target spec from a string.
     pub fn new(input: impl Into<Cow<'static, str>>) -> Result<Self, Error> {
         let input = input.into();
 
         if Self::looks_like_expression(&input) {
             Ok(TargetSpec::Expression(TargetExpression::new(&input)?))
+        } else if Self::looks_like_triple_string(&input) {
+            Ok(TargetSpec::TripleString(input))
         } else {
-            match Triple::new(input) {
-                Ok(triple) => Ok(TargetSpec::Triple(triple)),
-                Err(parse_err) => Err(Error::UnknownTargetTriple(parse_err)),
-            }
+            Err(Error::UnknownTargetTriple(input.into()))
         }
     }
 
-    /// Returns true if the input resembles a target expression.
+    /// Returns true if the input will be parsed as a target expression.
     ///
-    /// This simply checks that the input begins with `"cfg("`.
-    ///
-    /// # Examples
-    ///
-    /// `looks_like_expression` can be used to customize target spec construction. For example, it
-    /// can be used to resolve custom targets:
-    ///
-    /// ```
-    /// use target_spec::{Error, TargetExpression, TargetSpec, Triple};
-    ///
-    /// # #[cfg(feature = "custom")]
-    /// fn make_target_spec(input: &str) -> Result<TargetSpec, Error> {
-    ///     if TargetSpec::looks_like_expression(input) {
-    ///         Ok(TargetSpec::Expression(TargetExpression::new(&input)?))
-    ///     } else {
-    ///         let json = "{}";  // perform custom target resolution here
-    ///         let triple = Triple::new_custom(input.to_owned(), json)
-    ///             .map_err(Error::CustomTripleCreate)?;
-    ///         Ok(TargetSpec::Triple(triple))
-    ///     }
-    /// }
-    /// ```
+    /// In other words, returns true if the input begins with `"cfg("`.
     pub fn looks_like_expression(input: &str) -> bool {
         input.starts_with("cfg(")
+    }
+
+    /// Returns true if the input will be understood to be a triple string.
+    ///
+    /// Currently, this checks that a string is an "identifier plus -", where identifiers are as
+    /// [defined by Unicode](https://unicode.org/reports/tr31/):
+    /// * The string must not be empty.
+    /// * The first character must be in the `XID_Start` Unicode lexical class.
+    /// * All subsequent characters must either be `'-'` or be in the Unicode `XID_Continue` lexical
+    ///   class.
+    pub fn looks_like_triple_string(input: &str) -> bool {
+        if input.is_empty() {
+            return false;
+        }
+
+        let mut first = true;
+        for ch in input.chars() {
+            if first {
+                if !unicode_ident::is_xid_start(ch) {
+                    return false;
+                }
+                first = false;
+            } else if !(ch == '-' || unicode_ident::is_xid_continue(ch)) {
+                return false;
+            }
+        }
+        true
+    }
+
+    /// Returns true if an input looks like it's known and understood.
+    ///
+    /// * For [`Self::Expression`], the inner [`TargetExpression`] has aleady been parsed as valid,
+    ///   so this returns true.
+    /// * For [`Self::TripleString`], this returns true if the triple is builtin or has
+    ///   heuristically been determined to be valid.
+    ///
+    /// This method does not take into account custom platforms. If you know about custom platforms,
+    /// consider checking against those as well.
+    pub fn is_known(&self) -> bool {
+        match self {
+            TargetSpec::TripleString(triple) => Triple::new(triple.as_ref().to_owned()).is_ok(),
+            TargetSpec::Expression(_) => true,
+        }
     }
 
     /// Evaluates this specification against the given platform.
@@ -95,7 +145,7 @@ impl TargetSpec {
     #[inline]
     pub fn eval(&self, platform: &Platform) -> Option<bool> {
         match self {
-            TargetSpec::Triple(triple) => Some(triple.eval(platform)),
+            TargetSpec::TripleString(triple) => Some(platform.triple_str() == triple),
             TargetSpec::Expression(expr) => expr.eval(platform),
         }
     }
@@ -189,14 +239,14 @@ mod tests {
         let res = TargetSpec::new("x86_64-apple-darwin");
         assert!(matches!(
             res,
-            Ok(TargetSpec::Triple(triple)) if triple.as_str() == "x86_64-apple-darwin"
+            Ok(TargetSpec::TripleString(triple)) if triple == "x86_64-apple-darwin"
         ));
     }
 
     #[test]
     fn test_single() {
         let expr = match TargetSpec::new("cfg(windows)").unwrap() {
-            TargetSpec::Triple(triple) => {
+            TargetSpec::TripleString(triple) => {
                 panic!("expected expression, got triple: {:?}", triple)
             }
             TargetSpec::Expression(expr) => expr,
@@ -213,7 +263,7 @@ mod tests {
             match TargetSpec::new("cfg(any(target_arch = \"wasm32\", target_abi = \"unknown\"))")
                 .unwrap()
             {
-                TargetSpec::Triple(triple) => {
+                TargetSpec::TripleString(triple) => {
                     panic!("expected expression, got triple: {:?}", triple)
                 }
                 TargetSpec::Expression(expr) => expr,
@@ -239,7 +289,7 @@ mod tests {
     #[test]
     fn test_testequal() {
         let expr = match TargetSpec::new("cfg(target_os = \"windows\")").unwrap() {
-            TargetSpec::Triple(triple) => {
+            TargetSpec::TripleString(triple) => {
                 panic!("expected spec, got triple: {:?}", triple)
             }
             TargetSpec::Expression(expr) => expr,
@@ -252,19 +302,47 @@ mod tests {
     }
 
     #[test]
+    fn test_identifier_like_triple() {
+        // This used to be "x86_64-pc-darwin", but target-lexicon can parse that.
+        let spec = TargetSpec::new("cannotbeknown")
+            .expect("triples that look like identifiers should parse correctly");
+        assert!(!spec.is_known(), "spec isn't known");
+    }
+
+    #[test]
+    fn test_triple_string_identifier() {
+        // We generally trust that unicode-ident is correct. Just do some basic checks.
+        let valid = ["foo", "foo-bar", "foo_baz", "quux-"];
+        let invalid = ["", "foo+bar", "foo bar", " ", "_baz", "-foo"];
+        for input in valid {
+            assert!(
+                TargetSpec::looks_like_triple_string(input),
+                "`{input}` looks like triple string"
+            );
+        }
+        for input in invalid {
+            assert!(
+                !TargetSpec::looks_like_triple_string(input),
+                "`{input}` does not look like triple string"
+            );
+        }
+    }
+
+    #[test]
     fn test_unknown_triple() {
         // This used to be "x86_64-pc-darwin", but target-lexicon can parse that.
-        let err = TargetSpec::new("cannotbeknown").expect_err("unknown triple");
+        let err = TargetSpec::new("cannotbeknown!!!")
+            .expect_err("unknown triples should parse correctly");
         assert!(matches!(
             err,
-            Error::UnknownTargetTriple(parse_err) if parse_err.triple_str() == "cannotbeknown"
+            Error::UnknownTargetTriple(s) if s == "cannotbeknown!!!"
         ));
     }
 
     #[test]
     fn test_unknown_flag() {
         let expr = match TargetSpec::new("cfg(foo)").unwrap() {
-            TargetSpec::Triple(triple) => {
+            TargetSpec::TripleString(triple) => {
                 panic!("expected spec, got triple: {:?}", triple)
             }
             TargetSpec::Expression(expr) => expr,
@@ -281,7 +359,7 @@ mod tests {
         let expr = match TargetSpec::new("cfg(bogus_key = \"bogus_value\")")
             .expect("unknown predicate should parse")
         {
-            TargetSpec::Triple(triple) => {
+            TargetSpec::TripleString(triple) => {
                 panic!("expected spec, got triple: {:?}", triple)
             }
             TargetSpec::Expression(expr) => expr,

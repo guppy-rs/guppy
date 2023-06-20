@@ -12,7 +12,7 @@ pub enum Error {
     /// A `cfg()` expression was invalid and could not be parsed.
     InvalidExpression(ExpressionParseError),
     /// The provided target triple (in the position that a `cfg()` expression would be) was unknown.
-    UnknownTargetTriple(TripleParseError),
+    UnknownTargetTriple(String),
     /// The provided platform triple was unknown.
     UnknownPlatformTriple(TripleParseError),
     /// An error occurred while creating a custom triple (in the position that a `cfg()` expression
@@ -26,7 +26,9 @@ impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Error::InvalidExpression(_) => write!(f, "invalid cfg() expression"),
-            Error::UnknownTargetTriple(_) => write!(f, "unknown target triple"),
+            Error::UnknownTargetTriple(triple_str) => {
+                write!(f, "unknown target triple: `{triple_str}`")
+            }
             Error::UnknownPlatformTriple(_) => {
                 write!(f, "unknown platform triple")
             }
@@ -42,7 +44,7 @@ impl error::Error for Error {
     fn source(&self) -> Option<&(dyn error::Error + 'static)> {
         match self {
             Error::InvalidExpression(err) => Some(err),
-            Error::UnknownTargetTriple(err) => Some(err),
+            Error::UnknownTargetTriple(_) => None,
             Error::UnknownPlatformTriple(err) => Some(err),
             Error::CustomTripleCreate(err) => Some(err),
             Error::CustomPlatformCreate(err) => Some(err),

@@ -26,6 +26,7 @@ serde = { version = "1.0.164", optional = true, features = ["derive"] }
 serde_json = { version = "1.0.97", optional = true }
 target-lexicon = { version = "0.12.7", features = ["std"] }
 guppy-workspace-hack = { version = "0.1", path = "../workspace-hack" }
+unicode-ident = "1.0.9"
 
 [dev-dependencies]
 rustc_version = "0.4.0"

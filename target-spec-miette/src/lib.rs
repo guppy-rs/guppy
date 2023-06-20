@@ -36,9 +36,7 @@ impl IntoMietteDiagnostic for TargetSpecError {
     fn into_diagnostic(self) -> Self::IntoDiagnostic {
         match self {
             Self::InvalidExpression(error) => Box::new(error.into_diagnostic()),
-            Self::UnknownTargetTriple(error) | Self::UnknownPlatformTriple(error) => {
-                Box::new(error.into_diagnostic())
-            }
+            Self::UnknownPlatformTriple(error) => Box::new(error.into_diagnostic()),
             other => Box::<dyn Diagnostic + Send + Sync + 'static>::from(other.to_string()),
         }
     }
