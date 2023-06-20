@@ -36,7 +36,8 @@ use std::{borrow::Cow, str::FromStr, sync::Arc};
 /// The second syntax, listing just the name of a platform, is represented via the
 /// [`TargetSpec::TripleString`] variant. In target-spec's model, the contained data is arbitrary
 /// and used only for string comparisons. For example,
-/// `TargetSpec::TripleString("x86_64-pc-windows-gnu")` will match
+/// `TargetSpec::TripleString("x86_64-pc-windows-gnu")` will match the `x86_64-pc-windows-gnu`
+/// platform.
 ///
 /// ## Examples
 ///

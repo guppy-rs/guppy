@@ -14,8 +14,7 @@ use std::{borrow::Cow, cmp::Ordering, hash, str::FromStr};
 ///
 /// A `Triple` may be constructed through `new` or the `FromStr` implementation.
 ///
-/// Every [`Platform`](crate::Platform) has one of these, and an evaluation
-/// [`TargetSpec`](crate::TargetSpec) may be backed by one of these as well.
+/// Every [`Platform`](crate::Platform) is backed by one of these.
 ///
 /// # Standard and custom platforms
 ///
