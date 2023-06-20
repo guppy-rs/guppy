@@ -39,6 +39,9 @@ use std::{borrow::Cow, str::FromStr, sync::Arc};
 /// `TargetSpec::TripleString("x86_64-pc-windows-gnu")` will match the `x86_64-pc-windows-gnu`
 /// platform.
 ///
+/// `target-spec` checks that a triple looks like an identifier with possible dashes internally.
+/// This check is implemented in [`Self::looks_like_triple_string`].
+///
 /// ## Examples
 ///
 /// ```
