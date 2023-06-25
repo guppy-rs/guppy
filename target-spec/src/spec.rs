@@ -99,31 +99,17 @@ impl TargetSpec {
         input.starts_with("cfg(")
     }
 
-    /// Returns true if the input will be understood to be a triple string.
+    /// Returns true if the input will be understood to be a named platform.
     ///
-    /// Currently, this checks that a string is an "identifier plus -", where identifiers are as
-    /// [defined by Unicode](https://unicode.org/reports/tr31/):
-    /// * The string must not be empty.
-    /// * The first character must be in the `XID_Start` Unicode lexical class.
-    /// * All subsequent characters must either be `'-'` or be in the Unicode `XID_Continue` lexical
-    ///   class.
+    /// This check is borrowed from
+    /// [`cargo-platform`](https://github.com/rust-lang/cargo/blob/5febbe5587b74108165f748e79a4f8badbdf5e0e/crates/cargo-platform/src/lib.rs#L40-L63).
+    ///
+    /// Note that this currently accepts an empty string. This matches Cargo's behavior as of Rust
+    /// 1.70.
     pub fn looks_like_triple_string(input: &str) -> bool {
-        if input.is_empty() {
-            return false;
-        }
-
-        let mut first = true;
-        for ch in input.chars() {
-            if first {
-                if !unicode_ident::is_xid_start(ch) {
-                    return false;
-                }
-                first = false;
-            } else if !(ch == '-' || unicode_ident::is_xid_continue(ch)) {
-                return false;
-            }
-        }
-        true
+        input
+            .chars()
+            .all(|c| c.is_alphanumeric() || c == '_' || c == '-' || c == '.')
     }
 
     /// Returns true if an input looks like it's known and understood.
@@ -316,8 +302,8 @@ mod tests {
     #[test]
     fn test_triple_string_identifier() {
         // We generally trust that unicode-ident is correct. Just do some basic checks.
-        let valid = ["foo", "foo-bar", "foo_baz", "quux-"];
-        let invalid = ["", "foo+bar", "foo bar", " ", "_baz", "-foo"];
+        let valid = ["", "foo", "foo-bar", "foo_baz", "-foo", "quux-"];
+        let invalid = ["foo+bar", "foo bar", " "];
         for input in valid {
             assert!(
                 TargetSpec::looks_like_triple_string(input),
