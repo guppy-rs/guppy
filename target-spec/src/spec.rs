@@ -119,7 +119,7 @@ impl TargetSpec {
 
     /// Returns true if an input looks like it's known and understood.
     ///
-    /// * For [`Self::Expression`], the inner [`TargetSpecExpression`] has aleady been parsed as
+    /// * For [`Self::Expression`], the inner [`TargetSpecExpression`] has already been parsed as
     ///   valid, so this returns true.
     /// * For [`Self::PlainString`], this returns true if the string matches a builtin triple or has
     ///   heuristically been determined to be valid.
