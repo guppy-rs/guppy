@@ -12,6 +12,6 @@ edition = "2021"
 rust-version = "1.66"
 
 [dependencies]
-target-spec = { version = "2.0.1", path = "../target-spec" }
+target-spec = { version = "3.0.0", path = "../target-spec" }
 miette = "5.9.0"
 guppy-workspace-hack = { version = "0.1", path = "../workspace-hack" }

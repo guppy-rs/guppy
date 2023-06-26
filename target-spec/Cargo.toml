@@ -1,6 +1,6 @@
 [package]
 name = "target-spec"
-version = "2.0.1"
+version = "3.0.0"
 description = "Evaluate Cargo.toml target specifications"
 documentation = "https://docs.rs/target-spec"
 repository = "https://github.com/guppy-rs/guppy"
