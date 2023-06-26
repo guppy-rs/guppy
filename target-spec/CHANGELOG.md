@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.0.0] - 2023-06-25
+
+### Changed
+
+- `TargetSpec` now stores plain strings rather than parsed triples. This matches what Cargo does.
+- `TargetExpression` has been renamed renamed to `TargetSpecExpression`.
+- `Error::UnknownTargetTriple` has been renamed to `Error::InvalidTargetSpecString`, and returns a new `PlainStringParseError` type.
+
 ## [2.0.1] - 2023-06-19
 
 ### Fixed

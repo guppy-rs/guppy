@@ -1,9 +1,12 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-use crate::{errors::ExpressionParseError, Error, Platform, Triple};
+use crate::{
+    errors::{ExpressionParseError, PlainStringParseError},
+    Error, Platform, Triple,
+};
 use cfg_expr::{Expression, Predicate};
-use std::{borrow::Cow, str::FromStr, sync::Arc};
+use std::{borrow::Cow, fmt, str::FromStr, sync::Arc};
 
 /// A parsed target specification or triple string, as found in a `Cargo.toml` file.
 ///
@@ -34,13 +37,13 @@ use std::{borrow::Cow, str::FromStr, sync::Arc};
 /// ### Plain string syntax
 ///
 /// The second syntax, listing just the name of a platform, is represented via the
-/// [`TargetSpec::TripleString`] variant. In target-spec's model, the contained data is arbitrary
+/// [`TargetSpec::PlainString`] variant. In target-spec's model, the contained data is arbitrary
 /// and used only for string comparisons. For example,
-/// `TargetSpec::TripleString("x86_64-pc-windows-gnu")` will match the `x86_64-pc-windows-gnu`
+/// `TargetSpec::PlainString("x86_64-pc-windows-gnu")` will match the `x86_64-pc-windows-gnu`
 /// platform.
 ///
-/// `target-spec` checks that a triple looks like an identifier with possible dashes internally.
-/// This check is implemented in [`Self::looks_like_triple_string`].
+/// `target-spec` checks that the string looks sufficiently like a triple. This check is duplicated
+/// from Cargo's own check and is implemented in [`Self::looks_like_plain_string`].
 ///
 /// ## Examples
 ///
@@ -69,13 +72,13 @@ pub enum TargetSpec {
     /// A complex expression.
     ///
     /// Parsed from strings like `"cfg(any(windows, target_arch = \"x86_64\"))"`.
-    Expression(TargetExpression),
+    Expression(TargetSpecExpression),
 
     /// A plain string representing a triple.
     ///
     /// This string hasn't been validated because it may represent a custom platform. To validate
     /// this string, use [`Self::is_known`].
-    TripleString(Cow<'static, str>),
+    PlainString(TargetSpecPlainString),
 }
 
 impl TargetSpec {
@@ -84,11 +87,12 @@ impl TargetSpec {
         let input = input.into();
 
         if Self::looks_like_expression(&input) {
-            Ok(TargetSpec::Expression(TargetExpression::new(&input)?))
-        } else if Self::looks_like_triple_string(&input) {
-            Ok(TargetSpec::TripleString(input))
+            Ok(TargetSpec::Expression(TargetSpecExpression::new(&input)?))
         } else {
-            Err(Error::UnknownTargetTriple(input.into()))
+            match TargetSpecPlainString::new(input) {
+                Ok(plain_str) => Ok(Self::PlainString(plain_str)),
+                Err(error) => Err(Error::InvalidTargetSpecString(error)),
+            }
         }
     }
 
@@ -99,22 +103,20 @@ impl TargetSpec {
         input.starts_with("cfg(")
     }
 
-    /// Returns true if the input will be understood to be a named platform.
+    /// Returns true if the input will be understood to be a plain string.
     ///
     /// This check is borrowed from
     /// [`cargo-platform`](https://github.com/rust-lang/cargo/blob/5febbe5587b74108165f748e79a4f8badbdf5e0e/crates/cargo-platform/src/lib.rs#L40-L63).
     ///
     /// Note that this currently accepts an empty string. This matches Cargo's behavior as of Rust
     /// 1.70.
-    pub fn looks_like_triple_string(input: &str) -> bool {
-        input
-            .chars()
-            .all(|c| c.is_alphanumeric() || c == '_' || c == '-' || c == '.')
+    pub fn looks_like_plain_string(input: &str) -> bool {
+        TargetSpecPlainString::validate(input).is_ok()
     }
 
     /// Returns true if an input looks like it's known and understood.
     ///
-    /// * For [`Self::Expression`], the inner [`TargetExpression`] has aleady been parsed as valid,
+    /// * For [`Self::Expression`], the inner [`TargetSpecExpression`] has aleady been parsed as valid,
     ///   so this returns true.
     /// * For [`Self::TripleString`], this returns true if the triple is builtin or has
     ///   heuristically been determined to be valid.
@@ -123,7 +125,7 @@ impl TargetSpec {
     /// consider checking against those as well.
     pub fn is_known(&self) -> bool {
         match self {
-            TargetSpec::TripleString(triple) => Triple::new(triple.as_ref().to_owned()).is_ok(),
+            TargetSpec::PlainString(triple) => Triple::new(triple.as_str().to_owned()).is_ok(),
             TargetSpec::Expression(_) => true,
         }
     }
@@ -135,7 +137,7 @@ impl TargetSpec {
     #[inline]
     pub fn eval(&self, platform: &Platform) -> Option<bool> {
         match self {
-            TargetSpec::TripleString(triple) => Some(platform.triple_str() == triple),
+            TargetSpec::PlainString(triple) => Some(platform.triple_str() == triple.as_str()),
             TargetSpec::Expression(expr) => expr.eval(platform),
         }
     }
@@ -149,16 +151,16 @@ impl FromStr for TargetSpec {
     }
 }
 
-/// A target expression.
+/// A target expression, parsed from a string beginning with `cfg(`.
 ///
-/// Parsed from a string beginning with `cfg(`.
+/// For more information, see [`TargetSpec`].
 #[derive(Clone, Debug)]
-pub struct TargetExpression {
+pub struct TargetSpecExpression {
     inner: Arc<Expression>,
 }
 
-impl TargetExpression {
-    /// Creates a new `TargetExpression` from a string beginning with `cfg(`.
+impl TargetSpecExpression {
+    /// Creates a new `TargetSpecExpression` from a string beginning with `cfg(`.
     ///
     /// Returns an error if the string could not be parsed, or if the string contains a predicate
     /// that wasn't understood by `target-spec`.
@@ -208,11 +210,62 @@ impl TargetExpression {
     }
 }
 
-impl FromStr for TargetExpression {
+impl FromStr for TargetSpecExpression {
     type Err = Error;
 
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         Self::new(input)
+    }
+}
+
+impl fmt::Display for TargetSpecExpression {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str(self.expression_str())
+    }
+}
+
+/// A plain string as contained within a [`TargetSpec::PlainString`].
+///
+/// For more information, see [`TargetSpec`].
+#[derive(Clone, Debug)]
+pub struct TargetSpecPlainString(Cow<'static, str>);
+
+impl TargetSpecPlainString {
+    /// Creates a new instance of `TargetSpecPlainString`, after validating it.
+    pub fn new(input: impl Into<Cow<'static, str>>) -> Result<Self, PlainStringParseError> {
+        let input = input.into();
+        Self::validate(&input)?;
+        Ok(Self(input))
+    }
+
+    /// Returns the string as parsed.
+    pub fn as_str(&self) -> &str {
+        &self.0
+    }
+
+    fn validate(input: &str) -> Result<(), PlainStringParseError> {
+        if let Some((char_index, c)) = input
+            .char_indices()
+            .find(|&(_, c)| !(c.is_alphanumeric() || c == '_' || c == '-' || c == '.'))
+        {
+            Err(PlainStringParseError::new(input.to_owned(), char_index, c))
+        } else {
+            Ok(())
+        }
+    }
+}
+
+impl FromStr for TargetSpecPlainString {
+    type Err = PlainStringParseError;
+
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        Self::new(input.to_owned())
+    }
+}
+
+impl fmt::Display for TargetSpecPlainString {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str(&self.0)
     }
 }
 
@@ -229,14 +282,14 @@ mod tests {
         let res = TargetSpec::new("x86_64-apple-darwin");
         assert!(matches!(
             res,
-            Ok(TargetSpec::TripleString(triple)) if triple == "x86_64-apple-darwin"
+            Ok(TargetSpec::PlainString(triple)) if triple.as_str() == "x86_64-apple-darwin"
         ));
     }
 
     #[test]
     fn test_single() {
         let expr = match TargetSpec::new("cfg(windows)").unwrap() {
-            TargetSpec::TripleString(triple) => {
+            TargetSpec::PlainString(triple) => {
                 panic!("expected expression, got triple: {:?}", triple)
             }
             TargetSpec::Expression(expr) => expr,
@@ -253,7 +306,7 @@ mod tests {
             match TargetSpec::new("cfg(any(target_arch = \"wasm32\", target_abi = \"unknown\"))")
                 .unwrap()
             {
-                TargetSpec::TripleString(triple) => {
+                TargetSpec::PlainString(triple) => {
                     panic!("expected expression, got triple: {:?}", triple)
                 }
                 TargetSpec::Expression(expr) => expr,
@@ -279,7 +332,7 @@ mod tests {
     #[test]
     fn test_testequal() {
         let expr = match TargetSpec::new("cfg(target_os = \"windows\")").unwrap() {
-            TargetSpec::TripleString(triple) => {
+            TargetSpec::PlainString(triple) => {
                 panic!("expected spec, got triple: {:?}", triple)
             }
             TargetSpec::Expression(expr) => expr,
@@ -306,13 +359,13 @@ mod tests {
         let invalid = ["foo+bar", "foo bar", " "];
         for input in valid {
             assert!(
-                TargetSpec::looks_like_triple_string(input),
+                TargetSpec::looks_like_plain_string(input),
                 "`{input}` looks like triple string"
             );
         }
         for input in invalid {
             assert!(
-                !TargetSpec::looks_like_triple_string(input),
+                !TargetSpec::looks_like_plain_string(input),
                 "`{input}` does not look like triple string"
             );
         }
@@ -325,14 +378,14 @@ mod tests {
             .expect_err("unknown triples should parse correctly");
         assert!(matches!(
             err,
-            Error::UnknownTargetTriple(s) if s == "cannotbeknown!!!"
+            Error::InvalidTargetSpecString(s) if s.input() == "cannotbeknown!!!"
         ));
     }
 
     #[test]
     fn test_unknown_flag() {
         let expr = match TargetSpec::new("cfg(foo)").unwrap() {
-            TargetSpec::TripleString(triple) => {
+            TargetSpec::PlainString(triple) => {
                 panic!("expected spec, got triple: {:?}", triple)
             }
             TargetSpec::Expression(expr) => expr,
@@ -349,7 +402,7 @@ mod tests {
         let expr = match TargetSpec::new("cfg(bogus_key = \"bogus_value\")")
             .expect("unknown predicate should parse")
         {
-            TargetSpec::TripleString(triple) => {
+            TargetSpec::PlainString(triple) => {
                 panic!("expected spec, got triple: {:?}", triple)
             }
             TargetSpec::Expression(expr) => expr,

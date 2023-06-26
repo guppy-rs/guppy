@@ -17,7 +17,9 @@
 
 use miette::{Diagnostic, LabeledSpan, SourceCode};
 use std::{error::Error as StdError, fmt};
-use target_spec::errors::{Error as TargetSpecError, ExpressionParseError, TripleParseError};
+use target_spec::errors::{
+    Error as TargetSpecError, ExpressionParseError, PlainStringParseError, TripleParseError,
+};
 
 /// Extension trait that converts errors into a [`miette::Diagnostic`].
 pub trait IntoMietteDiagnostic {
@@ -36,6 +38,7 @@ impl IntoMietteDiagnostic for TargetSpecError {
     fn into_diagnostic(self) -> Self::IntoDiagnostic {
         match self {
             Self::InvalidExpression(error) => Box::new(error.into_diagnostic()),
+            Self::InvalidTargetSpecString(error) => Box::new(error.into_diagnostic()),
             Self::UnknownPlatformTriple(error) => Box::new(error.into_diagnostic()),
             other => Box::<dyn Diagnostic + Send + Sync + 'static>::from(other.to_string()),
         }
@@ -148,5 +151,63 @@ impl IntoMietteDiagnostic for TripleParseError {
 
     fn into_diagnostic(self) -> Self::IntoDiagnostic {
         TripleParseDiagnostic::new(self)
+    }
+}
+
+/// A wrapper around [`PlainStringParseError`] that implements [`Diagnostic`].
+#[derive(Clone, PartialEq, Eq)]
+pub struct PlainStringParseDiagnostic {
+    error: PlainStringParseError,
+    // Need to store this separately because &str can't be cast to &dyn SourceCode.
+    input: String,
+}
+
+impl PlainStringParseDiagnostic {
+    /// Creates a new `ExpressionParseDiagnostic`.
+    pub fn new(error: PlainStringParseError) -> Self {
+        let input = error.input().to_owned();
+        Self { error, input }
+    }
+}
+
+impl fmt::Debug for PlainStringParseDiagnostic {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Debug::fmt(&self.error, f)
+    }
+}
+
+impl fmt::Display for PlainStringParseDiagnostic {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Display::fmt(&self.error, f)
+    }
+}
+
+impl StdError for PlainStringParseDiagnostic {
+    fn source(&self) -> Option<&(dyn StdError + 'static)> {
+        self.error.source()
+    }
+}
+
+impl Diagnostic for PlainStringParseDiagnostic {
+    fn source_code(&self) -> Option<&dyn SourceCode> {
+        Some(&self.input as &dyn SourceCode)
+    }
+
+    fn labels(&self) -> Option<Box<dyn Iterator<Item = LabeledSpan> + '_>> {
+        let start = self.error.char_index();
+        let len = self.error.character().len_utf8();
+        let label = LabeledSpan::new_with_span(
+            Some("character must be alphanumeric, -, _ or .".to_owned()),
+            (start, len),
+        );
+        Some(Box::new(std::iter::once(label)))
+    }
+}
+
+impl IntoMietteDiagnostic for PlainStringParseError {
+    type IntoDiagnostic = PlainStringParseDiagnostic;
+
+    fn into_diagnostic(self) -> Self::IntoDiagnostic {
+        PlainStringParseDiagnostic::new(self)
     }
 }

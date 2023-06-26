@@ -11,8 +11,8 @@ use std::{borrow::Cow, error, fmt};
 pub enum Error {
     /// A `cfg()` expression was invalid and could not be parsed.
     InvalidExpression(ExpressionParseError),
-    /// The provided target triple (in the position that a `cfg()` expression would be) was unknown.
-    UnknownTargetTriple(String),
+    /// The provided plain string (in the position that a `cfg()` expression would be) was unknown.
+    InvalidTargetSpecString(PlainStringParseError),
     /// The provided platform triple was unknown.
     UnknownPlatformTriple(TripleParseError),
     /// An error occurred while creating a custom triple (in the position that a `cfg()` expression
@@ -26,8 +26,8 @@ impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Error::InvalidExpression(_) => write!(f, "invalid cfg() expression"),
-            Error::UnknownTargetTriple(triple_str) => {
-                write!(f, "unknown target triple: `{triple_str}`")
+            Error::InvalidTargetSpecString(_) => {
+                write!(f, "failed to parse target spec as a plain string")
             }
             Error::UnknownPlatformTriple(_) => {
                 write!(f, "unknown platform triple")
@@ -44,7 +44,7 @@ impl error::Error for Error {
     fn source(&self) -> Option<&(dyn error::Error + 'static)> {
         match self {
             Error::InvalidExpression(err) => Some(err),
-            Error::UnknownTargetTriple(_) => None,
+            Error::InvalidTargetSpecString(err) => Some(err),
             Error::UnknownPlatformTriple(err) => Some(err),
             Error::CustomTripleCreate(err) => Some(err),
             Error::CustomPlatformCreate(err) => Some(err),
@@ -184,6 +184,58 @@ impl fmt::Display for ExpressionParseErrorKind {
     }
 }
 
+/// An error that occurred while parsing a [`TargetSpecPlainString`](crate::TargetSpecPlainString).
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct PlainStringParseError {
+    input: String,
+    char_index: usize,
+    character: char,
+}
+
+impl PlainStringParseError {
+    pub(crate) fn new(input: String, char_index: usize, character: char) -> Self {
+        Self {
+            input,
+            char_index,
+            character,
+        }
+    }
+
+    /// Returns the input that failed to parse.
+    pub fn input(&self) -> &str {
+        &self.input
+    }
+
+    /// Returns the character index (in bytes) at which the input failed to parse.
+    ///
+    /// This index is guaranteed to be between 0 and `self.input().len()`.
+    pub fn char_index(&self) -> usize {
+        self.char_index
+    }
+
+    /// Returns the characcter at which the input failed to parse.
+    pub fn character(&self) -> char {
+        self.character
+    }
+}
+
+impl fmt::Display for PlainStringParseError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "failed to parse `{}` at index {}: character \
+             must be alphanumeric, `-`, `_` or `.`",
+            self.input, self.char_index,
+        )
+    }
+}
+
+impl error::Error for PlainStringParseError {
+    fn source(&self) -> Option<&(dyn error::Error + 'static)> {
+        None
+    }
+}
+
 /// An error returned while parsing a single target.
 ///
 /// This is produced when both of the following are true:
@@ -310,13 +362,13 @@ impl error::Error for CustomTripleCreateError {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::TargetExpression;
+    use crate::TargetSpecExpression;
     use test_case::test_case;
 
     #[test_case("cfg()", 4..4; "empty expression results in span inside cfg")]
     #[test_case("target_os = \"macos", 12..18; "unclosed quote specified without cfg")]
     fn test_expression_parse_error_span(input: &str, expected_span: std::ops::Range<usize>) {
-        let err = match TargetExpression::new(input).unwrap_err() {
+        let err = match TargetSpecExpression::new(input).unwrap_err() {
             Error::InvalidExpression(err) => err,
             other => {
                 panic!("unexpected error type {other:?}");
