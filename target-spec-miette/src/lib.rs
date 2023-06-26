@@ -178,7 +178,9 @@ impl fmt::Debug for PlainStringParseDiagnostic {
 
 impl fmt::Display for PlainStringParseDiagnostic {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Display::fmt(&self.error, f)
+        // The full error message duplicates information produced by the diagnostic, so keep it
+        // short.
+        f.write_str("invalid triple identifier")
     }
 }
 
