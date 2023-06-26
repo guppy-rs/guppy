@@ -9,7 +9,7 @@ edition = "2018"
 camino = "1.1.4"
 # disable tracing integration since we don't use it
 color-eyre = { version = "0.6.2", default-features = false }
-clap = { version = "3.2.25", features = ["derive"] }
+clap = { version = "4.3.4", features = ["derive"] }
 dialoguer = "0.10.4"
 guppy = { version = "0.17.0", path = "../guppy", features = ["summaries"] }
 guppy-cmdlib = { path = "../guppy-cmdlib" }
