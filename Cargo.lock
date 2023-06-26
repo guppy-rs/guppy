@@ -1666,9 +1666,9 @@ dependencies = [
 
 [[package]]
 name = "gix-quote"
-version = "0.4.4"
+version = "0.4.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "29d59489bff95b06dcdabe763b7266d3dc0a628cac1ac1caf65a7ca0a43eeae0"
+checksum = "3874de636c2526de26a3405b8024b23ef1a327bebf4845d770d00d48700b6a40"
 dependencies = [
  "bstr",
  "btoi",
