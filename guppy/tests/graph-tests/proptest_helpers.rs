@@ -28,7 +28,7 @@ macro_rules! proptest_suite {
                 let fixture = JsonFixture::$name();
                 let graph = fixture.graph();
 
-                proptest!(|(package_id in graph.prop010_id_strategy())| {
+                proptest!(|(package_id in graph.proptest1_id_strategy())| {
                     let package = graph.metadata(package_id).expect("valid package ID");
                     let summary_id = package.to_summary_id();
                     let package2 = graph.metadata_by_summary_id(&summary_id).expect("summary ID is valid");
@@ -42,7 +42,7 @@ macro_rules! proptest_suite {
                 let graph = fixture.graph();
 
                 proptest!(|(
-                    ids in vec(graph.prop010_id_strategy(), 1..16),
+                    ids in vec(graph.proptest1_id_strategy(), 1..16),
                     query_direction in any::<DependencyDirection>(),
                     iter_direction in any::<DependencyDirection>(),
                     query_indexes in vec(any::<Index>(), 0..16),
@@ -58,7 +58,7 @@ macro_rules! proptest_suite {
                 let feature_graph = package_graph.feature_graph();
 
                 proptest!(|(
-                    ids in vec(feature_graph.prop010_id_strategy(), 1..16),
+                    ids in vec(feature_graph.proptest1_id_strategy(), 1..16),
                     query_direction in any::<DependencyDirection>(),
                     iter_direction in any::<DependencyDirection>(),
                     query_indexes in vec(any::<Index>(), 0..16),
@@ -72,7 +72,7 @@ macro_rules! proptest_suite {
                 let fixture = JsonFixture::$name();
                 let package_graph = fixture.graph();
 
-                proptest!(|(query_id in package_graph.prop010_id_strategy())| {
+                proptest!(|(query_id in package_graph.proptest1_id_strategy())| {
                     depends_on_same_id(package_graph, query_id);
                 });
             }
@@ -83,7 +83,7 @@ macro_rules! proptest_suite {
                 let package_graph = fixture.graph();
                 let feature_graph = package_graph.feature_graph();
 
-                proptest!(|(query_id in feature_graph.prop010_id_strategy())| {
+                proptest!(|(query_id in feature_graph.proptest1_id_strategy())| {
                     depends_on_same_id(feature_graph, query_id);
                 });
             }
@@ -94,7 +94,7 @@ macro_rules! proptest_suite {
                 let graph = fixture.graph();
 
                 proptest!(|(
-                    ids in vec(graph.prop010_id_strategy(), 1..16),
+                    ids in vec(graph.proptest1_id_strategy(), 1..16),
                     query_direction in any::<DependencyDirection>(),
                     iter_direction in any::<DependencyDirection>(),
                 )| {
@@ -108,7 +108,7 @@ macro_rules! proptest_suite {
                 let graph = fixture.graph();
 
                 proptest!(|(
-                    ids in vec(graph.prop010_id_strategy(), 1..16),
+                    ids in vec(graph.proptest1_id_strategy(), 1..16),
                     query_direction in any::<DependencyDirection>(),
                     iter_direction in any::<DependencyDirection>(),
                     query_indexes in vec((any::<Index>(), any::<Index>()), 0..128),
@@ -131,7 +131,7 @@ macro_rules! proptest_suite {
                 let feature_graph = package_graph.feature_graph();
 
                 proptest!(|(
-                    ids in vec(feature_graph.prop010_id_strategy(), 1..16),
+                    ids in vec(feature_graph.proptest1_id_strategy(), 1..16),
                     query_direction in any::<DependencyDirection>(),
                     iter_direction in any::<DependencyDirection>(),
                     query_indexes in vec((any::<Index>(), any::<Index>()), 0..128),
@@ -153,9 +153,9 @@ macro_rules! proptest_suite {
                 let package_graph = fixture.graph();
 
                 proptest!(|(
-                    query_ids in vec(package_graph.prop010_id_strategy(), 1..16),
+                    query_ids in vec(package_graph.proptest1_id_strategy(), 1..16),
                     direction in any::<DependencyDirection>(),
-                    test_ids in vec(package_graph.prop010_id_strategy(), 0..64),
+                    test_ids in vec(package_graph.proptest1_id_strategy(), 0..64),
                 )| {
                     resolve_contains(package_graph, &query_ids, direction, &test_ids);
                 });
@@ -168,9 +168,9 @@ macro_rules! proptest_suite {
                 let feature_graph = package_graph.feature_graph();
 
                 proptest!(|(
-                    query_ids in vec(feature_graph.prop010_id_strategy(), 1..16),
+                    query_ids in vec(feature_graph.proptest1_id_strategy(), 1..16),
                     direction in any::<DependencyDirection>(),
-                    test_ids in vec(feature_graph.prop010_id_strategy(), 0..64),
+                    test_ids in vec(feature_graph.proptest1_id_strategy(), 0..64),
                 )| {
                     resolve_contains(feature_graph, &query_ids, direction, &test_ids);
                 });
@@ -182,7 +182,7 @@ macro_rules! proptest_suite {
                 let package_graph = fixture.graph();
 
                 proptest!(|(
-                    resolve_tree in ResolveTree::strategy(package_graph.prop010_id_strategy())
+                    resolve_tree in ResolveTree::strategy(package_graph.proptest1_id_strategy())
                 )| {
                     resolve_ops(package_graph, resolve_tree);
                 });
@@ -195,7 +195,7 @@ macro_rules! proptest_suite {
                 let feature_graph = package_graph.feature_graph();
 
                 proptest!(|(
-                    resolve_tree in ResolveTree::strategy(feature_graph.prop010_id_strategy())
+                    resolve_tree in ResolveTree::strategy(feature_graph.proptest1_id_strategy())
                 )| {
                     resolve_ops(feature_graph, resolve_tree);
                 });
@@ -208,10 +208,10 @@ macro_rules! proptest_suite {
                 let feature_graph = package_graph.feature_graph();
 
                 proptest!(|(
-                    query_ids in vec(package_graph.prop010_id_strategy(), 1..16),
+                    query_ids in vec(package_graph.proptest1_id_strategy(), 1..16),
                     query_direction in any::<DependencyDirection>(),
-                    mut resolver in package_graph.prop010_resolver_strategy(),
-                    test_ids in vec(feature_graph.prop010_id_strategy(), 1..16),
+                    mut resolver in package_graph.proptest1_resolver_strategy(),
+                    test_ids in vec(feature_graph.proptest1_id_strategy(), 1..16),
                     test_direction in any::<DependencyDirection>(),
                 )| {
                     resolver.check_depends_on(true);
@@ -226,7 +226,7 @@ macro_rules! proptest_suite {
                 let feature_graph = package_graph.feature_graph();
 
                 proptest!(|(
-                    feature_set in feature_graph.prop010_set_strategy(),
+                    feature_set in feature_graph.proptest1_set_strategy(),
                     direction in any::<DependencyDirection>(),
                 )| {
                     feature_set_props(feature_set, direction);
@@ -239,9 +239,9 @@ macro_rules! proptest_suite {
                 let package_graph = fixture.graph();
 
                 proptest!(|(
-                    query_ids in hash_set(package_graph.prop010_id_strategy(), 0..16),
+                    query_ids in hash_set(package_graph.proptest1_id_strategy(), 0..16),
                     direction in any::<DependencyDirection>(),
-                    test_ids in vec(package_graph.prop010_id_strategy(), 0..16)
+                    test_ids in vec(package_graph.proptest1_id_strategy(), 0..16)
                 )| {
                     query_starts_from(package_graph, query_ids, direction, test_ids);
                 });
@@ -254,9 +254,9 @@ macro_rules! proptest_suite {
                 let feature_graph = package_graph.feature_graph();
 
                 proptest!(|(
-                    query_ids in hash_set(feature_graph.prop010_id_strategy(), 0..16),
+                    query_ids in hash_set(feature_graph.proptest1_id_strategy(), 0..16),
                     direction in any::<DependencyDirection>(),
-                    test_ids in vec(feature_graph.prop010_id_strategy(), 0..16)
+                    test_ids in vec(feature_graph.proptest1_id_strategy(), 0..16)
                 )| {
                     query_starts_from(feature_graph, query_ids, direction, test_ids);
                 });

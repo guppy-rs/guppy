@@ -31,7 +31,7 @@ impl PackageGraph {
     /// ## Panics
     ///
     /// Panics if there are no packages in this `PackageGraph`.
-    pub fn prop010_id_strategy(&self) -> impl Strategy<Value = &PackageId> {
+    pub fn proptest1_id_strategy(&self) -> impl Strategy<Value = &PackageId> {
         let dep_graph = &self.dep_graph;
         any::<prop::sample::Index>().prop_map(move |index| {
             let package_ix = NodeIndex::new(index.index(dep_graph.node_count()));
@@ -46,7 +46,7 @@ impl PackageGraph {
     /// ## Panics
     ///
     /// Panics if there are no dependency edges in this `PackageGraph`.
-    pub fn prop010_link_strategy(&self) -> impl Strategy<Value = PackageLink<'_>> {
+    pub fn proptest1_link_strategy(&self) -> impl Strategy<Value = PackageLink<'_>> {
         any::<prop::sample::Index>().prop_map(move |index| {
             // Note that this works because PackageGraph uses petgraph::Graph, not StableGraph. If
             // PackageGraph used StableGraph, a retain_edges call would create holes -- invalid
@@ -60,7 +60,7 @@ impl PackageGraph {
     /// Returns a `Strategy` that generates a random `PackageResolver` instance from this graph.
     ///
     /// Requires the `proptest1` feature to be enabled.
-    pub fn prop010_resolver_strategy(&self) -> impl Strategy<Value = Prop010Resolver> {
+    pub fn proptest1_resolver_strategy(&self) -> impl Strategy<Value = Prop010Resolver> {
         // Generate a FixedBitSet to filter based off of.
         fixedbitset_strategy(self.dep_graph.edge_count()).prop_map(Prop010Resolver::new)
     }
@@ -68,8 +68,8 @@ impl PackageGraph {
     /// Returns a `Strategy` that generates a random `CargoOptions` from this graph.
     ///
     /// Requires the `proptest1` feature to be enabled.
-    pub fn prop010_cargo_options_strategy(&self) -> impl Strategy<Value = CargoOptions<'_>> {
-        let omitted_packages = hash_set(self.prop010_id_strategy(), 0..4);
+    pub fn proptest1_cargo_options_strategy(&self) -> impl Strategy<Value = CargoOptions<'_>> {
+        let omitted_packages = hash_set(self.proptest1_id_strategy(), 0..4);
         (
             any::<CargoResolverVersion>(),
             any::<bool>(),
@@ -116,7 +116,7 @@ impl<'g> Workspace<'g> {
     /// ## Panics
     ///
     /// Panics if there are no packages in this `Workspace`.
-    pub fn prop010_name_strategy(&self) -> impl Strategy<Value = &'g str> + 'g {
+    pub fn proptest1_name_strategy(&self) -> impl Strategy<Value = &'g str> + 'g {
         let name_list = self.name_list();
         (0..name_list.len()).prop_map(move |idx| name_list[idx].as_ref())
     }
@@ -128,9 +128,9 @@ impl<'g> Workspace<'g> {
     /// ## Panics
     ///
     /// Panics if there are no packages in this `Workspace`.
-    pub fn prop010_id_strategy(&self) -> impl Strategy<Value = &'g PackageId> + 'g {
+    pub fn proptest1_id_strategy(&self) -> impl Strategy<Value = &'g PackageId> + 'g {
         let members_by_name = &self.inner.members_by_name;
-        self.prop010_name_strategy()
+        self.proptest1_name_strategy()
             .prop_map(move |name| &members_by_name[name])
     }
 
@@ -143,7 +143,7 @@ impl<'g> Workspace<'g> {
 
 /// A randomly generated package resolver.
 ///
-/// Created by `PackageGraph::prop010_resolver_strategy`. Requires the `proptest1` feature to be
+/// Created by `PackageGraph::proptest1_resolver_strategy`. Requires the `proptest1` feature to be
 /// enabled.
 #[derive(Clone, Debug)]
 pub struct Prop010Resolver {

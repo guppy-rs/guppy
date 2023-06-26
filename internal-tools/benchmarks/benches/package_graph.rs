@@ -113,7 +113,7 @@ fn make_package_name_hashmap<'g>(
 /// Generate pairs of IDs for benchmarks.
 fn id_pairs_strategy(graph: &PackageGraph) -> impl Strategy<Value = Vec<(&PackageId, &PackageId)>> {
     vec(
-        (graph.prop010_id_strategy(), graph.prop010_id_strategy()),
+        (graph.proptest1_id_strategy(), graph.proptest1_id_strategy()),
         256,
     )
 }
@@ -124,7 +124,7 @@ fn ids_directions_strategy(
 ) -> impl Strategy<Value = Vec<(Vec<&PackageId>, DependencyDirection, DependencyDirection)>> {
     vec(
         (
-            vec(graph.prop010_id_strategy(), 32),
+            vec(graph.proptest1_id_strategy(), 32),
             any::<DependencyDirection>(),
             any::<DependencyDirection>(),
         ),

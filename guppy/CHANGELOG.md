@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.17.0] - 2023-06-25
+
+### Changed
+
+- `target-spec` updated to version 3.
+
+### Fixed
+
+- Proptest strategy creator names updated from `prop010_` to `proptest1_`.
+
 ## [0.16.0] - 2023-06-19
 
 ### Changed
@@ -556,6 +566,7 @@ lazy_static = "0.2"
 ### Added
 - Initial release.
 
+[0.17.0]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.0
 [0.16.0]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.16.0
 [0.15.2]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.15.2
 [0.15.1]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.15.1

@@ -44,7 +44,7 @@ impl<'g> ContextImpl<'g> for SummaryContext {
         let graph = fixture.graph();
 
         let packages_features_strategy = PackagesAndFeatures::strategy(graph);
-        let cargo_opts_strategy = graph.prop010_cargo_options_strategy();
+        let cargo_opts_strategy = graph.proptest1_cargo_options_strategy();
 
         let iter = (0..count).map(move |idx| {
             // The partial clones mean that e.g. a change to the algorithm in

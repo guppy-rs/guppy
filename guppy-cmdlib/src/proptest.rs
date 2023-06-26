@@ -15,13 +15,13 @@ impl PackagesAndFeatures {
         let workspace = graph.workspace();
         (
             // The lower bound of 0 is important because 0 means the whole workspace.
-            hash_set(workspace.prop010_name_strategy(), 0..8),
+            hash_set(workspace.proptest1_name_strategy(), 0..8),
             any::<bool>(),
             any::<bool>(),
             // The lower bound of 0 is important here as well, because 0 means none.
             // (This is at the end to avoid perturbing previously-generated values of all_features
             // and no_default_features.)
-            hash_set(workspace.prop010_name_strategy(), 0..4),
+            hash_set(workspace.proptest1_name_strategy(), 0..4),
         )
             .prop_map(
                 move |(packages, all_features, no_default_features, features_only)| {

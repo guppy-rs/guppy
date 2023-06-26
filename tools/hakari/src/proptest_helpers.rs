@@ -36,8 +36,8 @@ impl<'g> HakariBuilder<'g> {
             hakari_id_strategy,
             vec(Platform::strategy(any::<TargetFeatures>()), 0..4),
             any::<CargoResolverVersion>(),
-            hash_set(graph.prop010_id_strategy(), 0..8),
-            hash_set(graph.prop010_id_strategy(), 0..8),
+            hash_set(graph.proptest1_id_strategy(), 0..8),
+            hash_set(graph.proptest1_id_strategy(), 0..8),
             any::<UnifyTargetHost>(),
             any::<bool>(),
             any::<DepFormatVersion>(),
@@ -91,7 +91,7 @@ mod test {
             let workspace = graph.workspace();
             let strategy = HakariBuilder::proptest1_strategy(
                 graph,
-                option::of(workspace.prop010_id_strategy()),
+                option::of(workspace.proptest1_id_strategy()),
             );
             proptest!(|(builder in strategy)| {
                 let summary = builder.to_summary().unwrap_or_else(|err| {
@@ -116,9 +116,9 @@ mod test {
             let workspace = graph.workspace();
             let strategy = HakariBuilder::proptest1_strategy(
                 graph,
-                option::of(workspace.prop010_id_strategy()),
+                option::of(workspace.proptest1_id_strategy()),
             );
-            proptest!(|(builder in strategy, queries in vec(graph.prop010_id_strategy(), 0..64))| {
+            proptest!(|(builder in strategy, queries in vec(graph.proptest1_id_strategy(), 0..64))| {
                 // Ensure that the hakari package is omitted.
                 if let Some(package) = builder.hakari_package() {
                     assert!(
