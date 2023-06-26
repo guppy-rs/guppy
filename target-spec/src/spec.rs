@@ -119,9 +119,9 @@ impl TargetSpec {
 
     /// Returns true if an input looks like it's known and understood.
     ///
-    /// * For [`Self::Expression`], the inner [`TargetSpecExpression`] has aleady been parsed as valid,
-    ///   so this returns true.
-    /// * For [`Self::TripleString`], this returns true if the triple is builtin or has
+    /// * For [`Self::Expression`], the inner [`TargetSpecExpression`] has aleady been parsed as
+    ///   valid, so this returns true.
+    /// * For [`Self::PlainString`], this returns true if the string matches a builtin triple or has
     ///   heuristically been determined to be valid.
     ///
     /// This method does not take into account custom platforms. If you know about custom platforms,
