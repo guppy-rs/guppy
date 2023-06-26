@@ -213,7 +213,7 @@ impl PlainStringParseError {
         self.char_index
     }
 
-    /// Returns the characcter at which the input failed to parse.
+    /// Returns the character at which the input failed to parse.
     pub fn character(&self) -> char {
         self.character
     }
@@ -361,19 +361,13 @@ impl error::Error for CustomTripleCreateError {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use crate::TargetSpecExpression;
     use test_case::test_case;
 
     #[test_case("cfg()", 4..4; "empty expression results in span inside cfg")]
     #[test_case("target_os = \"macos", 12..18; "unclosed quote specified without cfg")]
     fn test_expression_parse_error_span(input: &str, expected_span: std::ops::Range<usize>) {
-        let err = match TargetSpecExpression::new(input).unwrap_err() {
-            Error::InvalidExpression(err) => err,
-            other => {
-                panic!("unexpected error type {other:?}");
-            }
-        };
+        let err = TargetSpecExpression::new(input).unwrap_err();
         assert_eq!(err.span, expected_span);
     }
 }

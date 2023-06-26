@@ -87,7 +87,10 @@ impl TargetSpec {
         let input = input.into();
 
         if Self::looks_like_expression(&input) {
-            Ok(TargetSpec::Expression(TargetSpecExpression::new(&input)?))
+            match TargetSpecExpression::new(&input) {
+                Ok(expression) => Ok(Self::Expression(expression)),
+                Err(error) => Err(Error::InvalidExpression(error)),
+            }
         } else {
             match TargetSpecPlainString::new(input) {
                 Ok(plain_str) => Ok(Self::PlainString(plain_str)),
@@ -164,9 +167,8 @@ impl TargetSpecExpression {
     ///
     /// Returns an error if the string could not be parsed, or if the string contains a predicate
     /// that wasn't understood by `target-spec`.
-    pub fn new(input: &str) -> Result<Self, Error> {
-        let expr = Expression::parse(input)
-            .map_err(|err| Error::InvalidExpression(ExpressionParseError::new(input, err)))?;
+    pub fn new(input: &str) -> Result<Self, ExpressionParseError> {
+        let expr = Expression::parse(input).map_err(|err| ExpressionParseError::new(input, err))?;
         Ok(Self {
             inner: Arc::new(expr),
         })
@@ -211,7 +213,7 @@ impl TargetSpecExpression {
 }
 
 impl FromStr for TargetSpecExpression {
-    type Err = Error;
+    type Err = ExpressionParseError;
 
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         Self::new(input)
