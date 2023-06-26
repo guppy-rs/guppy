@@ -165,7 +165,7 @@ pub struct PlainStringParseDiagnostic {
 impl PlainStringParseDiagnostic {
     /// Creates a new `ExpressionParseDiagnostic`.
     pub fn new(error: PlainStringParseError) -> Self {
-        let input = error.input().to_owned();
+        let input = error.input.clone();
         Self { error, input }
     }
 }
@@ -194,11 +194,9 @@ impl Diagnostic for PlainStringParseDiagnostic {
     }
 
     fn labels(&self) -> Option<Box<dyn Iterator<Item = LabeledSpan> + '_>> {
-        let start = self.error.char_index();
-        let len = self.error.character().len_utf8();
         let label = LabeledSpan::new_with_span(
             Some("character must be alphanumeric, -, _ or .".to_owned()),
-            (start, len),
+            self.error.span(),
         );
         Some(Box::new(std::iter::once(label)))
     }

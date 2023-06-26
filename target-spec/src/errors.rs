@@ -186,10 +186,16 @@ impl fmt::Display for ExpressionParseErrorKind {
 
 /// An error that occurred while parsing a [`TargetSpecPlainString`](crate::TargetSpecPlainString).
 #[derive(Clone, Debug, PartialEq, Eq)]
+#[non_exhaustive]
 pub struct PlainStringParseError {
-    input: String,
-    char_index: usize,
-    character: char,
+    /// The input we failed to parse.
+    pub input: String,
+
+    /// The character index (in bytes) at which the input failed to parse.
+    pub char_index: usize,
+
+    /// The character that failed to parse.
+    pub character: char,
 }
 
 impl PlainStringParseError {
@@ -201,21 +207,10 @@ impl PlainStringParseError {
         }
     }
 
-    /// Returns the input that failed to parse.
-    pub fn input(&self) -> &str {
-        &self.input
-    }
-
-    /// Returns the character index (in bytes) at which the input failed to parse.
-    ///
-    /// This index is guaranteed to be between 0 and `self.input().len()`.
-    pub fn char_index(&self) -> usize {
-        self.char_index
-    }
-
-    /// Returns the character at which the input failed to parse.
-    pub fn character(&self) -> char {
-        self.character
+    /// Returns the range of characters in the input that resulted in this error.
+    pub fn span(&self) -> std::ops::Range<usize> {
+        let end = self.char_index + self.character.len_utf8();
+        self.char_index..end
     }
 }
 
@@ -361,7 +356,7 @@ impl error::Error for CustomTripleCreateError {
 
 #[cfg(test)]
 mod tests {
-    use crate::TargetSpecExpression;
+    use crate::{TargetSpecExpression, TargetSpecPlainString};
     use test_case::test_case;
 
     #[test_case("cfg()", 4..4; "empty expression results in span inside cfg")]
@@ -369,5 +364,12 @@ mod tests {
     fn test_expression_parse_error_span(input: &str, expected_span: std::ops::Range<usize>) {
         let err = TargetSpecExpression::new(input).unwrap_err();
         assert_eq!(err.span, expected_span);
+    }
+
+    #[test_case("foobar$", 6..7; "dollar sign at end of string")]
+    #[test_case("my🛑triple", 2..6; "multibyte character")]
+    fn test_plain_string_parse_error_span(input: &str, expected_span: std::ops::Range<usize>) {
+        let err = TargetSpecPlainString::new(input.to_owned()).unwrap_err();
+        assert_eq!(err.span(), expected_span);
     }
 }

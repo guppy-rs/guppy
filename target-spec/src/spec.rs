@@ -380,7 +380,7 @@ mod tests {
             .expect_err("unknown triples should parse correctly");
         assert!(matches!(
             err,
-            Error::InvalidTargetSpecString(s) if s.input() == "cannotbeknown!!!"
+            Error::InvalidTargetSpecString(s) if s.input == "cannotbeknown!!!"
         ));
     }
 
