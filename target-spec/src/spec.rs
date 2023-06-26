@@ -128,7 +128,9 @@ impl TargetSpec {
     /// consider checking against those as well.
     pub fn is_known(&self) -> bool {
         match self {
-            TargetSpec::PlainString(triple) => Triple::new(triple.as_str().to_owned()).is_ok(),
+            TargetSpec::PlainString(plain_str) => {
+                Triple::new(plain_str.as_str().to_owned()).is_ok()
+            }
             TargetSpec::Expression(_) => true,
         }
     }
@@ -140,7 +142,7 @@ impl TargetSpec {
     #[inline]
     pub fn eval(&self, platform: &Platform) -> Option<bool> {
         match self {
-            TargetSpec::PlainString(triple) => Some(platform.triple_str() == triple.as_str()),
+            TargetSpec::PlainString(plain_str) => Some(platform.triple_str() == plain_str.as_str()),
             TargetSpec::Expression(expr) => expr.eval(platform),
         }
     }
