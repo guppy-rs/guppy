@@ -8,6 +8,10 @@
 - `TargetExpression` has been renamed renamed to `TargetSpecExpression`.
 - `Error::UnknownTargetTriple` has been renamed to `Error::InvalidTargetSpecString`, and returns a new `PlainStringParseError` type.
 
+### Added
+
+- `TargetSpec`, `TargetSpecExpression` and `TargetSpecPlainString` now implement `std::fmt::Display`.
+
 ## [2.0.1] - 2023-06-19
 
 ### Fixed

@@ -154,6 +154,15 @@ impl FromStr for TargetSpec {
     }
 }
 
+impl fmt::Display for TargetSpec {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            TargetSpec::Expression(expr) => write!(f, "{expr}"),
+            TargetSpec::PlainString(plain_str) => write!(f, "{plain_str}"),
+        }
+    }
+}
+
 /// A target expression, parsed from a string beginning with `cfg(`.
 ///
 /// For more information, see [`TargetSpec`].
