@@ -1,10 +1,7 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-use crate::{
-    diff::SummaryDiff,
-    errors::{TomlDeserializeError, TomlSerializeError},
-};
+use crate::diff::SummaryDiff;
 use camino::{Utf8Path, Utf8PathBuf};
 use semver::Version;
 use serde::{Deserialize, Serialize};
@@ -55,9 +52,10 @@ pub struct Summary {
 impl Summary {
     /// Constructs a new summary with the provided metadata, and an empty `target_packages` and
     /// `host_packages`.
-    pub fn with_metadata(metadata: impl Serialize) -> Result<Self, TomlSerializeError> {
-        let metadata = Table::try_from(metadata).map_err(TomlSerializeError::new)?;
-
+    pub fn with_metadata(metadata: &impl Serialize) -> Result<Self, toml::ser::Error> {
+        let toml_str = toml::to_string(metadata)?;
+        let metadata =
+            toml::from_str(&toml_str).expect("toml::to_string creates a valid TOML string");
         Ok(Self {
             metadata,
             ..Self::default()
@@ -65,8 +63,8 @@ impl Summary {
     }
 
     /// Deserializes a summary from the given string, with optional custom metadata.
-    pub fn parse(s: &str) -> Result<Self, TomlDeserializeError> {
-        toml::from_str(s).map_err(TomlDeserializeError::new)
+    pub fn parse(s: &str) -> Result<Self, toml::de::Error> {
+        toml::from_str(s)
     }
 
     /// Perform a diff of this summary against another.
@@ -77,20 +75,17 @@ impl Summary {
     }
 
     /// Serializes this summary to a TOML string.
-    pub fn to_string(&self) -> Result<String, TomlSerializeError> {
+    pub fn to_string(&self) -> Result<String, toml::ser::Error> {
         let mut dst = String::new();
         self.write_to_string(&mut dst)?;
         Ok(dst)
     }
 
     /// Serializes this summary into the given TOML string, using pretty TOML syntax.
-    /// 
-    /// Returns an error if writing out the TOML was unsuccessful.
-    pub fn write_to_string(&self, dst: &mut String) -> Result<(), TomlSerializeError> {
-        let serializer = Serializer::pretty(dst);
-        self
-            .serialize(serializer)
-            .map_err(TomlSerializeError::new)
+    pub fn write_to_string(&self, dst: &mut String) -> Result<(), toml::ser::Error> {
+        let mut serializer = Serializer::pretty(dst);
+        serializer.pretty_array(false);
+        self.serialize(&mut serializer)
     }
 }
 

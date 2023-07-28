@@ -180,12 +180,13 @@ impl HakariBuilderSummary {
         Ok(())
     }
 
-    /// Serializes this summary into the given TOML string, using pretty TOML syntax.
+    /// Writes out the contents of this summary as TOML to the given string.
     ///
     /// Returns an error if writing out the TOML was unsuccessful.
     pub fn write_to_string(&self, dst: &mut String) -> Result<(), toml::ser::Error> {
-        let serializer = Serializer::pretty(dst);
-        self.serialize(serializer)
+        let mut serializer = Serializer::pretty(dst);
+        serializer.pretty_array(false);
+        self.serialize(&mut serializer)
     }
 }
 

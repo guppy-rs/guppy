@@ -70,7 +70,7 @@ pub enum Error {
     },
     /// An error occurred while serializing to TOML.
     #[cfg(feature = "summaries")]
-    TomlSerializeError(guppy_summaries::errors::TomlSerializeError),
+    TomlSerializeError(toml::ser::Error),
 }
 
 impl Error {

@@ -28,8 +28,7 @@ all-features = true
 camino = { version = "1.1.6", features = ["serde1"] }
 cfg-if = "1.0.0"
 diffus = "0.10.0"
-thiserror = "1.0.44"
-toml = { version = "0.7.6", features = ["preserve_order"] }
+toml = { version = "0.5.11", features = ["preserve_order"] }
 semver = { version = "1.0.18", features = ["serde"] }
 serde = { version = "1.0.177", features = ["derive"] }
 guppy-workspace-hack = { version = "0.1", path = "../workspace-hack" }

@@ -31,7 +31,7 @@ unicode-ident = "1.0.11"
 [dev-dependencies]
 rustc_version = "0.4.0"
 test-case = "3.1.0"
-toml = "0.7.6"
+toml = "0.5.11"
 
 [features]
 custom = ["dep:serde", "dep:serde_json"]
