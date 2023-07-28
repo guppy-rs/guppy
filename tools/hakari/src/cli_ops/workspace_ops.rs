@@ -374,8 +374,15 @@ impl<'g, 'a> WorkspaceOp<'g, 'a> {
 
 fn decorate(existing: &Value, new: impl Into<Value>) -> Value {
     let decor = existing.decor();
-    new.into()
-        .decorated(decor.prefix().unwrap_or(""), decor.suffix().unwrap_or(""))
+    let mut new: Value = new.into();
+    let new_decor = new.decor_mut();
+    if let Some(prefix) = decor.prefix() {
+        new_decor.set_prefix(prefix.clone());
+    }
+    if let Some(suffix) = decor.suffix() {
+        new_decor.set_suffix(suffix.clone());
+    }
+    new
 }
 
 // Always write out paths with forward slashes, including on Windows.

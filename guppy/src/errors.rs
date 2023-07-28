@@ -5,6 +5,7 @@
 
 use crate::{graph::feature::FeatureId, PackageId};
 use camino::Utf8PathBuf;
+use guppy_summaries::errors::TomlSerializeError;
 use std::{error, fmt};
 pub use target_spec::Error as TargetSpecError;
 use Error::*;
@@ -70,7 +71,7 @@ pub enum Error {
     },
     /// An error occurred while serializing to TOML.
     #[cfg(feature = "summaries")]
-    TomlSerializeError(toml::ser::Error),
+    TomlSerializeError(TomlSerializeError),
 }
 
 impl Error {

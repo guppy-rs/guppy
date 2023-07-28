@@ -526,10 +526,10 @@ fn replace_decorated(dest: &mut Value, new_value: impl Into<Value>) -> Value {
     // Copy over the decor from dest into new_value.
     let new_decor = new_value.decor_mut();
     if let Some(prefix) = decor.prefix() {
-        new_decor.set_prefix(prefix);
+        new_decor.set_prefix(prefix.clone());
     }
     if let Some(suffix) = decor.suffix() {
-        new_decor.set_suffix(suffix);
+        new_decor.set_suffix(suffix.clone());
     }
 
     mem::replace(dest, new_value)

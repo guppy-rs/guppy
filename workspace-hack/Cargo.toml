@@ -18,7 +18,6 @@ repository = "https://github.com/guppy-rs/guppy"
 [dependencies]
 clap = { version = "4.3.19", features = ["derive"] }
 clap_builder = { version = "4.3.19", default-features = false, features = ["color", "help", "std", "suggestions", "usage"] }
-indexmap = { version = "1.9.3", default-features = false, features = ["std"] }
 libc = { version = "0.2.147" }
 log = { version = "0.4.19", default-features = false, features = ["std"] }
 memchr = { version = "2.5.0" }
@@ -30,7 +29,9 @@ regex-automata = { version = "0.3.3", default-features = false, features = ["dfa
 semver = { version = "1.0.18", features = ["serde"] }
 serde = { version = "1.0.177", features = ["alloc", "derive"] }
 serde_json = { version = "1.0.104", features = ["unbounded_depth"] }
-toml = { version = "0.5.11", features = ["preserve_order"] }
+toml = { version = "0.7.6", features = ["preserve_order"] }
+toml_datetime = { version = "0.6.3", default-features = false, features = ["serde"] }
+toml_edit = { version = "0.19.14", features = ["serde"] }
 
 [build-dependencies]
 proc-macro2 = { version = "1.0.66" }

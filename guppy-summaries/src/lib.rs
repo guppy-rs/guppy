@@ -111,6 +111,7 @@
 #![warn(missing_docs)]
 
 pub mod diff;
+pub mod errors;
 // report::SummaryReport is exported through the diff module.
 mod report;
 mod summary;

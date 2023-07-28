@@ -40,8 +40,8 @@ rayon = "1.7.0"
 serde = { version = "1.0.177", features = ["derive"], optional = true }
 tabular = { version = "0.2.0", features = ["ansi-cell"], optional = true }
 target-spec = { version = "3.0.0", path = "../../target-spec" }
-toml = { version = "0.5.11", optional = true }
-toml_edit = "0.17.1"
+toml = { version = "0.7.6", optional = true }
+toml_edit = "0.19.14"
 twox-hash = { version = "1.6.3", default-features = false }
 guppy-workspace-hack = { version = "0.1", path = "../../workspace-hack" }
 
