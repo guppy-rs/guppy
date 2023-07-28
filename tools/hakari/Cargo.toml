@@ -24,7 +24,7 @@ rustdoc-args = ["--cfg=doc_cfg"]
 [dependencies]
 atomicwrites = "0.3.1"
 bimap = "0.6.3"
-camino = "1.1.4"
+camino = "1.1.6"
 cfg-if = "1.0.0"
 debug-ignore = "1.0.5"
 diffy = "0.3.0"
@@ -37,7 +37,7 @@ pathdiff = { version = "0.2.1", features = ["camino"] }
 proptest = { version = "1.2.0", optional = true }
 proptest-derive = { version = "0.3.0", optional = true }
 rayon = "1.7.0"
-serde = { version = "1.0.164", features = ["derive"], optional = true }
+serde = { version = "1.0.177", features = ["derive"], optional = true }
 tabular = { version = "0.2.0", features = ["ansi-cell"], optional = true }
 target-spec = { version = "3.0.0", path = "../../target-spec" }
 toml = { version = "0.5.11", optional = true }
