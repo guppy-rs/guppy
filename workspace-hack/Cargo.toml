@@ -18,7 +18,7 @@ repository = "https://github.com/guppy-rs/guppy"
 [dependencies]
 clap = { version = "4.3.19", features = ["derive"] }
 clap_builder = { version = "4.3.19", default-features = false, features = ["color", "help", "std", "suggestions", "usage"] }
-indexmap = { version = "1.9.3", default-features = false, features = ["std"] }
+indexmap = { version = "2.0.0", default-features = false, features = ["std"] }
 libc = { version = "0.2.147" }
 log = { version = "0.4.19", default-features = false, features = ["std"] }
 memchr = { version = "2.5.0" }
