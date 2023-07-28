@@ -192,12 +192,12 @@ impl<'g, 'a> fmt::Display for FeatureDisplay<'g, 'a> {
             return write!(f, "(no features)");
         }
 
-        for feature in self.features.iter().with_position() {
-            match feature {
-                Position::First(feature) | Position::Middle(feature) => {
+        for (position, feature) in self.features.iter().with_position() {
+            match position {
+                Position::First | Position::Middle => {
                     write!(f, "{}, ", feature)?;
                 }
-                Position::Last(feature) | Position::Only(feature) => {
+                Position::Last | Position::Only => {
                     write!(f, "{}", feature)?;
                 }
             }

@@ -957,7 +957,7 @@ impl<'g> PackageMetadata<'g> {
     /// This is the same as the `rust-version` field of `Cargo.toml`. For more, see [the
     /// `rust-version` field](https://doc.rust-lang.org/cargo/reference/manifest.html#the-rust-version-field)
     /// in the Cargo reference.
-    pub fn rust_version(&self) -> Option<&'g VersionReq> {
+    pub fn rust_version(&self) -> Option<&'g Version> {
         self.inner.rust_version.as_ref()
     }
 
@@ -1184,7 +1184,7 @@ pub(crate) struct PackageMetadataImpl {
     pub(super) links: Option<Box<str>>,
     pub(super) publish: PackagePublishImpl,
     pub(super) default_run: Option<Box<str>>,
-    pub(super) rust_version: Option<VersionReq>,
+    pub(super) rust_version: Option<Version>,
     pub(super) named_features: IndexMap<Box<str>, SmallVec<[NamedFeatureDep; 4]>>,
     pub(super) optional_deps: IndexSet<Box<str>>,
 
