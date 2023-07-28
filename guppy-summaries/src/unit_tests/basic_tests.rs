@@ -567,7 +567,6 @@ fn test_serialization() {
     added-optional-deps = []
     removed-optional-deps = ["dep4"]
     unchanged-optional-deps = []
-
 "#
     );
     let toml_out = toml::to_string(&to_serialize).expect("should serialize");
