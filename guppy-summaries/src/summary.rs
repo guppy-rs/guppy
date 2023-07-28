@@ -88,9 +88,9 @@ impl Summary {
     /// Returns an error if writing out the TOML was unsuccessful.
     pub fn write_to_string(&self, dst: &mut String) -> Result<(), TomlSerializeError> {
         let serializer = Serializer::pretty(dst);
-        Ok(self
+        self
             .serialize(serializer)
-            .map_err(TomlSerializeError::new)?)
+            .map_err(TomlSerializeError::new)
     }
 }
 

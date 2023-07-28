@@ -185,7 +185,7 @@ impl HakariBuilderSummary {
     /// Returns an error if writing out the TOML was unsuccessful.
     pub fn write_to_string(&self, dst: &mut String) -> Result<(), toml::ser::Error> {
         let serializer = Serializer::pretty(dst);
-        Ok(self.serialize(serializer)?)
+        self.serialize(serializer)
     }
 }
 

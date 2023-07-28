@@ -78,7 +78,7 @@ pub fn cmd_diff(json: bool, old: &str, new: &str) -> Result<()> {
     let old_packages: Vec<_> = old_graph.packages().collect();
     let new_packages: Vec<_> = new_graph.packages().collect();
 
-    let diff = diff::DiffOptions::default().diff(&old_packages, &new_packages);
+    let diff = diff::DiffOptions.diff(&old_packages, &new_packages);
 
     if json {
         println!("{}", serde_json::to_string_pretty(&diff).unwrap());

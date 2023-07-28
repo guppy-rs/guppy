@@ -453,7 +453,7 @@ fn write_atomic(
 pub struct ApplyError {
     message: String,
     path: Utf8PathBuf,
-    kind: ApplyErrorKind,
+    kind: Box<ApplyErrorKind>,
 }
 
 impl ApplyError {
@@ -476,7 +476,7 @@ impl ApplyError {
         Self {
             message: message.into(),
             path: path.into(),
-            kind: ApplyErrorKind::Io { err },
+            kind: Box::new(ApplyErrorKind::Io { err }),
         }
     }
 
@@ -488,7 +488,7 @@ impl ApplyError {
         Self {
             message: message.into(),
             path: path.into(),
-            kind: ApplyErrorKind::Toml { err },
+            kind: Box::new(ApplyErrorKind::Toml { err }),
         }
     }
 
@@ -496,7 +496,7 @@ impl ApplyError {
         Self {
             message: message.into(),
             path: path.into(),
-            kind: ApplyErrorKind::Misc,
+            kind: Box::new(ApplyErrorKind::Misc),
         }
     }
 }
@@ -509,7 +509,7 @@ impl fmt::Display for ApplyError {
 
 impl error::Error for ApplyError {
     fn source(&self) -> Option<&(dyn error::Error + 'static)> {
-        match &self.kind {
+        match &*self.kind {
             ApplyErrorKind::Io { err } => Some(err),
             ApplyErrorKind::Toml { err } => Some(err),
             ApplyErrorKind::Misc => None,
