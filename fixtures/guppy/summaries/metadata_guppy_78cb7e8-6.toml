@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'sparcv9-sun-solaris'
+triple = 'thumbv4t-none-eabi'
 target-features = ['aes', 'bmi1', 'xsaves']
 flags = ['foo']
 

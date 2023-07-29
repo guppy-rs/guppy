@@ -6,7 +6,7 @@
 # unify-target-host = 'auto'
 # output-single-feature = true
 # dep-format-version = '3'
-# platforms = ['x86_64-apple-watchos-sim', 'mips-unknown-linux-gnu']
+# platforms = ['x86_64-fortanix-unknown-sgx', 'mips-unknown-linux-musl']
 # [[traversal-excludes.ids]]
 # name = 'testcycles-base'
 # version = '0.1.0'

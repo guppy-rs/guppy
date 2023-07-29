@@ -6,7 +6,7 @@
 # unify-target-host = 'auto'
 # output-single-feature = true
 # dep-format-version = '4'
-# platforms = ['x86_64-pc-windows-gnullvm', 'i686-apple-darwin', 'armv7-unknown-netbsd-eabihf']
+# platforms = ['x86_64-pc-windows-msvc', 'i686-apple-darwin', 'armv7-wrs-vxworks-eabihf']
 # [[traversal-excludes.ids]]
 # name = 'bitflags'
 # version = '1.1.0'

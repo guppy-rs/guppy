@@ -6,7 +6,7 @@
 # unify-target-host = 'replicate-target-on-host'
 # output-single-feature = true
 # dep-format-version = '4'
-# platforms = ['x86_64-uwp-windows-msvc']
+# platforms = ['x86_64-wrs-vxworks']
 # [[traversal-excludes.ids]]
 # name = 'num-derive'
 # version = '0.3.0'
@@ -30,7 +30,7 @@
 Inflector = { version = "0.11" }
 adler32 = { version = "1", default-features = false }
 aho-corasick = { version = "0.7" }
-ansi_term = { version = "0.9", default-features = false }
+ansi_term-274715c4dabd11b0 = { package = "ansi_term", version = "0.9", default-features = false }
 anyhow = { version = "1" }
 arbitrary = { version = "0.4", default-features = false }
 arc-swap = { version = "0.4", default-features = false }
@@ -84,8 +84,8 @@ crossbeam = { version = "0.7" }
 crossbeam-channel = { version = "0.4", default-features = false }
 crossbeam-deque = { version = "0.7", default-features = false }
 crossbeam-epoch = { version = "0.8" }
-crossbeam-queue = { version = "0.2" }
-crossbeam-utils = { version = "0.7" }
+crossbeam-queue-6f8ce4dd05d13bba = { package = "crossbeam-queue", version = "0.2" }
+crossbeam-utils-ca01ad9e24f5d932 = { package = "crossbeam-utils", version = "0.7" }
 crunchy = { version = "0.2" }
 crypto-mac = { version = "0.7", default-features = false }
 csv = { version = "1", default-features = false }
@@ -395,7 +395,7 @@ zeroize = { version = "1", default-features = false, features = ["alloc", "zeroi
 Inflector = { version = "0.11" }
 adler32 = { version = "1", default-features = false }
 aho-corasick = { version = "0.7" }
-ansi_term = { version = "0.9", default-features = false }
+ansi_term-274715c4dabd11b0 = { package = "ansi_term", version = "0.9", default-features = false }
 anyhow = { version = "1" }
 arbitrary = { version = "0.4", default-features = false }
 arc-swap = { version = "0.4", default-features = false }
@@ -457,8 +457,8 @@ crossbeam = { version = "0.7" }
 crossbeam-channel = { version = "0.4", default-features = false }
 crossbeam-deque = { version = "0.7", default-features = false }
 crossbeam-epoch = { version = "0.8" }
-crossbeam-queue = { version = "0.2" }
-crossbeam-utils = { version = "0.7" }
+crossbeam-queue-6f8ce4dd05d13bba = { package = "crossbeam-queue", version = "0.2" }
+crossbeam-utils-ca01ad9e24f5d932 = { package = "crossbeam-utils", version = "0.7" }
 crunchy = { version = "0.2" }
 crypto-mac = { version = "0.7", default-features = false }
 csv = { version = "1", default-features = false }
@@ -815,57 +815,57 @@ yamux = { version = "0.4", default-features = false }
 zeroize = { version = "1", default-features = false, features = ["alloc", "zeroize_derive"] }
 zeroize_derive = { version = "1", default-features = false }
 
-[target.x86_64-uwp-windows-msvc.dependencies]
+[target.x86_64-wrs-vxworks.dependencies]
+ansi_term-a6292c17cd707f01 = { package = "ansi_term", version = "0.11", default-features = false }
 async-compression = { version = "0.3", default-features = false, features = ["gzip", "stream"] }
 c2-chacha = { version = "0.2", default-features = false, features = ["simd", "std"] }
+crossbeam-queue-c65f7effa3be6d31 = { package = "crossbeam-queue", version = "0.1", default-features = false }
+crossbeam-utils-3b31131e45eafb45 = { package = "crossbeam-utils", version = "0.6" }
 encoding_rs = { version = "0.8", default-features = false }
 hyper-rustls-56bd22fc3884b12 = { package = "hyper-rustls", version = "0.20" }
 hyper-tls = { version = "0.4", default-features = false }
-kernel32-sys = { version = "0.2", default-features = false }
-mio-named-pipes = { version = "0.1", default-features = false }
-miow-468e82937335b1c9 = { package = "miow", version = "0.3", default-features = false }
-miow-6f8ce4dd05d13bba = { package = "miow", version = "0.2", default-features = false }
+mio-uds = { version = "0.6", default-features = false }
 native-tls = { version = "0.2", default-features = false }
+nix-582f2526e08bb6a0 = { package = "nix", version = "0.14", default-features = false }
+nix-9067fe90e8c1f593 = { package = "nix", version = "0.17", default-features = false }
+openssl-probe = { version = "0.1", default-features = false }
 ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }
 rand_chacha-6f8ce4dd05d13bba = { package = "rand_chacha", version = "0.2", default-features = false, features = ["std"] }
 rustls-9067fe90e8c1f593 = { package = "rustls", version = "0.17", features = ["dangerous_configuration"] }
 rustls-native-certs = { version = "0.3", default-features = false }
-schannel = { version = "0.1", default-features = false }
-socket2 = { version = "0.3", default-features = false }
+signal-hook-registry = { version = "1", default-features = false }
 tokio-rustls-594e8ee84c453af0 = { package = "tokio-rustls", version = "0.13", default-features = false }
+tokio-signal = { version = "0.2", default-features = false }
 tokio-tls = { version = "0.3", default-features = false }
-winapi-468e82937335b1c9 = { package = "winapi", version = "0.3", default-features = false, features = ["consoleapi", "errhandlingapi", "fileapi", "handleapi", "impl-debug", "impl-default", "ioapiset", "knownfolders", "libloaderapi", "lmcons", "memoryapi", "minschannel", "minwinbase", "minwindef", "namedpipeapi", "ntdef", "ntsecapi", "ntstatus", "objbase", "processenv", "processthreadsapi", "profileapi", "schannel", "securitybaseapi", "shlobj", "sspi", "std", "synchapi", "sysinfoapi", "threadpoollegacyapiset", "timezoneapi", "winbase", "wincon", "wincrypt", "winerror", "winnt", "winreg", "winsock2", "winuser", "ws2def", "ws2ipdef", "ws2tcpip", "wtypesbase"] }
-winapi-6f8ce4dd05d13bba = { package = "winapi", version = "0.2", default-features = false }
-winapi-util = { version = "0.1", default-features = false }
-winreg = { version = "0.6", default-features = false }
-ws2_32-sys = { version = "0.2", default-features = false }
+tokio-uds = { version = "0.2", default-features = false }
+utf8parse = { version = "0.1", default-features = false }
+void = { version = "1" }
 
-[target.x86_64-uwp-windows-msvc.build-dependencies]
+[target.x86_64-wrs-vxworks.build-dependencies]
+ansi_term-a6292c17cd707f01 = { package = "ansi_term", version = "0.11", default-features = false }
 async-compression = { version = "0.3", default-features = false, features = ["gzip", "stream"] }
 c2-chacha = { version = "0.2", default-features = false, features = ["simd", "std"] }
+crossbeam-queue-c65f7effa3be6d31 = { package = "crossbeam-queue", version = "0.1", default-features = false }
+crossbeam-utils-3b31131e45eafb45 = { package = "crossbeam-utils", version = "0.6" }
 encoding_rs = { version = "0.8", default-features = false }
 hyper-rustls-56bd22fc3884b12 = { package = "hyper-rustls", version = "0.20" }
 hyper-tls = { version = "0.4", default-features = false }
-kernel32-sys = { version = "0.2", default-features = false }
-mio-named-pipes = { version = "0.1", default-features = false }
-miow-468e82937335b1c9 = { package = "miow", version = "0.3", default-features = false }
-miow-6f8ce4dd05d13bba = { package = "miow", version = "0.2", default-features = false }
+mio-uds = { version = "0.6", default-features = false }
 native-tls = { version = "0.2", default-features = false }
+nix-582f2526e08bb6a0 = { package = "nix", version = "0.14", default-features = false }
+nix-9067fe90e8c1f593 = { package = "nix", version = "0.17", default-features = false }
+openssl-probe = { version = "0.1", default-features = false }
 ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }
 rand_chacha-6f8ce4dd05d13bba = { package = "rand_chacha", version = "0.2", default-features = false, features = ["std"] }
 rustls-9067fe90e8c1f593 = { package = "rustls", version = "0.17", features = ["dangerous_configuration"] }
 rustls-native-certs = { version = "0.3", default-features = false }
-schannel = { version = "0.1", default-features = false }
-socket2 = { version = "0.3", default-features = false }
+signal-hook-registry = { version = "1", default-features = false }
 tokio-rustls-594e8ee84c453af0 = { package = "tokio-rustls", version = "0.13", default-features = false }
+tokio-signal = { version = "0.2", default-features = false }
 tokio-tls = { version = "0.3", default-features = false }
-vcpkg = { version = "0.2", default-features = false }
-winapi-468e82937335b1c9 = { package = "winapi", version = "0.3", default-features = false, features = ["consoleapi", "errhandlingapi", "fileapi", "handleapi", "impl-debug", "impl-default", "ioapiset", "knownfolders", "libloaderapi", "lmcons", "memoryapi", "minschannel", "minwinbase", "minwindef", "namedpipeapi", "ntdef", "ntsecapi", "ntstatus", "objbase", "processenv", "processthreadsapi", "profileapi", "schannel", "securitybaseapi", "shlobj", "sspi", "std", "synchapi", "sysinfoapi", "threadpoollegacyapiset", "timezoneapi", "winbase", "wincon", "wincrypt", "winerror", "winnt", "winreg", "winsock2", "winuser", "ws2def", "ws2ipdef", "ws2tcpip", "wtypesbase"] }
-winapi-6f8ce4dd05d13bba = { package = "winapi", version = "0.2", default-features = false }
-winapi-build = { version = "0.1", default-features = false }
-winapi-util = { version = "0.1", default-features = false }
-winreg = { version = "0.6", default-features = false }
-ws2_32-sys = { version = "0.2", default-features = false }
+tokio-uds = { version = "0.2", default-features = false }
+utf8parse = { version = "0.1", default-features = false }
+void = { version = "1" }
 
 ### END HAKARI SECTION
 

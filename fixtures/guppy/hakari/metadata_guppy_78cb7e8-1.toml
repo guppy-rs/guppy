@@ -6,7 +6,7 @@
 # unify-target-host = 'none'
 # output-single-feature = false
 # dep-format-version = '1'
-# platforms = ['powerpc-wrs-vxworks', 'riscv32imc-unknown-none-elf', 'mipsel-unknown-linux-musl']
+# platforms = ['powerpc-wrs-vxworks', 'riscv64gc-unknown-freebsd', 'mipsel-unknown-linux-uclibc']
 # [[traversal-excludes.ids]]
 # name = 'pathdiff'
 # version = '0.2.0'
@@ -65,10 +65,16 @@ libc = { version = "0.2", features = ["std"] }
 [target.powerpc-wrs-vxworks.build-dependencies]
 libc = { version = "0.2", features = ["std"] }
 
-[target.mipsel-unknown-linux-musl.dependencies]
+[target.riscv64gc-unknown-freebsd.dependencies]
 libc = { version = "0.2", features = ["std"] }
 
-[target.mipsel-unknown-linux-musl.build-dependencies]
+[target.riscv64gc-unknown-freebsd.build-dependencies]
+libc = { version = "0.2", features = ["std"] }
+
+[target.mipsel-unknown-linux-uclibc.dependencies]
+libc = { version = "0.2", features = ["std"] }
+
+[target.mipsel-unknown-linux-uclibc.build-dependencies]
 libc = { version = "0.2", features = ["std"] }
 
 ### END HAKARI SECTION

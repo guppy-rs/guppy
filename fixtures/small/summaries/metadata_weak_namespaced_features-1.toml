@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'm68k-unknown-linux-gnu'
+triple = 'mips-unknown-linux-gnu'
 target-features = 'unknown'
 
 [metadata.target-platform]

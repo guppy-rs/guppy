@@ -6,7 +6,7 @@
 # unify-target-host = 'none'
 # output-single-feature = false
 # dep-format-version = '4'
-# platforms = ['x86_64-wrs-vxworks', 'aarch64-wrs-vxworks']
+# platforms = ['x86_64h-apple-darwin', 'aarch64-wrs-vxworks']
 # [[traversal-excludes.ids]]
 # name = 'bit-set'
 # version = '0.5.2'
@@ -62,7 +62,7 @@ serde_json = { version = "1", features = ["raw_value"] }
 proc-macro2 = { version = "1" }
 syn = { version = "1", features = ["full", "visit"] }
 
-[target.x86_64-wrs-vxworks.dependencies]
+[target.x86_64h-apple-darwin.dependencies]
 libc = { version = "0.2" }
 
 [target.aarch64-wrs-vxworks.dependencies]

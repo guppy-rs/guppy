@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'i686-wrs-vxworks'
+triple = 'loongarch64-unknown-linux-gnu'
 target-features = 'all'
 flags = ['flag-test', 'foo']
 

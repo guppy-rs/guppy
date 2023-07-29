@@ -12,7 +12,7 @@ target-features = 'all'
 flags = ['abc']
 
 [metadata.target-platform]
-triple = 'x86_64-apple-ios'
+triple = 'x86_64-apple-ios-macabi'
 target-features = ['avx2', 'sse2', 'ssse3', 'xsave']
 flags = ['abc']
 

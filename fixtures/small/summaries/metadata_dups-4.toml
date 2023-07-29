@@ -7,12 +7,12 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'i686-uwp-windows-gnu'
+triple = 'i686-uwp-windows-msvc'
 target-features = 'unknown'
 flags = ['cargo_web']
 
 [metadata.target-platform]
-triple = 'x86_64-pc-windows-gnullvm'
+triple = 'x86_64-pc-windows-msvc'
 target-features = 'all'
 [[metadata.omitted-packages.ids]]
 name = 'lazy_static'

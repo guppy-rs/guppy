@@ -12,7 +12,7 @@ target-features = 'unknown'
 flags = ['bar']
 
 [metadata.target-platform]
-triple = 'mipsel-unknown-linux-gnu'
+triple = 'mipsel-unknown-linux-musl'
 target-features = 'unknown'
 flags = ['foo']
 [[metadata.omitted-packages.ids]]

@@ -11,7 +11,7 @@ triple = 'armeb-unknown-linux-gnueabi'
 target-features = 'unknown'
 
 [metadata.target-platform]
-triple = 'x86_64-apple-darwin'
+triple = 'x86_64-apple-ios'
 target-features = 'unknown'
 [[metadata.omitted-packages.ids]]
 name = 'libra-json-rpc'

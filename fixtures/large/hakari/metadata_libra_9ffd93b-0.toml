@@ -6,7 +6,7 @@
 # unify-target-host = 'auto'
 # output-single-feature = false
 # dep-format-version = '1'
-# platforms = ['aarch64-nintendo-switch-freestanding', 'x86_64-apple-tvos']
+# platforms = ['aarch64-nintendo-switch-freestanding', 'x86_64-apple-watchos-sim']
 # [[traversal-excludes.ids]]
 # name = 'criterion-plot'
 # version = '0.4.1'
@@ -178,11 +178,11 @@ hyper = { version = "0.13", features = ["net2", "runtime", "stream", "tcp"] }
 [target.aarch64-nintendo-switch-freestanding.build-dependencies]
 hyper = { version = "0.13", features = ["net2", "runtime", "stream", "tcp"] }
 
-[target.x86_64-apple-tvos.dependencies]
+[target.x86_64-apple-watchos-sim.dependencies]
 hyper = { version = "0.13", features = ["net2", "runtime", "stream", "tcp"] }
 libc = { version = "0.2", default-features = false, features = ["extra_traits"] }
 
-[target.x86_64-apple-tvos.build-dependencies]
+[target.x86_64-apple-watchos-sim.build-dependencies]
 hyper = { version = "0.13", features = ["net2", "runtime", "stream", "tcp"] }
 libc = { version = "0.2", default-features = false, features = ["extra_traits"] }
 

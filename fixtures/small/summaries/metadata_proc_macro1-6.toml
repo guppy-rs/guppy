@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'x86_64-uwp-windows-msvc'
+triple = 'x86_64-wrs-vxworks'
 target-features = 'all'
 
 [metadata.target-platform]

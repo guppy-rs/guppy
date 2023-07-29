@@ -6,7 +6,7 @@
 # unify-target-host = 'auto'
 # output-single-feature = false
 # dep-format-version = '2'
-# platforms = ['riscv64gc-unknown-linux-gnu', 'armv7a-none-eabi']
+# platforms = ['riscv64gc-unknown-linux-musl', 'armv7a-none-eabihf']
 # [[traversal-excludes.ids]]
 # name = 'linked-hash-map'
 # version = '0.5.2'

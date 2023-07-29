@@ -6,7 +6,7 @@
 # unify-target-host = 'auto'
 # output-single-feature = false
 # dep-format-version = '4'
-# platforms = ['msp430-none-elf', 'x86_64-unknown-openbsd', 'aarch64-unknown-uefi']
+# platforms = ['nvptx64-nvidia-cuda', 'x86_64-unknown-redox', 'aarch64-unknown-uefi']
 # [[traversal-excludes.ids]]
 # name = 'fixtures'
 # version = '0.1.0'
@@ -74,10 +74,10 @@ proc-macro2 = { version = "1" }
 quote = { version = "1" }
 syn = { version = "1", features = ["full", "visit"] }
 
-[target.x86_64-unknown-openbsd.dependencies]
+[target.x86_64-unknown-redox.dependencies]
 libc = { version = "0.2" }
 
-[target.x86_64-unknown-openbsd.build-dependencies]
+[target.x86_64-unknown-redox.build-dependencies]
 libc = { version = "0.2" }
 
 ### END HAKARI SECTION

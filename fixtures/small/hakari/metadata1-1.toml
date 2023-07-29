@@ -6,7 +6,7 @@
 # unify-target-host = 'none'
 # output-single-feature = false
 # dep-format-version = '4'
-# platforms = ['x86_64-uwp-windows-msvc', 'aarch64-nintendo-switch-freestanding']
+# platforms = ['x86_64-wrs-vxworks', 'aarch64-nintendo-switch-freestanding']
 # [[traversal-excludes.ids]]
 # name = 'quote'
 # version = '1.0.2'

@@ -6,7 +6,7 @@
 # unify-target-host = 'auto'
 # output-single-feature = true
 # dep-format-version = '4'
-# platforms = ['armv7-unknown-netbsd-eabihf', 'mips64-unknown-linux-muslabi64', 'i686-apple-darwin']
+# platforms = ['armv7-unknown-netbsd-eabihf', 'mips64el-unknown-linux-gnuabi64', 'i686-apple-darwin']
 # [[traversal-excludes.ids]]
 # name = 'serde'
 # version = '1.0.105'
@@ -22,7 +22,7 @@ lazy_static-dff4ba8e3ae991db = { package = "lazy_static", version = "1", default
 [target.armv7-unknown-netbsd-eabihf.dependencies]
 lazy_static-6f8ce4dd05d13bba = { package = "lazy_static", version = "0.2", default-features = false }
 
-[target.mips64-unknown-linux-muslabi64.dependencies]
+[target.mips64el-unknown-linux-gnuabi64.dependencies]
 lazy_static-6f8ce4dd05d13bba = { package = "lazy_static", version = "0.2", default-features = false }
 
 [target.i686-apple-darwin.dependencies]

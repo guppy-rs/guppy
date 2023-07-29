@@ -10,7 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'armv4t-none-eabi'
+triple = 'armv4t-unknown-linux-gnueabi'
 target-features = ['fma', 'rdrand', 'sha']
 flags = ['flag-test']
 [[metadata.omitted-packages.ids]]

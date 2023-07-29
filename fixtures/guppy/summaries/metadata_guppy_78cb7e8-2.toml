@@ -10,7 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'powerpc64-unknown-linux-musl'
+triple = 'powerpc64-unknown-openbsd'
 target-features = 'all'
 [[metadata.omitted-packages.ids]]
 name = 'textwrap'
