@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.17.1] - 2023-07-29
+
+### Added
+
+- `PackageMetadata::minimum_rust_version` provides the `rust-version` field of a package as a `Version`.
+- `PackageMetadata::rust_version` has been deprecated because it returns a `VersionReq` in error. In the
+  next major release of guppy, the current definition of `rust_version` will go away and be replaced with
+  `minimum_rust_version`.
+
 ## [0.17.0] - 2023-06-25
 
 ### Changed
@@ -566,6 +575,7 @@ lazy_static = "0.2"
 ### Added
 - Initial release.
 
+[0.17.1]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.1
 [0.17.0]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.0
 [0.16.0]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.16.0
 [0.15.2]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.15.2

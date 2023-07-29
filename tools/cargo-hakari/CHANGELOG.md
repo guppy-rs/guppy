@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.9.27] - 2023-07-29
+
+### Changed
+
+- Builtin platforms updated to Rust 1.71.
+
 ## [0.9.26] - 2023-06-25
 
 ### Changed
@@ -226,6 +232,7 @@ This was tagged, but never released due to
 
 Initial release.
 
+[0.9.27]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.27
 [0.9.26]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.26
 [0.9.25]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.25
 [0.9.24]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.24
