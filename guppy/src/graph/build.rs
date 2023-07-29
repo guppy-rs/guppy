@@ -17,7 +17,7 @@ use fixedbitset::FixedBitSet;
 use indexmap::{IndexMap, IndexSet};
 use once_cell::sync::OnceCell;
 use petgraph::prelude::*;
-use semver::Version;
+use semver::{Version, VersionReq};
 use smallvec::SmallVec;
 use std::{
     borrow::Cow,
@@ -309,6 +309,22 @@ impl<'a> GraphBuildState<'a> {
             }
         }
 
+        // For compatibility with previous versions of guppy -- remove when a breaking change
+        // occurs.
+        let rust_version_req = package
+            .rust_version
+            .as_ref()
+            .map(|rust_version| VersionReq {
+                comparators: vec![semver::Comparator {
+                    op: semver::Op::GreaterEq,
+                    major: rust_version.major,
+                    minor: Some(rust_version.minor),
+                    patch: Some(rust_version.patch),
+                    // Rust versions don't support pre-release fields.
+                    pre: semver::Prerelease::EMPTY,
+                }],
+            });
+
         Ok((
             package_id,
             PackageMetadataImpl {
@@ -331,6 +347,7 @@ impl<'a> GraphBuildState<'a> {
                 publish: PackagePublishImpl::new(package.publish),
                 default_run: package.default_run.map(|s| s.into()),
                 rust_version: package.rust_version,
+                rust_version_req,
                 named_features,
                 optional_deps,
 
