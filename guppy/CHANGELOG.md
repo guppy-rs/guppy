@@ -5,9 +5,9 @@
 ### Added
 
 - `PackageMetadata::minimum_rust_version` provides the `rust-version` field of a package as a `Version`.
-- `PackageMetadata::rust_version` has been deprecated because it returns a `VersionReq` in error. In the
-  next major release of guppy, the current definition of `rust_version` will go away and be replaced with
-  `minimum_rust_version`.
+- `PackageMetadata::rust_version` has been deprecated because it returns a `VersionReq` even though
+  it actually should be a `Version`. In the next major release of guppy, the current definition of
+  `rust_version` will go away and be replaced with `minimum_rust_version`.
 
 ## [0.17.0] - 2023-06-25
 
