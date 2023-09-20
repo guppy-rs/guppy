@@ -31,7 +31,7 @@ guppy = { version = "0.17.1", path = "../../guppy" }
 hakari = { version = "0.16.0", path = "../hakari", features = ["cli-support"] }
 log = "0.4.19"
 owo-colors = { version = "3.5.0", features = ["supports-colors"] }
-supports-color = "1.3.1"
+supports-color = "2.1.0"
 guppy-workspace-hack = { version = "0.1", path = "../../workspace-hack" }
 
 [dev-dependencies]
