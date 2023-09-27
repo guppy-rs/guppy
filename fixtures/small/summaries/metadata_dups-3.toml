@@ -7,12 +7,12 @@ include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'x86_64-pc-windows-gnullvm'
+triple = 'x86_64-pc-windows-gnu'
 target-features = 'all'
 flags = ['test-flag']
 
 [metadata.target-platform]
-triple = 'thumbv8m.base-none-eabi'
+triple = 'thumbv7neon-unknown-linux-musleabihf'
 target-features = ['avx', 'sha', 'sse', 'xsaveopt']
 flags = ['flag-test', 'foo']
 

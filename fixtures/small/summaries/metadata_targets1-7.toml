@@ -12,7 +12,7 @@ target-features = ['avx2', 'sse3']
 flags = ['foo']
 
 [metadata.target-platform]
-triple = 'mips-unknown-linux-musl'
+triple = 'mips-unknown-linux-gnu'
 target-features = 'unknown'
 
 [[metadata.features-only]]

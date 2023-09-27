@@ -12,7 +12,7 @@ target-features = ['avx2', 'bmi2', 'fma', 'sse', 'sse3', 'xsaveopt']
 flags = ['foo']
 
 [metadata.target-platform]
-triple = 'riscv32imac-unknown-none-elf'
+triple = 'riscv32imac-esp-espidf'
 target-features = 'unknown'
 flags = ['abc', 'foo']
 

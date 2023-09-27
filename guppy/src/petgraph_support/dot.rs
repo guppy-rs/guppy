@@ -167,9 +167,9 @@ impl<'a, 'b> Write for DotWrite<'a, 'b> {
         match c {
             '"' => self.f.write_str(r#"\""#),
             // \l is for left-justified newlines (\n means center-justified newlines)
-            '\n' => self.f.write_str(r#"\l"#),
+            '\n' => self.f.write_str(r"\l"),
             // Backslashes are only escaped if the config is set.
-            '\\' if self.escape_backslashes => self.f.write_str(r#"\\"#),
+            '\\' if self.escape_backslashes => self.f.write_str(r"\\"),
             // Other escapes like backslashes are passed through.
             c => self.f.write_char(c),
         }

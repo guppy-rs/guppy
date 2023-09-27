@@ -15,12 +15,12 @@ keywords = [
     "guppy",
 ]
 categories = ["development-tools::cargo-plugins"]
-rust-version = "1.66"
+rust-version = "1.70"
 
 [dependencies]
 camino = "1.1.6"
 cfg-if = "1.0.0"
-clap = { version = "4.3.19", features = ["derive"] }
+clap = { version = "4.3.24", features = ["derive"] }
 # disable tracing integration since we don't use it
 color-eyre = { version = "0.6.2", default-features = false }
 dialoguer = "0.10.4"
@@ -29,13 +29,13 @@ enable-ansi-support = "0.2.1"
 env_logger = "0.9.3"
 guppy = { version = "0.17.1", path = "../../guppy" }
 hakari = { version = "0.16.0", path = "../hakari", features = ["cli-support"] }
-log = "0.4.19"
+log = "0.4.20"
 owo-colors = { version = "3.5.0", features = ["supports-colors"] }
 supports-color = "1.3.1"
 guppy-workspace-hack = { version = "0.1", path = "../../workspace-hack" }
 
 [dev-dependencies]
-tempfile = "3.7.0"
+tempfile = "3.8.0"
 
 # Metadata for cargo-binstall to get the right artifacts.
 [package.metadata.binstall]

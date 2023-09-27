@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'armv7a-kmc-solid_asp3-eabihf'
+triple = 'armv7a-none-eabi'
 target-features = 'unknown'
 flags = ['bar']
 

@@ -22,21 +22,21 @@ include = [
     # Include default rules with the package.
     "default-rules.toml",
 ]
-rust-version = "1.66"
+rust-version = "1.70"
 
 [dependencies]
 camino = "1.1.6"
-globset = "0.4.12"
+globset = "0.4.13"
 guppy = { version = "0.17.1", path = "../../guppy", features = [
     "rayon1",
     "summaries",
 ] }
 once_cell = "1.18.0"
-petgraph = { version = "0.6.3", default-features = false, features = [
+petgraph = { version = "0.6.4", default-features = false, features = [
     "graphmap",
 ] }
-rayon = "1.7.0"
-serde = { version = "1.0.178", features = ["derive"] }
+rayon = "1.8.0"
+serde = { version = "1.0.188", features = ["derive"] }
 toml = "0.5.11"
 guppy-workspace-hack = { version = "0.1", path = "../../workspace-hack" }
 

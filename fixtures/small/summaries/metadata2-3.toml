@@ -11,7 +11,7 @@ triple = 'riscv32imc-esp-espidf'
 target-features = 'all'
 
 [metadata.target-platform]
-triple = 'riscv64gc-unknown-fuchsia'
+triple = 'riscv64gc-unknown-freebsd'
 target-features = ['sse4.2', 'xsaveopt', 'xsaves']
 flags = ['test-flag']
 [[metadata.omitted-packages.ids]]

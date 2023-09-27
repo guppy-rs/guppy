@@ -10,7 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'thumbv8m.main-none-eabihf'
+triple = 'thumbv8m.main-none-eabi'
 target-features = 'all'
 flags = ['abc', 'cargo_web']
 [[metadata.omitted-packages.ids]]

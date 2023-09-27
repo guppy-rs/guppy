@@ -6,7 +6,7 @@
 # unify-target-host = 'none'
 # output-single-feature = false
 # dep-format-version = '4'
-# platforms = ['x86_64h-apple-darwin', 'aarch64-wrs-vxworks']
+# platforms = ['x86_64h-apple-darwin', 'aarch64_be-unknown-linux-gnu']
 # [[traversal-excludes.ids]]
 # name = 'bit-set'
 # version = '0.5.2'
@@ -65,7 +65,7 @@ syn = { version = "1", features = ["full", "visit"] }
 [target.x86_64h-apple-darwin.dependencies]
 libc = { version = "0.2" }
 
-[target.aarch64-wrs-vxworks.dependencies]
+[target.aarch64_be-unknown-linux-gnu.dependencies]
 libc = { version = "0.2" }
 
 ### END HAKARI SECTION

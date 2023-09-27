@@ -6,7 +6,7 @@
 # unify-target-host = 'replicate-target-on-host'
 # output-single-feature = true
 # dep-format-version = '1'
-# platforms = ['armv6k-nintendo-3ds', 'powerpc64le-unknown-linux-musl', 'x86_64-apple-ios']
+# platforms = ['armv7-apple-ios', 'riscv32gc-unknown-linux-gnu', 'x86_64-apple-darwin']
 # [[traversal-excludes.ids]]
 # name = 'testcycles-helper'
 # version = '0.1.0'

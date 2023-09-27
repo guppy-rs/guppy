@@ -11,7 +11,7 @@ triple = 'armv7-unknown-netbsd-eabihf'
 target-features = ['aes', 'fma', 'sha', 'sse2', 'xsavec']
 
 [metadata.target-platform]
-triple = 'mips-unknown-linux-uclibc'
+triple = 'mips-unknown-linux-musl'
 target-features = 'all'
 [[metadata.omitted-packages.ids]]
 name = 'quote'

@@ -16,35 +16,41 @@ repository = "https://github.com/guppy-rs/guppy"
 
 ### BEGIN HAKARI SECTION
 [dependencies]
-clap = { version = "4.3.19", features = ["derive"] }
-clap_builder = { version = "4.3.19", default-features = false, features = ["color", "help", "std", "suggestions", "usage"] }
+clap = { version = "4.4.5", features = ["derive"] }
+clap_builder = { version = "4.4.5", default-features = false, features = ["color", "help", "std", "suggestions", "usage"] }
 indexmap = { version = "1.9.3", default-features = false, features = ["std"] }
-libc = { version = "0.2.147" }
-log = { version = "0.4.19", default-features = false, features = ["std"] }
-memchr = { version = "2.5.0" }
+libc = { version = "0.2.148" }
+log = { version = "0.4.20", default-features = false, features = ["std"] }
+memchr = { version = "2.6.3" }
 num-traits = { version = "0.2.16", features = ["libm"] }
 owo-colors = { version = "3.5.0", default-features = false, features = ["supports-colors"] }
-petgraph = { version = "0.6.3", default-features = false, features = ["graphmap"] }
-regex = { version = "1.9.1", default-features = false, features = ["perf", "std"] }
-regex-automata = { version = "0.3.4", default-features = false, features = ["dfa-onepass", "hybrid", "meta", "nfa-backtrack", "perf-inline", "perf-literal"] }
-semver = { version = "1.0.18", features = ["serde"] }
-serde = { version = "1.0.178", features = ["alloc", "derive"] }
-serde_json = { version = "1.0.104", features = ["unbounded_depth"] }
+petgraph = { version = "0.6.4", default-features = false, features = ["graphmap"] }
+regex = { version = "1.9.5", default-features = false, features = ["perf", "std"] }
+regex-automata = { version = "0.3.8", default-features = false, features = ["dfa-onepass", "hybrid", "meta", "nfa-backtrack", "perf-inline", "perf-literal"] }
+semver = { version = "1.0.19", features = ["serde"] }
+serde = { version = "1.0.188", features = ["alloc", "derive"] }
+serde_json = { version = "1.0.107", features = ["unbounded_depth"] }
 toml = { version = "0.5.11", features = ["preserve_order"] }
 
 [build-dependencies]
-proc-macro2 = { version = "1.0.66" }
-quote = { version = "1.0.32" }
-syn-dff4ba8e3ae991db = { package = "syn", version = "1.0.109", features = ["extra-traits", "full"] }
-syn-f595c2ba2a3f28df = { package = "syn", version = "2.0.27", features = ["full"] }
+proc-macro2 = { version = "1.0.67" }
+quote = { version = "1.0.33" }
+syn-dff4ba8e3ae991db = { package = "syn", version = "1.0.109", features = ["full"] }
+syn-f595c2ba2a3f28df = { package = "syn", version = "2.0.37", features = ["extra-traits", "full"] }
 
 [target.x86_64-unknown-linux-gnu.dependencies]
-libc = { version = "0.2.147", default-features = false, features = ["extra_traits"] }
-rustix = { version = "0.38.4", features = ["fs", "termios"] }
+libc = { version = "0.2.148", default-features = false, features = ["extra_traits"] }
+rustix = { version = "0.38.14", features = ["fs", "termios"] }
+
+[target.x86_64-unknown-linux-gnu.build-dependencies]
+libc = { version = "0.2.148", features = ["extra_traits"] }
 
 [target.x86_64-apple-darwin.dependencies]
-libc = { version = "0.2.147", default-features = false, features = ["extra_traits"] }
-rustix = { version = "0.38.4", features = ["fs", "termios"] }
+libc = { version = "0.2.148", default-features = false, features = ["extra_traits"] }
+rustix = { version = "0.38.14", features = ["fs", "termios"] }
+
+[target.x86_64-apple-darwin.build-dependencies]
+libc = { version = "0.2.148", features = ["extra_traits"] }
 
 [target.x86_64-pc-windows-msvc.dependencies]
 winapi = { version = "0.3.9", default-features = false, features = ["consoleapi", "errhandlingapi", "fileapi", "handleapi", "minwinbase", "minwindef", "processenv", "std", "synchapi", "winbase", "wincon", "winerror", "winnt"] }

@@ -11,7 +11,6 @@ use crate::{
     summaries::*,
 };
 use anyhow::{anyhow, bail, Result};
-use clap::arg_enum;
 use fixtures::json::JsonFixture;
 use structopt::StructOpt;
 
@@ -106,14 +105,22 @@ pub struct GenerateOpts {
     pub fixtures: Vec<String>,
 }
 
-arg_enum! {
-    #[derive(Copy, Clone, Debug, Eq, Hash, PartialEq)]
-    pub enum GenerateMode {
-        Generate,
-        Check,
-        Force,
+/// Hack to disable the useless_vec lint for this code. We really need to switch to clap 4 soon.
+mod generate_mode {
+    #![allow(clippy::useless_vec)]
+    use clap::arg_enum;
+
+    arg_enum! {
+        #[derive(Copy, Clone, Debug, Eq, Hash, PartialEq)]
+        pub enum GenerateMode {
+            Generate,
+            Check,
+            Force,
+        }
     }
 }
+
+pub use generate_mode::GenerateMode;
 
 impl GenerateSummariesOpts {
     pub fn exec(self) -> Result<()> {

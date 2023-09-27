@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'x86_64-unknown-l4re-uclibc'
+triple = 'x86_64-unknown-illumos'
 target-features = 'unknown'
 flags = ['test-flag']
 
