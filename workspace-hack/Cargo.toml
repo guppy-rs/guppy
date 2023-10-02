@@ -28,7 +28,7 @@ petgraph = { version = "0.6.4", default-features = false, features = ["graphmap"
 regex = { version = "1.9.1", default-features = false, features = ["perf", "std"] }
 regex-automata = { version = "0.3.4", default-features = false, features = ["dfa-onepass", "hybrid", "meta", "nfa-backtrack", "perf-inline", "perf-literal"] }
 semver = { version = "1.0.19", features = ["serde"] }
-serde = { version = "1.0.178", features = ["alloc", "derive"] }
+serde = { version = "1.0.188", features = ["alloc", "derive"] }
 serde_json = { version = "1.0.104", features = ["unbounded_depth"] }
 toml = { version = "0.5.11", features = ["preserve_order"] }
 
@@ -36,7 +36,7 @@ toml = { version = "0.5.11", features = ["preserve_order"] }
 proc-macro2 = { version = "1.0.66" }
 quote = { version = "1.0.32" }
 syn-dff4ba8e3ae991db = { package = "syn", version = "1.0.109", features = ["extra-traits", "full"] }
-syn-f595c2ba2a3f28df = { package = "syn", version = "2.0.27", features = ["full"] }
+syn-f595c2ba2a3f28df = { package = "syn", version = "2.0.32", features = ["full"] }
 
 [target.x86_64-unknown-linux-gnu.dependencies]
 libc = { version = "0.2.147", default-features = false, features = ["extra_traits"] }
