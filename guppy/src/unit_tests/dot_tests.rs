@@ -15,7 +15,7 @@ fn dot_fmt() {
     // " is escaped.
     let b = graph.add_node(r#"B1"B2"#);
     // \ is escaped by DisplayVisitor but not by NoEscapeDisplayVisitor.
-    let c = graph.add_node(r#"C1\C2\\C3\lC4\nC5"#);
+    let c = graph.add_node(r"C1\C2\\C3\lC4\nC5");
     // Newlines are converted into \l.
     let d = graph.add_node("D1\nD2");
     graph.add_edge(a, b, 100);

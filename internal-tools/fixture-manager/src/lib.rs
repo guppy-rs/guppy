@@ -1,6 +1,9 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
+// This is fired by the arg_enum macro. We really need to upgrade to clap v4 at some point.
+#![allow(clippy::useless_vec)]
+
 pub mod context;
 pub mod hakari_toml;
 pub mod summaries;
