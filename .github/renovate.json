@@ -1,0 +1,6 @@
+{
+    "extends": [
+        "github>nextest-rs/renovate",
+        "github>nextest-rs/renovate:post-upgrade"
+    ]
+}
