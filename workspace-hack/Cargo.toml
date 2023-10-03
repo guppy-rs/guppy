@@ -36,7 +36,7 @@ toml = { version = "0.5.11", features = ["preserve_order"] }
 proc-macro2 = { version = "1.0.66" }
 quote = { version = "1.0.32" }
 syn-dff4ba8e3ae991db = { package = "syn", version = "1.0.109", features = ["extra-traits", "full", "visit"] }
-syn-f595c2ba2a3f28df = { package = "syn", version = "2.0.32", features = ["full"] }
+syn-f595c2ba2a3f28df = { package = "syn", version = "2.0.32", features = ["extra-traits", "full"] }
 
 [target.x86_64-unknown-linux-gnu.dependencies]
 libc = { version = "0.2.147", default-features = false, features = ["extra_traits"] }
