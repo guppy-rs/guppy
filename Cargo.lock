@@ -300,7 +300,7 @@ dependencies = [
  "crates-io",
  "curl",
  "curl-sys",
- "env_logger 0.10.0",
+ "env_logger",
  "filetime",
  "flate2",
  "fwdansi",
@@ -402,7 +402,7 @@ dependencies = [
  "dialoguer",
  "duct",
  "enable-ansi-support",
- "env_logger 0.9.3",
+ "env_logger",
  "guppy",
  "guppy-workspace-hack",
  "hakari",
@@ -1005,19 +1005,6 @@ name = "encode_unicode"
 version = "0.3.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a357d28ed41a50f9c765dbfe56cbc04a64e53e5fc58ba79fbc34c10ef3df831f"
-
-[[package]]
-name = "env_logger"
-version = "0.9.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a12e6657c4c97ebab115a42dcee77225f7f482cdd841cf7088c657a42e9e00e7"
-dependencies = [
- "atty",
- "humantime",
- "log",
- "regex",
- "termcolor",
-]
 
 [[package]]
 name = "env_logger"
