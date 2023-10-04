@@ -6,6 +6,7 @@
 # unify-target-host = 'auto'
 # output-single-feature = true
 # dep-format-version = '3'
+# workspace-hack-line-style = 'full'
 # platforms = ['aarch64-pc-windows-gnullvm', 'i686-unknown-haiku', 'x86_64-unknown-hermit']
 # [[traversal-excludes.ids]]
 # name = 'cargo-compare'

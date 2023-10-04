@@ -6,6 +6,7 @@
 # unify-target-host = 'auto'
 # output-single-feature = true
 # dep-format-version = '3'
+# workspace-hack-line-style = 'version-only'
 # platforms = ['mipsel-unknown-none', 'i686-unknown-uefi']
 # [[traversal-excludes.ids]]
 # name = 'bytes'

@@ -6,6 +6,7 @@
 # unify-target-host = 'auto'
 # output-single-feature = false
 # dep-format-version = '1'
+# workspace-hack-line-style = 'full'
 # platforms = ['aarch64-pc-windows-gnullvm', 'x86_64-apple-tvos']
 # [[traversal-excludes.ids]]
 # name = 'criterion-plot'

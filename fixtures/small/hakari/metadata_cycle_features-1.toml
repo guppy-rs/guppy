@@ -6,6 +6,7 @@
 # unify-target-host = 'auto'
 # output-single-feature = true
 # dep-format-version = '3'
+# workspace-hack-line-style = 'version-only'
 # platforms = ['x86_64-apple-watchos-sim', 'mips-unknown-linux-gnu']
 # [[traversal-excludes.ids]]
 # name = 'testcycles-base'

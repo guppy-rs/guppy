@@ -32,7 +32,7 @@
 //!
 //! ## dep-format-version
 //!
-//! The format version to use
+//! The format version to use.
 //!
 //! Possible values:
 //! * *"1"*: `workspace-hack = { path = ...}` in other `Cargo.toml` files. (Note the lack of a
@@ -60,6 +60,32 @@
 //! ```toml
 //! dep-format-version = "4"
 //! ```
+//!
+//! ## workspace-hack-line-style
+//!
+//! Style of `workspace-hack` lines to output.
+//!
+//! Possible values:
+//! * *"full"*: `my-workspace-hack = { version = "0.1", path = ... }`. This is the default and a
+//!   good way to get started.
+//! * *"version-only"*: `my-workspace-hack = { version = "0.1" }`. Specifying versions this way is
+//!   useful if you've published a stub crate to crates.io (see the [publishing](crate::publishing)
+//!   section). You can use this in combination with a `patch` directive in the root `Cargo.toml`:
+//!
+//!   ```toml
+//!   [patch.crates-io.my-workspace-hack]
+//!   path = "workspace-hack"
+//!   ```
+//! * *"workspace-dotted"*: `my-workspace-hack.workspace = true`. To use this, define a workspace
+//!   dependency in the root `Cargo.toml`:
+//!
+//!   ```toml
+//!   [workspace.dependencies]
+//!   my-workspace-hack = { version = "0.1", path = "workspace-hack" }
+//!
+//!   # or, along with a patch directive:
+//!   my-workspace-hack = { version = "0.1" }
+//!   ```
 //!
 //! ## platforms
 //!

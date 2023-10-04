@@ -43,6 +43,7 @@ pub struct HakariBuilder<'g> {
     unify_target_host: UnifyTargetHost,
     output_single_feature: bool,
     pub(crate) dep_format_version: DepFormatVersion,
+    pub(crate) workspace_hack_line_style: WorkspaceHackLineStyle,
 }
 
 impl<'g> HakariBuilder<'g> {
@@ -81,6 +82,7 @@ impl<'g> HakariBuilder<'g> {
             unify_target_host: UnifyTargetHost::default(),
             output_single_feature: false,
             dep_format_version: DepFormatVersion::default(),
+            workspace_hack_line_style: WorkspaceHackLineStyle::default(),
         })
     }
 
@@ -298,7 +300,7 @@ impl<'g> HakariBuilder<'g> {
         self.output_single_feature
     }
 
-    /// Version of `workspace-hack = ...` lines to output.
+    /// Version of hakari data to output.
     ///
     /// For more, see the documentation for [`DepFormatVersion`](DepFormatVersion).
     pub fn set_dep_format_version(&mut self, dep_format_version: DepFormatVersion) -> &mut Self {
@@ -309,6 +311,22 @@ impl<'g> HakariBuilder<'g> {
     /// Returns the current value of `dep_format_version`.
     pub fn dep_format_version(&self) -> DepFormatVersion {
         self.dep_format_version
+    }
+
+    /// Kind of `workspace-hack = ...` lines to output.
+    ///
+    /// For more, see the documentation for [`WorkspaceHackLineStyle`].
+    pub fn set_workspace_hack_line_style(
+        &mut self,
+        line_style: WorkspaceHackLineStyle,
+    ) -> &mut Self {
+        self.workspace_hack_line_style = line_style;
+        self
+    }
+
+    /// Returns the current value of `workspace_hack_line_style`.
+    pub fn workspace_hack_line_style(&self) -> WorkspaceHackLineStyle {
+        self.workspace_hack_line_style
     }
 
     /// Computes the `Hakari` for this builder.
@@ -423,6 +441,7 @@ mod summaries {
                 unify_target_host: summary.unify_target_host,
                 output_single_feature: summary.output_single_feature,
                 dep_format_version: summary.dep_format_version,
+                workspace_hack_line_style: summary.workspace_hack_line_style,
                 platforms,
                 registries,
                 traversal_excludes,
@@ -553,6 +572,24 @@ impl fmt::Display for DepFormatVersion {
             DepFormatVersion::V4 => write!(f, "4"),
         }
     }
+}
+
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
+#[cfg_attr(feature = "cli-support", derive(serde::Deserialize, serde::Serialize))]
+#[cfg_attr(feature = "cli-support", serde(rename_all = "kebab-case"))]
+#[cfg_attr(feature = "proptest1", derive(proptest_derive::Arbitrary))]
+#[non_exhaustive]
+#[derive(Default)]
+pub enum WorkspaceHackLineStyle {
+    /// `workspace-hack = { version = "0.1", path = ... }`.
+    #[default]
+    Full,
+
+    /// `workspace-hack = { version = "0.1" }`.
+    VersionOnly,
+
+    /// `workspace-hack.workspace = true`
+    WorkspaceDotted,
 }
 
 /// A key representing a platform and host/target. Returned by `Hakari`.

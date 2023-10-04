@@ -6,6 +6,7 @@
 # unify-target-host = 'auto'
 # output-single-feature = true
 # dep-format-version = '4'
+# workspace-hack-line-style = 'full'
 # platforms = ['x86_64-pc-windows-gnullvm', 'i686-linux-android', 'armv7-wrs-vxworks-eabihf']
 # [[traversal-excludes.ids]]
 # name = 'bitflags'

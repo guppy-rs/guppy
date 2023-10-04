@@ -1,7 +1,10 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-use crate::{hakari::DepFormatVersion, HakariBuilder, UnifyTargetHost};
+use crate::{
+    hakari::{DepFormatVersion, WorkspaceHackLineStyle},
+    HakariBuilder, UnifyTargetHost,
+};
 use guppy::{
     graph::{cargo::CargoResolverVersion, PackageGraph},
     platform::{Platform, TargetFeatures},
@@ -41,6 +44,7 @@ impl<'g> HakariBuilder<'g> {
             any::<UnifyTargetHost>(),
             any::<bool>(),
             any::<DepFormatVersion>(),
+            any::<WorkspaceHackLineStyle>(),
         )
             .prop_map(
                 move |(
@@ -52,6 +56,7 @@ impl<'g> HakariBuilder<'g> {
                     unify_target_host,
                     output_single_feature,
                     dep_format_version,
+                    line_style,
                 )| {
                     let mut builder = HakariBuilder::new(graph, hakari_id)
                         .expect("HakariBuilder::new returned an error");
@@ -69,6 +74,7 @@ impl<'g> HakariBuilder<'g> {
                         .expect("final excludes obtained from PackageGraph should work")
                         .set_unify_target_host(unify_target_host)
                         .set_dep_format_version(dep_format_version)
+                        .set_workspace_hack_line_style(line_style)
                         .set_output_single_feature(output_single_feature);
                     builder
                 },

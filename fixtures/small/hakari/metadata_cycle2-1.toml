@@ -6,6 +6,7 @@
 # unify-target-host = 'none'
 # output-single-feature = true
 # dep-format-version = '1'
+# workspace-hack-line-style = 'version-only'
 # platforms = ['armv7-linux-androideabi']
 # [[traversal-excludes.ids]]
 # name = 'lower-a'

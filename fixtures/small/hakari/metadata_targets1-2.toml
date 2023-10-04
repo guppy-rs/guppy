@@ -6,6 +6,7 @@
 # unify-target-host = 'unify-if-both'
 # output-single-feature = true
 # dep-format-version = '3'
+# workspace-hack-line-style = 'full'
 # platforms = ['i686-pc-windows-msvc', 'armebv7r-none-eabihf', 'powerpc-wrs-vxworks-spe']
 # [[traversal-excludes.ids]]
 # name = 'dep-a'

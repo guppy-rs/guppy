@@ -6,6 +6,7 @@
 # unify-target-host = 'none'
 # output-single-feature = false
 # dep-format-version = '4'
+# workspace-hack-line-style = 'workspace-dep'
 # platforms = ['x86_64h-apple-darwin', 'aarch64_be-unknown-linux-gnu']
 # [[traversal-excludes.ids]]
 # name = 'bit-set'

@@ -55,6 +55,7 @@ impl<'g> HakariBuilder<'g> {
                     .expect("hakari package is in workspace"),
                 version: hakari_package.version(),
                 dep_format: self.dep_format_version,
+                line_style: self.workspace_hack_line_style,
                 add_to,
             });
         }
@@ -104,6 +105,7 @@ impl<'g> HakariBuilder<'g> {
                     .workspace_path()
                     .expect("hakari package is in workspace"),
                 dep_format: self.dep_format_version,
+                line_style: self.workspace_hack_line_style,
                 add_to,
             })
         } else {

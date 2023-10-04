@@ -6,6 +6,7 @@
 # unify-target-host = 'replicate-target-on-host'
 # output-single-feature = true
 # dep-format-version = '4'
+# workspace-hack-line-style = 'version-only'
 # platforms = []
 # [[traversal-excludes.ids]]
 # name = 'winapi-i686-pc-windows-gnu'

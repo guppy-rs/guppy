@@ -6,6 +6,7 @@
 # unify-target-host = 'none'
 # output-single-feature = true
 # dep-format-version = '4'
+# workspace-hack-line-style = 'workspace-dep'
 # platforms = ['aarch64-apple-ios-macabi', 'armv7-sony-vita-newlibeabihf']
 # [[traversal-excludes.ids]]
 # name = 'dep-a'

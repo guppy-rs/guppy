@@ -1,6 +1,32 @@
 # Changelog
 
-## Unreleased
+## [0.17.0] - 2023-10-03
+
+### Added
+
+New config option `workspace-hack-line-style`, with three possible values:
+
+* *"full"*: `my-workspace-hack = { version = "0.1", path = ... }`. This is the default and a
+  good way to get started.
+
+* *"version-only"*: `my-workspace-hack = { version = "0.1" }`. Specifying versions this way is
+  useful if you've published a stub crate to crates.io (see the [publishing](crate::publishing)
+  section). You can use this in combination with a `patch` directive in the root `Cargo.toml`:
+
+  ```toml
+  [patch.crates-io.my-workspace-hack]
+  path = "workspace-hack"
+  ```
+* *"workspace-dotted"*: `my-workspace-hack.workspace = true`. To use this, define a workspace
+  dependency in the root `Cargo.toml`:
+
+  ```toml
+  [workspace.dependencies]
+  my-workspace-hack = { version = "0.1", path = "workspace-hack" }
+
+  # or, along with a patch directive:
+  my-workspace-hack = { version = "0.1" }
+  ```
 
 ### Changed
 
@@ -278,6 +304,7 @@ Internal updates for `cargo-hakari 0.9.8`.
 
 Initial release.
 
+[0.17.0]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.17.0
 [0.16.0]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.16.0
 [0.15.0]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.15.0
 [0.14.0]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.14.0

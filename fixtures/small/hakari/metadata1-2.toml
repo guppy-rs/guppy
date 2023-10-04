@@ -6,6 +6,7 @@
 # unify-target-host = 'auto'
 # output-single-feature = false
 # dep-format-version = '4'
+# workspace-hack-line-style = 'full'
 # platforms = ['aarch64-unknown-uefi']
 # [[traversal-excludes.ids]]
 # name = 'regex'

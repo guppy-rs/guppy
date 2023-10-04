@@ -6,6 +6,7 @@
 # unify-target-host = 'replicate-target-on-host'
 # output-single-feature = true
 # dep-format-version = '4'
+# workspace-hack-line-style = 'workspace-dep'
 # platforms = []
 # [[traversal-excludes.ids]]
 # name = 'arrayvec'

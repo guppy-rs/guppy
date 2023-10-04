@@ -6,6 +6,7 @@
 # unify-target-host = 'replicate-target-on-host'
 # output-single-feature = true
 # dep-format-version = '2'
+# workspace-hack-line-style = 'version-only'
 # platforms = ['x86_64-pc-windows-gnullvm', 'arm-unknown-linux-musleabi', 'armv7-linux-androideabi']
 # [[traversal-excludes.ids]]
 # name = 'netcore'

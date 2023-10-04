@@ -6,6 +6,7 @@
 # unify-target-host = 'none'
 # output-single-feature = false
 # dep-format-version = '4'
+# workspace-hack-line-style = 'full'
 # platforms = ['armv7k-apple-watchos', 'powerpc64le-unknown-linux-gnu', 'powerpc64-unknown-linux-gnu']
 #
 # [traversal-excludes]

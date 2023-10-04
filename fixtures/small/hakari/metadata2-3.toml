@@ -6,6 +6,7 @@
 # unify-target-host = 'auto'
 # output-single-feature = true
 # dep-format-version = '3'
+# workspace-hack-line-style = 'version-only'
 # platforms = ['aarch64-unknown-uefi', 'mips64el-unknown-linux-muslabi64', 'powerpc64le-unknown-linux-musl']
 # [[traversal-excludes.ids]]
 # name = 'quote'

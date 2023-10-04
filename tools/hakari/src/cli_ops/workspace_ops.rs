@@ -1,7 +1,10 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-use crate::{hakari::DepFormatVersion, helpers::VersionDisplay};
+use crate::{
+    hakari::{DepFormatVersion, WorkspaceHackLineStyle},
+    helpers::VersionDisplay,
+};
 use atomicwrites::{AtomicFile, OverwriteBehavior};
 use camino::{Utf8Path, Utf8PathBuf};
 use guppy::{
@@ -75,6 +78,7 @@ pub(crate) enum WorkspaceOp<'g, 'a> {
         crate_path: &'a Utf8Path,
         version: &'a Version,
         dep_format: DepFormatVersion,
+        line_style: WorkspaceHackLineStyle,
         add_to: PackageSet<'g>,
     },
     RemoveDependency {
@@ -110,11 +114,19 @@ impl<'g, 'a> WorkspaceOp<'g, 'a> {
                 crate_path,
                 version,
                 dep_format,
+                line_style,
                 add_to,
             } => {
                 let crate_path = canonical_rel_path(crate_path, canonical_workspace_root)?;
                 for package in add_to.packages(DependencyDirection::Reverse) {
-                    Self::add_to_cargo_toml(name, version, &crate_path, *dep_format, package)?;
+                    Self::add_to_cargo_toml(
+                        name,
+                        version,
+                        &crate_path,
+                        *dep_format,
+                        *line_style,
+                        package,
+                    )?;
                 }
                 Ok(())
             }
@@ -275,6 +287,7 @@ impl<'g, 'a> WorkspaceOp<'g, 'a> {
         version: &Version,
         crate_path: &Utf8Path,
         dep_format: DepFormatVersion,
+        line_style: WorkspaceHackLineStyle,
         package: PackageMetadata<'g>,
     ) -> Result<(), ApplyError> {
         let manifest_path = package.manifest_path();
@@ -289,7 +302,7 @@ impl<'g, 'a> WorkspaceOp<'g, 'a> {
         let path = pathdiff::diff_utf8_paths(crate_path, package_path)
             .expect("both new_path and package_path are relative");
 
-        let path_table = Self::inline_table_for_add(version, dep_format, &path);
+        let path_table = Self::inline_table_for_add(version, dep_format, line_style, &path);
 
         dep_table.insert(name, Item::Value(Value::InlineTable(path_table)));
 
@@ -299,33 +312,52 @@ impl<'g, 'a> WorkspaceOp<'g, 'a> {
     fn inline_table_for_add(
         version: &Version,
         dep_format: DepFormatVersion,
+        line_style: WorkspaceHackLineStyle,
         path: &Utf8Path,
     ) -> InlineTable {
         let mut itable = InlineTable::new();
 
-        // Pass in exact_versions = false because we don't want unnecessary churn in the unlikely
-        // event that a published workspace-hack version has a minor bump in it.
-        let version_str = format!(
-            "{}",
-            VersionDisplay::new(version, false, dep_format < DepFormatVersion::V3)
-        );
-        if dep_format >= DepFormatVersion::V2 {
-            itable.insert("version", version_str.into());
-        }
+        match line_style {
+            WorkspaceHackLineStyle::Full => {
+                // Pass in exact_versions = false because we don't want unnecessary churn in the unlikely
+                // event that a published workspace-hack version has a minor bump in it.
+                let version_str = format!(
+                    "{}",
+                    VersionDisplay::new(version, false, dep_format < DepFormatVersion::V3)
+                );
+                if dep_format >= DepFormatVersion::V2 {
+                    itable.insert("version", version_str.into());
+                }
 
-        let mut path = Formatted::new(with_forward_slashes(path).into_string());
-        if dep_format == DepFormatVersion::V1 {
-            // Previous versions of `cargo hakari` accidentally missed adding the space to the end
-            // of the line. Newer versions of toml_edit do that automatically, so restore the old
-            // behavior.
-            path.decor_mut().set_suffix("");
-        }
-        itable.insert("path", Value::String(path));
+                let mut path = Formatted::new(with_forward_slashes(path).into_string());
+                if dep_format == DepFormatVersion::V1 {
+                    // Previous versions of `cargo hakari` accidentally missed adding the space to the end
+                    // of the line. Newer versions of toml_edit do that automatically, so restore the old
+                    // behavior.
+                    path.decor_mut().set_suffix("");
+                }
+                itable.insert("path", Value::String(path));
 
-        if dep_format == DepFormatVersion::V2 {
-            itable.fmt();
+                if dep_format == DepFormatVersion::V2 {
+                    itable.fmt();
+                }
+                itable
+            }
+            WorkspaceHackLineStyle::VersionOnly => {
+                // Pass in exact_versions = false because we don't want unnecessary churn in the unlikely
+                // event that a published workspace-hack version has a minor bump in it.
+                let version_str = format!("{}", VersionDisplay::new(version, false, false));
+                itable.insert("version", version_str.into());
+                itable
+            }
+            WorkspaceHackLineStyle::WorkspaceDotted => {
+                // Pass in exact_versions = false because we don't want unnecessary churn in the unlikely
+                // event that a published workspace-hack version has a minor bump in it.
+                itable.insert("workspace", true.into());
+                itable.set_dotted(true);
+                itable
+            }
         }
-        itable
     }
 
     fn remove_from_cargo_toml(name: &str, package: PackageMetadata<'g>) -> Result<(), ApplyError> {
@@ -587,6 +619,7 @@ impl<'g, 'a, 'ops> fmt::Display for WorkspaceOpsDisplay<'g, 'a, 'ops> {
                     version,
                     crate_path,
                     dep_format: _,
+                    line_style: _,
                     add_to,
                 } => {
                     writeln!(
@@ -690,6 +723,7 @@ mod tests {
             let itable = WorkspaceOp::inline_table_for_add(
                 &version,
                 DepFormatVersion::V1,
+                WorkspaceHackLineStyle::Full,
                 "../../path".into(),
             );
             assert_eq!(
@@ -701,6 +735,7 @@ mod tests {
             let itable = WorkspaceOp::inline_table_for_add(
                 &version,
                 DepFormatVersion::V2,
+                WorkspaceHackLineStyle::Full,
                 "../../path".into(),
             );
             assert_eq!(
@@ -712,6 +747,7 @@ mod tests {
             let itable = WorkspaceOp::inline_table_for_add(
                 &version,
                 DepFormatVersion::V3,
+                WorkspaceHackLineStyle::Full,
                 "../../path".into(),
             );
             assert_eq!(
@@ -721,6 +757,34 @@ mod tests {
                     version_str_v3
                 ),
                 "dep format v3 matches"
+            );
+
+            let itable = WorkspaceOp::inline_table_for_add(
+                &version,
+                DepFormatVersion::V4,
+                WorkspaceHackLineStyle::VersionOnly,
+                "../../path".into(),
+            );
+            assert_eq!(
+                itable.to_string(),
+                format!("{{ version = \"{}\" }}", version_str_v3),
+                "version only matches"
+            );
+
+            let itable = WorkspaceOp::inline_table_for_add(
+                &version,
+                DepFormatVersion::V4,
+                WorkspaceHackLineStyle::WorkspaceDotted,
+                "../../path".into(),
+            );
+            let mut document = Document::new();
+            document
+                .as_table_mut()
+                .insert("workspace-hack", Item::Value(Value::InlineTable(itable)));
+            assert_eq!(
+                document.to_string(),
+                "workspace-hack.workspace = true\n",
+                "workspace dep matches"
             );
         }
     }

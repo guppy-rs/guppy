@@ -6,6 +6,7 @@
 # unify-target-host = 'auto'
 # output-single-feature = true
 # dep-format-version = '4'
+# workspace-hack-line-style = 'version-only'
 # platforms = ['armv7-unknown-netbsd-eabihf', 'mips64-unknown-linux-muslabi64', 'i686-linux-android']
 # [[traversal-excludes.ids]]
 # name = 'serde'

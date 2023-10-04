@@ -6,6 +6,7 @@
 # unify-target-host = 'replicate-target-on-host'
 # output-single-feature = true
 # dep-format-version = '2'
+# workspace-hack-line-style = 'full'
 # platforms = ['aarch64-unknown-hermit', 'armv7-apple-ios']
 #
 # [traversal-excludes]

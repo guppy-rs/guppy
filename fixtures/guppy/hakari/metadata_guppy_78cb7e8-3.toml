@@ -6,6 +6,7 @@
 # unify-target-host = 'auto'
 # output-single-feature = false
 # dep-format-version = '4'
+# workspace-hack-line-style = 'version-only'
 # platforms = ['nvptx64-nvidia-cuda', 'x86_64-unknown-redox', 'aarch64-uwp-windows-msvc']
 # [[traversal-excludes.ids]]
 # name = 'fixtures'

@@ -6,8 +6,8 @@
 //! *This section can be ignored if your workspace doesn't publish any crates to registries.*
 //!
 //! Many projects using `cargo hakari` may wish to publish their crates to `crates.io` or other
-//! registries. However, if you attempt to publish a crate from a Hakari-managed workspace,
-//! `cargo publish` may reject it for containing the local-only workspace-hack dependency.
+//! registries. However, if you attempt to publish a crate from a Hakari-managed workspace, `cargo
+//! publish` may reject it for containing the local-only workspace-hack dependency.
 //!
 //! `cargo hakari` provides two ways to handle this.
 //!
@@ -20,17 +20,17 @@
 //! ```
 //!
 //! This command temporarily removes the dependency on the `workspace-hack` before publishing the
-//! crate. The dependency will be re-added afterwards, unless the command is interrupted with
-//! ctrl-C (in which case you can use `cargo hakari manage-deps` to finish the job.)
+//! crate. The dependency will be re-added afterwards, unless the command is interrupted with ctrl-C
+//! (in which case you can use `cargo hakari manage-deps` to finish the job.)
 //!
-//! This works out of the box. However, it has the downside of requiring `cargo hakari publish`.
-//! If you don't have control over the commands run while publishing the package, it won't be
-//! possible to use this method.
+//! This works out of the box. However, it has the downside of requiring `cargo hakari publish`. If
+//! you don't have control over the commands run while publishing the package, it won't be possible
+//! to use this method.
 //!
 //! # B. Publish your own workspace-hack crate to the registry
 //!
-//! This method preserves workspace-hack dependencies in `Cargo.toml`s by targeting a stub
-//! crate on the registry.
+//! This method preserves workspace-hack dependencies in `Cargo.toml`s by targeting a stub crate on
+//! the registry.
 //!
 //! ## 1. Ensure the local crate is unique on the registry
 //!
@@ -53,20 +53,17 @@
 //!
 //! The rest of this section assumes the crate is called `my-workspace-hack`.
 //!
-//! ## 2. Ensure `dep-format-version = "2"` is set in `.config/hakari.toml`
+//! ## 2. Ensure `dep-format-version = "2"` or higher is set in `.config/hakari.toml`
 //!
-//! `dep-format-version = "2"` adds the `version` field to the `my-workspace-hack = ...` lines in
-//! other `Cargo.toml` files. `cargo publish` uses the `version` field to recognize published
-//! dependencies.
+//! `dep-format-version = "2"` and higher add the `version` field to the `my-workspace-hack = ...`
+//! lines in other `Cargo.toml` files. `cargo publish` uses the `version` field to recognize
+//! published dependencies.
 //!
 //! This option is new in cargo-hakari 0.9.8. Configuration files created by older versions of
 //! cargo-hakari may not have this option set.
 //!
-//! Ensure that this option is present in `.config/hakari.toml`:
-//!
-//! ```toml
-//! dep-format-version = "2"
-//! ```
+//! Ensure that this option is present in `.config/hakari.toml` and is set to 2 or a value greater
+//! than it. See the [config](crate::config) section for more details.
 //!
 //! Then run `cargo hakari manage-deps` to update the `workspace-hack = ...` lines.
 //!
@@ -97,8 +94,8 @@
 //!
 //! ## 5. Publish the stub workspace-hack crate
 //!
-//! Run `cargo publish -p my-workspace-hack --allow-dirty` to publish the crate to `crates.io`.
-//! For other registries, use the `--registry` flag.
+//! Run `cargo publish -p my-workspace-hack --allow-dirty` to publish the crate to `crates.io`. For
+//! other registries, use the `--registry` flag.
 //!
 //! ## 6. Re-enable the workspace-hack crate
 //!
