@@ -12,7 +12,7 @@ target-features = 'all'
 flags = ['foo']
 
 [metadata.target-platform]
-triple = 'hexagon-unknown-linux-musl'
+triple = 'i386-apple-ios'
 target-features = ['bmi2', 'sse', 'sse4.1']
 flags = ['bar', 'flag-test']
 [[metadata.omitted-packages.ids]]

@@ -6,7 +6,7 @@
 # unify-target-host = 'auto'
 # output-single-feature = true
 # dep-format-version = '3'
-# platforms = ['aarch64-pc-windows-gnullvm', 'i686-unknown-freebsd', 'x86_64-unknown-hermit']
+# platforms = ['aarch64-pc-windows-gnullvm', 'i686-unknown-haiku', 'x86_64-unknown-hermit']
 # [[traversal-excludes.ids]]
 # name = 'cargo-compare'
 # version = '0.1.0'
@@ -152,7 +152,7 @@ winapi-util = { version = "0.1", default-features = false }
 [target.aarch64-pc-windows-gnullvm.build-dependencies]
 ctor = { version = "0.1", default-features = false }
 
-[target.i686-unknown-freebsd.dependencies]
+[target.i686-unknown-haiku.dependencies]
 ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }
 rand_chacha = { version = "0.2", default-features = false, features = ["std"] }
 termios = { version = "0.3", default-features = false }

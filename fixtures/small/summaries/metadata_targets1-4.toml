@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'x86_64-sun-solaris'
+triple = 'x86_64-pc-windows-msvc'
 target-features = []
 flags = ['foo']
 

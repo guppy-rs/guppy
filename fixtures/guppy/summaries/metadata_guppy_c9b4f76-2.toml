@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'aarch64-unknown-freebsd'
+triple = 'aarch64-unknown-fuchsia'
 target-features = ['avx2', 'sha', 'sse2', 'sse3']
 flags = ['test-flag']
 [[metadata.omitted-packages.ids]]
