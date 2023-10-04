@@ -12,6 +12,7 @@ resolver = "2"
 # Format version for cargo-hakari's output.
 # See https://docs.rs/cargo-hakari/latest/cargo_hakari/config#dep-format-version for more.
 dep-format-version = "4"
+workspace-hack-line-style = "workspace-dotted"
 
 # Add triples corresponding to platforms commonly used by developers here.
 # https://doc.rust-lang.org/rustc/platform-support.html

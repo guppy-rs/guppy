@@ -63,7 +63,12 @@
 //!
 //! ## workspace-hack-line-style
 //!
-//! Style of `workspace-hack` lines to output.
+//! Style of `workspace-hack` lines to output. After changing this, you must run:
+//!
+//! ```sh
+//! cargo hakari remove-deps
+//! cargo hakari manage-deps
+//! ```
 //!
 //! Possible values:
 //! * *"full"*: `my-workspace-hack = { version = "0.1", path = ... }`. This is the default and a

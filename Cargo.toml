@@ -18,6 +18,12 @@ members = [
     "workspace-hack",
 ]
 
+[workspace.dependencies]
+guppy-workspace-hack = "0.1.0"
+
+[patch.crates-io.guppy-workspace-hack]
+path = "workspace-hack"
+
 # Recommended for color-eyre
 [profile.dev.package.backtrace]
 opt-level = 3

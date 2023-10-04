@@ -31,7 +31,7 @@ diffus = "0.10.0"
 toml = { version = "0.5.11", features = ["preserve_order"] }
 semver = { version = "1.0.19", features = ["serde"] }
 serde = { version = "1.0.188", features = ["derive"] }
-guppy-workspace-hack = { version = "0.1", path = "../workspace-hack" }
+guppy-workspace-hack.workspace = true
 
 [dev-dependencies]
 indoc = "2.0.4"

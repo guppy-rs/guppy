@@ -51,7 +51,7 @@ smallvec = "1.11.1"
 static_assertions = "1.1.0"
 target-spec = { version = "3.0.1", path = "../target-spec" }
 toml = { version = "0.5.11", optional = true, features = ["preserve_order"] }
-guppy-workspace-hack = { version = "0.1", path = "../workspace-hack" }
+guppy-workspace-hack.workspace = true
 
 [dev-dependencies]
 fixtures = { path = "../fixtures" }

@@ -14,4 +14,4 @@ rust-version = "1.70"
 [dependencies]
 target-spec = { version = "3.0.1", path = "../target-spec" }
 miette = "5.10.0"
-guppy-workspace-hack = { version = "0.1", path = "../workspace-hack" }
+guppy-workspace-hack.workspace = true
