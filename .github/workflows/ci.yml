@@ -136,7 +136,7 @@ jobs:
     steps:
       - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3
       # This matches the cfg-expr version.
-      - uses: dtolnay/rust-toolchain@1.70.0
+      - uses: dtolnay/rust-toolchain@1.72.1
       - uses: Swatinem/rust-cache@a95ba195448af2da9b00fb742d14ffaaf3c21f43 # v2
       - name: Build and test
         run: cargo test --package cargo-compare --release
