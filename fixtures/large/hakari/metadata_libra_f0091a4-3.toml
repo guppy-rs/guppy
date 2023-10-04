@@ -6,7 +6,7 @@
 # unify-target-host = 'none'
 # output-single-feature = false
 # dep-format-version = '2'
-# workspace-hack-line-style = 'workspace-dep'
+# workspace-hack-line-style = 'workspace-dotted'
 # platforms = ['x86_64-pc-windows-msvc']
 #
 # [traversal-excludes]

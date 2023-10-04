@@ -6,7 +6,7 @@
 # unify-target-host = 'none'
 # output-single-feature = true
 # dep-format-version = '3'
-# workspace-hack-line-style = 'workspace-dep'
+# workspace-hack-line-style = 'workspace-dotted'
 # platforms = []
 # [[traversal-excludes.ids]]
 # name = 'atty'

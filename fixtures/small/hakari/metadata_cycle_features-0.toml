@@ -6,7 +6,7 @@
 # unify-target-host = 'replicate-target-on-host'
 # output-single-feature = true
 # dep-format-version = '1'
-# workspace-hack-line-style = 'workspace-dep'
+# workspace-hack-line-style = 'workspace-dotted'
 # platforms = ['armv7-apple-ios', 'riscv32gc-unknown-linux-gnu', 'x86_64-apple-darwin']
 # [[traversal-excludes.ids]]
 # name = 'testcycles-helper'
