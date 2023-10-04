@@ -22,7 +22,7 @@ include = [
     # Include default rules with the package.
     "default-rules.toml",
 ]
-rust-version = "1.66"
+rust-version = "1.70"
 
 [dependencies]
 camino = "1.1.6"
