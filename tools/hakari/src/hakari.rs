@@ -574,6 +574,7 @@ impl fmt::Display for DepFormatVersion {
     }
 }
 
+/// Style of `workspace-hack = ...` lines to output.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 #[cfg_attr(feature = "cli-support", derive(serde::Deserialize, serde::Serialize))]
 #[cfg_attr(feature = "cli-support", serde(rename_all = "kebab-case"))]

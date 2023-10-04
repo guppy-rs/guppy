@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.17.1] - 2023-10-03
+
+### Fixed
+
+Add `WorkspaceHackLineStyle` to list of public exports.
+
 ## [0.17.0] - 2023-10-03
 
 ### Added
@@ -304,6 +310,7 @@ Internal updates for `cargo-hakari 0.9.8`.
 
 Initial release.
 
+[0.17.1]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.17.1
 [0.17.0]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.17.0
 [0.16.0]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.16.0
 [0.15.0]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.15.0
