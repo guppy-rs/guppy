@@ -352,7 +352,7 @@ impl Eq for TripleInner {}
 impl PartialOrd for TripleInner {
     #[inline]
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        self.project().partial_cmp(&other.project())
+        Some(self.cmp(other))
     }
 }
 

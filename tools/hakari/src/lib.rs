@@ -47,7 +47,7 @@
 //!
 //! ## 1. Configuration
 //!
-//! A [`HakariBuilder`](HakariBuilder) provides options to configure how a Hakari computation is done. Options supported
+//! A [`HakariBuilder`] provides options to configure how a Hakari computation is done. Options supported
 //! include:
 //! * [the location of the `workspace-hack` package](HakariBuilder::new)
 //! * [platforms to simulate Cargo builds on](HakariBuilder::set_platforms)
@@ -78,7 +78,7 @@
 //!
 //! This computation is done in a parallel fashion, using the [Rayon](rayon) library.
 //!
-//! The result of this computation is a [`Hakari`](Hakari) instance.
+//! The result of this computation is a [`Hakari`] instance.
 //!
 //! ## 3. Serialization
 //!
@@ -102,7 +102,7 @@
 //!    The contents outside the `BEGIN HAKARI SECTION` and `END HAKARI SECTION` lines may be
 //!    edited by hand. The contents within this section are automatically generated.
 //!
-//!    On success, a [`HakariCargoToml`](HakariCargoToml) is returned.
+//!    On success, a [`HakariCargoToml`] is returned.
 //!
 //! 2. [`Hakari::to_toml_string`](Hakari::to_toml_string) returns the new contents of the
 //!    automatically generated section.

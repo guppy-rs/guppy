@@ -448,7 +448,7 @@ pub(crate) fn write_toml(
                 .filter_map(|&label| {
                     // Only care about named features here.
                     match label {
-                        x if x == "default" => None,
+                        "default" => None,
                         feature_name => Some(feature_name),
                     }
                 })
