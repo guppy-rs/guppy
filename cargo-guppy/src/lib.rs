@@ -428,7 +428,7 @@ pub fn cmd_subtree_size(options: &SubtreeSizeOptions) -> Result<()> {
                 }
             }
 
-            let unique_list = unique_deps.entry(package_id).or_insert_with(HashSet::new);
+            let unique_list = unique_deps.entry(package_id).or_default();
             if unique {
                 unique_list.insert(dep_package_id);
             }
