@@ -239,7 +239,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6798148dccfbff0fae41c7574d2fa8f1ef3492fba0face179de5d8d447d67b05"
 dependencies = [
  "memchr",
- "regex-automata",
+ "regex-automata 0.3.4",
  "serde",
 ]
 
@@ -287,20 +287,23 @@ dependencies = [
 
 [[package]]
 name = "cargo"
-version = "0.73.1"
+version = "0.74.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "77a6fe1f5394d14b81d2f3f605832a3ce35ed0bf120bc7ef437ce27fd4929c6a"
+checksum = "244574fb9c19dfe9b9d11cd6398f718aca7d11fb4f0d46f22cd867876a6c4c56"
 dependencies = [
  "anyhow",
  "base64",
  "bytesize",
+ "cargo-credential",
+ "cargo-credential-libsecret",
+ "cargo-credential-macos-keychain",
+ "cargo-credential-wincred",
  "cargo-platform",
  "cargo-util",
  "clap 4.3.19",
  "crates-io",
  "curl",
  "curl-sys",
- "env_logger",
  "filetime",
  "flate2",
  "fwdansi",
@@ -316,13 +319,12 @@ dependencies = [
  "humantime",
  "ignore",
  "im-rc",
- "indexmap 1.9.3",
+ "indexmap 2.0.2",
  "itertools 0.10.5",
  "jobserver",
  "lazycell",
  "libc",
  "libgit2-sys",
- "log",
  "memchr",
  "opener",
  "os_info",
@@ -346,6 +348,9 @@ dependencies = [
  "time",
  "toml 0.7.6",
  "toml_edit 0.19.14",
+ "tracing",
+ "tracing-subscriber",
+ "unicase",
  "unicode-width",
  "unicode-xid",
  "url",
@@ -371,6 +376,52 @@ dependencies = [
  "pathdiff",
  "proptest",
  "tempfile",
+]
+
+[[package]]
+name = "cargo-credential"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "626c6c87f7906515d241db80b2e35e6818ea771da38003dec873914d417f48b5"
+dependencies = [
+ "anyhow",
+ "libc",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "time",
+ "windows-sys 0.48.0",
+]
+
+[[package]]
+name = "cargo-credential-libsecret"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fbbb9372b45e669060bba532a7a78f7e05a5791d8450eceab93006d72a542ee4"
+dependencies = [
+ "anyhow",
+ "cargo-credential",
+ "libloading",
+]
+
+[[package]]
+name = "cargo-credential-macos-keychain"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3a07e26e78213508bf6007c9187f48ef1c98584d912d8195496828f30b7e2796"
+dependencies = [
+ "cargo-credential",
+ "security-framework",
+]
+
+[[package]]
+name = "cargo-credential-wincred"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6637491b9d0fe5350a839903742de909c01e8440b2eadb561177039cbd8f0c71"
+dependencies = [
+ "cargo-credential",
+ "windows-sys 0.48.0",
 ]
 
 [[package]]
@@ -414,18 +465,18 @@ dependencies = [
 
 [[package]]
 name = "cargo-platform"
-version = "0.1.3"
+version = "0.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2cfa25e60aea747ec7e1124f238816749faa93759c6ff5b31f1ccdda137f4479"
+checksum = "12024c4645c97566567129c204f65d5815a8c9aecf30fcbe682b2fe034996d36"
 dependencies = [
  "serde",
 ]
 
 [[package]]
 name = "cargo-util"
-version = "0.2.5"
+version = "0.2.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dd54c8b94a0c851d687924460637361c355afafa72d973fe8644499fbdee8fae"
+checksum = "77042b5b585f701f1cfb4b6b12ebc02b9b0cefbc8dcce235906b6bf376d4245d"
 dependencies = [
  "anyhow",
  "core-foundation",
@@ -433,12 +484,12 @@ dependencies = [
  "hex",
  "jobserver",
  "libc",
- "log",
  "miow",
  "same-file",
  "sha2",
  "shell-escape",
  "tempfile",
+ "tracing",
  "walkdir",
  "windows-sys 0.48.0",
 ]
@@ -682,15 +733,15 @@ dependencies = [
 
 [[package]]
 name = "crates-io"
-version = "0.37.0"
+version = "0.38.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "876aa69b4afca5f2eb5e23daa3445930faf829bcb67075a20ffa884f11f8c57c"
+checksum = "4bd35a7899c7804e2f8e305438d7b70a852c0424009f3ac29ca4f6733f2aec85"
 dependencies = [
- "anyhow",
  "curl",
  "percent-encoding",
  "serde",
  "serde_json",
+ "thiserror",
  "url",
 ]
 
@@ -1999,7 +2050,7 @@ dependencies = [
  "proc-macro2",
  "quote",
  "regex",
- "regex-automata",
+ "regex-automata 0.3.4",
  "rustix 0.38.21",
  "semver",
  "serde",
@@ -2361,6 +2412,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "libloading"
+version = "0.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c571b676ddfc9a8c12f1f3d3085a7b163966a8fd8098a90640953ce5f6170161"
+dependencies = [
+ "cfg-if",
+ "windows-sys 0.48.0",
+]
+
+[[package]]
 name = "libm"
 version = "0.2.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2429,6 +2490,15 @@ name = "log"
 version = "0.4.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b5e6163cb8c49088c2c36f57875e58ccd8c87c7427f7fbd50ea6710b2f3f2e8f"
+
+[[package]]
+name = "matchers"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8263075bb86c5a1b1427b5ae862e8889656f126e9f77c484496e8b47cf5c5558"
+dependencies = [
+ "regex-automata 0.1.10",
+]
 
 [[package]]
 name = "maybe-async"
@@ -2505,11 +2575,11 @@ dependencies = [
 
 [[package]]
 name = "miow"
-version = "0.5.0"
+version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "52ffbca2f655e33c08be35d87278e5b18b89550a37dbd598c20db92f6a471123"
+checksum = "359f76430b20a79f9e20e115b3428614e654f04fab314482fc0fda0ebd3c6044"
 dependencies = [
- "windows-sys 0.42.0",
+ "windows-sys 0.48.0",
 ]
 
 [[package]]
@@ -2535,6 +2605,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ae01545c9c7fc4486ab7debaf2aad7003ac19431791868fb2e8066df97fad2f8"
 dependencies = [
  "memchr",
+]
+
+[[package]]
+name = "normpath"
+version = "1.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ec60c60a693226186f5d6edf073232bfb6464ed97eb22cf3b01c1e8198fd97f5"
+dependencies = [
+ "windows-sys 0.48.0",
 ]
 
 [[package]]
@@ -2589,11 +2668,12 @@ checksum = "0ab1bc2a289d34bd04a330323ac98a1b4bc82c9d9fcb1e66b63caa84da26b575"
 
 [[package]]
 name = "opener"
-version = "0.5.2"
+version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "293c15678e37254c15bd2f092314abb4e51d7fdde05c2021279c12631b54f005"
+checksum = "6c62dcb6174f9cb326eac248f07e955d5d559c272730b6c03e396b443b562788"
 dependencies = [
  "bstr",
+ "normpath",
  "winapi",
 ]
 
@@ -2766,6 +2846,12 @@ dependencies = [
  "fixedbitset",
  "indexmap 2.0.2",
 ]
+
+[[package]]
+name = "pin-project-lite"
+version = "0.2.13"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8afb450f006bf6385ca15ef45d71d2288452bc3683ce2e2cacc0d18e4be60b58"
 
 [[package]]
 name = "pkcs8"
@@ -3047,8 +3133,17 @@ checksum = "b2eae68fc220f7cf2532e4494aded17545fce192d59cd996e0fe7887f4ceb575"
 dependencies = [
  "aho-corasick",
  "memchr",
- "regex-automata",
+ "regex-automata 0.3.4",
  "regex-syntax 0.7.4",
+]
+
+[[package]]
+name = "regex-automata"
+version = "0.1.10"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6c230d73fb8d8c1b9c0b3135c5142a8acee3a0558fb8db5cf1cb65f8d7862132"
+dependencies = [
+ "regex-syntax 0.6.29",
 ]
 
 [[package]]
@@ -3195,6 +3290,29 @@ dependencies = [
 ]
 
 [[package]]
+name = "security-framework"
+version = "2.9.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "05b64fb303737d99b81884b2c63433e9ae28abebe5eb5045dcdd175dc2ecf4de"
+dependencies = [
+ "bitflags 1.3.2",
+ "core-foundation",
+ "core-foundation-sys",
+ "libc",
+ "security-framework-sys",
+]
+
+[[package]]
+name = "security-framework-sys"
+version = "2.9.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e932934257d3b408ed8f30db49d85ea163bfe74961f017f405b025af298f0c7a"
+dependencies = [
+ "core-foundation-sys",
+ "libc",
+]
+
+[[package]]
 name = "semver"
 version = "1.0.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3288,6 +3406,15 @@ dependencies = [
  "cfg-if",
  "cpufeatures",
  "digest",
+]
+
+[[package]]
+name = "sharded-slab"
+version = "0.1.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f40ca3c46823713e0d4209592e8d6e826aa57e928f09752619fc696c499637f6"
+dependencies = [
+ "lazy_static",
 ]
 
 [[package]]
@@ -3746,6 +3873,67 @@ dependencies = [
 ]
 
 [[package]]
+name = "tracing"
+version = "0.1.40"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c3523ab5a71916ccf420eebdf5521fcef02141234bbc0b8a49f2fdc4544364ef"
+dependencies = [
+ "pin-project-lite",
+ "tracing-attributes",
+ "tracing-core",
+]
+
+[[package]]
+name = "tracing-attributes"
+version = "0.1.27"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "34704c8d6ebcbc939824180af020566b01a7c01f80641264eba0999f6c2b6be7"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.32",
+]
+
+[[package]]
+name = "tracing-core"
+version = "0.1.32"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c06d3da6113f116aaee68e4d601191614c9053067f9ab7f6edbcb161237daa54"
+dependencies = [
+ "once_cell",
+ "valuable",
+]
+
+[[package]]
+name = "tracing-log"
+version = "0.1.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f751112709b4e791d8ce53e32c4ed2d353565a795ce84da2285393f41557bdf2"
+dependencies = [
+ "log",
+ "once_cell",
+ "tracing-core",
+]
+
+[[package]]
+name = "tracing-subscriber"
+version = "0.3.17"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "30a651bc37f915e81f087d86e62a18eec5f79550c7faff886f7090b4ea757c77"
+dependencies = [
+ "matchers",
+ "nu-ansi-term",
+ "once_cell",
+ "regex",
+ "sharded-slab",
+ "smallvec",
+ "thread_local",
+ "tracing",
+ "tracing-core",
+ "tracing-log",
+]
+
+[[package]]
 name = "twox-hash"
 version = "1.6.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3837,6 +4025,12 @@ name = "utf8parse"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "711b9620af191e0cdc7468a8d14e709c3dcdb115b36f838e601583af800a370a"
+
+[[package]]
+name = "valuable"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "830b7e5d4d90034032940e4ace0d9a9a057e7a45cd94e6c007832e39edb82f6d"
 
 [[package]]
 name = "vcpkg"
