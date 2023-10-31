@@ -36,4 +36,4 @@ guppy-workspace-hack.workspace = true
 [dev-dependencies]
 indoc = "2.0.4"
 pretty_assertions = "1.4.0"
-serde_json = "1.0.107"
+serde_json = "1.0.108"
