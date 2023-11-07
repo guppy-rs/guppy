@@ -746,7 +746,9 @@ impl PackageLinkImpl {
         Ok(Self {
             dep_name: name.into(),
             resolved_name: resolved_name.into(),
-            version_req: version_req.expect("at least one dependency instance"),
+            version_req: version_req.unwrap_or_else(|| {
+                panic!("at least one dependency instance: {from_id}, {name}, {resolved_name}")
+            }),
             normal,
             build,
             dev,
