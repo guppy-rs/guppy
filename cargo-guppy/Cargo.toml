@@ -15,7 +15,7 @@ guppy = { version = "0.17.1", path = "../guppy", features = ["summaries"] }
 guppy-cmdlib = { path = "../guppy-cmdlib" }
 itertools = "0.11.0"
 pathdiff = { version = "0.2.1", features = ["camino"] }
-serde = { version = "1.0.190", features = ["derive"] }
+serde = { version = "1.0.192", features = ["derive"] }
 serde_json = "1.0.108"
 toml_edit = "0.17.1"
 guppy-workspace-hack.workspace = true
