@@ -12,9 +12,9 @@ spec = 'always'
 [metadata.target-platform]
 spec = 'any'
 [[metadata.omitted-packages.ids]]
-name = 'x25519-dalek'
-version = '0.5.2'
-source = 'git+https://github.com/calibra/x25519-dalek.git?branch=fiat#8d5b63010f8466d75a4fa2fb95f573092aed5611'
+name = 'url'
+version = '1.7.2'
+crates-io = true
 
 [[target-package]]
 name = 'bytecode-to-boogie'
@@ -1161,6 +1161,13 @@ status = 'direct'
 features = []
 
 [[target-package]]
+name = 'x25519-dalek'
+version = '0.5.2'
+source = 'git+https://github.com/calibra/x25519-dalek.git?branch=fiat#8d5b63010f8466d75a4fa2fb95f573092aed5611'
+status = 'direct'
+features = ['std', 'u64_backend']
+
+[[target-package]]
 name = 'yamux'
 version = '0.4.3'
 crates-io = true
@@ -1685,13 +1692,6 @@ version = '1.3.4'
 crates-io = true
 status = 'transitive'
 features = ['default', 'std']
-
-[[target-package]]
-name = 'idna'
-version = '0.1.5'
-crates-io = true
-status = 'transitive'
-features = []
 
 [[target-package]]
 name = 'idna'
@@ -2670,13 +2670,6 @@ features = []
 [[target-package]]
 name = 'untrusted'
 version = '0.7.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'url'
-version = '1.7.2'
 crates-io = true
 status = 'transitive'
 features = []

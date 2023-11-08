@@ -12,8 +12,8 @@ spec = 'any'
 [metadata.target-platform]
 spec = 'any'
 [[metadata.omitted-packages.ids]]
-name = 'pkg-config'
-version = '0.3.17'
+name = 'num-rational'
+version = '0.2.3'
 crates-io = true
 
 [[host-package]]

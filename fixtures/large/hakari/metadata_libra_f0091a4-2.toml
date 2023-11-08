@@ -9,62 +9,64 @@
 # workspace-hack-line-style = 'full'
 # platforms = []
 # [[traversal-excludes.ids]]
-# name = 'bytecode-to-boogie'
+# name = 'bounded-executor'
 # version = '0.1.0'
-# workspace-path = 'language/move-prover/bytecode-to-boogie'
+# workspace-path = 'common/bounded-executor'
 #
 # [[traversal-excludes.ids]]
-# name = 'crunchy'
-# version = '0.2.2'
+# name = 'cc'
+# version = '1.0.50'
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
-# name = 'rusoto_s3'
-# version = '0.42.0'
+# name = 'crossbeam-queue'
+# version = '0.2.1'
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
-# name = 'sha3'
-# version = '0.8.2'
+# name = 'http'
+# version = '0.2.0'
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
-# name = 'transaction-builder'
+# name = 'move-lang-stdlib'
 # version = '0.1.0'
-# workspace-path = 'language/transaction-builder'
+# workspace-path = 'language/move-lang/stdlib'
 #
 # [[traversal-excludes.ids]]
-# name = 'vm'
-# version = '0.1.0'
-# workspace-path = 'language/vm'
+# name = 'net2'
+# version = '0.2.33'
+# crates-io = true
 #
 # [[traversal-excludes.ids]]
-# name = 'winapi-i686-pc-windows-gnu'
-# version = '0.4.0'
+# name = 'prettytable-rs'
+# version = '0.8.0'
 # crates-io = true
 # [[final-excludes.ids]]
-# name = 'autocfg'
-# version = '0.1.7'
-# crates-io = true
-#
-# [[final-excludes.ids]]
-# name = 'rand04'
-# version = '0.1.1'
+# name = 'ppv-lite86'
+# version = '0.2.6'
 # crates-io = true
 #
 # [[final-excludes.ids]]
-# name = 'tower-limit'
+# name = 'qstring'
+# version = '0.7.2'
+# crates-io = true
+#
+# [[final-excludes.ids]]
+# name = 'tower-retry'
 # version = '0.3.0'
 # crates-io = true
 
 [dependencies]
 adler32 = { version = "1", default-features = false }
 aho-corasick = { version = "0.7" }
+ansi_term = { version = "0.9", default-features = false }
 anyhow = { version = "1" }
 arbitrary = { version = "0.4", default-features = false }
 arc-swap = { version = "0.4", default-features = false }
 arrayref = { version = "0.3", default-features = false }
-arrayvec = { version = "0.4", default-features = false }
+arrayvec-9fbad63c4bcf4a8f = { package = "arrayvec", version = "0.4", default-features = false }
+arrayvec-d8f496e17d97b5cb = { package = "arrayvec", version = "0.5" }
 assert_approx_eq = { version = "1", default-features = false }
 assert_matches = { version = "1", default-features = false }
 async-stream = { version = "0.2", default-features = false }
@@ -116,9 +118,9 @@ crossbeam-channel-468e82937335b1c9 = { package = "crossbeam-channel", version = 
 crossbeam-channel-9fbad63c4bcf4a8f = { package = "crossbeam-channel", version = "0.4", default-features = false }
 crossbeam-deque = { version = "0.7", default-features = false }
 crossbeam-epoch = { version = "0.8" }
-crossbeam-queue = { version = "0.2" }
 crossbeam-utils-3b31131e45eafb45 = { package = "crossbeam-utils", version = "0.6" }
 crossbeam-utils-ca01ad9e24f5d932 = { package = "crossbeam-utils", version = "0.7" }
+crunchy = { version = "0.2" }
 crypto-mac = { version = "0.7", default-features = false }
 csv = { version = "1", default-features = false }
 csv-core = { version = "0.1" }
@@ -157,15 +159,15 @@ futures-util = { version = "0.3", features = ["channel", "io-compat", "sink"] }
 generic-array = { version = "0.12", default-features = false }
 get_if_addrs = { version = "0.5", default-features = false }
 getrandom = { version = "0.1", default-features = false, features = ["std"] }
+goldenfile = { version = "1", default-features = false }
 h2-6f8ce4dd05d13bba = { package = "h2", version = "0.2", default-features = false }
 h2-c65f7effa3be6d31 = { package = "h2", version = "0.1", default-features = false }
 hex = { version = "0.4" }
 hex_fmt = { version = "0.3", default-features = false }
 hmac = { version = "0.7", default-features = false }
-http-6f8ce4dd05d13bba = { package = "http", version = "0.2", default-features = false }
+http = { version = "0.1", default-features = false }
 http-body-468e82937335b1c9 = { package = "http-body", version = "0.3", default-features = false }
 http-body-c65f7effa3be6d31 = { package = "http-body", version = "0.1", default-features = false }
-http-c65f7effa3be6d31 = { package = "http", version = "0.1", default-features = false }
 httparse = { version = "1" }
 hyper-594e8ee84c453af0 = { package = "hyper", version = "0.13" }
 hyper-5ef9efb8ec2df382 = { package = "hyper", version = "0.12" }
@@ -178,6 +180,7 @@ itertools = { version = "0.8" }
 itoa = { version = "0.4" }
 jemalloc-sys = { version = "0.3", default-features = false, features = ["background_threads_runtime_support", "profiling", "unprefixed_malloc_on_supported_platforms"] }
 jemallocator = { version = "0.3", features = ["profiling", "unprefixed_malloc_on_supported_platforms"] }
+keccak = { version = "0.1", default-features = false }
 lazy_static = { version = "1", default-features = false }
 libc = { version = "0.2", features = ["extra_traits"] }
 libfuzzer-sys = { version = "0.3", default-features = false }
@@ -198,7 +201,6 @@ memsec = { version = "0.5" }
 miniz_oxide = { version = "0.3", default-features = false }
 mio = { version = "0.6" }
 mirai-annotations = { version = "1", default-features = false }
-net2 = { version = "0.2" }
 nibble_vec = { version = "0.0.4", default-features = false }
 nodrop = { version = "0.1", default-features = false }
 nohash-hasher = { version = "0.2" }
@@ -231,17 +233,19 @@ petgraph = { version = "0.5" }
 pin-project = { version = "0.4", default-features = false }
 pin-project-lite = { version = "0.1", default-features = false }
 pin-utils = { version = "0.1.0-alpha.4", default-features = false }
+pretty = { version = "0.9", default-features = false }
+prettydiff = { version = "0.3", default-features = false }
 proc-macro-nested = { version = "0.1", default-features = false }
 prometheus = { version = "0.7", default-features = false }
 proptest = { version = "0.9" }
 prost = { version = "0.6" }
-qstring = { version = "0.7", default-features = false }
 quick-error = { version = "1", default-features = false }
 radix_trie = { version = "0.1", default-features = false }
 rand-3b31131e45eafb45 = { package = "rand", version = "0.6", features = ["i128_support"] }
 rand-9fbad63c4bcf4a8f = { package = "rand", version = "0.4" }
 rand-ca01ad9e24f5d932 = { package = "rand", version = "0.7", features = ["small_rng"] }
 rand-d8f496e17d97b5cb = { package = "rand", version = "0.5" }
+rand04 = { version = "0.1", default-features = false, features = ["std"] }
 rand04_compat = { version = "0.1" }
 rand_chacha = { version = "0.1", default-features = false }
 rand_core-468e82937335b1c9 = { package = "rand_core", version = "0.3", default-features = false, features = ["alloc", "std"] }
@@ -273,6 +277,7 @@ rusoto_credential = { version = "0.42", default-features = false }
 rusoto_ec2 = { version = "0.42", default-features = false, features = ["rustls"] }
 rusoto_ecr = { version = "0.42", default-features = false, features = ["rustls"] }
 rusoto_ecs = { version = "0.42", default-features = false, features = ["rustls"] }
+rusoto_s3 = { version = "0.42", default-features = false, features = ["rustls"] }
 rusoto_signature = { version = "0.42", default-features = false }
 rust_decimal = { version = "1" }
 rustc-demangle = { version = "0.1", default-features = false }
@@ -289,7 +294,9 @@ serde_json = { version = "1" }
 serde_urlencoded = { version = "0.6", default-features = false }
 sha-1 = { version = "0.8", default-features = false }
 sha2 = { version = "0.8" }
+sha3 = { version = "0.8" }
 shlex = { version = "0.1", default-features = false }
+simplelog = { version = "0.7" }
 slab = { version = "0.4", default-features = false }
 slog = { version = "2", features = ["max_level_debug", "max_level_trace", "release_max_level_debug"] }
 slog-async = { version = "2" }
@@ -308,7 +315,8 @@ statistical = { version = "1", default-features = false }
 stats_alloc = { version = "0.1" }
 string = { version = "0.2" }
 strsim = { version = "0.8", default-features = false }
-structopt = { version = "0.3" }
+structopt-468e82937335b1c9 = { package = "structopt", version = "0.3" }
+structopt-6f8ce4dd05d13bba = { package = "structopt", version = "0.2" }
 strum = { version = "0.17", default-features = false }
 subtle-dff4ba8e3ae991db = { package = "subtle", version = "1", default-features = false }
 subtle-f595c2ba2a3f28df = { package = "subtle", version = "2" }
@@ -351,11 +359,11 @@ tower-balance = { version = "0.3" }
 tower-buffer = { version = "0.3", default-features = false, features = ["log"] }
 tower-discover = { version = "0.3", default-features = false }
 tower-layer = { version = "0.3", default-features = false }
+tower-limit = { version = "0.3", default-features = false }
 tower-load = { version = "0.3", default-features = false }
 tower-load-shed = { version = "0.3", default-features = false }
 tower-make = { version = "0.3", default-features = false, features = ["connect"] }
 tower-ready-cache = { version = "0.3", default-features = false }
-tower-retry = { version = "0.3", default-features = false }
 tower-service = { version = "0.3", default-features = false }
 tower-timeout = { version = "0.3", default-features = false }
 tower-util = { version = "0.3" }
@@ -393,18 +401,21 @@ zstd-sys = { git = "https://github.com/gyscos/zstd-rs.git" }
 [build-dependencies]
 adler32 = { version = "1", default-features = false }
 aho-corasick = { version = "0.7" }
+ansi_term = { version = "0.9", default-features = false }
 anyhow = { version = "1" }
 arbitrary = { version = "0.4", default-features = false }
 arc-swap = { version = "0.4", default-features = false }
 arrayref = { version = "0.3", default-features = false }
-arrayvec = { version = "0.4", default-features = false }
+arrayvec-9fbad63c4bcf4a8f = { package = "arrayvec", version = "0.4", default-features = false }
+arrayvec-d8f496e17d97b5cb = { package = "arrayvec", version = "0.5" }
 assert_approx_eq = { version = "1", default-features = false }
 assert_matches = { version = "1", default-features = false }
 async-stream = { version = "0.2", default-features = false }
 async-stream-impl = { version = "0.2", default-features = false }
 async-trait = { version = "0.1", default-features = false }
 atty = { version = "0.2", default-features = false }
-autocfg = { version = "1", default-features = false }
+autocfg-c65f7effa3be6d31 = { package = "autocfg", version = "0.1", default-features = false }
+autocfg-dff4ba8e3ae991db = { package = "autocfg", version = "1", default-features = false }
 backtrace = { version = "0.3", features = ["serialize-serde"] }
 backtrace-sys = { version = "0.1", default-features = false }
 base64-274715c4dabd11b0 = { package = "base64", version = "0.9", default-features = false }
@@ -432,7 +443,6 @@ bzip2-sys = { git = "https://github.com/alexcrichton/bzip2-rs.git", default-feat
 c_linked_list = { version = "1", default-features = false }
 cached = { version = "0.11", default-features = false }
 cast = { version = "0.2" }
-cc = { version = "1", default-features = false, features = ["parallel"] }
 cexpr = { version = "0.3", default-features = false }
 cfg-if = { version = "0.1", default-features = false }
 chacha20-poly1305-aead = { version = "0.1", default-features = false }
@@ -458,9 +468,9 @@ crossbeam-channel-468e82937335b1c9 = { package = "crossbeam-channel", version = 
 crossbeam-channel-9fbad63c4bcf4a8f = { package = "crossbeam-channel", version = "0.4", default-features = false }
 crossbeam-deque = { version = "0.7", default-features = false }
 crossbeam-epoch = { version = "0.8" }
-crossbeam-queue = { version = "0.2" }
 crossbeam-utils-3b31131e45eafb45 = { package = "crossbeam-utils", version = "0.6" }
 crossbeam-utils-ca01ad9e24f5d932 = { package = "crossbeam-utils", version = "0.7" }
+crunchy = { version = "0.2" }
 crypto-mac = { version = "0.7", default-features = false }
 csv = { version = "1", default-features = false }
 csv-core = { version = "0.1" }
@@ -505,16 +515,16 @@ generic-array = { version = "0.12", default-features = false }
 get_if_addrs = { version = "0.5", default-features = false }
 getrandom = { version = "0.1", default-features = false, features = ["std"] }
 glob = { version = "0.3", default-features = false }
+goldenfile = { version = "1", default-features = false }
 h2-6f8ce4dd05d13bba = { package = "h2", version = "0.2", default-features = false }
 h2-c65f7effa3be6d31 = { package = "h2", version = "0.1", default-features = false }
 heck = { version = "0.3", default-features = false }
 hex = { version = "0.4" }
 hex_fmt = { version = "0.3", default-features = false }
 hmac = { version = "0.7", default-features = false }
-http-6f8ce4dd05d13bba = { package = "http", version = "0.2", default-features = false }
+http = { version = "0.1", default-features = false }
 http-body-468e82937335b1c9 = { package = "http-body", version = "0.3", default-features = false }
 http-body-c65f7effa3be6d31 = { package = "http-body", version = "0.1", default-features = false }
-http-c65f7effa3be6d31 = { package = "http", version = "0.1", default-features = false }
 httparse = { version = "1" }
 humantime = { version = "1", default-features = false }
 hyper-594e8ee84c453af0 = { package = "hyper", version = "0.13" }
@@ -528,7 +538,7 @@ itertools = { version = "0.8" }
 itoa = { version = "0.4" }
 jemalloc-sys = { version = "0.3", default-features = false, features = ["background_threads_runtime_support", "profiling", "unprefixed_malloc_on_supported_platforms"] }
 jemallocator = { version = "0.3", features = ["profiling", "unprefixed_malloc_on_supported_platforms"] }
-jobserver = { version = "0.1", default-features = false }
+keccak = { version = "0.1", default-features = false }
 lazy_static = { version = "1", default-features = false }
 libc = { version = "0.2", features = ["extra_traits"] }
 libfuzzer-sys = { version = "0.3", default-features = false }
@@ -551,7 +561,6 @@ miniz_oxide = { version = "0.3", default-features = false }
 mio = { version = "0.6" }
 mirai-annotations = { version = "1", default-features = false }
 multimap = { version = "0.8", default-features = false }
-net2 = { version = "0.2" }
 nibble_vec = { version = "0.0.4", default-features = false }
 nodrop = { version = "0.1", default-features = false }
 nohash-hasher = { version = "0.2" }
@@ -590,6 +599,8 @@ pin-project-internal = { version = "0.4", default-features = false }
 pin-project-lite = { version = "0.1", default-features = false }
 pin-utils = { version = "0.1.0-alpha.4", default-features = false }
 pkg-config = { version = "0.3", default-features = false }
+pretty = { version = "0.9", default-features = false }
+prettydiff = { version = "0.3", default-features = false }
 proc-macro-crate = { version = "0.1", default-features = false }
 proc-macro-error = { version = "0.4", default-features = false }
 proc-macro-error-attr = { version = "0.4", default-features = false }
@@ -604,7 +615,6 @@ prost = { version = "0.6" }
 prost-build = { version = "0.6", default-features = false }
 prost-derive = { version = "0.6", default-features = false }
 prost-types = { version = "0.6", default-features = false }
-qstring = { version = "0.7", default-features = false }
 quick-error = { version = "1", default-features = false }
 quote-3b31131e45eafb45 = { package = "quote", version = "0.6" }
 quote-dff4ba8e3ae991db = { package = "quote", version = "1" }
@@ -613,6 +623,7 @@ rand-3b31131e45eafb45 = { package = "rand", version = "0.6", features = ["i128_s
 rand-9fbad63c4bcf4a8f = { package = "rand", version = "0.4" }
 rand-ca01ad9e24f5d932 = { package = "rand", version = "0.7", features = ["small_rng"] }
 rand-d8f496e17d97b5cb = { package = "rand", version = "0.5" }
+rand04 = { version = "0.1", default-features = false, features = ["std"] }
 rand04_compat = { version = "0.1" }
 rand_chacha = { version = "0.1", default-features = false }
 rand_core-468e82937335b1c9 = { package = "rand_core", version = "0.3", default-features = false, features = ["alloc", "std"] }
@@ -646,6 +657,7 @@ rusoto_credential = { version = "0.42", default-features = false }
 rusoto_ec2 = { version = "0.42", default-features = false, features = ["rustls"] }
 rusoto_ecr = { version = "0.42", default-features = false, features = ["rustls"] }
 rusoto_ecs = { version = "0.42", default-features = false, features = ["rustls"] }
+rusoto_s3 = { version = "0.42", default-features = false, features = ["rustls"] }
 rusoto_signature = { version = "0.42", default-features = false }
 rust_decimal = { version = "1" }
 rustc-demangle = { version = "0.1", default-features = false }
@@ -668,7 +680,9 @@ serde_json = { version = "1" }
 serde_urlencoded = { version = "0.6", default-features = false }
 sha-1 = { version = "0.8", default-features = false }
 sha2 = { version = "0.8" }
+sha3 = { version = "0.8" }
 shlex = { version = "0.1", default-features = false }
+simplelog = { version = "0.7" }
 slab = { version = "0.4", default-features = false }
 slog = { version = "2", features = ["max_level_debug", "max_level_trace", "release_max_level_debug"] }
 slog-async = { version = "2" }
@@ -687,8 +701,10 @@ statistical = { version = "1", default-features = false }
 stats_alloc = { version = "0.1" }
 string = { version = "0.2" }
 strsim = { version = "0.8", default-features = false }
-structopt = { version = "0.3" }
-structopt-derive = { version = "0.4", default-features = false }
+structopt-468e82937335b1c9 = { package = "structopt", version = "0.3" }
+structopt-6f8ce4dd05d13bba = { package = "structopt", version = "0.2" }
+structopt-derive-6f8ce4dd05d13bba = { package = "structopt-derive", version = "0.2", default-features = false }
+structopt-derive-9fbad63c4bcf4a8f = { package = "structopt-derive", version = "0.4", default-features = false }
 strum = { version = "0.17", default-features = false }
 strum_macros = { version = "0.17", default-features = false }
 subtle-dff4ba8e3ae991db = { package = "subtle", version = "1", default-features = false }
@@ -739,11 +755,11 @@ tower-balance = { version = "0.3" }
 tower-buffer = { version = "0.3", default-features = false, features = ["log"] }
 tower-discover = { version = "0.3", default-features = false }
 tower-layer = { version = "0.3", default-features = false }
+tower-limit = { version = "0.3", default-features = false }
 tower-load = { version = "0.3", default-features = false }
 tower-load-shed = { version = "0.3", default-features = false }
 tower-make = { version = "0.3", default-features = false, features = ["connect"] }
 tower-ready-cache = { version = "0.3", default-features = false }
-tower-retry = { version = "0.3", default-features = false }
 tower-service = { version = "0.3", default-features = false }
 tower-timeout = { version = "0.3", default-features = false }
 tower-util = { version = "0.3" }

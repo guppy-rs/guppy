@@ -1317,11 +1317,11 @@ impl FixtureDetails {
             vec![
                 METADATA_LIBRA_FUNCTIONAL_HYPHEN_TESTS,
                 METADATA_LIBRA_E2E_TESTS,
-                METADATA_LIBRA_COMPILER,
                 METADATA_LIBRA_VM_GENESIS,
+                METADATA_LIBRA_TRANSACTION_BUILDER,
                 METADATA_LIBRA_LIBRA_VM,
                 METADATA_LIBRA_MOVE_VM_RUNTIME,
-                METADATA_LIBRA_TRANSACTION_BUILDER,
+                METADATA_LIBRA_COMPILER,
                 METADATA_LIBRA_STDLIB,
                 METADATA_LIBRA_MOVE_LANG,
             ],

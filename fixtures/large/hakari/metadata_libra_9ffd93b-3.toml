@@ -9,22 +9,22 @@
 # workspace-hack-line-style = 'version-only'
 # platforms = ['x86_64-wrs-vxworks']
 # [[traversal-excludes.ids]]
-# name = 'num-derive'
+# name = 'serde_derive'
+# version = '1.0.104'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'tower-load-shed'
 # version = '0.3.0'
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
-# name = 'schemadb'
-# version = '0.1.0'
-# workspace-path = 'storage/schemadb'
-#
-# [[traversal-excludes.ids]]
-# name = 'tokio-udp'
-# version = '0.1.6'
+# name = 'tower-retry'
+# version = '0.3.0'
 # crates-io = true
 # [[final-excludes.ids]]
-# name = 'quote'
-# version = '0.6.13'
+# name = 'miniz_oxide'
+# version = '0.3.6'
 # crates-io = true
 
 [dependencies]
@@ -65,6 +65,7 @@ byte-tools = { version = "0.3", default-features = false }
 byteorder = { version = "1", features = ["i128"] }
 bytes-9fbad63c4bcf4a8f = { package = "bytes", version = "0.4", default-features = false, features = ["either"] }
 bytes-d8f496e17d97b5cb = { package = "bytes", version = "0.5", features = ["serde"] }
+bzip2-sys = { git = "https://github.com/alexcrichton/bzip2-rs.git", default-features = false }
 c_linked_list = { version = "1", default-features = false }
 cached = { version = "0.11", default-features = false }
 cast = { version = "0.2" }
@@ -106,7 +107,7 @@ ed25519-dalek = { git = "https://github.com/calibra/ed25519-dalek.git", branch =
 either = { version = "1" }
 encode_unicode = { version = "0.3" }
 endian-type = { version = "0.1", default-features = false }
-env_logger = { version = "0.7" }
+env_logger-ca01ad9e24f5d932 = { package = "env_logger", version = "0.7" }
 errno = { version = "0.2", default-features = false }
 failure = { version = "0.1" }
 fake-simd = { version = "0.1", default-features = false }
@@ -164,11 +165,15 @@ kube = { version = "0.27", features = ["openapi"] }
 lazy_static = { version = "1", default-features = false }
 libc = { version = "0.2", features = ["extra_traits"] }
 libfuzzer-sys = { version = "0.3", default-features = false }
+librocksdb_sys = { git = "https://github.com/tikv/rust-rocksdb.git", rev = "72e45c3f3283302c825d53c3cd7154f4cd9e8f5b" }
+libtitan_sys = { git = "https://github.com/tikv/rust-rocksdb.git", rev = "72e45c3f3283302c825d53c3cd7154f4cd9e8f5b" }
+libz-sys = { version = "1", default-features = false, features = ["static"] }
 linked-hash-map = { version = "0.5", default-features = false }
 lock_api = { version = "0.3", default-features = false }
 log-468e82937335b1c9 = { package = "log", version = "0.3" }
 log-9fbad63c4bcf4a8f = { package = "log", version = "0.4", default-features = false, features = ["serde", "std"] }
 lru-cache = { version = "0.1", default-features = false }
+lz4-sys = { git = "https://github.com/busyjay/lz4-rs.git", branch = "adjust-build", default-features = false }
 matches = { version = "0.1", default-features = false }
 maybe-uninit = { version = "2", default-features = false }
 md5 = { version = "0.7" }
@@ -179,7 +184,6 @@ mime-468e82937335b1c9 = { package = "mime", version = "0.3", default-features = 
 mime-6f8ce4dd05d13bba = { package = "mime", version = "0.2", default-features = false }
 mime_guess-dff4ba8e3ae991db = { package = "mime_guess", version = "1", default-features = false }
 mime_guess-f595c2ba2a3f28df = { package = "mime_guess", version = "2" }
-miniz_oxide = { version = "0.3", default-features = false }
 mio = { version = "0.6" }
 mirai-annotations = { version = "1", default-features = false }
 multipart = { version = "0.16", default-features = false, features = ["server"] }
@@ -259,6 +263,7 @@ rental = { version = "0.5" }
 reqwest = { version = "0.10", default-features = false, features = ["blocking", "gzip", "json", "native-tls", "rustls-tls", "stream"] }
 ring = { version = "0.16", features = ["std"] }
 ripemd160 = { version = "0.8" }
+rocksdb = { git = "https://github.com/tikv/rust-rocksdb.git", rev = "72e45c3f3283302c825d53c3cd7154f4cd9e8f5b" }
 rusoto_core = { version = "0.42", default-features = false, features = ["rustls"] }
 rusoto_credential = { version = "0.42", default-features = false }
 rusoto_ec2 = { version = "0.42", default-features = false, features = ["rustls"] }
@@ -291,6 +296,7 @@ siphasher = { version = "0.2", default-features = false }
 slab = { version = "0.4", default-features = false }
 smallvec-3b31131e45eafb45 = { package = "smallvec", version = "0.6" }
 smallvec-dff4ba8e3ae991db = { package = "smallvec", version = "1", default-features = false }
+snappy-sys = { git = "https://github.com/busyjay/rust-snappy.git", branch = "static-link", default-features = false }
 snow = { version = "0.6", features = ["ring-accelerated"] }
 spin = { version = "0.5", default-features = false }
 stable_deref_trait = { version = "1", default-features = false, features = ["std"] }
@@ -336,6 +342,7 @@ tokio-tcp = { version = "0.1", default-features = false }
 tokio-threadpool = { version = "0.1", default-features = false }
 tokio-timer = { version = "0.2", default-features = false }
 tokio-tungstenite = { version = "0.10", default-features = false }
+tokio-udp = { version = "0.1", default-features = false }
 tokio-util-468e82937335b1c9 = { package = "tokio-util", version = "0.3", features = ["codec"] }
 tokio-util-6f8ce4dd05d13bba = { package = "tokio-util", version = "0.2", features = ["codec"] }
 toml = { version = "0.5" }
@@ -347,10 +354,8 @@ tower-discover = { version = "0.3", default-features = false }
 tower-layer = { version = "0.3", default-features = false }
 tower-limit = { version = "0.3", default-features = false }
 tower-load = { version = "0.3", default-features = false }
-tower-load-shed = { version = "0.3", default-features = false }
 tower-make = { version = "0.3", default-features = false, features = ["connect"] }
 tower-ready-cache = { version = "0.3", default-features = false }
-tower-retry = { version = "0.3", default-features = false }
 tower-service = { version = "0.3", default-features = false }
 tower-timeout = { version = "0.3", default-features = false }
 tower-util = { version = "0.3" }
@@ -391,6 +396,7 @@ xml-rs = { version = "0.8", default-features = false }
 yaml-rust = { version = "0.4", default-features = false }
 yamux = { version = "0.4", default-features = false }
 zeroize = { version = "1", default-features = false, features = ["alloc", "zeroize_derive"] }
+zstd-sys = { git = "https://github.com/gyscos/zstd-rs.git" }
 
 [build-dependencies]
 Inflector = { version = "0.11" }
@@ -418,7 +424,8 @@ base64-5ef9efb8ec2df382 = { package = "base64", version = "0.12" }
 base64-93f6ce9d446188ac = { package = "base64", version = "0.10", default-features = false }
 base64-a6292c17cd707f01 = { package = "base64", version = "0.11" }
 bincode = { version = "1", default-features = false }
-bindgen = { version = "0.53" }
+bindgen-8d8b32fa686af104 = { package = "bindgen", version = "0.51" }
+bindgen-c1a53b25704bd5ca = { package = "bindgen", version = "0.53" }
 bit-set = { version = "0.5" }
 bit-vec-3b31131e45eafb45 = { package = "bit-vec", version = "0.6" }
 bit-vec-d8f496e17d97b5cb = { package = "bit-vec", version = "0.5", default-features = false, features = ["std"] }
@@ -435,10 +442,11 @@ byte-tools = { version = "0.3", default-features = false }
 byteorder = { version = "1", features = ["i128"] }
 bytes-9fbad63c4bcf4a8f = { package = "bytes", version = "0.4", default-features = false, features = ["either"] }
 bytes-d8f496e17d97b5cb = { package = "bytes", version = "0.5", features = ["serde"] }
+bzip2-sys = { git = "https://github.com/alexcrichton/bzip2-rs.git", default-features = false }
 c_linked_list = { version = "1", default-features = false }
 cached = { version = "0.11", default-features = false }
 cast = { version = "0.2" }
-cc = { version = "1", default-features = false }
+cc = { version = "1", default-features = false, features = ["parallel"] }
 cexpr = { version = "0.3", default-features = false }
 cfg-if = { version = "0.1", default-features = false }
 chacha20-poly1305-aead = { version = "0.1", default-features = false }
@@ -447,6 +455,7 @@ chunked_transfer = { version = "1", default-features = false }
 clang-sys = { version = "0.28", default-features = false, features = ["clang_6_0", "runtime"] }
 clap = { version = "2" }
 clear_on_drop = { version = "0.2", default-features = false }
+cmake = { version = "0.1", default-features = false }
 codespan = { version = "0.8", default-features = false, features = ["serialization"] }
 codespan-reporting = { version = "0.8", default-features = false }
 constant_time_eq = { version = "0.1", default-features = false }
@@ -479,7 +488,8 @@ ed25519-dalek = { git = "https://github.com/calibra/ed25519-dalek.git", branch =
 either = { version = "1" }
 encode_unicode = { version = "0.3" }
 endian-type = { version = "0.1", default-features = false }
-env_logger = { version = "0.7" }
+env_logger-3b31131e45eafb45 = { package = "env_logger", version = "0.6" }
+env_logger-ca01ad9e24f5d932 = { package = "env_logger", version = "0.7" }
 errno = { version = "0.2", default-features = false }
 failure = { version = "0.1" }
 failure_derive = { version = "0.1", default-features = false }
@@ -536,6 +546,7 @@ itertools-c38e5c1d305a1b54 = { package = "itertools", version = "0.8" }
 itoa = { version = "0.4" }
 jemalloc-sys = { version = "0.3", default-features = false, features = ["background_threads_runtime_support", "profiling", "unprefixed_malloc_on_supported_platforms"] }
 jemallocator = { version = "0.3", features = ["profiling", "unprefixed_malloc_on_supported_platforms"] }
+jobserver = { version = "0.1", default-features = false }
 k8s-openapi = { version = "0.7", default-features = false, features = ["v1_15"] }
 keccak = { version = "0.1", default-features = false }
 kube = { version = "0.27", features = ["openapi"] }
@@ -544,11 +555,15 @@ lazycell = { version = "1", default-features = false }
 libc = { version = "0.2", features = ["extra_traits"] }
 libfuzzer-sys = { version = "0.3", default-features = false }
 libloading = { version = "0.5", default-features = false }
+librocksdb_sys = { git = "https://github.com/tikv/rust-rocksdb.git", rev = "72e45c3f3283302c825d53c3cd7154f4cd9e8f5b" }
+libtitan_sys = { git = "https://github.com/tikv/rust-rocksdb.git", rev = "72e45c3f3283302c825d53c3cd7154f4cd9e8f5b" }
+libz-sys = { version = "1", default-features = false, features = ["static"] }
 linked-hash-map = { version = "0.5", default-features = false }
 lock_api = { version = "0.3", default-features = false }
 log-468e82937335b1c9 = { package = "log", version = "0.3" }
 log-9fbad63c4bcf4a8f = { package = "log", version = "0.4", default-features = false, features = ["serde", "std"] }
 lru-cache = { version = "0.1", default-features = false }
+lz4-sys = { git = "https://github.com/busyjay/lz4-rs.git", branch = "adjust-build", default-features = false }
 matches = { version = "0.1", default-features = false }
 maybe-uninit = { version = "2", default-features = false }
 md5 = { version = "0.7" }
@@ -559,7 +574,6 @@ mime-468e82937335b1c9 = { package = "mime", version = "0.3", default-features = 
 mime-6f8ce4dd05d13bba = { package = "mime", version = "0.2", default-features = false }
 mime_guess-dff4ba8e3ae991db = { package = "mime_guess", version = "1", default-features = false }
 mime_guess-f595c2ba2a3f28df = { package = "mime_guess", version = "2" }
-miniz_oxide = { version = "0.3", default-features = false }
 mio = { version = "0.6" }
 mirai-annotations = { version = "1", default-features = false }
 multimap = { version = "0.8", default-features = false }
@@ -572,6 +586,7 @@ nom = { version = "4", features = ["verbose-errors"] }
 num = { version = "0.2" }
 num-bigint = { version = "0.2", default-features = false, features = ["std"] }
 num-complex = { version = "0.2", default-features = false, features = ["std"] }
+num-derive = { version = "0.3", default-features = false }
 num-integer = { version = "0.1", default-features = false, features = ["std"] }
 num-iter = { version = "0.1", default-features = false, features = ["std"] }
 num-rational = { version = "0.2", default-features = false, features = ["bigint", "std"] }
@@ -626,7 +641,8 @@ prost-derive = { version = "0.6", default-features = false }
 prost-types = { version = "0.6", default-features = false }
 qstring = { version = "0.7", default-features = false }
 quick-error = { version = "1", default-features = false }
-quote = { version = "1" }
+quote-3b31131e45eafb45 = { package = "quote", version = "0.6" }
+quote-dff4ba8e3ae991db = { package = "quote", version = "1" }
 radium = { version = "0.3", default-features = false }
 radix_trie = { version = "0.1", default-features = false }
 rand-3b31131e45eafb45 = { package = "rand", version = "0.6", features = ["i128_support"] }
@@ -659,6 +675,7 @@ rental-impl = { version = "0.5", default-features = false }
 reqwest = { version = "0.10", default-features = false, features = ["blocking", "gzip", "json", "native-tls", "rustls-tls", "stream"] }
 ring = { version = "0.16", features = ["std"] }
 ripemd160 = { version = "0.8" }
+rocksdb = { git = "https://github.com/tikv/rust-rocksdb.git", rev = "72e45c3f3283302c825d53c3cd7154f4cd9e8f5b" }
 rusoto_core = { version = "0.42", default-features = false, features = ["rustls"] }
 rusoto_credential = { version = "0.42", default-features = false }
 rusoto_ec2 = { version = "0.42", default-features = false, features = ["rustls"] }
@@ -684,7 +701,6 @@ semver = { version = "0.9" }
 semver-parser = { version = "0.7", default-features = false }
 serde = { version = "1", features = ["derive", "rc"] }
 serde-value = { version = "0.6", default-features = false }
-serde_derive = { version = "1" }
 serde_json = { version = "1" }
 serde_urlencoded = { version = "0.6", default-features = false }
 serde_yaml = { version = "0.8", default-features = false }
@@ -697,6 +713,7 @@ siphasher = { version = "0.2", default-features = false }
 slab = { version = "0.4", default-features = false }
 smallvec-3b31131e45eafb45 = { package = "smallvec", version = "0.6" }
 smallvec-dff4ba8e3ae991db = { package = "smallvec", version = "1", default-features = false }
+snappy-sys = { git = "https://github.com/busyjay/rust-snappy.git", branch = "static-link", default-features = false }
 snow = { version = "0.6", features = ["ring-accelerated"] }
 spin = { version = "0.5", default-features = false }
 stable_deref_trait = { version = "1", default-features = false, features = ["std"] }
@@ -752,6 +769,7 @@ tokio-tcp = { version = "0.1", default-features = false }
 tokio-threadpool = { version = "0.1", default-features = false }
 tokio-timer = { version = "0.2", default-features = false }
 tokio-tungstenite = { version = "0.10", default-features = false }
+tokio-udp = { version = "0.1", default-features = false }
 tokio-util-468e82937335b1c9 = { package = "tokio-util", version = "0.3", features = ["codec"] }
 tokio-util-6f8ce4dd05d13bba = { package = "tokio-util", version = "0.2", features = ["codec"] }
 toml = { version = "0.5" }
@@ -764,10 +782,8 @@ tower-discover = { version = "0.3", default-features = false }
 tower-layer = { version = "0.3", default-features = false }
 tower-limit = { version = "0.3", default-features = false }
 tower-load = { version = "0.3", default-features = false }
-tower-load-shed = { version = "0.3", default-features = false }
 tower-make = { version = "0.3", default-features = false, features = ["connect"] }
 tower-ready-cache = { version = "0.3", default-features = false }
-tower-retry = { version = "0.3", default-features = false }
 tower-service = { version = "0.3", default-features = false }
 tower-timeout = { version = "0.3", default-features = false }
 tower-util = { version = "0.3" }
@@ -815,6 +831,7 @@ yaml-rust = { version = "0.4", default-features = false }
 yamux = { version = "0.4", default-features = false }
 zeroize = { version = "1", default-features = false, features = ["alloc", "zeroize_derive"] }
 zeroize_derive = { version = "1", default-features = false }
+zstd-sys = { git = "https://github.com/gyscos/zstd-rs.git" }
 
 [target.x86_64-wrs-vxworks.dependencies]
 ansi_term-a6292c17cd707f01 = { package = "ansi_term", version = "0.11", default-features = false }

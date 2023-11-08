@@ -12,14 +12,14 @@ spec = 'any'
 [metadata.target-platform]
 spec = 'always'
 [[metadata.omitted-packages.ids]]
-name = 'num_cpus'
-version = '1.12.0'
+name = 'proptest-derive'
+version = '0.1.2'
 crates-io = true
 
 [[metadata.omitted-packages.ids]]
-name = 'serde_derive'
-version = '1.0.104'
-crates-io = true
+name = 'serializer_tests'
+version = '0.1.0'
+workspace-path = 'language/vm/serializer_tests'
 
 [[metadata.features-only]]
 name = 'libra-wallet'
@@ -508,13 +508,6 @@ crates-io = true
 status = 'direct'
 features = ['bit-set', 'break-dead-code', 'default', 'fork', 'lazy_static', 'quick-error', 'regex-syntax', 'rusty-fork', 'std', 'tempfile', 'timeout']
 optional-deps = ['bit-set', 'lazy_static', 'quick-error', 'regex-syntax', 'rusty-fork', 'tempfile']
-
-[[host-package]]
-name = 'proptest-derive'
-version = '0.1.2'
-crates-io = true
-status = 'direct'
-features = []
 
 [[host-package]]
 name = 'prost'
@@ -1381,6 +1374,13 @@ status = 'transitive'
 features = ['std']
 
 [[host-package]]
+name = 'num_cpus'
+version = '1.12.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'opaque-debug'
 version = '0.2.3'
 crates-io = true
@@ -1472,13 +1472,6 @@ status = 'transitive'
 features = []
 
 [[host-package]]
-name = 'proc-macro2'
-version = '0.4.30'
-crates-io = true
-status = 'transitive'
-features = ['default', 'proc-macro']
-
-[[host-package]]
 name = 'prost-derive'
 version = '0.6.1'
 crates-io = true
@@ -1498,13 +1491,6 @@ version = '1.2.3'
 crates-io = true
 status = 'transitive'
 features = []
-
-[[host-package]]
-name = 'quote'
-version = '0.6.13'
-crates-io = true
-status = 'transitive'
-features = ['default', 'proc-macro']
 
 [[host-package]]
 name = 'rand'
@@ -1742,6 +1728,13 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'serde_derive'
+version = '1.0.104'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[host-package]]
 name = 'sha-1'
 version = '0.8.2'
 crates-io = true
@@ -1831,14 +1824,6 @@ version = '2.2.2'
 crates-io = true
 status = 'transitive'
 features = ['std']
-
-[[host-package]]
-name = 'syn'
-version = '0.15.44'
-crates-io = true
-status = 'transitive'
-features = ['clone-impls', 'default', 'derive', 'extra-traits', 'full', 'parsing', 'printing', 'proc-macro', 'quote', 'visit']
-optional-deps = ['quote']
 
 [[host-package]]
 name = 'syn-mid'
@@ -2079,13 +2064,6 @@ features = []
 [[host-package]]
 name = 'unicode-width'
 version = '0.1.7'
-crates-io = true
-status = 'transitive'
-features = ['default']
-
-[[host-package]]
-name = 'unicode-xid'
-version = '0.1.0'
 crates-io = true
 status = 'transitive'
 features = ['default']

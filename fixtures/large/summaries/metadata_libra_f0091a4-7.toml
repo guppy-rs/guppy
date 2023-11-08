@@ -14,14 +14,14 @@ target-features = 'all'
 triple = 'armv7-linux-androideabi'
 target-features = 'unknown'
 [[metadata.omitted-packages.ids]]
-name = 'hyper'
-version = '0.13.2'
+name = 'base64'
+version = '0.9.3'
 crates-io = true
 
 [[metadata.omitted-packages.ids]]
-name = 'rusty-fork'
-version = '0.2.2'
-crates-io = true
+name = 'executor'
+version = '0.1.0'
+workspace-path = 'executor'
 
 [[metadata.features-only]]
 name = 'libra-secure-net'
@@ -549,6 +549,13 @@ status = 'transitive'
 features = []
 
 [[target-package]]
+name = 'fnv'
+version = '1.0.6'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
 name = 'generic-array'
 version = '0.12.3'
 crates-io = true
@@ -863,6 +870,14 @@ features = ['default', 'log', 'logging']
 optional-deps = ['log']
 
 [[target-package]]
+name = 'rusty-fork'
+version = '0.2.2'
+crates-io = true
+status = 'transitive'
+features = ['timeout', 'wait-timeout']
+optional-deps = ['wait-timeout']
+
+[[target-package]]
 name = 'ryu'
 version = '1.0.2'
 crates-io = true
@@ -998,6 +1013,13 @@ features = []
 [[target-package]]
 name = 'url'
 version = '2.1.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'wait-timeout'
+version = '0.2.0'
 crates-io = true
 status = 'transitive'
 features = []

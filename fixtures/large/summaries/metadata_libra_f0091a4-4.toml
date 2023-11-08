@@ -14,8 +14,8 @@ flags = ['abc', 'foo']
 [metadata.target-platform]
 spec = 'always'
 [[metadata.omitted-packages.ids]]
-name = 'futures-macro'
-version = '0.3.4'
+name = 'redox_syscall'
+version = '0.1.56'
 crates-io = true
 
 [[target-package]]

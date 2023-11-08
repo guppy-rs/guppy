@@ -21,13 +21,13 @@ version = '1.3.4'
 crates-io = true
 
 [[metadata.omitted-packages.ids]]
-name = 'petgraph'
-version = '0.5.0'
+name = 'security-framework'
+version = '0.3.4'
 crates-io = true
 
 [[metadata.omitted-packages.ids]]
-name = 'wasm-bindgen-macro'
-version = '0.2.58'
+name = 'tokio-timer'
+version = '0.2.13'
 crates-io = true
 
 [[metadata.features-only]]
@@ -453,6 +453,13 @@ version = '0.7.2'
 crates-io = true
 status = 'direct'
 features = []
+
+[[host-package]]
+name = 'petgraph'
+version = '0.5.0'
+crates-io = true
+status = 'direct'
+features = ['default', 'graphmap', 'matrix_graph', 'stable_graph']
 
 [[host-package]]
 name = 'proc-macro2'
@@ -989,6 +996,13 @@ features = []
 [[host-package]]
 name = 'fake-simd'
 version = '0.1.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'fixedbitset'
+version = '0.2.0'
 crates-io = true
 status = 'transitive'
 features = []
