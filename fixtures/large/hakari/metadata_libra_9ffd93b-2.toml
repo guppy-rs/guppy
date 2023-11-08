@@ -9,33 +9,33 @@
 # workspace-hack-line-style = 'workspace-dotted'
 # platforms = []
 # [[traversal-excludes.ids]]
-# name = 'async-compression'
-# version = '0.3.1'
+# name = 'chunked_transfer'
+# version = '1.0.0'
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
-# name = 'genesis-viewer'
+# name = 'get_if_addrs-sys'
+# version = '0.1.1'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'language_benchmarks'
 # version = '0.1.0'
-# workspace-path = 'language/tools/genesis-viewer'
+# workspace-path = 'language/benchmarks'
 #
 # [[traversal-excludes.ids]]
-# name = 'peeking_take_while'
-# version = '0.1.2'
+# name = 'rdrand'
+# version = '0.4.0'
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
-# name = 'quick-error'
-# version = '1.2.3'
+# name = 'semver-parser'
+# version = '0.7.0'
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
-# name = 'rand_core'
-# version = '0.3.1'
-# crates-io = true
-#
-# [[traversal-excludes.ids]]
-# name = 'wasm-bindgen-shared'
-# version = '0.2.59'
+# name = 'yamux'
+# version = '0.4.4'
 # crates-io = true
 #
 # [final-excludes]
@@ -85,7 +85,6 @@ cast = { version = "0.2", features = ["std"] }
 cfg-if = { version = "0.1", default-features = false }
 chacha20-poly1305-aead = { version = "0.1", default-features = false }
 chrono = { version = "0.4", features = ["clock", "serde", "std", "time"] }
-chunked_transfer = { version = "1", default-features = false }
 clap = { version = "2", features = ["ansi_term", "atty", "color", "strsim", "suggestions", "vec_map"] }
 clear_on_drop = { version = "0.2", default-features = false }
 codespan = { version = "0.8", default-features = false, features = ["serde", "serialization"] }
@@ -125,7 +124,7 @@ errno = { version = "0.2", default-features = false }
 failure = { version = "0.1", features = ["backtrace", "derive", "failure_derive", "std"] }
 fake-simd = { version = "0.1", default-features = false }
 fixedbitset = { version = "0.2", default-features = false }
-flate2 = { version = "1", default-features = false, features = ["miniz_oxide", "rust_backend"] }
+flate2 = { version = "1", features = ["miniz_oxide", "rust_backend"] }
 fnv = { version = "1", default-features = false }
 foreign-types = { version = "0.3", default-features = false }
 foreign-types-shared = { version = "0.1", default-features = false }
@@ -204,7 +203,6 @@ multipart = { version = "0.16", default-features = false, features = ["buf_redux
 net2 = { version = "0.2", features = ["duration"] }
 nibble_vec = { version = "0.0.4", default-features = false }
 nodrop = { version = "0.1", default-features = false }
-nohash-hasher = { version = "0.2", features = ["std"] }
 num = { version = "0.2", features = ["num-bigint", "std"] }
 num-bigint = { version = "0.2", default-features = false, features = ["std"] }
 num-complex = { version = "0.2", default-features = false, features = ["std"] }
@@ -223,10 +221,8 @@ ordered-float = { version = "1", features = ["std"] }
 pairing = { version = "0.14", features = ["u128-support"] }
 parity-multiaddr = { version = "0.7", default-features = false }
 parity-multihash = { version = "0.2", default-features = false }
-parking_lot-93f6ce9d446188ac = { package = "parking_lot", version = "0.10" }
-parking_lot-274715c4dabd11b0 = { package = "parking_lot", version = "0.9" }
-parking_lot_core-3b31131e45eafb45 = { package = "parking_lot_core", version = "0.6", default-features = false }
-parking_lot_core-ca01ad9e24f5d932 = { package = "parking_lot_core", version = "0.7", default-features = false }
+parking_lot = { version = "0.9" }
+parking_lot_core = { version = "0.6", default-features = false }
 paste = { version = "0.1", default-features = false }
 pbkdf2 = { version = "0.3", features = ["base64", "hmac", "include_simple", "rand", "sha2", "subtle"] }
 percent-encoding-dff4ba8e3ae991db = { package = "percent-encoding", version = "1", default-features = false }
@@ -246,6 +242,7 @@ prometheus = { version = "0.8", default-features = false }
 proptest = { version = "0.9", features = ["bit-set", "break-dead-code", "fork", "lazy_static", "quick-error", "regex-syntax", "rusty-fork", "std", "tempfile", "timeout"] }
 prost = { version = "0.6", features = ["prost-derive"] }
 qstring = { version = "0.7", default-features = false }
+quick-error = { version = "1", default-features = false }
 radium = { version = "0.3", default-features = false }
 radix_trie = { version = "0.1", default-features = false }
 rand-9fbad63c4bcf4a8f = { package = "rand", version = "0.4", features = ["libc", "std"] }
@@ -255,6 +252,7 @@ rand-ca01ad9e24f5d932 = { package = "rand", version = "0.7", features = ["alloc"
 rand04 = { version = "0.1", default-features = false, features = ["std"] }
 rand04_compat = { version = "0.1", features = ["std"] }
 rand_chacha = { version = "0.1", default-features = false }
+rand_core-468e82937335b1c9 = { package = "rand_core", version = "0.3", default-features = false, features = ["alloc", "std"] }
 rand_core-9fbad63c4bcf4a8f = { package = "rand_core", version = "0.4", default-features = false, features = ["alloc", "std"] }
 rand_core-d8f496e17d97b5cb = { package = "rand_core", version = "0.5", default-features = false, features = ["alloc", "getrandom", "std"] }
 rand_hc = { version = "0.1", default-features = false }
@@ -408,7 +406,6 @@ x25519-dalek-e7fe84ab14e05bdb = { package = "x25519-dalek", git = "https://githu
 x25519-dalek-3b31131e45eafb45 = { package = "x25519-dalek", version = "0.6", features = ["std", "u64_backend"] }
 xml-rs = { version = "0.8", default-features = false }
 yaml-rust = { version = "0.4", default-features = false }
-yamux = { version = "0.4", default-features = false }
 zeroize = { version = "1", default-features = false, features = ["alloc", "zeroize_derive"] }
 zstd-sys = { git = "https://github.com/gyscos/zstd-rs.git", features = ["legacy"] }
 
@@ -462,6 +459,7 @@ multimap = { version = "0.8", default-features = false }
 nom = { version = "4", features = ["alloc", "std", "verbose-errors"] }
 num-derive = { version = "0.3", default-features = false }
 paste-impl = { version = "0.1", default-features = false }
+peeking_take_while = { version = "0.1", default-features = false }
 petgraph = { version = "0.5", features = ["graphmap", "matrix_graph", "stable_graph"] }
 phf = { version = "0.7", default-features = false, features = ["unicase"] }
 phf_codegen = { version = "0.7", default-features = false }
@@ -479,11 +477,13 @@ prost = { version = "0.6", features = ["prost-derive"] }
 prost-build = { version = "0.6", default-features = false }
 prost-derive = { version = "0.6", default-features = false }
 prost-types = { version = "0.6", default-features = false }
+quick-error = { version = "1", default-features = false }
 quote-3b31131e45eafb45 = { package = "quote", version = "0.6", features = ["proc-macro"] }
 quote-dff4ba8e3ae991db = { package = "quote", version = "1", features = ["proc-macro"] }
 rand-3b31131e45eafb45 = { package = "rand", version = "0.6", features = ["alloc", "i128_support", "rand_os", "std"] }
 rand-ca01ad9e24f5d932 = { package = "rand", version = "0.7", features = ["alloc", "getrandom", "getrandom_package", "libc", "rand_pcg", "small_rng", "std"] }
 rand_chacha = { version = "0.1", default-features = false }
+rand_core-468e82937335b1c9 = { package = "rand_core", version = "0.3", default-features = false, features = ["alloc", "std"] }
 rand_core-9fbad63c4bcf4a8f = { package = "rand_core", version = "0.4", default-features = false, features = ["alloc", "std"] }
 rand_core-d8f496e17d97b5cb = { package = "rand_core", version = "0.5", default-features = false, features = ["alloc", "getrandom", "std"] }
 rand_hc = { version = "0.1", default-features = false }
@@ -503,7 +503,6 @@ rustc-hash = { version = "1", features = ["std"] }
 rustc_version = { version = "0.2", default-features = false }
 rustversion = { version = "1", default-features = false }
 semver = { version = "0.9" }
-semver-parser = { version = "0.7", default-features = false }
 serde = { version = "1", features = ["derive", "rc", "serde_derive", "std"] }
 serde_derive = { version = "1" }
 shlex = { version = "0.1", default-features = false }

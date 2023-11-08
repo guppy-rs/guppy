@@ -13,8 +13,8 @@ target-features = 'unknown'
 [metadata.target-platform]
 spec = 'always'
 [[metadata.omitted-packages.ids]]
-name = 'tokio-uds'
-version = '0.2.6'
+name = 'num-complex'
+version = '0.2.4'
 crates-io = true
 
 [[target-package]]

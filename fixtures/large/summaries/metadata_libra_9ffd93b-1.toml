@@ -16,18 +16,18 @@ triple = 'sparc-unknown-linux-gnu'
 target-features = 'unknown'
 flags = ['foo', 'test-flag']
 [[metadata.omitted-packages.ids]]
-name = 'bincode'
-version = '1.2.1'
+name = 'crossbeam-utils'
+version = '0.6.6'
 crates-io = true
 
 [[metadata.omitted-packages.ids]]
-name = 'rand_jitter'
-version = '0.1.4'
-crates-io = true
+name = 'libradb'
+version = '0.1.0'
+workspace-path = 'storage/libradb'
 
 [[metadata.omitted-packages.ids]]
-name = 'wasm-bindgen-macro-support'
-version = '0.2.59'
+name = 'rand_chacha'
+version = '0.1.1'
 crates-io = true
 
 [[metadata.features-only]]
@@ -857,13 +857,6 @@ features = ['default', 'std']
 
 [[target-package]]
 name = 'rand_chacha'
-version = '0.1.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'rand_chacha'
 version = '0.2.1'
 crates-io = true
 status = 'transitive'
@@ -904,6 +897,13 @@ version = '0.1.1'
 crates-io = true
 status = 'transitive'
 features = []
+
+[[target-package]]
+name = 'rand_jitter'
+version = '0.1.4'
+crates-io = true
+status = 'transitive'
+features = ['std']
 
 [[target-package]]
 name = 'rand_os'

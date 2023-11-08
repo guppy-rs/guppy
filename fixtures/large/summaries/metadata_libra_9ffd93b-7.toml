@@ -13,18 +13,18 @@ spec = 'always'
 triple = 'aarch64_be-unknown-linux-gnu_ilp32'
 target-features = ['avx2', 'fma', 'rdrand', 'sha', 'sse2', 'ssse3', 'xsave']
 [[metadata.omitted-packages.ids]]
-name = 'rustls'
-version = '0.16.0'
+name = 'libfuzzer-sys'
+version = '0.3.1'
 crates-io = true
 
 [[metadata.omitted-packages.ids]]
-name = 'time-macros-impl'
+name = 'libra-logger'
 version = '0.1.0'
-crates-io = true
+workspace-path = 'common/logger'
 
 [[metadata.omitted-packages.ids]]
-name = 'winapi-i686-pc-windows-gnu'
-version = '0.4.0'
+name = 'slab'
+version = '0.4.2'
 crates-io = true
 
 [[metadata.features-only]]
@@ -148,13 +148,6 @@ features = ['default', 'std', 'u64_backend']
 name = 'libra-crypto-derive'
 version = '0.1.0'
 workspace-path = 'crypto/crypto-derive'
-status = 'workspace'
-features = []
-
-[[host-package]]
-name = 'libra-logger'
-version = '0.1.0'
-workspace-path = 'common/logger'
 status = 'workspace'
 features = []
 
@@ -373,14 +366,6 @@ source = 'git+https://github.com/calibra/ed25519-dalek.git?branch=fiat#ecb1d36ad
 status = 'direct'
 features = ['serde', 'std', 'u64_backend']
 optional-deps = ['serde']
-
-[[host-package]]
-name = 'env_logger'
-version = '0.7.1'
-crates-io = true
-status = 'direct'
-features = ['atty', 'default', 'humantime', 'regex', 'termcolor']
-optional-deps = ['atty', 'humantime', 'regex', 'termcolor']
 
 [[host-package]]
 name = 'futures'
@@ -1055,6 +1040,14 @@ features = []
 [[host-package]]
 name = 'env_logger'
 version = '0.6.2'
+crates-io = true
+status = 'transitive'
+features = ['atty', 'default', 'humantime', 'regex', 'termcolor']
+optional-deps = ['atty', 'humantime', 'regex', 'termcolor']
+
+[[host-package]]
+name = 'env_logger'
+version = '0.7.1'
 crates-io = true
 status = 'transitive'
 features = ['atty', 'default', 'humantime', 'regex', 'termcolor']
@@ -1785,13 +1778,6 @@ features = []
 [[host-package]]
 name = 'shlex'
 version = '0.1.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'slab'
-version = '0.4.2'
 crates-io = true
 status = 'transitive'
 features = []

@@ -12,19 +12,19 @@ spec = 'always'
 [metadata.target-platform]
 spec = 'always'
 [[metadata.omitted-packages.ids]]
-name = 'futures-cpupool'
-version = '0.1.8'
+name = 'backup-restore'
+version = '0.1.0'
+workspace-path = 'storage/backup-restore'
+
+[[metadata.omitted-packages.ids]]
+name = 'rust-argon2'
+version = '0.7.0'
 crates-io = true
 
 [[metadata.omitted-packages.ids]]
-name = 'rustversion'
-version = '1.0.2'
-crates-io = true
-
-[[metadata.omitted-packages.ids]]
-name = 'web-sys'
-version = '0.3.36'
-crates-io = true
+name = 'snappy-sys'
+version = '0.1.0'
+source = 'git+https://github.com/busyjay/rust-snappy.git?branch=static-link#8c12738bad811397600455d6982aff754ea2ac44'
 
 [[metadata.features-only]]
 name = 'datatest-stable'
@@ -1986,6 +1986,13 @@ status = 'transitive'
 features = ['alloc', 'default', 'std']
 
 [[target-package]]
+name = 'futures-cpupool'
+version = '0.1.8'
+crates-io = true
+status = 'transitive'
+features = ['default', 'with-deprecated']
+
+[[target-package]]
 name = 'futures-executor'
 version = '0.3.4'
 crates-io = true
@@ -2835,13 +2842,6 @@ features = ['default', 'std']
 name = 'smallvec'
 version = '1.2.0'
 crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'snappy-sys'
-version = '0.1.0'
-source = 'git+https://github.com/busyjay/rust-snappy.git?branch=static-link#8c12738bad811397600455d6982aff754ea2ac44'
 status = 'transitive'
 features = []
 
@@ -4087,6 +4087,13 @@ features = ['default', 'std']
 [[host-package]]
 name = 'rustc_version'
 version = '0.2.3'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'rustversion'
+version = '1.0.2'
 crates-io = true
 status = 'transitive'
 features = []

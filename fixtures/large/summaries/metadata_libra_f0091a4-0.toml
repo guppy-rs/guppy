@@ -13,13 +13,13 @@ target-features = 'unknown'
 [metadata.target-platform]
 spec = 'always'
 [[metadata.omitted-packages.ids]]
-name = 'atty'
-version = '0.2.14'
+name = 'parking_lot_core'
+version = '0.6.2'
 crates-io = true
 
 [[metadata.omitted-packages.ids]]
-name = 'nodrop'
-version = '0.1.14'
+name = 'security-framework-sys'
+version = '0.3.3'
 crates-io = true
 
 [[metadata.features-only]]
@@ -1144,6 +1144,13 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'atty'
+version = '0.2.14'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'autocfg'
 version = '0.1.7'
 crates-io = true
@@ -1849,6 +1856,13 @@ features = []
 [[host-package]]
 name = 'nix'
 version = '0.17.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'nodrop'
+version = '0.1.14'
 crates-io = true
 status = 'transitive'
 features = []

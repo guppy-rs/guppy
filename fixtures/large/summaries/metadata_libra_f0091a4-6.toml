@@ -14,13 +14,13 @@ flags = ['cargo_web']
 [metadata.target-platform]
 spec = 'always'
 [[metadata.omitted-packages.ids]]
-name = 'noise'
-version = '0.1.0'
-workspace-path = 'network/noise'
+name = 'ansi_term'
+version = '0.11.0'
+crates-io = true
 
 [[metadata.omitted-packages.ids]]
-name = 'typenum'
-version = '1.11.2'
+name = 'wasm-bindgen-shared'
+version = '0.2.58'
 crates-io = true
 
 [[host-package]]
@@ -501,7 +501,7 @@ name = 'noise'
 version = '0.1.0'
 workspace-path = 'network/noise'
 status = 'initial'
-features = []
+features = ['default', 'testing']
 
 [[host-package]]
 name = 'num-variants'
@@ -1512,13 +1512,6 @@ features = []
 [[host-package]]
 name = 'adler32'
 version = '1.0.4'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'ansi_term'
-version = '0.11.0'
 crates-io = true
 status = 'transitive'
 features = []
@@ -3443,6 +3436,13 @@ optional-deps = ['pin-project']
 [[host-package]]
 name = 'try-lock'
 version = '0.2.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'typenum'
+version = '1.11.2'
 crates-io = true
 status = 'transitive'
 features = []

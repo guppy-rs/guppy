@@ -9,67 +9,67 @@
 # workspace-hack-line-style = 'full'
 # platforms = ['aarch64-pc-windows-gnullvm', 'x86_64-apple-tvos']
 # [[traversal-excludes.ids]]
-# name = 'criterion-plot'
-# version = '0.4.1'
+# name = 'c_linked_list'
+# version = '1.1.1'
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
-# name = 'crossbeam-epoch'
-# version = '0.8.2'
+# name = 'encoding_rs'
+# version = '0.8.22'
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
-# name = 'num-complex'
-# version = '0.2.4'
+# name = 'lock_api'
+# version = '0.3.3'
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
-# name = 'prettytable-rs'
+# name = 'phf_generator'
+# version = '0.7.24'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'pin-project-lite'
+# version = '0.1.4'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'strum'
+# version = '0.18.0'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'xml-rs'
+# version = '0.8.0'
+# crates-io = true
+# [[final-excludes.ids]]
+# name = 'backtrace-sys'
+# version = '0.1.33'
+# crates-io = true
+#
+# [[final-excludes.ids]]
+# name = 'codespan'
 # version = '0.8.0'
 # crates-io = true
 #
-# [[traversal-excludes.ids]]
-# name = 'rand04'
-# version = '0.1.1'
-# crates-io = true
-#
-# [[traversal-excludes.ids]]
-# name = 'tokio-util'
-# version = '0.3.0'
-# crates-io = true
-#
-# [[traversal-excludes.ids]]
-# name = 'utf8parse'
-# version = '0.1.1'
-# crates-io = true
 # [[final-excludes.ids]]
-# name = 'dirs'
-# version = '1.0.5'
-# crates-io = true
-#
-# [[final-excludes.ids]]
-# name = 'futures'
-# version = '0.3.4'
-# crates-io = true
-#
-# [[final-excludes.ids]]
-# name = 'miow'
-# version = '0.2.1'
-# crates-io = true
-#
-# [[final-excludes.ids]]
-# name = 'move-vm-runtime'
+# name = 'executor'
 # version = '0.1.0'
-# workspace-path = 'language/move-vm/runtime'
+# workspace-path = 'execution/executor'
 #
 # [[final-excludes.ids]]
-# name = 'static_assertions'
-# version = '1.1.0'
+# name = 'rusoto_ecs'
+# version = '0.42.0'
 # crates-io = true
 #
 # [[final-excludes.ids]]
-# name = 'tokio'
-# version = '0.1.22'
+# name = 'serde'
+# version = '1.0.104'
+# crates-io = true
+#
+# [[final-excludes.ids]]
+# name = 'stats_alloc'
+# version = '0.1.8'
 # crates-io = true
 
 [dependencies]
@@ -110,7 +110,6 @@ regex-syntax = { version = "0.6", features = ["unicode", "unicode-age", "unicode
 reqwest = { version = "0.10", default-features = false, features = ["__tls", "async-compression", "blocking", "default-tls", "gzip", "hyper-rustls", "hyper-tls", "json", "native-tls", "native-tls-crate", "rustls", "rustls-tls", "serde_json", "stream", "tokio-rustls", "tokio-tls", "webpki-roots"] }
 ring = { version = "0.16", features = ["alloc", "dev_urandom_fallback", "lazy_static", "std"] }
 rusty-fork = { version = "0.2", features = ["timeout", "wait-timeout"] }
-serde = { version = "1", features = ["derive", "rc", "serde_derive", "std"] }
 sha-1 = { version = "0.8", features = ["std"] }
 sha2 = { version = "0.8", features = ["std"] }
 sha3 = { version = "0.8", features = ["std"] }
@@ -161,7 +160,6 @@ regex-syntax = { version = "0.6", features = ["unicode", "unicode-age", "unicode
 reqwest = { version = "0.10", default-features = false, features = ["__tls", "async-compression", "blocking", "default-tls", "gzip", "hyper-rustls", "hyper-tls", "json", "native-tls", "native-tls-crate", "rustls", "rustls-tls", "serde_json", "stream", "tokio-rustls", "tokio-tls", "webpki-roots"] }
 ring = { version = "0.16", features = ["alloc", "dev_urandom_fallback", "lazy_static", "std"] }
 rusty-fork = { version = "0.2", features = ["timeout", "wait-timeout"] }
-serde = { version = "1", features = ["derive", "rc", "serde_derive", "std"] }
 sha-1 = { version = "0.8", features = ["std"] }
 sha2 = { version = "0.8", features = ["std"] }
 sha3 = { version = "0.8", features = ["std"] }
