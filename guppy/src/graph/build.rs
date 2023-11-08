@@ -12,7 +12,9 @@ use crate::{
     Error, PackageId,
 };
 use camino::{Utf8Path, Utf8PathBuf};
-use cargo_metadata::{Dependency, DependencyKind, Metadata, Node, NodeDep, Package, Target};
+use cargo_metadata::{
+    DepKindInfo, Dependency, DependencyKind, Metadata, Node, NodeDep, Package, Target,
+};
 use fixedbitset::FixedBitSet;
 use indexmap::{IndexMap, IndexSet};
 use once_cell::sync::OnceCell;
@@ -22,6 +24,7 @@ use smallvec::SmallVec;
 use std::{
     borrow::Cow,
     collections::{BTreeMap, HashMap, HashSet},
+    sync::Arc,
 };
 use target_spec::TargetSpec;
 
@@ -137,9 +140,12 @@ impl WorkspaceImpl {
 /// Helper struct for building up dependency graph.
 struct GraphBuildState<'a> {
     dep_graph: Graph<PackageId, PackageLinkImpl, Directed, PackageIx>,
-    // The values of package_data are (package_ix, name, version).
-    package_data: HashMap<PackageId, (NodeIndex<PackageIx>, String, Version)>,
-    // The values of resolve_data are the resolved dependencies.
+    package_data: HashMap<PackageId, Arc<PackageDataValue>>,
+    // The above, except by package name.
+    by_package_name: HashMap<String, Vec<Arc<PackageDataValue>>>,
+
+    // The values of resolve_data are the resolved dependencies. This is mutated so it is stored
+    // separately from package_data.
     resolve_data: HashMap<PackageId, Vec<NodeDep>>,
     workspace_root: &'a Utf8Path,
     workspace_members: &'a HashSet<PackageId>,
@@ -155,17 +161,20 @@ impl<'a> GraphBuildState<'a> {
         // No idea how many edges there are going to be, so use packages.len() as a reasonable lower
         // bound.
         let mut dep_graph = Graph::with_capacity(packages.len(), packages.len());
-        let package_data: HashMap<_, _> = packages
+        let all_package_data = packages
             .iter()
-            .map(|package| {
-                let package_id = PackageId::from_metadata(package.id.clone());
-                let package_ix = dep_graph.add_node(package_id.clone());
-                (
-                    package_id,
-                    (package_ix, package.name.clone(), package.version.clone()),
-                )
-            })
-            .collect();
+            .map(|package| PackageDataValue::new(package, &mut dep_graph))
+            .collect::<HashMap<_, _>>();
+        // While it is possible to have duplicate names so the hash map is smaller, just make this
+        // as big as package_data.
+        let mut by_package_name: HashMap<String, Vec<Arc<PackageDataValue>>> =
+            HashMap::with_capacity(all_package_data.len());
+        for package_data in all_package_data.values() {
+            by_package_name
+                .entry(package_data.name.clone())
+                .or_default()
+                .push(package_data.clone());
+        }
 
         let resolve_data: HashMap<_, _> = resolve_nodes
             .into_iter()
@@ -181,7 +190,8 @@ impl<'a> GraphBuildState<'a> {
 
         Self {
             dep_graph,
-            package_data,
+            package_data: all_package_data,
+            by_package_name,
             resolve_data,
             workspace_root,
             workspace_members,
@@ -193,7 +203,7 @@ impl<'a> GraphBuildState<'a> {
         package: Package,
     ) -> Result<(PackageId, PackageMetadataImpl), Error> {
         let package_id = PackageId::from_metadata(package.id);
-        let (package_ix, _, _) = self.package_data(&package_id)?;
+        let package_data = self.package_data(&package_id)?.clone();
 
         let source = if self.workspace_members.contains(&package_id) {
             PackageSourceImpl::Workspace(self.workspace_path(&package_id, &package.manifest_path)?)
@@ -226,23 +236,28 @@ impl<'a> GraphBuildState<'a> {
         // resolved_deps is missing if the metadata was generated with --no-deps.
         let resolved_deps = self.resolve_data.remove(&package_id).unwrap_or_default();
 
-        let dep_resolver =
-            DependencyResolver::new(&package_id, &self.package_data, &package.dependencies);
+        let dep_resolver = DependencyResolver::new(
+            &package_id,
+            &self.package_data,
+            &self.by_package_name,
+            &package.dependencies,
+        );
 
         for NodeDep {
             name: resolved_name,
             pkg,
+            dep_kinds,
             ..
         } in resolved_deps
         {
             let dep_id = PackageId::from_metadata(pkg);
-            let (name, deps) = dep_resolver.resolve(&resolved_name, &dep_id)?;
-            let (dep_idx, _, _) = self.package_data(&dep_id)?;
-            let edge = PackageLinkImpl::new(&package_id, name, &resolved_name, deps)?;
+            let (dep_data, deps) = dep_resolver.resolve(&resolved_name, &dep_id, &dep_kinds)?;
+            let link = PackageLinkImpl::new(&package_id, &resolved_name, deps)?;
             // Use update_edge instead of add_edge to prevent multiple edges from being added
             // between these two nodes.
             // XXX maybe check for an existing edge?
-            self.dep_graph.update_edge(package_ix, dep_idx, edge);
+            self.dep_graph
+                .update_edge(package_data.package_ix, dep_data.package_ix, link);
         }
 
         let has_default_feature = package.features.contains_key("default");
@@ -351,7 +366,7 @@ impl<'a> GraphBuildState<'a> {
                 named_features,
                 optional_deps,
 
-                package_ix,
+                package_ix: package_data.package_ix,
                 source,
                 build_targets,
                 has_default_feature,
@@ -359,14 +374,10 @@ impl<'a> GraphBuildState<'a> {
         ))
     }
 
-    fn package_data(
-        &self,
-        id: &PackageId,
-    ) -> Result<(NodeIndex<PackageIx>, &str, &Version), Error> {
-        let (package_ix, name, version) = self.package_data.get(id).ok_or_else(|| {
+    fn package_data(&self, id: &PackageId) -> Result<&Arc<PackageDataValue>, Error> {
+        self.package_data.get(id).ok_or_else(|| {
             Error::PackageGraphConstructError(format!("no package data found for package '{}'", id))
-        })?;
-        Ok((*package_ix, name, version))
+        })
     }
 
     /// Computes the workspace path for this package. Errors if this package is not in the
@@ -381,7 +392,7 @@ impl<'a> GraphBuildState<'a> {
             .strip_prefix(self.workspace_root)
             .map_err(|_| {
                 Error::PackageGraphConstructError(format!(
-                    "workspace member '{}' at path {:?} not in workspace (root: {})",
+                    "workspace member '{}' at path {} not in workspace (root: {})",
                     id, manifest_path, self.workspace_root
                 ))
             })?;
@@ -396,6 +407,96 @@ impl<'a> GraphBuildState<'a> {
 
     fn finish(self) -> Graph<PackageId, PackageLinkImpl, Directed, PackageIx> {
         self.dep_graph
+    }
+}
+
+/// Intermediate state for a package as stored in `GraphBuildState`.
+#[derive(Debug)]
+struct PackageDataValue {
+    package_ix: NodeIndex<PackageIx>,
+    name: String,
+    resolved_name: ResolvedName,
+    version: Version,
+}
+
+impl PackageDataValue {
+    fn new(
+        package: &Package,
+        dep_graph: &mut Graph<PackageId, PackageLinkImpl, Directed, PackageIx>,
+    ) -> (PackageId, Arc<Self>) {
+        let package_id = PackageId::from_metadata(package.id.clone());
+        let package_ix = dep_graph.add_node(package_id.clone());
+
+        // The resolved name is determined by lib.name or proc-macro.name (only one should exist).
+        // So look for a lib target if it exists.
+        fn lib_target(package: &Package) -> Option<&Target> {
+            package.targets.iter().find(|target| {
+                target
+                    .kind
+                    .iter()
+                    .any(|kind| kind == "lib" || kind == "proc-macro")
+            })
+        }
+
+        let resolved_name = match lib_target(package) {
+            Some(lib_target) => {
+                if lib_target.name != package.name {
+                    // This means that `lib.name` was specified.
+                    ResolvedName::LibNameSpecified(lib_target.name.clone())
+                } else {
+                    // The resolved name is the same as the package name.
+                    ResolvedName::LibNameNotSpecified(lib_target.name.replace('-', "_"))
+                }
+            }
+            None => {
+                // XXX warn here?
+                ResolvedName::LibNameNotSpecified(package.name.replace('-', "_"))
+            }
+        };
+
+        let value = PackageDataValue {
+            package_ix,
+            name: package.name.clone(),
+            resolved_name,
+            version: package.version.clone(),
+        };
+
+        (package_id, Arc::new(value))
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Hash)]
+enum ResolvedName {
+    LibNameSpecified(String),
+    /// This variant has its - replaced with _.
+    LibNameNotSpecified(String),
+}
+
+#[derive(Clone, Debug, Eq, PartialEq, Hash)]
+enum ReqResolvedName<'g> {
+    Renamed(String),
+    LibNameSpecified(&'g str),
+    LibNameNotSpecified(&'g str),
+}
+
+impl<'g> ReqResolvedName<'g> {
+    fn from_renamed(rename: &str) -> Self {
+        Self::Renamed(rename.replace('-', "_"))
+    }
+
+    fn from_resolved_name(resolved_name: &'g ResolvedName) -> Self {
+        match resolved_name {
+            ResolvedName::LibNameSpecified(name) => Self::LibNameSpecified(name),
+            ResolvedName::LibNameNotSpecified(name) => Self::LibNameNotSpecified(name),
+        }
+    }
+
+    fn matches(&self, name: &str) -> bool {
+        match self {
+            Self::Renamed(rename) => rename == name,
+            Self::LibNameSpecified(resolved_name) => *resolved_name == name,
+            Self::LibNameNotSpecified(resolved_name) => *resolved_name == name,
+        }
     }
 }
 
@@ -555,162 +656,159 @@ struct DependencyResolver<'g> {
     from_id: &'g PackageId,
 
     /// The package data, inherited from the graph build state.
-    package_data: &'g HashMap<PackageId, (NodeIndex<PackageIx>, String, Version)>,
+    package_data: &'g HashMap<PackageId, Arc<PackageDataValue>>,
 
-    /// This is a mapping of renamed dependencies to their rename sources and dependency info --
-    /// this always takes top priority.
-    ///
-    /// This is an owned string because hyphens can be replaced with underscores in the resolved\
-    /// name. In principle this could be a Cow<'a, str>, but str::replace returns a String.
-    renamed_map: HashMap<Box<str>, (&'g str, DependencyReqs<'g>)>,
-
-    /// This is a mapping of dependencies using their original names. For these names, dashes are
-    /// not replaced with underscores.
-    original_map: HashMap<&'g str, DependencyReqs<'g>>,
+    /// This is a list of dependency requirements. We don't know the package ID yet so we don't have
+    /// a great key to work with. This could be improved in the future by matching on requirements
+    /// (though it's hard).
+    dep_reqs: DependencyReqs<'g>,
 }
 
 impl<'g> DependencyResolver<'g> {
     /// Constructs a new resolver using the provided package data and dependencies.
     fn new(
         from_id: &'g PackageId,
-        package_data: &'g HashMap<PackageId, (NodeIndex<PackageIx>, String, Version)>,
+        package_data: &'g HashMap<PackageId, Arc<PackageDataValue>>,
+        by_package_name: &'g HashMap<String, Vec<Arc<PackageDataValue>>>,
         package_deps: impl IntoIterator<Item = &'g Dependency>,
     ) -> Self {
-        let mut renamed_map = HashMap::new();
-        let mut original_map: HashMap<_, DependencyReqs<'g>> = HashMap::new();
-
+        let mut dep_reqs = DependencyReqs::default();
         for dep in package_deps {
-            match &dep.rename {
-                // The rename != dep.name check is because of Cargo.toml instances like this:
-                //
-                // [dependencies]
-                // datatest = "0.4.2"
-                //
-                // [build-dependencies]
-                // datatest = { package = "datatest", version = "0.4.2" }
-                //
-                // cargo seems to accept such cases if the name doesn't contain a hyphen.
-                Some(rename) if rename != &dep.name => {
-                    // The resolved name is the same as the renamed name, except dashes are replaced
-                    // with underscores.
-                    let resolved_name = rename.replace('-', "_");
-                    let (_, deps) = renamed_map
-                        .entry(resolved_name.into())
-                        .or_insert_with(|| (rename.as_str(), DependencyReqs::default()));
-                    deps.push(dep);
-                }
-                Some(_) | None => {
-                    let deps = original_map.entry(dep.name.as_str()).or_default();
-                    deps.push(dep);
+            // Determine what the resolved name of each package could be by matching on package name
+            // and version (NOT source, because the source can be patched).
+            let Some(packages) = by_package_name.get(&dep.name) else {
+                // This dependency did not lead to a resolved package.
+                continue;
+            };
+            for package in packages {
+                if cargo_version_matches(&dep.req, &package.version) {
+                    // The cargo `resolve.deps` map uses, in order of preference:
+                    // 1. dep.rename with - turned into _, if specified.
+                    // 2. lib.name, if specified.
+                    // 3. package.name with - turned into _.
+                    if let Some(rename) = &dep.rename {
+                        dep_reqs.push(ReqResolvedName::from_renamed(rename), dep);
+                    } else {
+                        dep_reqs.push(
+                            ReqResolvedName::from_resolved_name(&package.resolved_name),
+                            dep,
+                        );
+                    }
                 }
             }
         }
 
+        // let mut resolved_name_map: HashMap<_, DependencyReqs<'_>> = HashMap::new();
+
+        // for dep in package_deps {
+        //     match &dep.rename {
+        //         Some(rename) => {
+        //             // The resolved name is the renamed name, except dashes are replaced with
+        //             // underscores.
+        //             let resolved_name = rename.replace('-', "_");
+        //             resolved_name_map
+        //                 .entry(resolved_name.into())
+        //                 .or_default()
+        //                 .push(dep);
+        //         }
+        //         None => {
+        //             let resolved_name = dep.name.replace('-', "_");
+        //             resolved_name_map
+        //                 .entry(resolved_name.into())
+        //                 .or_default()
+        //                 .push(dep);
+        //         }
+        //     }
+        // }
+
         Self {
             from_id,
             package_data,
-            renamed_map,
-            original_map,
+            dep_reqs,
         }
     }
 
-    /// Resolves this dependency by finding the `Dependency` corresponding to this resolved name
-    /// and package ID.
+    /// Resolves this dependency by finding the `Dependency` items corresponding to this resolved
+    /// name and package ID.
     fn resolve<'a>(
         &'a self,
-        resolved_name: &str,
-        package_id: &PackageId,
-    ) -> Result<(&'g str, impl Iterator<Item = &'g Dependency> + 'a), Error> {
-        // This method needs to reconcile three separate sources of data:
-        // 1. The metadata for each package, which is basically a parsed version of the Cargo.toml
-        //    for that package.
-        // 2. The list of dependencies for the source package, which is also extracted from
-        //    Cargo.toml for that package.
-        // 3. The "resolve" section of the manifest, which has resolved names and package IDs (this
-        //    is what's passed in).
-        //
-        // The below algorithm does a pretty job, but there are some edge cases it has trouble
-        // handling, primarily around malformed Cargo.toml files. For example, this Cargo.toml file
-        // will result in a metadata JSON (as of Rust 1.37) that will parse incorrectly:
-        //
-        // [dependencies]
-        // lazy_static = "1"
-        //
-        // [build-dependencies]
-        // lazy_static_new = { package = "lazy_static", version = "1", optional = true }
-        //
-        // TODO: Add detection for cases like this.
-
-        // Lookup the package ID in the package data.
-        let (_, package_name, version) = self.package_data.get(package_id).ok_or_else(|| {
+        resolved_name: &'a str,
+        dep_id: &PackageId,
+        dep_kinds: &'a [DepKindInfo],
+    ) -> Result<
+        (
+            &'g Arc<PackageDataValue>,
+            impl Iterator<Item = &'g Dependency> + 'a,
+        ),
+        Error,
+    > {
+        let dep_data = self.package_data.get(dep_id).ok_or_else(|| {
             Error::PackageGraphConstructError(format!(
                 "{}: no package data found for dependency '{}'",
-                self.from_id, package_id
+                self.from_id, dep_id
             ))
         })?;
 
-        // ---
-        // Both the following checks verify against the version as well to allow situations like
-        // this to work:
-        //
-        // [dependencies]
-        // lazy_static = "1"
-        //
-        // [dev-dependencies]
-        // lazy_static = "0.2"
-        //
-        // This needs to be done against the renamed map as well.
-        // ---
-
-        // Lookup the name in the renamed map. If a hit is found here we're done.
-        if let Some((name, deps)) = self.renamed_map.get(resolved_name) {
-            return Ok((*name, deps.matches_for(version)));
-        }
-
-        // Lookup the name in the original map.
-        let (name, dep_reqs) = self
-            .original_map
-            .get_key_value(package_name.as_str())
-            .ok_or_else(|| {
-                Error::PackageGraphConstructError(format!(
-                    "{}: no dependency information found for '{}', package ID '{}'",
-                    self.from_id, package_name, package_id
-                ))
-            })?;
-        let deps = dep_reqs.matches_for(version);
-        Ok((*name, deps))
+        Ok((
+            dep_data,
+            self.dep_reqs
+                .matches_for(resolved_name, dep_data, dep_kinds),
+        ))
     }
 }
 
 /// Maintains a list of dependency requirements to match up to for a given package name.
 #[derive(Clone, Debug, Default)]
 struct DependencyReqs<'g> {
-    reqs: Vec<&'g Dependency>,
+    // The keys are (resolved name, dependency).
+    reqs: Vec<(ReqResolvedName<'g>, &'g Dependency)>,
 }
 
 impl<'g> DependencyReqs<'g> {
-    fn push(&mut self, dependency: &'g Dependency) {
-        self.reqs.push(dependency);
+    fn push(&mut self, resolved_name: ReqResolvedName<'g>, dependency: &'g Dependency) {
+        self.reqs.push((resolved_name, dependency));
     }
 
     fn matches_for<'a>(
         &'a self,
-        version: &'a Version,
+        resolved_name: &'a str,
+        package_data: &'a PackageDataValue,
+        dep_kinds: &'a [DepKindInfo],
     ) -> impl Iterator<Item = &'g Dependency> + 'a {
-        self.reqs.iter().filter_map(move |dep| {
-            if cargo_version_matches(&dep.req, version) {
-                Some(*dep)
-            } else {
-                None
-            }
-        })
+        self.reqs
+            .iter()
+            .filter_map(move |(req_resolved_name, dep)| {
+                // A dependency requirement matches this package if all of the following are true:
+                //
+                // 1. The resolved_name matches.
+                // 2. The Cargo version matches (XXX is this necessary?)
+                // 3. The dependency kind and target is found in dep_kinds.
+                if !req_resolved_name.matches(resolved_name) {
+                    return None;
+                }
+
+                if !cargo_version_matches(&dep.req, &package_data.version) {
+                    return None;
+                }
+
+                // Some older manifests don't have the dep_kinds field -- in that case we can't
+                // fully match manifests and just accept all such packages. We just can't do better
+                // than that.
+                if dep_kinds.is_empty() {
+                    return Some(*dep);
+                }
+
+                dep_kinds
+                    .iter()
+                    .any(|dep_kind| dep_kind.kind == dep.kind && dep_kind.target == dep.target)
+                    .then_some(*dep)
+            })
     }
 }
 
 impl PackageLinkImpl {
     fn new<'a>(
         from_id: &PackageId,
-        name: &str,
         resolved_name: &str,
         deps: impl IntoIterator<Item = &'a Dependency>,
     ) -> Result<Self, Error> {
@@ -718,12 +816,28 @@ impl PackageLinkImpl {
         let mut normal = DependencyReqImpl::default();
         let mut build = DependencyReqImpl::default();
         let mut dev = DependencyReqImpl::default();
+
+        // We hope that the dep name is the same for all of these, but it's not guaranteed.
+        let mut dep_name: Option<String> = None;
         for dep in deps {
+            let rename_or_name = dep.rename.as_ref().unwrap_or(&dep.name);
+            match &dep_name {
+                Some(dn) => {
+                    if dn != rename_or_name {
+                        // XXX: warn or error on this?
+                    }
+                }
+                None => {
+                    dep_name = Some(rename_or_name.clone());
+                }
+            }
+
             // Dev dependencies cannot be optional.
             if dep.kind == DependencyKind::Development && dep.optional {
                 return Err(Error::PackageGraphConstructError(format!(
                     "for package '{}': dev-dependency '{}' marked optional",
-                    from_id, name,
+                    from_id,
+                    dep_name.expect("dep_name set above"),
                 )));
             }
 
@@ -743,10 +857,23 @@ impl PackageLinkImpl {
             };
         }
 
+        let dep_name = dep_name.ok_or_else(|| {
+            Error::PackageGraphConstructError(format!(
+                "for package '{}': no dependencies found matching '{}'",
+                from_id, resolved_name,
+            ))
+        })?;
+        let version_req = version_req.unwrap_or_else(|| {
+            panic!(
+                "requires at least one dependency instance: \
+                 from `{from_id}` to `{dep_name}` (resolved name `{resolved_name}`)"
+            )
+        });
+
         Ok(Self {
-            dep_name: name.into(),
+            dep_name,
             resolved_name: resolved_name.into(),
-            version_req: version_req.expect("at least one dependency instance"),
+            version_req,
             normal,
             build,
             dev,
