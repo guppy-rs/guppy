@@ -317,8 +317,7 @@ pub struct CmdSelectOptions {
 }
 
 pub fn cmd_select(options: &CmdSelectOptions) -> Result<()> {
-    let mut command = options.metadata_opts.make_command();
-    command.other_options(["--no-deps"]);
+    let command = options.metadata_opts.make_command();
     let pkg_graph = command.build_graph()?;
 
     let query = options.query_opts.apply(&pkg_graph)?;

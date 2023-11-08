@@ -4,7 +4,18 @@ version = "0.1.0"
 authors = ["Fake Author <fakeauthor@example.com>"]
 edition = "2018"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 external = { path = "../../external", features = ["side-feature"] }
+
+# Test scenarios: rename where version is the same, rename where version number is different.
+[target.'cfg(target_os = "linux")'.dependencies]
+guppy-workspace-hack = "0.1"
+# The redox_syscall package has lib.name set to "syscall", which makes it somewhat special.
+redox_syscall = "0.4.1"
+
+[target.'cfg(target_os = "darwin")'.dependencies]
+guppy-workspace-hack = { package = "nextest-workspace-hack", version = "0.1" }
+redox_syscall_2 = { package = "redox_syscall", version = "0.3.5" }
+
+[target.'cfg(not(any(target_os = "linux", target_os = "darwin")))'.dependencies]
+guppy-workspace-hack = { package = "debug-ignore", version = "1" }
