@@ -21,7 +21,7 @@ maintenance = { status = "actively-developed" }
 
 [dependencies]
 cfg-expr = { version = "0.15.5", features = ["targets"] }
-proptest = { version = "1.2.0", optional = true }
+proptest = { version = "1.4.0", optional = true }
 serde = { version = "1.0.192", optional = true, features = ["derive"] }
 serde_json = { version = "1.0.108", optional = true }
 target-lexicon = { version = "0.12.12", features = ["std"] }

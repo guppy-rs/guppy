@@ -8,6 +8,6 @@ publish = false  # this is a private crate
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-proptest = "1.2.0"
+proptest = "1.4.0"
 twox-hash = { version = "1.6.3", default-features = false }
 guppy-workspace-hack.workspace = true
