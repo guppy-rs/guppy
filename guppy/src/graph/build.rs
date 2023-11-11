@@ -11,6 +11,7 @@ use crate::{
     sorted_set::SortedSet,
     Error, PackageId,
 };
+use ahash::AHashMap;
 use camino::{Utf8Path, Utf8PathBuf};
 use cargo_metadata::{
     DepKindInfo, Dependency, DependencyKind, Metadata, Node, NodeDep, Package, Target,
@@ -23,7 +24,7 @@ use semver::{Version, VersionReq};
 use smallvec::SmallVec;
 use std::{
     borrow::Cow,
-    collections::{BTreeMap, HashMap, HashSet},
+    collections::{BTreeMap, HashSet},
     sync::Arc,
 };
 use target_spec::TargetSpec;
@@ -49,7 +50,7 @@ impl PackageGraph {
             &workspace_members,
         );
 
-        let packages: HashMap<_, _> = metadata
+        let packages: AHashMap<_, _> = metadata
             .packages
             .into_iter()
             .map(|package| build_state.process_package(package))
@@ -83,7 +84,7 @@ impl WorkspaceImpl {
         workspace_root: impl Into<Utf8PathBuf>,
         target_directory: impl Into<Utf8PathBuf>,
         metadata_table: serde_json::Value,
-        packages: &HashMap<PackageId, PackageMetadataImpl>,
+        packages: &AHashMap<PackageId, PackageMetadataImpl>,
         members: impl IntoIterator<Item = PackageId>,
     ) -> Result<Self, Error> {
         use std::collections::btree_map::Entry;
@@ -140,13 +141,13 @@ impl WorkspaceImpl {
 /// Helper struct for building up dependency graph.
 struct GraphBuildState<'a> {
     dep_graph: Graph<PackageId, PackageLinkImpl, Directed, PackageIx>,
-    package_data: HashMap<PackageId, Arc<PackageDataValue>>,
+    package_data: AHashMap<PackageId, Arc<PackageDataValue>>,
     // The above, except by package name.
-    by_package_name: HashMap<String, Vec<Arc<PackageDataValue>>>,
+    by_package_name: AHashMap<String, Vec<Arc<PackageDataValue>>>,
 
     // The values of resolve_data are the resolved dependencies. This is mutated so it is stored
     // separately from package_data.
-    resolve_data: HashMap<PackageId, Vec<NodeDep>>,
+    resolve_data: AHashMap<PackageId, Vec<NodeDep>>,
     workspace_root: &'a Utf8Path,
     workspace_members: &'a HashSet<PackageId>,
 }
@@ -164,11 +165,11 @@ impl<'a> GraphBuildState<'a> {
         let all_package_data = packages
             .iter()
             .map(|package| PackageDataValue::new(package, &mut dep_graph))
-            .collect::<HashMap<_, _>>();
+            .collect::<AHashMap<_, _>>();
         // While it is possible to have duplicate names so the hash map is smaller, just make this
         // as big as package_data.
-        let mut by_package_name: HashMap<String, Vec<Arc<PackageDataValue>>> =
-            HashMap::with_capacity(all_package_data.len());
+        let mut by_package_name: AHashMap<String, Vec<Arc<PackageDataValue>>> =
+            AHashMap::with_capacity(all_package_data.len());
         for package_data in all_package_data.values() {
             by_package_name
                 .entry(package_data.name.clone())
@@ -176,7 +177,7 @@ impl<'a> GraphBuildState<'a> {
                 .push(package_data.clone());
         }
 
-        let resolve_data: HashMap<_, _> = resolve_nodes
+        let resolve_data: AHashMap<_, _> = resolve_nodes
             .into_iter()
             .map(|node| {
                 (
@@ -656,7 +657,7 @@ struct DependencyResolver<'g> {
     from_id: &'g PackageId,
 
     /// The package data, inherited from the graph build state.
-    package_data: &'g HashMap<PackageId, Arc<PackageDataValue>>,
+    package_data: &'g AHashMap<PackageId, Arc<PackageDataValue>>,
 
     /// This is a list of dependency requirements. We don't know the package ID yet so we don't have
     /// a great key to work with. This could be improved in the future by matching on requirements
@@ -668,8 +669,8 @@ impl<'g> DependencyResolver<'g> {
     /// Constructs a new resolver using the provided package data and dependencies.
     fn new(
         from_id: &'g PackageId,
-        package_data: &'g HashMap<PackageId, Arc<PackageDataValue>>,
-        by_package_name: &'g HashMap<String, Vec<Arc<PackageDataValue>>>,
+        package_data: &'g AHashMap<PackageId, Arc<PackageDataValue>>,
+        by_package_name: &'g AHashMap<String, Vec<Arc<PackageDataValue>>>,
         package_deps: impl IntoIterator<Item = &'g Dependency>,
     ) -> Self {
         let mut dep_reqs = DependencyReqs::default();
@@ -697,29 +698,6 @@ impl<'g> DependencyResolver<'g> {
                 }
             }
         }
-
-        // let mut resolved_name_map: HashMap<_, DependencyReqs<'_>> = HashMap::new();
-
-        // for dep in package_deps {
-        //     match &dep.rename {
-        //         Some(rename) => {
-        //             // The resolved name is the renamed name, except dashes are replaced with
-        //             // underscores.
-        //             let resolved_name = rename.replace('-', "_");
-        //             resolved_name_map
-        //                 .entry(resolved_name.into())
-        //                 .or_default()
-        //                 .push(dep);
-        //         }
-        //         None => {
-        //             let resolved_name = dep.name.replace('-', "_");
-        //             resolved_name_map
-        //                 .entry(resolved_name.into())
-        //                 .or_default()
-        //                 .push(dep);
-        //         }
-        //     }
-        // }
 
         Self {
             from_id,

@@ -16,13 +16,14 @@ use crate::{
     platform::{PlatformStatus, PlatformStatusImpl},
     DependencyKind, Error, PackageId,
 };
+use ahash::AHashMap;
 use once_cell::sync::OnceCell;
 use petgraph::{
     algo::has_path_connecting,
     prelude::*,
     visit::{EdgeFiltered, IntoNodeReferences},
 };
-use std::{collections::HashMap, fmt, iter, iter::FromIterator};
+use std::{fmt, iter, iter::FromIterator};
 
 // Some general notes about feature graphs:
 //
@@ -646,7 +647,7 @@ pub(in crate::graph) struct FeatureGraphImpl {
     pub(super) graph: FeaturePetgraph,
     // base ixs consists of the base (start) feature indexes for each package.
     pub(super) base_ixs: Vec<NodeIndex<FeatureIx>>,
-    pub(super) map: HashMap<FeatureNode, FeatureMetadataImpl>,
+    pub(super) map: AHashMap<FeatureNode, FeatureMetadataImpl>,
     pub(super) warnings: Vec<FeatureGraphWarning>,
     // The strongly connected components of the feature graph. Computed on demand.
     pub(super) sccs: OnceCell<Sccs<FeatureIx>>,

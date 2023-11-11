@@ -25,6 +25,7 @@ include = [
 rust-version = "1.70"
 
 [dependencies]
+ahash.workspace = true
 camino = "1.1.6"
 globset = "0.4.13"
 guppy = { version = "0.17.1", path = "../../guppy", features = [

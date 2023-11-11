@@ -5,6 +5,7 @@ use crate::{
     details::{FixtureDetails, LinkDetails, PackageDetails, PlatformResults},
     package_id,
 };
+use ahash::AHashMap;
 use camino::{Utf8Component, Utf8Path, Utf8PathBuf};
 use guppy::{
     errors::{FeatureBuildStage, FeatureGraphWarning},
@@ -13,10 +14,7 @@ use guppy::{
     CargoMetadata, DependencyKind,
 };
 use once_cell::sync::{Lazy, OnceCell};
-use std::{
-    collections::{BTreeMap, HashMap},
-    fs,
-};
+use std::{collections::BTreeMap, fs};
 
 // Metadata along with interesting crate names.
 pub static METADATA1_PATH: &str = "../small/metadata1.json";
@@ -409,7 +407,7 @@ impl FixtureDetails {
     // Specific fixtures follow.
 
     pub(crate) fn metadata1() -> Self {
-        let mut details = HashMap::new();
+        let mut details = AHashMap::new();
 
         PackageDetails::new(
             METADATA1_TESTCRATE,
@@ -501,7 +499,7 @@ impl FixtureDetails {
     }
 
     pub(crate) fn metadata2() -> Self {
-        let mut details = HashMap::new();
+        let mut details = AHashMap::new();
 
         PackageDetails::new(
             METADATA2_TESTCRATE,
@@ -583,13 +581,13 @@ impl FixtureDetails {
     }
 
     pub(crate) fn metadata_builddep() -> Self {
-        let details = HashMap::new();
+        let details = AHashMap::new();
 
         Self::new(details)
     }
 
     pub(crate) fn metadata_dups() -> Self {
-        let mut details = HashMap::new();
+        let mut details = AHashMap::new();
 
         PackageDetails::new(
             METADATA_DUPS_TESTCRATE,
@@ -612,7 +610,7 @@ impl FixtureDetails {
     }
 
     pub(crate) fn metadata_cycle1() -> Self {
-        let mut details = HashMap::new();
+        let mut details = AHashMap::new();
 
         PackageDetails::new(
             METADATA_CYCLE1_BASE,
@@ -652,7 +650,7 @@ impl FixtureDetails {
         //                |
         //                v
         //             lower-a <-> lower-b
-        let mut details = HashMap::new();
+        let mut details = AHashMap::new();
 
         // upper-a
         PackageDetails::new(
@@ -760,7 +758,7 @@ impl FixtureDetails {
     }
 
     pub(crate) fn metadata_cycle_features() -> Self {
-        let details = HashMap::new();
+        let details = AHashMap::new();
 
         Self::new(details)
             .with_workspace_members(vec![
@@ -821,7 +819,7 @@ impl FixtureDetails {
         // [target.'cfg(all(unix, target_feature = "sse"))'.build-dependencies]
         // dep-a = { path = "../dep-a", optional = true, default-features = false, features = ["bar"] }
         // ```
-        let mut details = HashMap::new();
+        let mut details = AHashMap::new();
 
         PackageDetails::new(
             METADATA_TARGETS1_TESTCRATE,
@@ -851,7 +849,7 @@ impl FixtureDetails {
         let x86_64_windows =
             Platform::new("x86_64-pc-windows-msvc", TargetFeatures::Unknown).unwrap();
 
-        let mut link_details = HashMap::new();
+        let mut link_details = AHashMap::new();
 
         use EnabledTernary::*;
 
@@ -1074,7 +1072,7 @@ impl FixtureDetails {
         // path = "src/lib.rs"
         // crate-type = ["rlib", "dylib"]
 
-        let mut details = HashMap::new();
+        let mut details = AHashMap::new();
 
         static BIN_CDYLIB_TYPES: Lazy<Vec<String>> =
             Lazy::new(|| vec!["bin".into(), "cdylib".into()]);
@@ -1128,7 +1126,7 @@ impl FixtureDetails {
     }
 
     pub(crate) fn metadata_proc_macro1() -> Self {
-        let mut details = HashMap::new();
+        let mut details = AHashMap::new();
 
         PackageDetails::new(
             METADATA_PROC_MACRO1_MACRO,
@@ -1150,17 +1148,17 @@ impl FixtureDetails {
     }
 
     pub(crate) fn metadata_alternate_registries() -> Self {
-        let details = HashMap::new();
+        let details = AHashMap::new();
         Self::new(details)
     }
 
     pub(crate) fn metadata_weak_namespaced_features() -> Self {
-        let details = HashMap::new();
+        let details = AHashMap::new();
         Self::new(details)
     }
 
     pub(crate) fn metadata_libra() -> Self {
-        let mut details = HashMap::new();
+        let mut details = AHashMap::new();
 
         PackageDetails::new(
             METADATA_LIBRA_E2E_TESTS,
@@ -1298,7 +1296,7 @@ impl FixtureDetails {
     }
 
     pub(crate) fn metadata_libra_f0091a4() -> Self {
-        let details = HashMap::new();
+        let details = AHashMap::new();
 
         Self::new(details).with_cycles(vec![vec![
             METADATA_LIBRA_FUNCTIONAL_HYPHEN_TESTS,
@@ -1310,7 +1308,7 @@ impl FixtureDetails {
     }
 
     pub(crate) fn metadata_libra_9ffd93b() -> Self {
-        let details = HashMap::new();
+        let details = AHashMap::new();
 
         Self::new(details).with_cycles(vec![
             vec![METADATA_LIBRA_EXECUTOR_UTILS, METADATA_LIBRA_EXECUTOR],
@@ -1329,25 +1327,25 @@ impl FixtureDetails {
     }
 
     pub(crate) fn metadata_guppy_78cb7e8() -> Self {
-        let details = HashMap::new();
+        let details = AHashMap::new();
 
         Self::new(details)
     }
 
     pub(crate) fn metadata_guppy_869476c() -> Self {
-        let details = HashMap::new();
+        let details = AHashMap::new();
 
         Self::new(details)
     }
 
     pub(crate) fn metadata_guppy_c9b4f76() -> Self {
-        let details = HashMap::new();
+        let details = AHashMap::new();
 
         Self::new(details)
     }
 
     pub(crate) fn metadata_guppy_44b62fa() -> Self {
-        let details = HashMap::new();
+        let details = AHashMap::new();
 
         Self::new(details)
     }

@@ -13,11 +13,12 @@ use crate::{
     },
     platform::PlatformStatusImpl,
 };
+use ahash::AHashMap;
 use cargo_metadata::DependencyKind;
 use once_cell::sync::OnceCell;
 use petgraph::{prelude::*, visit::IntoEdgeReferences};
 use smallvec::SmallVec;
-use std::{collections::HashMap, iter};
+use std::iter;
 
 pub(super) type FeaturePetgraph = Graph<FeatureNode, FeatureEdge, Directed, FeatureIx>;
 pub(super) type FeatureEdgeReference<'g> = <&'g FeaturePetgraph as IntoEdgeReferences>::EdgeRef;
@@ -27,7 +28,7 @@ pub(super) struct FeatureGraphBuildState {
     graph: FeaturePetgraph,
     // Map from package ixs to the base (first) feature for each package.
     base_ixs: Vec<NodeIndex<FeatureIx>>,
-    map: HashMap<FeatureNode, FeatureMetadataImpl>,
+    map: AHashMap<FeatureNode, FeatureMetadataImpl>,
     weak: WeakDependencies,
     warnings: Vec<FeatureGraphWarning>,
 }
@@ -41,7 +42,7 @@ impl FeatureGraphBuildState {
             // Each package corresponds to exactly one base feature ix, and there's one last ix at
             // the end.
             base_ixs: Vec::with_capacity(package_count + 1),
-            map: HashMap::with_capacity(package_count),
+            map: AHashMap::with_capacity(package_count),
             weak: WeakDependencies::new(),
             warnings: vec![],
         }
@@ -68,7 +69,7 @@ impl FeatureGraphBuildState {
     }
 
     pub(super) fn add_named_feature_edges(&mut self, metadata: PackageMetadata<'_>) {
-        let dep_name_to_link: HashMap<_, _> = metadata
+        let dep_name_to_link: AHashMap<_, _> = metadata
             .direct_links()
             .map(|link| (link.dep_name(), link))
             .collect();
@@ -102,7 +103,7 @@ impl FeatureGraphBuildState {
         metadata: PackageMetadata<'_>,
         from_label: FeatureLabel<'_>,
         feature_dep: &NamedFeatureDep,
-        dep_name_to_link: &HashMap<&str, PackageLink>,
+        dep_name_to_link: &AHashMap<&str, PackageLink>,
     ) -> SmallVec<[(FeatureNode, FeatureEdge); 3]> {
         let mut nodes_edges: SmallVec<[(FeatureNode, FeatureEdge); 3]> = SmallVec::new();
 
@@ -477,7 +478,7 @@ struct FeatureReq<'g> {
     edge_ix: EdgeIndex<PackageIx>,
     to_default_idx: FeatureIndexInPackage,
     // This will contain any build states that aren't empty.
-    features: HashMap<FeatureIndexInPackage, DependencyBuildState>,
+    features: AHashMap<FeatureIndexInPackage, DependencyBuildState>,
 }
 
 impl<'g> FeatureReq<'g> {
@@ -490,7 +491,7 @@ impl<'g> FeatureReq<'g> {
             to_default_idx: to
                 .get_feature_idx(FeatureLabel::Named("default"))
                 .unwrap_or(FeatureIndexInPackage::Base),
-            features: HashMap::new(),
+            features: AHashMap::new(),
         }
     }
 

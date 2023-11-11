@@ -8,6 +8,7 @@ use crate::{
         RulesImpl,
     },
 };
+use ahash::AHashMap;
 use camino::Utf8Path;
 use globset::Candidate;
 use guppy::{
@@ -21,7 +22,7 @@ use guppy::{
 };
 use petgraph::{graphmap::GraphMap, Directed};
 use rayon::prelude::*;
-use std::collections::{hash_map::Entry, HashMap, HashSet};
+use std::collections::{hash_map::Entry, HashSet};
 
 /// Determine target dependencies from changed files and packages in a workspace.
 ///
@@ -426,7 +427,7 @@ fn process_path<'g>(
 /// Stores a build cache of every package in a workspace.
 #[derive(Debug)]
 struct CargoBuildCache<'g> {
-    result_cache: HashMap<&'g PackageId, BuildResult<'g>>,
+    result_cache: AHashMap<&'g PackageId, BuildResult<'g>>,
 }
 
 impl<'g> CargoBuildCache<'g> {
@@ -441,7 +442,7 @@ impl<'g> CargoBuildCache<'g> {
             .as_ref()
             .unwrap_or(&default_features_only);
 
-        let result_cache: HashMap<_, _> = workspace
+        let result_cache: ahash::HashMap<_, _> = workspace
             .par_iter()
             .map(|package| {
                 let id = package.id();
@@ -450,7 +451,9 @@ impl<'g> CargoBuildCache<'g> {
             })
             .collect();
 
-        Self { result_cache }
+        Self {
+            result_cache: result_cache.into(),
+        }
     }
 }
 
@@ -645,7 +648,7 @@ impl<'g> ReverseIndex<'g> {
             .collect();
 
         // Do a DFS with two maps, in case there are cycles (can happen with dev deps).
-        let mut discovered = HashMap::new();
+        let mut discovered = AHashMap::new();
         let mut finished = HashSet::new();
 
         while let Some(&(id, follow)) = stack.last() {

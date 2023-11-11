@@ -1,6 +1,7 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
+use ahash::AHashMap;
 use fixedbitset::FixedBitSet;
 use nested::Nested;
 use petgraph::{
@@ -9,12 +10,12 @@ use petgraph::{
     prelude::*,
     visit::{IntoNeighborsDirected, IntoNodeIdentifiers, VisitMap, Visitable},
 };
-use std::{collections::HashMap, slice};
+use std::slice;
 
 #[derive(Clone, Debug)]
 pub(crate) struct Sccs<Ix: IndexType> {
     sccs: Nested<Vec<NodeIndex<Ix>>>,
-    multi_map: HashMap<NodeIndex<Ix>, usize>,
+    multi_map: AHashMap<NodeIndex<Ix>, usize>,
 }
 
 impl<Ix: IndexType> Sccs<Ix> {
@@ -39,7 +40,7 @@ impl<Ix: IndexType> Sccs<Ix> {
             // forward topological order.
             .rev()
             .collect();
-        let mut multi_map = HashMap::new();
+        let mut multi_map = AHashMap::new();
         for (idx, scc) in sccs.iter().enumerate() {
             if scc.len() > 1 {
                 multi_map.extend(scc.iter().map(|ix| (*ix, idx)));

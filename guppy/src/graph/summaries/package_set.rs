@@ -9,16 +9,13 @@ use crate::{
     },
     Error, PackageId,
 };
+use ahash::AHashMap;
 use camino::Utf8PathBuf;
 use guppy_summaries::SummaryId;
 use semver::VersionReq;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use smallvec::SmallVec;
-use std::{
-    borrow::Cow,
-    collections::{BTreeSet, HashMap},
-    fmt,
-};
+use std::{borrow::Cow, collections::BTreeSet, fmt};
 
 /// A set of packages specified in a summary. Can be resolved into a `PackageSet` given a
 /// `PackageGraph`.
@@ -569,10 +566,10 @@ fn version_req_is_star(req: &VersionReq) -> bool {
 struct PackageMatcher<'a> {
     // The bools are to ensure that all the packages specified in the summary actually get matched
     // against something in the metadata.
-    summary_ids: HashMap<&'a SummaryId, bool>,
+    summary_ids: AHashMap<&'a SummaryId, bool>,
     workspace_members: &'a BTreeSet<String>,
-    third_party: HashMap<&'a str, SmallVec<[(&'a ThirdPartySummary, bool); 2]>>,
-    registry_names_to_urls: HashMap<&'a str, &'a str>,
+    third_party: AHashMap<&'a str, SmallVec<[(&'a ThirdPartySummary, bool); 2]>>,
+    registry_names_to_urls: AHashMap<&'a str, &'a str>,
 }
 
 impl<'a> PackageMatcher<'a> {
@@ -587,8 +584,8 @@ impl<'a> PackageMatcher<'a> {
             .map(|summary_id| (summary_id, false))
             .collect();
 
-        let mut third_party: HashMap<_, SmallVec<[_; 2]>> = HashMap::new();
-        let mut registry_names_to_urls = HashMap::new();
+        let mut third_party: AHashMap<_, SmallVec<[_; 2]>> = AHashMap::new();
+        let mut registry_names_to_urls = AHashMap::new();
         for tp_summary in &summary.third_party {
             if let ThirdPartySource::Registry(Some(name)) = &tp_summary.source {
                 if !registry_names_to_urls.contains_key(name.as_str()) {
@@ -730,7 +727,7 @@ impl<'a> PackageMatcher<'a> {
     fn source_matches(
         package_source: PackageSource<'_>,
         third_party_source: &ThirdPartySource,
-        registry_names_to_urls: &HashMap<&'a str, &'a str>,
+        registry_names_to_urls: &AHashMap<&'a str, &'a str>,
     ) -> bool {
         match (package_source, third_party_source) {
             (PackageSource::Workspace(_), _) => {

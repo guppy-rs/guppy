@@ -12,6 +12,7 @@ use crate::{
     platform::{EnabledTernary, PlatformSpec, PlatformStatus, PlatformStatusImpl},
     CargoMetadata, DependencyKind, Error, JsonValue, MetadataCommand, PackageId,
 };
+use ahash::AHashMap;
 use camino::{Utf8Path, Utf8PathBuf};
 use fixedbitset::FixedBitSet;
 use indexmap::{IndexMap, IndexSet};
@@ -25,7 +26,7 @@ use petgraph::{
 use semver::{Version, VersionReq};
 use smallvec::SmallVec;
 use std::{
-    collections::{BTreeMap, HashMap, HashSet},
+    collections::{BTreeMap, HashSet},
     fmt, iter,
     iter::FromIterator,
 };
@@ -54,7 +55,7 @@ pub struct PackageGraph {
 /// Per-package data for a PackageGraph instance.
 #[derive(Clone, Debug)]
 pub(super) struct PackageGraphData {
-    pub(super) packages: HashMap<PackageId, PackageMetadataImpl>,
+    pub(super) packages: AHashMap<PackageId, PackageMetadataImpl>,
     pub(super) workspace: WorkspaceImpl,
 }
 

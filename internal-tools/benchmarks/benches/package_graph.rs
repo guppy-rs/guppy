@@ -102,6 +102,8 @@ fn make_package_graph() -> PackageGraph {
 fn make_package_name_hashmap<'g>(
     graph: &'g PackageGraph,
 ) -> HashMap<&'g str, Vec<PackageMetadata<'g>>> {
+    // Testing the real HashMap is fine here.
+    #[allow(clippy::disallowed_methods)]
     let mut hashmap: HashMap<&'g str, Vec<_>> = HashMap::new();
     for package in graph.packages() {
         hashmap.entry(package.name()).or_default().push(package);
