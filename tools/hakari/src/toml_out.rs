@@ -10,6 +10,7 @@ use crate::{
     helpers::VersionDisplay,
     DepFormatVersion,
 };
+use ahash::AHashMap;
 use camino::Utf8PathBuf;
 use cfg_if::cfg_if;
 use guppy::{
@@ -19,7 +20,7 @@ use guppy::{
 };
 use std::{
     borrow::Cow,
-    collections::{HashMap, HashSet},
+    collections::HashSet,
     error, fmt,
     hash::{Hash, Hasher},
 };
@@ -179,8 +180,8 @@ pub enum TomlOutError {
 pub(crate) fn toml_name_map<'g>(
     output_map: &OutputMap<'g>,
     dep_format: DepFormatVersion,
-) -> HashMap<Cow<'g, str>, PackageMetadata<'g>> {
-    let mut packages_by_name: HashMap<&'g str, HashMap<_, _>> = HashMap::new();
+) -> AHashMap<Cow<'g, str>, PackageMetadata<'g>> {
+    let mut packages_by_name: AHashMap<&'g str, AHashMap<_, _>> = AHashMap::new();
     for vals in output_map.values() {
         for (&package_id, (package, _)) in vals {
             packages_by_name
@@ -190,7 +191,7 @@ pub(crate) fn toml_name_map<'g>(
         }
     }
 
-    let mut toml_name_map = HashMap::new();
+    let mut toml_name_map = AHashMap::new();
     for (name, packages) in packages_by_name {
         if packages.len() > 1 {
             // Make hashed names for each package.
@@ -286,7 +287,7 @@ pub(crate) fn write_toml(
         }
     }
 
-    let mut packages_by_name: HashMap<&str, HashSet<_>> = HashMap::new();
+    let mut packages_by_name: AHashMap<&str, HashSet<_>> = AHashMap::new();
     for vals in output_map.values() {
         for (&package_id, (package, _)) in vals {
             packages_by_name

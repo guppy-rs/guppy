@@ -1,0 +1,5 @@
+disallowed-methods = [
+    # use ahash everywhere instead
+    "std::collections::hash::map::HashMap::new",
+    "std::collections::hash::map::HashMap::with_capacity",
+]

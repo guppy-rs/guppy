@@ -8,6 +8,7 @@ use crate::{
     },
     package_id,
 };
+use ahash::AHashMap;
 use camino::Utf8PathBuf;
 use guppy::{
     errors::FeatureGraphWarning,
@@ -19,24 +20,24 @@ use guppy::{
     DependencyKind, PackageId, Version,
 };
 use pretty_assertions::assert_eq;
-use std::collections::{BTreeMap, HashMap};
+use std::collections::BTreeMap;
 
 /// This captures metadata fields that are relevant for tests. They are meant to be written out
 /// lazily as tests are filled out -- feel free to add more details as necessary!
 pub struct FixtureDetails {
     workspace_members: Option<BTreeMap<Utf8PathBuf, PackageId>>,
-    package_details: HashMap<PackageId, PackageDetails>,
-    link_details: HashMap<(PackageId, PackageId), LinkDetails>,
+    package_details: AHashMap<PackageId, PackageDetails>,
+    link_details: AHashMap<(PackageId, PackageId), LinkDetails>,
     feature_graph_warnings: Vec<FeatureGraphWarning>,
     cycles: Vec<Vec<PackageId>>,
 }
 
 impl FixtureDetails {
-    pub fn new(package_details: HashMap<PackageId, PackageDetails>) -> Self {
+    pub fn new(package_details: AHashMap<PackageId, PackageDetails>) -> Self {
         Self {
             workspace_members: None,
             package_details,
-            link_details: HashMap::new(),
+            link_details: AHashMap::new(),
             feature_graph_warnings: vec![],
             cycles: vec![],
         }
@@ -57,7 +58,7 @@ impl FixtureDetails {
 
     pub fn with_link_details(
         mut self,
-        link_details: HashMap<(PackageId, PackageId), LinkDetails>,
+        link_details: AHashMap<(PackageId, PackageId), LinkDetails>,
     ) -> Self {
         self.link_details = link_details;
         self
@@ -456,7 +457,7 @@ impl PackageDetails {
         self
     }
 
-    pub fn insert_into(self, map: &mut HashMap<PackageId, PackageDetails>) {
+    pub fn insert_into(self, map: &mut AHashMap<PackageId, PackageDetails>) {
         map.insert(self.id.clone(), self);
     }
 
@@ -543,7 +544,7 @@ impl LinkDetails {
         self
     }
 
-    pub fn insert_into(self, map: &mut HashMap<(PackageId, PackageId), Self>) {
+    pub fn insert_into(self, map: &mut AHashMap<(PackageId, PackageId), Self>) {
         map.insert((self.from.clone(), self.to.clone()), self);
     }
 
@@ -601,7 +602,7 @@ pub struct PlatformResults {
     // Each pair stands for (required on, enabled on).
     status: (EnabledTernary, EnabledTernary),
     default_features: (EnabledTernary, EnabledTernary),
-    feature_statuses: HashMap<String, (EnabledTernary, EnabledTernary)>,
+    feature_statuses: AHashMap<String, (EnabledTernary, EnabledTernary)>,
 }
 
 impl PlatformResults {
@@ -612,7 +613,7 @@ impl PlatformResults {
         Self {
             status,
             default_features,
-            feature_statuses: HashMap::new(),
+            feature_statuses: AHashMap::new(),
         }
     }
 

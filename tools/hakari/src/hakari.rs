@@ -7,6 +7,7 @@ use crate::{
     toml_out::{write_toml, HakariOutputOptions},
     CargoTomlError, HakariCargoToml, TomlOutError,
 };
+use ahash::AHashMap;
 use bimap::BiHashMap;
 use debug_ignore::DebugIgnore;
 use guppy::{
@@ -22,7 +23,7 @@ use guppy::{
 use rayon::prelude::*;
 use std::{
     borrow::Cow,
-    collections::{BTreeMap, BTreeSet, HashMap, HashSet},
+    collections::{BTreeMap, BTreeSet, HashSet},
     fmt,
     sync::Arc,
 };
@@ -39,7 +40,7 @@ pub struct HakariBuilder<'g> {
     pub(crate) verify_mode: bool,
     pub(crate) traversal_excludes: HashSet<&'g PackageId>,
     final_excludes: HashSet<&'g PackageId>,
-    pub(crate) registries: BiHashMap<String, String>,
+    pub(crate) registries: BiHashMap<String, String, ahash::RandomState, ahash::RandomState>,
     unify_target_host: UnifyTargetHost,
     output_single_feature: bool,
     pub(crate) dep_format_version: DepFormatVersion,
@@ -78,7 +79,7 @@ impl<'g> HakariBuilder<'g> {
             verify_mode: false,
             traversal_excludes: HashSet::new(),
             final_excludes: HashSet::new(),
-            registries: BiHashMap::new(),
+            registries: BiHashMap::with_hashers(Default::default(), Default::default()),
             unify_target_host: UnifyTargetHost::default(),
             output_single_feature: false,
             dep_format_version: DepFormatVersion::default(),
@@ -408,7 +409,7 @@ mod summaries {
                 })
                 .collect::<Result<Vec<_>, _>>()?;
 
-            let registries: BiHashMap<_, _> = summary
+            let registries: BiHashMap<_, _, ahash::RandomState, ahash::RandomState> = summary
                 .registries
                 .iter()
                 .map(|(name, url)| (name.clone(), url.clone()))
@@ -666,7 +667,7 @@ impl<'g> Hakari<'g> {
     ///
     /// Packages which have one version are present as their original names, while packages with
     /// more than one version have a hash appended to them.
-    pub fn toml_name_map(&self) -> HashMap<Cow<'g, str>, PackageMetadata<'g>> {
+    pub fn toml_name_map(&self) -> AHashMap<Cow<'g, str>, PackageMetadata<'g>> {
         toml_name_map(&self.output_map, self.builder.dep_format_version)
     }
 

@@ -42,6 +42,7 @@ mod mv;
 
 pub use crate::{core::*, mv::*};
 
+use ahash::AHashMap;
 use camino::Utf8PathBuf;
 use clap::{ArgEnum, Parser};
 use color_eyre::eyre::{bail, Result, WrapErr};
@@ -58,15 +59,7 @@ use guppy::{
 use guppy_cmdlib::{
     string_to_platform_spec, CargoMetadataOptions, CargoResolverOpts, PackagesAndFeatures,
 };
-use std::{
-    borrow::Cow,
-    cmp,
-    collections::{HashMap, HashSet},
-    fmt, fs,
-    io::Write,
-    iter,
-    path::PathBuf,
-};
+use std::{borrow::Cow, cmp, collections::HashSet, fmt, fs, io::Write, iter, path::PathBuf};
 
 pub fn cmd_diff(json: bool, old: &str, new: &str) -> Result<()> {
     let old_json = fs::read_to_string(old)?;
@@ -140,7 +133,7 @@ pub fn cmd_dups(opts: &DupsOptions) -> Result<()> {
     let resolver = opts.filter_opts.make_resolver(&pkg_graph)?;
     let selection = pkg_graph.query_workspace();
 
-    let mut dupe_map: HashMap<_, Vec<_>> = HashMap::new();
+    let mut dupe_map: AHashMap<_, Vec<_>> = AHashMap::new();
     for package in selection
         .resolve_with_fn(resolver)
         .packages(DependencyDirection::Forward)
@@ -387,7 +380,7 @@ pub fn cmd_subtree_size(options: &SubtreeSizeOptions) -> Result<()> {
         pkg_graph.query_workspace()
     };
 
-    let mut unique_deps: HashMap<&PackageId, HashSet<&PackageId>> = HashMap::new();
+    let mut unique_deps: AHashMap<&PackageId, HashSet<&PackageId>> = AHashMap::new();
     for package_id in selection
         .resolve_with_fn(&resolver)
         .package_ids(DependencyDirection::Forward)

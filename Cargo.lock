@@ -19,14 +19,15 @@ checksum = "f26201604c87b1e01bd3d98f8d5d9a8fcbb815e8cedb41ffccbeb4bf593a35fe"
 
 [[package]]
 name = "ahash"
-version = "0.8.3"
+version = "0.8.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2c99f64d1e06488f620f932677e24bc6e2897582980441ae90a671415bd7ec2f"
+checksum = "91429305e9f0a25f6205c5b8e0d2db09e0708a7a6df0f42212bb56c32c8ac97a"
 dependencies = [
  "cfg-if",
  "getrandom",
  "once_cell",
  "version_check",
+ "zerocopy",
 ]
 
 [[package]]
@@ -422,6 +423,7 @@ dependencies = [
 name = "cargo-guppy"
 version = "0.1.0"
 dependencies = [
+ "ahash",
  "camino",
  "clap 3.2.25",
  "color-eyre",
@@ -907,6 +909,7 @@ dependencies = [
 name = "determinator"
 version = "0.12.0"
 dependencies = [
+ "ahash",
  "camino",
  "cfg-if",
  "fixtures",
@@ -1172,6 +1175,7 @@ dependencies = [
 name = "fixtures"
 version = "0.1.0"
 dependencies = [
+ "ahash",
  "camino",
  "guppy",
  "guppy-workspace-hack",
@@ -1963,6 +1967,7 @@ dependencies = [
 name = "guppy"
 version = "0.17.1"
 dependencies = [
+ "ahash",
  "camino",
  "cargo_metadata",
  "cfg-if",
@@ -2016,6 +2021,7 @@ dependencies = [
 name = "guppy-summaries"
 version = "0.7.1"
 dependencies = [
+ "ahash",
  "camino",
  "cfg-if",
  "diffus",
@@ -2034,11 +2040,13 @@ version = "0.1.0"
 dependencies = [
  "clap 4.3.19",
  "clap_builder",
+ "getrandom",
  "indexmap 1.9.3",
  "libc",
  "log",
  "memchr",
  "num-traits",
+ "once_cell",
  "owo-colors",
  "petgraph",
  "proc-macro2",
@@ -2060,6 +2068,7 @@ dependencies = [
 name = "hakari"
 version = "0.17.1"
 dependencies = [
+ "ahash",
  "atomicwrites",
  "bimap",
  "camino",
@@ -4361,6 +4370,26 @@ name = "yansi"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "09041cd90cf85f7f8b2df60c646f853b7f535ce68f85244eb6731cf89fa498ec"
+
+[[package]]
+name = "zerocopy"
+version = "0.7.25"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8cd369a67c0edfef15010f980c3cbe45d7f651deac2cd67ce097cd801de16557"
+dependencies = [
+ "zerocopy-derive",
+]
+
+[[package]]
+name = "zerocopy-derive"
+version = "0.7.25"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c2f140bda219a26ccc0cdb03dba58af72590c53b22642577d88a927bc5c87d6b"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.32",
+]
 
 [[package]]
 name = "zeroize"

@@ -10,11 +10,12 @@
 
 pub use crate::report::SummaryReport;
 use crate::{PackageInfo, PackageMap, PackageStatus, Summary, SummaryId, SummarySource};
+use ahash::AHashMap;
 use diffus::{edit, Diffable};
 use semver::Version;
 use serde::{ser::SerializeStruct, Serialize};
 use std::{
-    collections::{BTreeMap, BTreeSet, HashMap},
+    collections::{BTreeMap, BTreeSet},
     fmt, mem,
 };
 
@@ -182,7 +183,8 @@ impl<'a> PackageDiff<'a> {
     // ---
 
     fn combine_insert_remove(changed: &mut BTreeMap<&'a SummaryId, SummaryDiffStatus<'a>>) {
-        let mut combine_statuses = HashMap::with_capacity(changed.len());
+        let mut combine_statuses: AHashMap<&str, CombineStatus<'_>> =
+            AHashMap::with_capacity(changed.len());
 
         for (summary_id, status) in &*changed {
             let entry = combine_statuses
