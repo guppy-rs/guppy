@@ -31,7 +31,7 @@ use target_spec::TargetSpec;
 
 impl PackageGraph {
     /// Constructs a new `PackageGraph` instances from the given metadata.
-    pub(crate) fn build(metadata: Metadata) -> Result<Self, Error> {
+    pub(crate) fn build(metadata: Metadata) -> Result<Self, Box<Error>> {
         // resolve_nodes is missing if the metadata was generated with --no-deps.
         let resolve_nodes = metadata.resolve.map(|r| r.nodes).unwrap_or_default();
 
@@ -86,7 +86,7 @@ impl WorkspaceImpl {
         metadata_table: serde_json::Value,
         packages: &AHashMap<PackageId, PackageMetadataImpl>,
         members: impl IntoIterator<Item = PackageId>,
-    ) -> Result<Self, Error> {
+    ) -> Result<Self, Box<Error>> {
         use std::collections::btree_map::Entry;
 
         let workspace_root = workspace_root.into();
@@ -106,7 +106,8 @@ impl WorkspaceImpl {
                     return Err(Error::PackageGraphConstructError(format!(
                         "workspace member '{}' at path {:?} not in workspace",
                         id, package_metadata.manifest_path,
-                    )));
+                    ))
+                    .into());
                 }
             };
             members_by_path.insert(workspace_path.to_path_buf(), id.clone());
@@ -121,7 +122,8 @@ impl WorkspaceImpl {
                         occupied.key(),
                         occupied.get(),
                         id
-                    )))
+                    ))
+                    .into());
                 }
             }
         }
@@ -202,7 +204,7 @@ impl<'a> GraphBuildState<'a> {
     fn process_package(
         &mut self,
         package: Package,
-    ) -> Result<(PackageId, PackageMetadataImpl), Error> {
+    ) -> Result<(PackageId, PackageMetadataImpl), Box<Error>> {
         let package_id = PackageId::from_metadata(package.id);
         let package_data = self.package_data(&package_id)?.clone();
 
@@ -222,7 +224,8 @@ impl<'a> GraphBuildState<'a> {
                     return Err(Error::PackageGraphConstructError(format!(
                         "package '{}': manifest path '{}' does not have parent",
                         package_id, package.manifest_path,
-                    )));
+                    ))
+                    .into());
                 }
             };
             PackageSourceImpl::create_path(dirname, self.workspace_root)
@@ -375,9 +378,10 @@ impl<'a> GraphBuildState<'a> {
         ))
     }
 
-    fn package_data(&self, id: &PackageId) -> Result<&Arc<PackageDataValue>, Error> {
+    fn package_data(&self, id: &PackageId) -> Result<&Arc<PackageDataValue>, Box<Error>> {
         self.package_data.get(id).ok_or_else(|| {
             Error::PackageGraphConstructError(format!("no package data found for package '{}'", id))
+                .into()
         })
     }
 
@@ -387,7 +391,7 @@ impl<'a> GraphBuildState<'a> {
         &self,
         id: &PackageId,
         manifest_path: &Utf8Path,
-    ) -> Result<Box<Utf8Path>, Error> {
+    ) -> Result<Box<Utf8Path>, Box<Error>> {
         // Strip off the workspace path from the manifest path.
         let workspace_path = manifest_path
             .strip_prefix(self.workspace_root)
@@ -548,7 +552,7 @@ impl<'a> BuildTargets<'a> {
         }
     }
 
-    fn add(&mut self, target: Target) -> Result<(), Error> {
+    fn add(&mut self, target: Target) -> Result<(), Box<Error>> {
         use std::collections::btree_map::Entry;
 
         // Figure out the id and kind using target.kind and target.crate_types.
@@ -561,13 +565,15 @@ impl<'a> BuildTargets<'a> {
             return Err(Error::PackageGraphConstructError(format!(
                 "for package {}, proc-macro mixed with other kinds ({:?})",
                 self.package_id, target_kinds
-            )));
+            ))
+            .into());
         }
         if crate_types.len() > 1 && Self::is_proc_macro(&crate_types) {
             return Err(Error::PackageGraphConstructError(format!(
                 "for package {}, proc-macro mixed with other crate types ({})",
                 self.package_id, crate_types
-            )));
+            ))
+            .into());
         }
 
         let (id, kind, lib_name) = if target_kinds.len() > 1 {
@@ -607,7 +613,8 @@ impl<'a> BuildTargets<'a> {
                         return Err(Error::PackageGraphConstructError(format!(
                             "for package {}: build target '{:?}' has invalid crate types '{}'",
                             self.package_id, id, crate_types,
-                        )));
+                        ))
+                        .into());
                     }
                     BuildTargetKindImpl::Binary
                 }
@@ -618,7 +625,8 @@ impl<'a> BuildTargets<'a> {
             return Err(Error::PackageGraphConstructError(format!(
                 "for package ID '{}': build target '{}' has no kinds",
                 self.package_id, target_name
-            )));
+            ))
+            .into());
         };
 
         match self.targets.entry(id) {
@@ -627,7 +635,8 @@ impl<'a> BuildTargets<'a> {
                     "for package ID '{}': duplicate build targets for {:?}",
                     self.package_id,
                     occupied.key()
-                )));
+                ))
+                .into());
             }
             Entry::Vacant(vacant) => {
                 vacant.insert(BuildTargetImpl {
@@ -789,7 +798,7 @@ impl PackageLinkImpl {
         from_id: &PackageId,
         resolved_name: &str,
         deps: impl IntoIterator<Item = &'a Dependency>,
-    ) -> Result<Self, Error> {
+    ) -> Result<Self, Box<Error>> {
         let mut version_req = None;
         let mut normal = DependencyReqImpl::default();
         let mut build = DependencyReqImpl::default();
@@ -816,7 +825,8 @@ impl PackageLinkImpl {
                     "for package '{}': dev-dependency '{}' marked optional",
                     from_id,
                     dep_name.expect("dep_name set above"),
-                )));
+                ))
+                .into());
             }
 
             // Pick the first version req that this come across.
@@ -886,7 +896,7 @@ impl PackageLinkImpl {
 /// causes this union-ing to *not* happen, so that's why we store all the features enabled by
 /// each target separately.
 impl DependencyReqImpl {
-    fn add_instance(&mut self, from_id: &PackageId, dep: &Dependency) -> Result<(), Error> {
+    fn add_instance(&mut self, from_id: &PackageId, dep: &Dependency) -> Result<(), Box<Error>> {
         if dep.optional {
             self.optional.add_instance(from_id, dep)
         } else {
@@ -896,7 +906,7 @@ impl DependencyReqImpl {
 }
 
 impl DepRequiredOrOptional {
-    fn add_instance(&mut self, from_id: &PackageId, dep: &Dependency) -> Result<(), Error> {
+    fn add_instance(&mut self, from_id: &PackageId, dep: &Dependency) -> Result<(), Box<Error>> {
         // target_spec is None if this is not a platform-specific dependency.
         let target_spec = match dep.target.as_ref() {
             Some(spec_or_triple) => {
