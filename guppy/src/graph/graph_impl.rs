@@ -67,7 +67,7 @@ impl PackageGraph {
 
     /// Parses the given `Metadata` and constructs a `PackageGraph` from it.
     pub fn from_metadata(metadata: CargoMetadata) -> Result<Self, Error> {
-        Self::build(metadata.0)
+        Self::build(metadata.0).map_err(|error| *error)
     }
 
     /// Constructs a package graph from the given JSON output of `cargo metadata`.
