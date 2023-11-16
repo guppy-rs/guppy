@@ -161,9 +161,13 @@ impl<'a> GraphBuildState<'a> {
         workspace_root: &'a Utf8Path,
         workspace_members: &'a HashSet<PackageId>,
     ) -> Self {
-        // No idea how many edges there are going to be, so use packages.len() as a reasonable lower
-        // bound.
-        let mut dep_graph = Graph::with_capacity(packages.len(), packages.len());
+        // Precomputing the edge count is a roughly 5% performance improvement.
+        let edge_count = resolve_nodes
+            .iter()
+            .map(|node| node.deps.len())
+            .sum::<usize>();
+
+        let mut dep_graph = Graph::with_capacity(packages.len(), edge_count);
         let all_package_data = packages
             .iter()
             .map(|package| PackageDataValue::new(package, &mut dep_graph))
