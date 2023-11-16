@@ -32,3 +32,7 @@ opt-level = 3
 # Build guppy in opt mode for tests, speeding up test runs
 [profile.test.package.guppy]
 opt-level = 3
+
+[profile.profiling]
+inherits = "release"
+debug = true
