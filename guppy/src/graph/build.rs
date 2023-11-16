@@ -24,14 +24,15 @@ use semver::{Version, VersionReq};
 use smallvec::SmallVec;
 use std::{
     borrow::Cow,
+    cell::RefCell,
     collections::{BTreeMap, HashSet},
-    sync::Arc,
+    rc::Rc,
 };
 use target_spec::TargetSpec;
 
 impl PackageGraph {
     /// Constructs a new `PackageGraph` instances from the given metadata.
-    pub(crate) fn build(metadata: Metadata) -> Result<Self, Box<Error>> {
+    pub(crate) fn build(mut metadata: Metadata) -> Result<Self, Box<Error>> {
         // resolve_nodes is missing if the metadata was generated with --no-deps.
         let resolve_nodes = metadata.resolve.map(|r| r.nodes).unwrap_or_default();
 
@@ -44,11 +45,11 @@ impl PackageGraph {
         let workspace_root = metadata.workspace_root;
 
         let mut build_state = GraphBuildState::new(
-            &metadata.packages,
+            &mut metadata.packages,
             resolve_nodes,
             &workspace_root,
             &workspace_members,
-        );
+        )?;
 
         let packages: AHashMap<_, _> = metadata
             .packages
@@ -143,9 +144,9 @@ impl WorkspaceImpl {
 /// Helper struct for building up dependency graph.
 struct GraphBuildState<'a> {
     dep_graph: Graph<PackageId, PackageLinkImpl, Directed, PackageIx>,
-    package_data: AHashMap<PackageId, Arc<PackageDataValue>>,
+    package_data: AHashMap<PackageId, Rc<PackageDataValue>>,
     // The above, except by package name.
-    by_package_name: AHashMap<String, Vec<Arc<PackageDataValue>>>,
+    by_package_name: AHashMap<String, Vec<Rc<PackageDataValue>>>,
 
     // The values of resolve_data are the resolved dependencies. This is mutated so it is stored
     // separately from package_data.
@@ -155,12 +156,13 @@ struct GraphBuildState<'a> {
 }
 
 impl<'a> GraphBuildState<'a> {
+    /// This method drains the list of targets from the package.
     fn new(
-        packages: &[Package],
+        packages: &mut [Package],
         resolve_nodes: Vec<Node>,
         workspace_root: &'a Utf8Path,
         workspace_members: &'a HashSet<PackageId>,
-    ) -> Self {
+    ) -> Result<Self, Box<Error>> {
         // Precomputing the edge count is a roughly 5% performance improvement.
         let edge_count = resolve_nodes
             .iter()
@@ -168,13 +170,14 @@ impl<'a> GraphBuildState<'a> {
             .sum::<usize>();
 
         let mut dep_graph = Graph::with_capacity(packages.len(), edge_count);
-        let all_package_data = packages
-            .iter()
+        let all_package_data: AHashMap<_, _> = packages
+            .iter_mut()
             .map(|package| PackageDataValue::new(package, &mut dep_graph))
-            .collect::<AHashMap<_, _>>();
+            .collect::<Result<_, _>>()?;
+
         // While it is possible to have duplicate names so the hash map is smaller, just make this
         // as big as package_data.
-        let mut by_package_name: AHashMap<String, Vec<Arc<PackageDataValue>>> =
+        let mut by_package_name: AHashMap<String, Vec<Rc<PackageDataValue>>> =
             AHashMap::with_capacity(all_package_data.len());
         for package_data in all_package_data.values() {
             by_package_name
@@ -195,14 +198,14 @@ impl<'a> GraphBuildState<'a> {
             })
             .collect();
 
-        Self {
+        Ok(Self {
             dep_graph,
             package_data: all_package_data,
             by_package_name,
             resolve_data,
             workspace_root,
             workspace_members,
-        }
+        })
     }
 
     fn process_package(
@@ -210,7 +213,8 @@ impl<'a> GraphBuildState<'a> {
         package: Package,
     ) -> Result<(PackageId, PackageMetadataImpl), Box<Error>> {
         let package_id = PackageId::from_metadata(package.id);
-        let package_data = self.package_data(&package_id)?.clone();
+        let (package_data, build_targets) =
+            self.package_data_and_remove_build_targets(&package_id)?;
 
         let source = if self.workspace_members.contains(&package_id) {
             PackageSourceImpl::Workspace(self.workspace_path(&package_id, &package.manifest_path)?)
@@ -234,12 +238,6 @@ impl<'a> GraphBuildState<'a> {
             };
             PackageSourceImpl::create_path(dirname, self.workspace_root)
         };
-
-        let mut build_targets = BuildTargets::new(&package_id);
-        for build_target in package.targets {
-            build_targets.add(build_target)?;
-        }
-        let build_targets = build_targets.finish();
 
         // resolved_deps is missing if the metadata was generated with --no-deps.
         let resolved_deps = self.resolve_data.remove(&package_id).unwrap_or_default();
@@ -382,11 +380,16 @@ impl<'a> GraphBuildState<'a> {
         ))
     }
 
-    fn package_data(&self, id: &PackageId) -> Result<&Arc<PackageDataValue>, Box<Error>> {
-        self.package_data.get(id).ok_or_else(|| {
+    fn package_data_and_remove_build_targets(
+        &self,
+        id: &PackageId,
+    ) -> Result<(Rc<PackageDataValue>, BuildTargetMap), Box<Error>> {
+        let package_data = self.package_data.get(id).ok_or_else(|| {
             Error::PackageGraphConstructError(format!("no package data found for package '{}'", id))
-                .into()
-        })
+        })?;
+        let package_data = package_data.clone();
+        let build_targets = std::mem::take(&mut *package_data.build_targets.borrow_mut());
+        Ok((package_data, build_targets))
     }
 
     /// Computes the workspace path for this package. Errors if this package is not in the
@@ -425,36 +428,38 @@ struct PackageDataValue {
     package_ix: NodeIndex<PackageIx>,
     name: String,
     resolved_name: ResolvedName,
+    // build_targets is used in two spots: in the constructor here, and removed from this field in
+    // package_data_and_remove_build_targets.
+    build_targets: RefCell<BuildTargetMap>,
     version: Version,
 }
 
 impl PackageDataValue {
     fn new(
-        package: &Package,
+        package: &mut Package,
         dep_graph: &mut Graph<PackageId, PackageLinkImpl, Directed, PackageIx>,
-    ) -> (PackageId, Arc<Self>) {
+    ) -> Result<(PackageId, Rc<Self>), Box<Error>> {
         let package_id = PackageId::from_metadata(package.id.clone());
         let package_ix = dep_graph.add_node(package_id.clone());
 
-        // The resolved name is determined by lib.name or proc-macro.name (only one should exist).
-        // So look for a lib target if it exists.
-        fn lib_target(package: &Package) -> Option<&Target> {
-            package.targets.iter().find(|target| {
-                target
-                    .kind
-                    .iter()
-                    .any(|kind| kind == "lib" || kind == "proc-macro")
-            })
+        // Build up the list of build targets -- this will be used to construct the resolved_name.
+        let mut build_targets = BuildTargets::new(&package_id);
+        for build_target in package.targets.drain(..) {
+            build_targets.add(build_target)?;
         }
+        let build_targets = build_targets.finish();
 
-        let resolved_name = match lib_target(package) {
-            Some(lib_target) => {
-                if lib_target.name != package.name {
-                    // This means that `lib.name` was specified.
-                    ResolvedName::LibNameSpecified(lib_target.name.clone())
+        let resolved_name = match build_targets.get(&OwnedBuildTargetId::Library) {
+            Some(target) => {
+                let lib_name = target
+                    .lib_name
+                    .as_deref()
+                    .expect("lib_name is always specified for library targets");
+                if lib_name != package.name {
+                    ResolvedName::LibNameSpecified(lib_name.to_string())
                 } else {
                     // The resolved name is the same as the package name.
-                    ResolvedName::LibNameNotSpecified(lib_target.name.replace('-', "_"))
+                    ResolvedName::LibNameNotSpecified(lib_name.replace('-', "_"))
                 }
             }
             None => {
@@ -467,10 +472,11 @@ impl PackageDataValue {
             package_ix,
             name: package.name.clone(),
             resolved_name,
+            build_targets: RefCell::new(build_targets),
             version: package.version.clone(),
         };
 
-        (package_id, Arc::new(value))
+        Ok((package_id, Rc::new(value)))
     }
 }
 
@@ -543,9 +549,11 @@ impl NamedFeatureDep {
     }
 }
 
+type BuildTargetMap = BTreeMap<OwnedBuildTargetId, BuildTargetImpl>;
+
 struct BuildTargets<'a> {
     package_id: &'a PackageId,
-    targets: BTreeMap<OwnedBuildTargetId, BuildTargetImpl>,
+    targets: BuildTargetMap,
 }
 
 impl<'a> BuildTargets<'a> {
@@ -661,7 +669,7 @@ impl<'a> BuildTargets<'a> {
         list.iter().any(|kind| kind.as_str() == "proc-macro")
     }
 
-    fn finish(self) -> BTreeMap<OwnedBuildTargetId, BuildTargetImpl> {
+    fn finish(self) -> BuildTargetMap {
         self.targets
     }
 }
@@ -670,7 +678,7 @@ struct DependencyResolver<'g> {
     from_id: &'g PackageId,
 
     /// The package data, inherited from the graph build state.
-    package_data: &'g AHashMap<PackageId, Arc<PackageDataValue>>,
+    package_data: &'g AHashMap<PackageId, Rc<PackageDataValue>>,
 
     /// This is a list of dependency requirements. We don't know the package ID yet so we don't have
     /// a great key to work with. This could be improved in the future by matching on requirements
@@ -682,8 +690,8 @@ impl<'g> DependencyResolver<'g> {
     /// Constructs a new resolver using the provided package data and dependencies.
     fn new(
         from_id: &'g PackageId,
-        package_data: &'g AHashMap<PackageId, Arc<PackageDataValue>>,
-        by_package_name: &'g AHashMap<String, Vec<Arc<PackageDataValue>>>,
+        package_data: &'g AHashMap<PackageId, Rc<PackageDataValue>>,
+        by_package_name: &'g AHashMap<String, Vec<Rc<PackageDataValue>>>,
         package_deps: impl IntoIterator<Item = &'g Dependency>,
     ) -> Self {
         let mut dep_reqs = DependencyReqs::default();
@@ -728,7 +736,7 @@ impl<'g> DependencyResolver<'g> {
         dep_kinds: &'a [DepKindInfo],
     ) -> Result<
         (
-            &'g Arc<PackageDataValue>,
+            &'g Rc<PackageDataValue>,
             impl Iterator<Item = &'g Dependency> + 'a,
         ),
         Error,
