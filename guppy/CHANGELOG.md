@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.17.3] - 2023-11-16
+
+### Fixed
+
+- Fixed a `PackageGraph` creation edge case ([#158]).
+
+[#158]: https://github.com/guppy-rs/guppy/issues/158
+
 ## [0.17.2] - 2023-11-14
 
 ### Fixed
@@ -624,6 +632,7 @@ lazy_static = "0.2"
 
 - Initial release.
 
+[0.17.3]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.3
 [0.17.2]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.2
 [0.17.1]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.1
 [0.17.0]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.0
