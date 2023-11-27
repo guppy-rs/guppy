@@ -27,7 +27,7 @@ rust-version = "1.70"
 [dependencies]
 ahash.workspace = true
 camino = "1.1.6"
-globset = "0.4.13"
+globset = "0.4.14"
 guppy = { version = "0.17.3", path = "../../guppy", features = [
     "rayon1",
     "summaries",
