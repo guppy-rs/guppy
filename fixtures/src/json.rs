@@ -158,6 +158,8 @@ pub static METADATA_LIBRA_F0091A4_PATH: &str = "../large/metadata_libra_f0091a4.
 
 pub static METADATA_LIBRA_9FFD93B_PATH: &str = "../large/metadata_libra_9ffd93b.json";
 
+pub static MNEMOS_B3B4DA9_PATH: &str = "../large/mnemos_b3b4da9.json";
+
 pub static METADATA_GUPPY_78CB7E8_PATH: &str = "../guppy/metadata_guppy_78cb7e8.json";
 
 pub static METADATA_GUPPY_869476C_PATH: &str = "../guppy/metadata_guppy_869476c.json";
@@ -214,6 +216,7 @@ define_fixtures! {
     metadata_libra => METADATA_LIBRA_PATH,
     metadata_libra_f0091a4 => METADATA_LIBRA_F0091A4_PATH,
     metadata_libra_9ffd93b => METADATA_LIBRA_9FFD93B_PATH,
+    mnemos_b3b4da9 => MNEMOS_B3B4DA9_PATH,
     metadata_guppy_78cb7e8 => METADATA_GUPPY_78CB7E8_PATH,
     metadata_guppy_869476c => METADATA_GUPPY_869476C_PATH,
     metadata_guppy_c9b4f76 => METADATA_GUPPY_C9B4F76_PATH,
@@ -1324,6 +1327,12 @@ impl FixtureDetails {
                 METADATA_LIBRA_MOVE_LANG,
             ],
         ])
+    }
+
+    pub(crate) fn mnemos_b3b4da9() -> Self {
+        let details = AHashMap::new();
+
+        Self::new(details)
     }
 
     pub(crate) fn metadata_guppy_78cb7e8() -> Self {

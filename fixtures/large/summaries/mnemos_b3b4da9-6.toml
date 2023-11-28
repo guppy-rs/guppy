@@ -1,0 +1,3187 @@
+# This summary was @generated. To regenerate, run:
+#   cargo run -p fixture-manager -- generate-summaries --fixture mnemos_b3b4da9
+
+[metadata]
+resolver = '2'
+include-dev = true
+initials-platform = 'proc-macros-on-target'
+
+[metadata.host-platform]
+triple = 'i586-pc-windows-msvc'
+target-features = 'all'
+flags = ['cargo_web', 'foo']
+
+[metadata.target-platform]
+spec = 'any'
+[[metadata.omitted-packages.ids]]
+name = 'anstyle-parse'
+version = '0.2.1'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'mach'
+version = '0.2.3'
+crates-io = true
+
+[[target-package]]
+name = 'melpomene'
+version = '0.1.0'
+workspace-path = 'platforms/melpomene'
+status = 'initial'
+features = ['atty', 'console-subscriber', 'default', 'humantime', 'trace-console', 'trace-fmt', 'trace-modality', 'tracing-modality']
+optional-deps = ['atty', 'console-subscriber', 'humantime', 'tracing-modality']
+
+[[target-package]]
+name = 'mnemos-abi'
+version = '0.1.0'
+workspace-path = 'source/abi'
+status = 'initial'
+features = ['default', 'defmt', 'use-defmt']
+optional-deps = ['defmt']
+
+[[target-package]]
+name = 'mnemos-alloc'
+version = '0.1.0'
+workspace-path = 'source/alloc'
+status = 'initial'
+features = ['default', 'stats', 'use-std']
+
+[[target-package]]
+name = 'mnemos-trace-proto'
+version = '0.1.0'
+workspace-path = 'source/trace-proto'
+status = 'initial'
+features = ['std']
+
+[[target-package]]
+name = 'pomelo'
+version = '0.1.0'
+workspace-path = 'platforms/pomelo'
+status = 'initial'
+features = []
+
+[[target-package]]
+name = 'forth3'
+version = '0.1.0'
+workspace-path = 'source/forth3'
+status = 'workspace'
+features = ['async', 'default']
+
+[[target-package]]
+name = 'melpo-config'
+version = '0.1.0'
+workspace-path = 'platforms/melpomene/melpo-config'
+status = 'workspace'
+features = []
+
+[[target-package]]
+name = 'mnemos'
+version = '0.1.0'
+workspace-path = 'source/kernel'
+status = 'workspace'
+features = []
+
+[[target-package]]
+name = 'mnemos-config'
+version = '0.1.0'
+workspace-path = 'source/config'
+status = 'workspace'
+features = ['default']
+
+[[target-package]]
+name = 'mnemos-std'
+version = '0.1.0'
+workspace-path = 'source/mstd'
+status = 'workspace'
+features = []
+
+[[target-package]]
+name = 'sermux-proto'
+version = '0.1.0'
+workspace-path = 'source/sermux-proto'
+status = 'workspace'
+features = []
+
+[[target-package]]
+name = 'spitebuf'
+version = '0.1.0'
+workspace-path = 'source/spitebuf'
+status = 'workspace'
+features = []
+
+[[target-package]]
+name = 'async-std'
+version = '1.12.0'
+crates-io = true
+status = 'direct'
+features = ['alloc', 'async-channel', 'async-global-executor', 'async-io', 'async-lock', 'async-process', 'crossbeam-utils', 'default', 'futures-channel', 'futures-core', 'futures-io', 'futures-lite', 'gloo-timers', 'kv-log-macro', 'log', 'memchr', 'once_cell', 'pin-project-lite', 'pin-utils', 'slab', 'std', 'unstable', 'wasm-bindgen-futures']
+optional-deps = ['async-channel', 'async-global-executor', 'async-io', 'async-lock', 'async-process', 'crossbeam-utils', 'futures-channel', 'futures-core', 'futures-io', 'futures-lite', 'gloo-timers', 'kv-log-macro', 'log', 'memchr', 'once_cell', 'pin-project-lite', 'pin-utils', 'slab', 'wasm-bindgen-futures']
+
+[[target-package]]
+name = 'atty'
+version = '0.2.14'
+crates-io = true
+status = 'direct'
+features = []
+
+[[target-package]]
+name = 'cfg-if'
+version = '1.0.0'
+crates-io = true
+status = 'direct'
+features = []
+
+[[target-package]]
+name = 'chrono'
+version = '0.4.26'
+crates-io = true
+status = 'direct'
+features = ['clock', 'default', 'iana-time-zone', 'js-sys', 'oldtime', 'std', 'time', 'wasm-bindgen', 'wasmbind', 'winapi']
+optional-deps = ['iana-time-zone', 'js-sys', 'time', 'wasm-bindgen', 'winapi']
+
+[[target-package]]
+name = 'clap'
+version = '3.2.25'
+crates-io = true
+status = 'direct'
+features = ['atty', 'clap_derive', 'color', 'default', 'derive', 'env', 'once_cell', 'std', 'strsim', 'suggestions', 'termcolor']
+optional-deps = ['atty', 'clap_derive', 'once_cell', 'strsim', 'termcolor']
+
+[[target-package]]
+name = 'cobs'
+version = '0.2.3'
+crates-io = true
+status = 'direct'
+features = []
+
+[[target-package]]
+name = 'console-subscriber'
+version = '0.1.10'
+crates-io = true
+status = 'direct'
+features = ['default', 'env-filter']
+
+[[target-package]]
+name = 'console_error_panic_hook'
+version = '0.1.7'
+crates-io = true
+status = 'direct'
+features = []
+
+[[target-package]]
+name = 'cordyceps'
+version = '0.3.2'
+source = 'git+https://github.com/hawkw/mycelium.git?rev=101a4abaa19afdd131b334a16d92c9fb4909c064#101a4abaa19afdd131b334a16d92c9fb4909c064'
+status = 'direct'
+features = ['alloc', 'default']
+
+[[target-package]]
+name = 'defmt'
+version = '0.3.5'
+crates-io = true
+status = 'direct'
+features = []
+
+[[target-package]]
+name = 'embedded-graphics'
+version = '0.7.1'
+crates-io = true
+status = 'direct'
+features = ['default']
+
+[[target-package]]
+name = 'embedded-graphics'
+version = '0.8.1'
+crates-io = true
+status = 'direct'
+features = ['default']
+
+[[target-package]]
+name = 'embedded-graphics-simulator'
+version = '0.3.0'
+crates-io = true
+status = 'direct'
+features = ['default', 'sdl2', 'with-sdl']
+optional-deps = ['sdl2']
+
+[[target-package]]
+name = 'embedded-graphics-web-simulator'
+version = '0.3.0'
+source = 'git+https://github.com/spookyvision/embedded-graphics-web-simulator#0f07b1efb8181860c16b3edf8293aff9515cc480'
+status = 'direct'
+features = []
+
+[[target-package]]
+name = 'embedded-hal-async'
+version = '0.2.0-alpha.2'
+crates-io = true
+status = 'direct'
+features = []
+
+[[target-package]]
+name = 'futures'
+version = '0.3.28'
+crates-io = true
+status = 'direct'
+features = ['alloc', 'async-await', 'std']
+
+[[target-package]]
+name = 'futures-util'
+version = '0.3.28'
+crates-io = true
+status = 'direct'
+features = ['alloc', 'async-await', 'async-await-macro', 'channel', 'default', 'futures-channel', 'futures-io', 'futures-macro', 'futures-sink', 'io', 'memchr', 'sink', 'slab', 'std']
+optional-deps = ['futures-channel', 'futures-io', 'futures-macro', 'futures-sink', 'memchr', 'slab']
+
+[[target-package]]
+name = 'gloo'
+version = '0.9.0'
+crates-io = true
+status = 'direct'
+features = ['console', 'default', 'dialogs', 'events', 'file', 'futures', 'gloo-console', 'gloo-dialogs', 'gloo-events', 'gloo-file', 'gloo-history', 'gloo-net', 'gloo-render', 'gloo-storage', 'gloo-timers', 'gloo-utils', 'gloo-worker', 'history', 'net', 'render', 'storage', 'timers', 'utils', 'worker']
+optional-deps = ['gloo-console', 'gloo-dialogs', 'gloo-events', 'gloo-file', 'gloo-history', 'gloo-net', 'gloo-render', 'gloo-storage', 'gloo-timers', 'gloo-utils', 'gloo-worker']
+
+[[target-package]]
+name = 'gloo-utils'
+version = '0.2.0'
+crates-io = true
+status = 'direct'
+features = ['default', 'serde']
+optional-deps = ['serde', 'serde_json']
+
+[[target-package]]
+name = 'hash32'
+version = '0.3.1'
+crates-io = true
+status = 'direct'
+features = []
+
+[[target-package]]
+name = 'heapless'
+version = '0.7.16'
+crates-io = true
+status = 'direct'
+features = ['atomic-polyfill', 'cas', 'default', 'defmt', 'defmt-impl', 'serde']
+optional-deps = ['atomic-polyfill', 'defmt', 'serde']
+
+[[target-package]]
+name = 'humantime'
+version = '2.1.0'
+crates-io = true
+status = 'direct'
+features = []
+
+[[target-package]]
+name = 'input-mgr'
+version = '0.1.0'
+source = 'git+https://github.com/tosc-rs/teletype/?rev=de95e610cc79db6d59ad6b40eb2d82adebb4e033#de95e610cc79db6d59ad6b40eb2d82adebb4e033'
+status = 'direct'
+features = []
+
+[[target-package]]
+name = 'linked_list_allocator'
+version = '0.10.5'
+crates-io = true
+status = 'direct'
+features = []
+
+[[target-package]]
+name = 'maitake'
+version = '0.1.0'
+source = 'git+https://github.com/hawkw/mycelium.git?rev=101a4abaa19afdd131b334a16d92c9fb4909c064#101a4abaa19afdd131b334a16d92c9fb4909c064'
+status = 'direct'
+features = ['alloc', 'default', 'tracing-01']
+optional-deps = ['tracing-01']
+
+[[target-package]]
+name = 'mycelium-bitfield'
+version = '0.1.3'
+source = 'git+https://github.com/hawkw/mycelium.git?rev=101a4abaa19afdd131b334a16d92c9fb4909c064#101a4abaa19afdd131b334a16d92c9fb4909c064'
+status = 'direct'
+features = []
+
+[[target-package]]
+name = 'mycelium-util'
+version = '0.1.0'
+source = 'git+https://github.com/hawkw/mycelium.git?rev=101a4abaa19afdd131b334a16d92c9fb4909c064#101a4abaa19afdd131b334a16d92c9fb4909c064'
+status = 'direct'
+features = ['default']
+
+[[target-package]]
+name = 'portable-atomic'
+version = '1.4.2'
+crates-io = true
+status = 'direct'
+features = ['default', 'fallback', 'require-cas']
+
+[[target-package]]
+name = 'postcard'
+version = '1.0.6'
+crates-io = true
+status = 'direct'
+features = ['const_format', 'default', 'experimental-derive', 'heapless', 'heapless-cas', 'postcard-derive']
+optional-deps = ['const_format', 'heapless', 'postcard-derive']
+
+[[target-package]]
+name = 'profont'
+version = '0.6.1'
+crates-io = true
+status = 'direct'
+features = []
+
+[[target-package]]
+name = 'ring-drawer'
+version = '0.1.0'
+source = 'git+https://github.com/tosc-rs/teletype/?rev=de95e610cc79db6d59ad6b40eb2d82adebb4e033#de95e610cc79db6d59ad6b40eb2d82adebb4e033'
+status = 'direct'
+features = ['default']
+
+[[target-package]]
+name = 'serde'
+version = '1.0.188'
+crates-io = true
+status = 'direct'
+features = ['default', 'derive', 'serde_derive', 'std']
+optional-deps = ['serde_derive']
+
+[[target-package]]
+name = 'tokio'
+version = '1.29.1'
+crates-io = true
+status = 'direct'
+features = ['bytes', 'default', 'io-std', 'io-util', 'libc', 'macros', 'mio', 'net', 'rt', 'socket2', 'sync', 'time', 'tokio-macros', 'tracing', 'windows-sys']
+optional-deps = ['bytes', 'libc', 'mio', 'socket2', 'tokio-macros', 'tracing', 'windows-sys']
+
+[[target-package]]
+name = 'tracing'
+version = '0.1.37'
+crates-io = true
+status = 'direct'
+features = ['attributes', 'default', 'std', 'tracing-attributes']
+optional-deps = ['tracing-attributes']
+
+[[target-package]]
+name = 'tracing-core'
+version = '0.1.31'
+crates-io = true
+status = 'direct'
+features = ['default', 'once_cell', 'std', 'valuable']
+optional-deps = ['once_cell', 'valuable']
+
+[[target-package]]
+name = 'tracing-modality'
+version = '0.1.0'
+source = 'git+https://github.com/auxoncorp/modality-tracing-rs?rev=9c23c188466357e7ad0c618b4edfe9514e9bf764#9c23c188466357e7ad0c618b4edfe9514e9bf764'
+status = 'direct'
+features = []
+
+[[target-package]]
+name = 'tracing-serde-structured'
+version = '0.2.0'
+source = 'git+https://github.com/hawkw/tracing-serde-structured?branch=eliza/span-fields#d8c384a09f27eb06aaf31dd3f9bb9c69b33f7e66'
+status = 'direct'
+features = ['std']
+
+[[target-package]]
+name = 'tracing-subscriber'
+version = '0.3.17'
+crates-io = true
+status = 'direct'
+features = ['alloc', 'ansi', 'default', 'env-filter', 'fmt', 'matchers', 'nu-ansi-term', 'once_cell', 'regex', 'registry', 'sharded-slab', 'smallvec', 'std', 'thread_local', 'tracing', 'tracing-log']
+optional-deps = ['matchers', 'nu-ansi-term', 'once_cell', 'regex', 'sharded-slab', 'smallvec', 'thread_local', 'tracing', 'tracing-log']
+
+[[target-package]]
+name = 'tracing-wasm'
+version = '0.2.1'
+crates-io = true
+status = 'direct'
+features = []
+
+[[target-package]]
+name = 'uuid'
+version = '1.4.1'
+crates-io = true
+status = 'direct'
+features = ['default', 'getrandom', 'rng', 'serde', 'std', 'v4']
+optional-deps = ['getrandom', 'serde']
+
+[[target-package]]
+name = 'wasm-bindgen'
+version = '0.2.87'
+crates-io = true
+status = 'direct'
+features = ['default', 'spans', 'std']
+
+[[target-package]]
+name = 'wasm-bindgen-futures'
+version = '0.4.37'
+crates-io = true
+status = 'direct'
+features = []
+
+[[target-package]]
+name = 'web-sys'
+version = '0.3.64'
+crates-io = true
+status = 'direct'
+features = ['AbortSignal', 'AddEventListenerOptions', 'BinaryType', 'Blob', 'BlobPropertyBag', 'CanvasRenderingContext2d', 'CloseEvent', 'CloseEventInit', 'DedicatedWorkerGlobalScope', 'Document', 'DomException', 'Element', 'ErrorEvent', 'Event', 'EventSource', 'EventTarget', 'File', 'FileList', 'FilePropertyBag', 'FileReader', 'FormData', 'Headers', 'History', 'HtmlCanvasElement', 'HtmlElement', 'HtmlHeadElement', 'HtmlInputElement', 'ImageData', 'KeyboardEvent', 'Location', 'MessageEvent', 'Node', 'ObserverCallback', 'ProgressEvent', 'ReadableStream', 'ReferrerPolicy', 'Request', 'RequestCache', 'RequestCredentials', 'RequestInit', 'RequestMode', 'RequestRedirect', 'Response', 'ResponseInit', 'ResponseType', 'Storage', 'UiEvent', 'Url', 'UrlSearchParams', 'WebSocket', 'Window', 'Worker', 'WorkerGlobalScope', 'WorkerOptions', 'console']
+
+[[target-package]]
+name = 'addr2line'
+version = '0.20.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'adler'
+version = '1.0.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'adler32'
+version = '1.2.0'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
+name = 'android-tzdata'
+version = '0.1.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'android_system_properties'
+version = '0.1.5'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'anyhow'
+version = '1.0.71'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
+name = 'async-channel'
+version = '1.9.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'async-executor'
+version = '1.5.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'async-global-executor'
+version = '2.3.1'
+crates-io = true
+status = 'transitive'
+features = ['async-io', 'default']
+optional-deps = ['async-io']
+
+[[target-package]]
+name = 'async-io'
+version = '1.13.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'async-lock'
+version = '2.7.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'async-process'
+version = '1.7.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'async-task'
+version = '4.4.0'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
+name = 'atomic-polyfill'
+version = '0.1.11'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'atomic-waker'
+version = '1.1.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'axum'
+version = '0.6.19'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'axum-core'
+version = '0.3.4'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'az'
+version = '1.2.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'backtrace'
+version = '0.3.68'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
+name = 'base64'
+version = '0.13.1'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
+name = 'base64'
+version = '0.21.2'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
+name = 'bincode'
+version = '1.3.3'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'bitflags'
+version = '1.3.2'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[target-package]]
+name = 'blocking'
+version = '1.3.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'bytemuck'
+version = '1.13.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'byteorder'
+version = '1.4.3'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
+name = 'bytes'
+version = '1.4.0'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
+name = 'clap_lex'
+version = '0.2.4'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'cloudabi'
+version = '0.0.3'
+crates-io = true
+status = 'transitive'
+features = ['bitflags', 'default']
+optional-deps = ['bitflags']
+
+[[target-package]]
+name = 'color_quant'
+version = '1.1.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'concurrent-queue'
+version = '2.2.0'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
+name = 'console-api'
+version = '0.5.0'
+crates-io = true
+status = 'transitive'
+features = ['transport']
+
+[[target-package]]
+name = 'const_format'
+version = '0.2.31'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[target-package]]
+name = 'core-foundation'
+version = '0.9.3'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'core-foundation-sys'
+version = '0.8.4'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'crc32fast'
+version = '1.3.2'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
+name = 'critical-section'
+version = '1.1.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'crossbeam-channel'
+version = '0.5.8'
+crates-io = true
+status = 'transitive'
+features = ['crossbeam-utils', 'default', 'std']
+optional-deps = ['crossbeam-utils']
+
+[[target-package]]
+name = 'crossbeam-deque'
+version = '0.8.3'
+crates-io = true
+status = 'transitive'
+features = ['crossbeam-epoch', 'crossbeam-utils', 'default', 'std']
+optional-deps = ['crossbeam-epoch', 'crossbeam-utils']
+
+[[target-package]]
+name = 'crossbeam-epoch'
+version = '0.9.15'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'std']
+
+[[target-package]]
+name = 'crossbeam-utils'
+version = '0.8.16'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
+name = 'deflate'
+version = '0.8.6'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'dirs'
+version = '4.0.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'dirs-sys'
+version = '0.3.7'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'either'
+version = '1.9.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'embedded-graphics-core'
+version = '0.3.3'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[target-package]]
+name = 'embedded-graphics-core'
+version = '0.4.0'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[target-package]]
+name = 'embedded-hal'
+version = '1.0.0-alpha.11'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'errno'
+version = '0.3.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'errno-dragonfly'
+version = '0.1.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'event-listener'
+version = '2.5.3'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'fastrand'
+version = '1.9.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'flate2'
+version = '1.0.26'
+crates-io = true
+status = 'transitive'
+features = ['default', 'miniz_oxide', 'rust_backend']
+optional-deps = ['miniz_oxide']
+
+[[target-package]]
+name = 'float-cmp'
+version = '0.8.0'
+crates-io = true
+status = 'transitive'
+features = ['default', 'num-traits', 'ratio']
+optional-deps = ['num-traits']
+
+[[target-package]]
+name = 'float-cmp'
+version = '0.9.0'
+crates-io = true
+status = 'transitive'
+features = ['default', 'num-traits', 'ratio']
+optional-deps = ['num-traits']
+
+[[target-package]]
+name = 'fnv'
+version = '1.0.7'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
+name = 'foreign-types'
+version = '0.3.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'foreign-types-shared'
+version = '0.1.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'form_urlencoded'
+version = '1.2.0'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'default', 'std']
+
+[[target-package]]
+name = 'fuchsia-cprng'
+version = '0.1.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'futures-channel'
+version = '0.3.28'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'default', 'futures-sink', 'sink', 'std']
+optional-deps = ['futures-sink']
+
+[[target-package]]
+name = 'futures-core'
+version = '0.3.28'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'default', 'std']
+
+[[target-package]]
+name = 'futures-io'
+version = '0.3.28'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
+name = 'futures-lite'
+version = '1.13.0'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'default', 'fastrand', 'futures-io', 'memchr', 'parking', 'std', 'waker-fn']
+optional-deps = ['fastrand', 'futures-io', 'memchr', 'parking', 'waker-fn']
+
+[[target-package]]
+name = 'futures-sink'
+version = '0.3.28'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'default', 'std']
+
+[[target-package]]
+name = 'futures-task'
+version = '0.3.28'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'std']
+
+[[target-package]]
+name = 'generator'
+version = '0.7.4'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'getrandom'
+version = '0.2.10'
+crates-io = true
+status = 'transitive'
+features = ['std']
+
+[[target-package]]
+name = 'gif'
+version = '0.11.4'
+crates-io = true
+status = 'transitive'
+features = ['default', 'raii_no_panic', 'std']
+
+[[target-package]]
+name = 'gimli'
+version = '0.27.3'
+crates-io = true
+status = 'transitive'
+features = ['read', 'read-core']
+
+[[target-package]]
+name = 'gloo-console'
+version = '0.2.3'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'gloo-dialogs'
+version = '0.1.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'gloo-events'
+version = '0.1.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'gloo-file'
+version = '0.2.3'
+crates-io = true
+status = 'transitive'
+features = ['default', 'futures', 'futures-channel']
+optional-deps = ['futures-channel']
+
+[[target-package]]
+name = 'gloo-history'
+version = '0.1.5'
+crates-io = true
+status = 'transitive'
+features = ['default', 'query', 'serde_urlencoded', 'thiserror']
+optional-deps = ['serde_urlencoded', 'thiserror']
+
+[[target-package]]
+name = 'gloo-net'
+version = '0.3.1'
+crates-io = true
+status = 'transitive'
+features = ['default', 'eventsource', 'futures-channel', 'futures-core', 'futures-sink', 'http', 'json', 'pin-project', 'serde', 'serde_json', 'websocket']
+optional-deps = ['futures-channel', 'futures-core', 'futures-sink', 'pin-project', 'serde', 'serde_json']
+
+[[target-package]]
+name = 'gloo-render'
+version = '0.1.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'gloo-storage'
+version = '0.2.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'gloo-timers'
+version = '0.2.6'
+crates-io = true
+status = 'transitive'
+features = ['default', 'futures', 'futures-channel', 'futures-core']
+optional-deps = ['futures-channel', 'futures-core']
+
+[[target-package]]
+name = 'gloo-utils'
+version = '0.1.7'
+crates-io = true
+status = 'transitive'
+features = ['default', 'serde']
+optional-deps = ['serde', 'serde_json']
+
+[[target-package]]
+name = 'gloo-worker'
+version = '0.3.0'
+crates-io = true
+status = 'transitive'
+features = ['default', 'futures']
+
+[[target-package]]
+name = 'h2'
+version = '0.3.20'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'hash32'
+version = '0.2.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'hashbrown'
+version = '0.12.3'
+crates-io = true
+status = 'transitive'
+features = ['raw']
+
+[[target-package]]
+name = 'hdrhistogram'
+version = '7.5.2'
+crates-io = true
+status = 'transitive'
+features = ['base64', 'flate2', 'nom', 'serialization']
+optional-deps = ['base64', 'flate2', 'nom']
+
+[[target-package]]
+name = 'hermit-abi'
+version = '0.1.19'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[target-package]]
+name = 'hermit-abi'
+version = '0.3.1'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[target-package]]
+name = 'hex'
+version = '0.4.3'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'default', 'std']
+
+[[target-package]]
+name = 'http'
+version = '0.2.9'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'http-body'
+version = '0.4.5'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'httparse'
+version = '1.8.0'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
+name = 'httpdate'
+version = '1.0.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'hyper'
+version = '0.14.27'
+crates-io = true
+status = 'transitive'
+features = ['client', 'default', 'full', 'h2', 'http1', 'http2', 'runtime', 'server', 'socket2', 'stream', 'tcp']
+optional-deps = ['h2', 'socket2']
+
+[[target-package]]
+name = 'hyper-timeout'
+version = '0.4.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'iana-time-zone'
+version = '0.1.57'
+crates-io = true
+status = 'transitive'
+features = ['fallback']
+
+[[target-package]]
+name = 'iana-time-zone-haiku'
+version = '0.1.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'idna'
+version = '0.4.0'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'default', 'std']
+
+[[target-package]]
+name = 'image'
+version = '0.23.14'
+crates-io = true
+status = 'transitive'
+features = ['bmp', 'dds', 'default', 'dxt', 'farbfeld', 'gif', 'hdr', 'ico', 'jpeg', 'jpeg_rayon', 'png', 'pnm', 'scoped_threadpool', 'tga', 'tiff', 'webp']
+optional-deps = ['gif', 'jpeg', 'png', 'scoped_threadpool', 'tiff']
+
+[[target-package]]
+name = 'indexmap'
+version = '1.9.3'
+crates-io = true
+status = 'transitive'
+features = ['std']
+
+[[target-package]]
+name = 'instant'
+version = '0.1.12'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'io-lifetimes'
+version = '1.0.11'
+crates-io = true
+status = 'transitive'
+features = ['close', 'hermit-abi', 'libc', 'windows-sys']
+optional-deps = ['hermit-abi', 'libc', 'windows-sys']
+
+[[target-package]]
+name = 'itoa'
+version = '1.0.6'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'jpeg-decoder'
+version = '0.1.22'
+crates-io = true
+status = 'transitive'
+features = ['rayon']
+optional-deps = ['rayon']
+
+[[target-package]]
+name = 'js-sys'
+version = '0.3.64'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'kv-log-macro'
+version = '1.0.7'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'lazy_static'
+version = '1.4.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'libc'
+version = '0.2.147'
+crates-io = true
+status = 'transitive'
+features = ['default', 'extra_traits', 'std']
+
+[[target-package]]
+name = 'linux-raw-sys'
+version = '0.3.8'
+crates-io = true
+status = 'transitive'
+features = ['errno', 'general', 'ioctl', 'no_std']
+
+[[target-package]]
+name = 'lock_api'
+version = '0.4.10'
+crates-io = true
+status = 'transitive'
+features = ['atomic_usize', 'default']
+
+[[target-package]]
+name = 'log'
+version = '0.4.20'
+crates-io = true
+status = 'transitive'
+features = ['kv_unstable', 'std', 'value-bag']
+optional-deps = ['value-bag']
+
+[[target-package]]
+name = 'loom'
+version = '0.5.6'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[target-package]]
+name = 'matchers'
+version = '0.1.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'matchit'
+version = '0.7.0'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[target-package]]
+name = 'memchr'
+version = '2.5.0'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
+name = 'memoffset'
+version = '0.9.0'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[target-package]]
+name = 'micromath'
+version = '1.1.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'micromath'
+version = '2.0.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'mime'
+version = '0.3.17'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'minicbor'
+version = '0.13.2'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'derive', 'minicbor-derive', 'std']
+optional-deps = ['minicbor-derive']
+
+[[target-package]]
+name = 'minimal-lexical'
+version = '0.2.1'
+crates-io = true
+status = 'transitive'
+features = ['std']
+
+[[target-package]]
+name = 'miniz_oxide'
+version = '0.3.7'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'miniz_oxide'
+version = '0.4.4'
+crates-io = true
+status = 'transitive'
+features = ['no_extern_crate_alloc']
+
+[[target-package]]
+name = 'miniz_oxide'
+version = '0.7.1'
+crates-io = true
+status = 'transitive'
+features = ['with-alloc']
+
+[[target-package]]
+name = 'mio'
+version = '0.8.8'
+crates-io = true
+status = 'transitive'
+features = ['net', 'os-ext', 'os-poll']
+
+[[target-package]]
+name = 'modality-ingest-client'
+version = '0.1.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'native-tls'
+version = '0.2.11'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'nom'
+version = '7.1.3'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'default', 'std']
+
+[[target-package]]
+name = 'nu-ansi-term'
+version = '0.46.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'num'
+version = '0.1.42'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'num-integer'
+version = '0.1.45'
+crates-io = true
+status = 'transitive'
+features = ['default', 'i128', 'std']
+
+[[target-package]]
+name = 'num-iter'
+version = '0.1.43'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
+name = 'num-rational'
+version = '0.3.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'num-traits'
+version = '0.2.15'
+crates-io = true
+status = 'transitive'
+features = ['default', 'i128', 'std']
+
+[[target-package]]
+name = 'num_cpus'
+version = '1.16.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'object'
+version = '0.31.1'
+crates-io = true
+status = 'transitive'
+features = ['archive', 'coff', 'elf', 'macho', 'pe', 'read_core', 'unaligned']
+
+[[target-package]]
+name = 'once_cell'
+version = '1.18.0'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'default', 'race', 'std']
+
+[[target-package]]
+name = 'openssl'
+version = '0.10.55'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[target-package]]
+name = 'openssl-probe'
+version = '0.1.5'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'openssl-sys'
+version = '0.9.90'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'os_str_bytes'
+version = '6.5.1'
+crates-io = true
+status = 'transitive'
+features = ['raw_os_str']
+
+[[target-package]]
+name = 'overload'
+version = '0.1.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'parking'
+version = '2.1.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'percent-encoding'
+version = '2.3.0'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'default', 'std']
+
+[[target-package]]
+name = 'pin-project'
+version = '1.1.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'pin-project-lite'
+version = '0.2.13'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'pin-utils'
+version = '0.1.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'pinned'
+version = '0.1.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'png'
+version = '0.16.8'
+crates-io = true
+status = 'transitive'
+features = ['default', 'deflate', 'png-encoding']
+optional-deps = ['deflate']
+
+[[target-package]]
+name = 'polling'
+version = '2.8.0'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
+name = 'ppv-lite86'
+version = '0.2.17'
+crates-io = true
+status = 'transitive'
+features = ['simd', 'std']
+
+[[target-package]]
+name = 'prost'
+version = '0.11.9'
+crates-io = true
+status = 'transitive'
+features = ['default', 'prost-derive', 'std']
+optional-deps = ['prost-derive']
+
+[[target-package]]
+name = 'prost-types'
+version = '0.11.9'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
+name = 'rand'
+version = '0.6.5'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'default', 'rand_os', 'std']
+optional-deps = ['rand_os']
+
+[[target-package]]
+name = 'rand'
+version = '0.8.5'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'default', 'getrandom', 'libc', 'rand_chacha', 'small_rng', 'std', 'std_rng']
+optional-deps = ['libc', 'rand_chacha']
+
+[[target-package]]
+name = 'rand_chacha'
+version = '0.1.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'rand_chacha'
+version = '0.3.1'
+crates-io = true
+status = 'transitive'
+features = ['std']
+
+[[target-package]]
+name = 'rand_core'
+version = '0.3.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'rand_core'
+version = '0.4.2'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'std']
+
+[[target-package]]
+name = 'rand_core'
+version = '0.6.4'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'getrandom', 'std']
+optional-deps = ['getrandom']
+
+[[target-package]]
+name = 'rand_hc'
+version = '0.1.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'rand_isaac'
+version = '0.1.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'rand_jitter'
+version = '0.1.4'
+crates-io = true
+status = 'transitive'
+features = ['std']
+
+[[target-package]]
+name = 'rand_os'
+version = '0.1.3'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'rand_pcg'
+version = '0.1.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'rand_xorshift'
+version = '0.1.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'rayon'
+version = '1.7.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'rayon-core'
+version = '1.11.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'rdrand'
+version = '0.4.0'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
+name = 'redox_syscall'
+version = '0.2.16'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'redox_syscall'
+version = '0.3.5'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'redox_users'
+version = '0.4.3'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'regex'
+version = '1.9.4'
+crates-io = true
+status = 'transitive'
+features = ['std', 'unicode-case', 'unicode-perl']
+
+[[target-package]]
+name = 'regex-automata'
+version = '0.1.10'
+crates-io = true
+status = 'transitive'
+features = ['default', 'regex-syntax', 'std']
+optional-deps = ['regex-syntax']
+
+[[target-package]]
+name = 'regex-automata'
+version = '0.3.7'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'meta', 'nfa-pikevm', 'nfa-thompson', 'std', 'syntax', 'unicode-case', 'unicode-perl', 'unicode-word-boundary']
+optional-deps = ['regex-syntax']
+
+[[target-package]]
+name = 'regex-syntax'
+version = '0.6.29'
+crates-io = true
+status = 'transitive'
+features = ['default', 'unicode', 'unicode-age', 'unicode-bool', 'unicode-case', 'unicode-gencat', 'unicode-perl', 'unicode-script', 'unicode-segment']
+
+[[target-package]]
+name = 'regex-syntax'
+version = '0.7.5'
+crates-io = true
+status = 'transitive'
+features = ['std', 'unicode-case', 'unicode-perl']
+
+[[target-package]]
+name = 'rustc-demangle'
+version = '0.1.23'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'rustix'
+version = '0.37.20'
+crates-io = true
+status = 'transitive'
+features = ['default', 'fs', 'io-lifetimes', 'libc', 'std', 'use-libc-auxv']
+optional-deps = ['io-lifetimes', 'libc']
+
+[[target-package]]
+name = 'ryu'
+version = '1.0.15'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'schannel'
+version = '0.1.22'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'scoped-tls'
+version = '1.0.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'scoped_threadpool'
+version = '0.1.9'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'scopeguard'
+version = '1.1.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'sdl2'
+version = '0.32.2'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[target-package]]
+name = 'sdl2-sys'
+version = '0.32.6'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[target-package]]
+name = 'security-framework'
+version = '2.9.2'
+crates-io = true
+status = 'transitive'
+features = ['OSX_10_9', 'default']
+
+[[target-package]]
+name = 'security-framework-sys'
+version = '2.9.1'
+crates-io = true
+status = 'transitive'
+features = ['OSX_10_9', 'default']
+
+[[target-package]]
+name = 'serde-wasm-bindgen'
+version = '0.5.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'serde_json'
+version = '1.0.105'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
+name = 'serde_urlencoded'
+version = '0.7.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'sharded-slab'
+version = '0.1.4'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'signal-hook'
+version = '0.3.17'
+crates-io = true
+status = 'transitive'
+features = ['channel', 'iterator']
+
+[[target-package]]
+name = 'signal-hook-registry'
+version = '1.4.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'slab'
+version = '0.4.8'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
+name = 'smallvec'
+version = '1.11.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'socket2'
+version = '0.4.9'
+crates-io = true
+status = 'transitive'
+features = ['all']
+
+[[target-package]]
+name = 'spin'
+version = '0.9.8'
+crates-io = true
+status = 'transitive'
+features = ['barrier', 'default', 'lazy', 'lock_api', 'lock_api_crate', 'mutex', 'once', 'rwlock', 'spin_mutex']
+optional-deps = ['lock_api_crate']
+
+[[target-package]]
+name = 'stable_deref_trait'
+version = '1.2.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'strsim'
+version = '0.10.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'sync_wrapper'
+version = '0.1.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'tempfile'
+version = '3.6.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'termcolor'
+version = '1.2.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'textwrap'
+version = '0.16.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'thiserror'
+version = '1.0.47'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'thread_local'
+version = '1.1.7'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'tiff'
+version = '0.6.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'time'
+version = '0.1.45'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'tinyvec'
+version = '1.6.0'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'default', 'tinyvec_macros']
+optional-deps = ['tinyvec_macros']
+
+[[target-package]]
+name = 'tinyvec_macros'
+version = '0.1.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'tokio-io-timeout'
+version = '1.2.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'tokio-native-tls'
+version = '0.3.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'tokio-stream'
+version = '0.1.14'
+crates-io = true
+status = 'transitive'
+features = ['default', 'net', 'time']
+
+[[target-package]]
+name = 'tokio-util'
+version = '0.7.8'
+crates-io = true
+status = 'transitive'
+features = ['codec', 'default', 'tracing']
+optional-deps = ['tracing']
+
+[[target-package]]
+name = 'tonic'
+version = '0.9.2'
+crates-io = true
+status = 'transitive'
+features = ['channel', 'codegen', 'default', 'prost', 'transport']
+optional-deps = ['async-trait', 'axum', 'h2', 'hyper', 'hyper-timeout', 'prost', 'tokio', 'tower']
+
+[[target-package]]
+name = 'tower'
+version = '0.4.13'
+crates-io = true
+status = 'transitive'
+features = ['__common', 'balance', 'buffer', 'discover', 'futures-core', 'futures-util', 'indexmap', 'limit', 'load', 'make', 'pin-project', 'pin-project-lite', 'rand', 'ready-cache', 'slab', 'timeout', 'tokio', 'tokio-util', 'tracing', 'util']
+optional-deps = ['futures-core', 'futures-util', 'indexmap', 'pin-project', 'pin-project-lite', 'rand', 'slab', 'tokio', 'tokio-util', 'tracing']
+
+[[target-package]]
+name = 'tower-layer'
+version = '0.3.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'tower-service'
+version = '0.3.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'tracing'
+version = '0.2.0'
+source = 'git+https://github.com/tokio-rs/tracing#941b1591faeea55d62c1c8cf524ffa3e95b66887'
+status = 'transitive'
+features = ['attributes', 'tracing-attributes']
+optional-deps = ['tracing-attributes']
+
+[[target-package]]
+name = 'tracing-core'
+version = '0.2.0'
+source = 'git+https://github.com/tokio-rs/tracing#941b1591faeea55d62c1c8cf524ffa3e95b66887'
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'tracing-log'
+version = '0.1.3'
+crates-io = true
+status = 'transitive'
+features = ['log-tracer', 'std']
+
+[[target-package]]
+name = 'try-lock'
+version = '0.2.4'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'unicode-bidi'
+version = '0.3.13'
+crates-io = true
+status = 'transitive'
+features = ['hardcoded-data', 'std']
+
+[[target-package]]
+name = 'unicode-normalization'
+version = '0.1.22'
+crates-io = true
+status = 'transitive'
+features = ['std']
+
+[[target-package]]
+name = 'url'
+version = '2.4.0'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[target-package]]
+name = 'uuid'
+version = '0.8.2'
+crates-io = true
+status = 'transitive'
+features = ['default', 'getrandom', 'std', 'v4']
+optional-deps = ['getrandom']
+
+[[target-package]]
+name = 'valuable'
+version = '0.1.0'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'std']
+
+[[target-package]]
+name = 'value-bag'
+version = '1.4.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'waker-fn'
+version = '1.1.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'want'
+version = '0.3.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'wasi'
+version = '0.10.0+wasi-snapshot-preview1'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
+name = 'wasi'
+version = '0.11.0+wasi-snapshot-preview1'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
+name = 'weezl'
+version = '0.1.7'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'default', 'std']
+
+[[target-package]]
+name = 'winapi'
+version = '0.3.9'
+crates-io = true
+status = 'transitive'
+features = ['consoleapi', 'errhandlingapi', 'fileapi', 'handleapi', 'knownfolders', 'minwinbase', 'minwindef', 'ntdef', 'ntsecapi', 'objbase', 'processenv', 'profileapi', 'shlobj', 'std', 'sysinfoapi', 'timezoneapi', 'winbase', 'wincon', 'winerror', 'winnt', 'ws2ipdef', 'ws2tcpip']
+
+[[target-package]]
+name = 'winapi-i686-pc-windows-gnu'
+version = '0.4.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'winapi-util'
+version = '0.1.5'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'winapi-x86_64-pc-windows-gnu'
+version = '0.4.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'windows'
+version = '0.48.0'
+crates-io = true
+status = 'transitive'
+features = ['Globalization', 'Win32', 'Win32_Foundation', 'Win32_System', 'Win32_System_Diagnostics', 'Win32_System_Diagnostics_Debug', 'Win32_System_Memory', 'Win32_System_SystemInformation', 'default']
+
+[[target-package]]
+name = 'windows-sys'
+version = '0.48.0'
+crates-io = true
+status = 'transitive'
+features = ['Win32', 'Win32_Foundation', 'Win32_NetworkManagement', 'Win32_NetworkManagement_IpHelper', 'Win32_Networking', 'Win32_Networking_WinSock', 'Win32_Security', 'Win32_Security_Authentication', 'Win32_Security_Authentication_Identity', 'Win32_Security_Credentials', 'Win32_Security_Cryptography', 'Win32_Storage', 'Win32_Storage_FileSystem', 'Win32_System', 'Win32_System_Diagnostics', 'Win32_System_Diagnostics_Debug', 'Win32_System_IO', 'Win32_System_LibraryLoader', 'Win32_System_Memory', 'Win32_System_Pipes', 'Win32_System_SystemServices', 'Win32_System_Threading', 'Win32_System_WindowsProgramming', 'default']
+
+[[target-package]]
+name = 'windows-targets'
+version = '0.48.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'windows_aarch64_gnullvm'
+version = '0.48.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'windows_aarch64_msvc'
+version = '0.48.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'windows_i686_gnu'
+version = '0.48.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'windows_i686_msvc'
+version = '0.48.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'windows_x86_64_gnu'
+version = '0.48.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'windows_x86_64_gnullvm'
+version = '0.48.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'windows_x86_64_msvc'
+version = '0.48.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'mnemos-abi'
+version = '0.1.0'
+workspace-path = 'source/abi'
+status = 'initial'
+features = ['default']
+
+[[host-package]]
+name = 'mnemos-alloc'
+version = '0.1.0'
+workspace-path = 'source/alloc'
+status = 'initial'
+features = ['default']
+
+[[host-package]]
+name = 'forth3'
+version = '0.1.0'
+workspace-path = 'source/forth3'
+status = 'workspace'
+features = ['async', 'default']
+
+[[host-package]]
+name = 'melpo-config'
+version = '0.1.0'
+workspace-path = 'platforms/melpomene/melpo-config'
+status = 'workspace'
+features = []
+
+[[host-package]]
+name = 'mnemos'
+version = '0.1.0'
+workspace-path = 'source/kernel'
+status = 'workspace'
+features = []
+
+[[host-package]]
+name = 'mnemos-config'
+version = '0.1.0'
+workspace-path = 'source/config'
+status = 'workspace'
+features = ['default', 'use-std']
+optional-deps = ['miette', 'toml']
+
+[[host-package]]
+name = 'sermux-proto'
+version = '0.1.0'
+workspace-path = 'source/sermux-proto'
+status = 'workspace'
+features = []
+
+[[host-package]]
+name = 'spitebuf'
+version = '0.1.0'
+workspace-path = 'source/spitebuf'
+status = 'workspace'
+features = []
+
+[[host-package]]
+name = 'cfg-if'
+version = '1.0.0'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
+name = 'cobs'
+version = '0.2.3'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
+name = 'cordyceps'
+version = '0.3.2'
+source = 'git+https://github.com/hawkw/mycelium.git?rev=101a4abaa19afdd131b334a16d92c9fb4909c064#101a4abaa19afdd131b334a16d92c9fb4909c064'
+status = 'direct'
+features = ['alloc', 'default']
+
+[[host-package]]
+name = 'embedded-graphics'
+version = '0.7.1'
+crates-io = true
+status = 'direct'
+features = ['default']
+
+[[host-package]]
+name = 'embedded-hal-async'
+version = '0.2.0-alpha.2'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
+name = 'futures'
+version = '0.3.28'
+crates-io = true
+status = 'direct'
+features = ['async-await']
+
+[[host-package]]
+name = 'hash32'
+version = '0.3.1'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
+name = 'heapless'
+version = '0.7.16'
+crates-io = true
+status = 'direct'
+features = ['atomic-polyfill', 'cas', 'default', 'defmt', 'defmt-impl', 'serde']
+optional-deps = ['defmt', 'serde']
+
+[[host-package]]
+name = 'input-mgr'
+version = '0.1.0'
+source = 'git+https://github.com/tosc-rs/teletype/?rev=de95e610cc79db6d59ad6b40eb2d82adebb4e033#de95e610cc79db6d59ad6b40eb2d82adebb4e033'
+status = 'direct'
+features = []
+
+[[host-package]]
+name = 'linked_list_allocator'
+version = '0.10.5'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
+name = 'maitake'
+version = '0.1.0'
+source = 'git+https://github.com/hawkw/mycelium.git?rev=101a4abaa19afdd131b334a16d92c9fb4909c064#101a4abaa19afdd131b334a16d92c9fb4909c064'
+status = 'direct'
+features = ['alloc']
+
+[[host-package]]
+name = 'miette'
+version = '5.10.0'
+crates-io = true
+status = 'direct'
+features = ['backtrace', 'backtrace-ext', 'default', 'fancy', 'fancy-no-backtrace', 'is-terminal', 'owo-colors', 'supports-color', 'supports-hyperlinks', 'supports-unicode', 'terminal_size', 'textwrap']
+optional-deps = ['backtrace', 'backtrace-ext', 'is-terminal', 'owo-colors', 'supports-color', 'supports-hyperlinks', 'supports-unicode', 'terminal_size', 'textwrap']
+
+[[host-package]]
+name = 'mycelium-bitfield'
+version = '0.1.3'
+source = 'git+https://github.com/hawkw/mycelium.git?rev=101a4abaa19afdd131b334a16d92c9fb4909c064#101a4abaa19afdd131b334a16d92c9fb4909c064'
+status = 'direct'
+features = []
+
+[[host-package]]
+name = 'mycelium-util'
+version = '0.1.0'
+source = 'git+https://github.com/hawkw/mycelium.git?rev=101a4abaa19afdd131b334a16d92c9fb4909c064#101a4abaa19afdd131b334a16d92c9fb4909c064'
+status = 'direct'
+features = ['default']
+
+[[host-package]]
+name = 'portable-atomic'
+version = '1.4.2'
+crates-io = true
+status = 'direct'
+features = ['default', 'fallback', 'require-cas']
+
+[[host-package]]
+name = 'postcard'
+version = '1.0.6'
+crates-io = true
+status = 'direct'
+features = ['alloc', 'const_format', 'default', 'experimental-derive', 'heapless', 'heapless-cas', 'postcard-derive', 'use-std']
+optional-deps = ['const_format', 'heapless', 'postcard-derive']
+
+[[host-package]]
+name = 'profont'
+version = '0.6.1'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
+name = 'ring-drawer'
+version = '0.1.0'
+source = 'git+https://github.com/tosc-rs/teletype/?rev=de95e610cc79db6d59ad6b40eb2d82adebb4e033#de95e610cc79db6d59ad6b40eb2d82adebb4e033'
+status = 'direct'
+features = ['default']
+
+[[host-package]]
+name = 'serde'
+version = '1.0.188'
+crates-io = true
+status = 'direct'
+features = ['alloc', 'default', 'derive', 'serde_derive', 'std']
+optional-deps = ['serde_derive']
+
+[[host-package]]
+name = 'toml'
+version = '0.7.6'
+crates-io = true
+status = 'direct'
+features = ['default', 'display', 'parse']
+optional-deps = ['toml_edit']
+
+[[host-package]]
+name = 'tracing'
+version = '0.1.37'
+crates-io = true
+status = 'direct'
+features = ['attributes', 'tracing-attributes']
+optional-deps = ['tracing-attributes']
+
+[[host-package]]
+name = 'uuid'
+version = '1.4.1'
+crates-io = true
+status = 'direct'
+features = ['serde']
+optional-deps = ['serde']
+
+[[host-package]]
+name = 'vergen'
+version = '8.2.1'
+crates-io = true
+status = 'direct'
+features = ['cargo', 'default', 'git', 'gitcl', 'rustc', 'rustc_version', 'time']
+optional-deps = ['rustc_version', 'time']
+
+[[host-package]]
+name = 'addr2line'
+version = '0.20.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'adler'
+version = '1.0.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'anyhow'
+version = '1.0.71'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[host-package]]
+name = 'async-trait'
+version = '0.1.72'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'autocfg'
+version = '0.1.8'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'autocfg'
+version = '1.1.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'az'
+version = '1.2.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'backtrace'
+version = '0.3.68'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[host-package]]
+name = 'backtrace-ext'
+version = '0.2.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'bitflags'
+version = '1.3.2'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[host-package]]
+name = 'bumpalo'
+version = '3.13.0'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[host-package]]
+name = 'byteorder'
+version = '1.4.3'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'cc'
+version = '1.0.79'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'cfg-if'
+version = '0.1.10'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'clap_derive'
+version = '3.2.25'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[host-package]]
+name = 'const_format'
+version = '0.2.31'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[host-package]]
+name = 'const_format_proc_macros'
+version = '0.2.31'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[host-package]]
+name = 'defmt'
+version = '0.3.5'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'defmt-macros'
+version = '0.3.6'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'defmt-parser'
+version = '0.3.3'
+crates-io = true
+status = 'transitive'
+features = ['unstable']
+
+[[host-package]]
+name = 'either'
+version = '1.9.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'embedded-graphics-core'
+version = '0.3.3'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[host-package]]
+name = 'embedded-hal'
+version = '1.0.0-alpha.11'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'equivalent'
+version = '1.0.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'float-cmp'
+version = '0.8.0'
+crates-io = true
+status = 'transitive'
+features = ['default', 'num-traits', 'ratio']
+optional-deps = ['num-traits']
+
+[[host-package]]
+name = 'futures-channel'
+version = '0.3.28'
+crates-io = true
+status = 'transitive'
+features = ['futures-sink', 'sink']
+optional-deps = ['futures-sink']
+
+[[host-package]]
+name = 'futures-core'
+version = '0.3.28'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'futures-io'
+version = '0.3.28'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'futures-macro'
+version = '0.3.28'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'futures-sink'
+version = '0.3.28'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'futures-task'
+version = '0.3.28'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'futures-util'
+version = '0.3.28'
+crates-io = true
+status = 'transitive'
+features = ['async-await', 'async-await-macro', 'futures-macro', 'futures-sink', 'sink']
+optional-deps = ['futures-macro', 'futures-sink']
+
+[[host-package]]
+name = 'gimli'
+version = '0.27.3'
+crates-io = true
+status = 'transitive'
+features = ['read', 'read-core']
+
+[[host-package]]
+name = 'gloo-worker-macros'
+version = '0.1.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'hash32'
+version = '0.2.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'hashbrown'
+version = '0.14.0'
+crates-io = true
+status = 'transitive'
+features = ['raw']
+
+[[host-package]]
+name = 'heck'
+version = '0.4.1'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[host-package]]
+name = 'indexmap'
+version = '2.0.0'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[host-package]]
+name = 'io-lifetimes'
+version = '1.0.11'
+crates-io = true
+status = 'transitive'
+features = ['close', 'default', 'hermit-abi', 'libc', 'windows-sys']
+optional-deps = ['windows-sys']
+
+[[host-package]]
+name = 'is-terminal'
+version = '0.4.7'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'is_ci'
+version = '1.1.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'itertools'
+version = '0.10.5'
+crates-io = true
+status = 'transitive'
+features = ['use_alloc']
+
+[[host-package]]
+name = 'itoa'
+version = '1.0.6'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'libc'
+version = '0.2.147'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'log'
+version = '0.4.20'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'memchr'
+version = '2.5.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'micromath'
+version = '1.1.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'miette-derive'
+version = '5.10.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'minicbor-derive'
+version = '0.8.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'miniz_oxide'
+version = '0.7.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'num-traits'
+version = '0.2.15'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'object'
+version = '0.31.1'
+crates-io = true
+status = 'transitive'
+features = ['archive', 'coff', 'elf', 'macho', 'pe', 'read_core', 'unaligned']
+
+[[host-package]]
+name = 'once_cell'
+version = '1.18.0'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'default', 'race', 'std']
+
+[[host-package]]
+name = 'openssl-macros'
+version = '0.1.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'owo-colors'
+version = '3.5.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'pin-project'
+version = '1.1.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'pin-project-internal'
+version = '1.1.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'pin-project-lite'
+version = '0.2.13'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'pin-utils'
+version = '0.1.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'pkg-config'
+version = '0.3.27'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'postcard-derive'
+version = '0.1.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'proc-macro-crate'
+version = '1.3.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'proc-macro-error'
+version = '1.0.4'
+crates-io = true
+status = 'transitive'
+features = ['default', 'syn', 'syn-error']
+optional-deps = ['syn']
+
+[[host-package]]
+name = 'proc-macro-error-attr'
+version = '1.0.4'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'proc-macro2'
+version = '1.0.66'
+crates-io = true
+status = 'transitive'
+features = ['default', 'proc-macro']
+
+[[host-package]]
+name = 'prost-derive'
+version = '0.11.9'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'quote'
+version = '1.0.32'
+crates-io = true
+status = 'transitive'
+features = ['default', 'proc-macro']
+
+[[host-package]]
+name = 'rustc-demangle'
+version = '0.1.23'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'rustc_version'
+version = '0.4.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'rustversion'
+version = '1.0.12'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'semver'
+version = '1.0.18'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[host-package]]
+name = 'serde_derive'
+version = '1.0.188'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[host-package]]
+name = 'serde_spanned'
+version = '0.6.3'
+crates-io = true
+status = 'transitive'
+features = ['serde']
+optional-deps = ['serde']
+
+[[host-package]]
+name = 'smawk'
+version = '0.3.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'stable_deref_trait'
+version = '1.2.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'supports-color'
+version = '2.0.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'supports-hyperlinks'
+version = '2.1.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'supports-unicode'
+version = '2.0.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'syn'
+version = '1.0.109'
+crates-io = true
+status = 'transitive'
+features = ['clone-impls', 'default', 'derive', 'extra-traits', 'full', 'parsing', 'printing', 'proc-macro', 'quote', 'visit']
+optional-deps = ['quote']
+
+[[host-package]]
+name = 'syn'
+version = '2.0.29'
+crates-io = true
+status = 'transitive'
+features = ['clone-impls', 'default', 'derive', 'extra-traits', 'full', 'parsing', 'printing', 'proc-macro', 'quote', 'visit', 'visit-mut']
+optional-deps = ['quote']
+
+[[host-package]]
+name = 'terminal_size'
+version = '0.1.17'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'textwrap'
+version = '0.15.2'
+crates-io = true
+status = 'transitive'
+features = ['default', 'smawk', 'unicode-linebreak', 'unicode-width']
+optional-deps = ['smawk', 'unicode-linebreak', 'unicode-width']
+
+[[host-package]]
+name = 'thiserror'
+version = '1.0.47'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'thiserror-impl'
+version = '1.0.47'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'time'
+version = '0.3.22'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'default', 'formatting', 'parsing', 'std']
+optional-deps = ['itoa']
+
+[[host-package]]
+name = 'time-core'
+version = '0.1.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'tokio-macros'
+version = '2.1.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'toml_datetime'
+version = '0.6.3'
+crates-io = true
+status = 'transitive'
+features = ['serde']
+optional-deps = ['serde']
+
+[[host-package]]
+name = 'toml_edit'
+version = '0.19.14'
+crates-io = true
+status = 'transitive'
+features = ['default', 'serde']
+optional-deps = ['serde', 'serde_spanned']
+
+[[host-package]]
+name = 'tracing'
+version = '0.2.0'
+source = 'git+https://github.com/tokio-rs/tracing#941b1591faeea55d62c1c8cf524ffa3e95b66887'
+status = 'transitive'
+features = ['attributes', 'tracing-attributes']
+optional-deps = ['tracing-attributes']
+
+[[host-package]]
+name = 'tracing-attributes'
+version = '0.1.26'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'tracing-attributes'
+version = '0.2.0'
+source = 'git+https://github.com/tokio-rs/tracing#941b1591faeea55d62c1c8cf524ffa3e95b66887'
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'tracing-core'
+version = '0.1.31'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'tracing-core'
+version = '0.2.0'
+source = 'git+https://github.com/tokio-rs/tracing#941b1591faeea55d62c1c8cf524ffa3e95b66887'
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'unicode-ident'
+version = '1.0.11'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'unicode-linebreak'
+version = '0.1.5'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'unicode-width'
+version = '0.1.10'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[host-package]]
+name = 'unicode-xid'
+version = '0.2.4'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[host-package]]
+name = 'vcpkg'
+version = '0.2.15'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'version_check'
+version = '0.9.4'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'wasm-bindgen-backend'
+version = '0.2.87'
+crates-io = true
+status = 'transitive'
+features = ['spans']
+
+[[host-package]]
+name = 'wasm-bindgen-macro'
+version = '0.2.87'
+crates-io = true
+status = 'transitive'
+features = ['spans']
+
+[[host-package]]
+name = 'wasm-bindgen-macro-support'
+version = '0.2.87'
+crates-io = true
+status = 'transitive'
+features = ['spans']
+
+[[host-package]]
+name = 'wasm-bindgen-shared'
+version = '0.2.87'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'winapi'
+version = '0.3.9'
+crates-io = true
+status = 'transitive'
+features = ['handleapi', 'processenv', 'winbase', 'wincon', 'winnt']
+
+[[host-package]]
+name = 'windows-sys'
+version = '0.48.0'
+crates-io = true
+status = 'transitive'
+features = ['Win32', 'Win32_Foundation', 'Win32_Networking', 'Win32_Networking_WinSock', 'Win32_Security', 'Win32_Storage', 'Win32_Storage_FileSystem', 'Win32_System', 'Win32_System_Console', 'Win32_System_IO', 'Win32_System_Threading', 'default']
+
+[[host-package]]
+name = 'windows-targets'
+version = '0.48.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'windows_i686_msvc'
+version = '0.48.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'winnow'
+version = '0.5.2'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'default', 'std']

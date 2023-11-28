@@ -444,6 +444,14 @@ mod large {
     }
 
     proptest_suite!(metadata_libra_9ffd93b);
+
+    #[test]
+    fn mnemos_b3b4da9() {
+        let metadata = JsonFixture::mnemos_b3b4da9();
+        metadata.verify();
+    }
+
+    proptest_suite!(mnemos_b3b4da9);
 }
 
 mod guppy_tests {
