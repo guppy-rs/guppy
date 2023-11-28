@@ -463,8 +463,10 @@ impl PackageDataValue {
                 }
             }
             None => {
-                // XXX warn here?
-                ResolvedName::LibNameNotSpecified(package.name.replace('-', "_"))
+                // This means that it's a weird case like a binary-only dependency (not part of
+                // stable Rust as of 2023-11). This will typically be reflected as an empty resolved
+                // name.
+                ResolvedName::NoLibTarget
             }
         };
 
@@ -485,6 +487,7 @@ enum ResolvedName {
     LibNameSpecified(String),
     /// This variant has its - replaced with _.
     LibNameNotSpecified(String),
+    NoLibTarget,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
@@ -492,6 +495,7 @@ enum ReqResolvedName<'g> {
     Renamed(String),
     LibNameSpecified(&'g str),
     LibNameNotSpecified(&'g str),
+    NoLibTarget,
 }
 
 impl<'g> ReqResolvedName<'g> {
@@ -503,6 +507,7 @@ impl<'g> ReqResolvedName<'g> {
         match resolved_name {
             ResolvedName::LibNameSpecified(name) => Self::LibNameSpecified(name),
             ResolvedName::LibNameNotSpecified(name) => Self::LibNameNotSpecified(name),
+            ResolvedName::NoLibTarget => Self::NoLibTarget,
         }
     }
 
@@ -511,6 +516,7 @@ impl<'g> ReqResolvedName<'g> {
             Self::Renamed(rename) => rename == name,
             Self::LibNameSpecified(resolved_name) => *resolved_name == name,
             Self::LibNameNotSpecified(resolved_name) => *resolved_name == name,
+            Self::NoLibTarget => name.is_empty(),
         }
     }
 }
