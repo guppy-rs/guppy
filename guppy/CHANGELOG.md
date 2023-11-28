@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.17.4] - 2023-11-29
+
+### Fixed
+
+- Attempted to address `PackageGraph` creation with artifact dependencies as supported by nightly Rust ([#174]). Note that this is not a complete fix, as documented at [#174].
+
+[#174]: https://github.com/guppy-rs/guppy/issues/174
+
 ## [0.17.3] - 2023-11-16
 
 ### Fixed

@@ -516,7 +516,20 @@ impl<'g> ReqResolvedName<'g> {
             Self::Renamed(rename) => rename == name,
             Self::LibNameSpecified(resolved_name) => *resolved_name == name,
             Self::LibNameNotSpecified(resolved_name) => *resolved_name == name,
-            Self::NoLibTarget => name.is_empty(),
+            Self::NoLibTarget => {
+                // This code path is only hit with nightly Rust as of 2023-11. It depends on Rust
+                // RFC 3028. at https://github.com/rust-lang/cargo/issues/9096.
+                //
+                // This isn't quite right -- if we have two or more non-lib dependencies, we'll
+                // return true for both of them over here. What we need to do instead is use the
+                // extern_name and bin_name fields that are present in nightly DepKindInfo, but that
+                // aren't in stable yet. For now, this is the best we can do.
+                //
+                // (If we're going to be relying on heuristics, it is also possible to use the
+                // package ID over here, but that's documented to be an opaque string. It also
+                // wouldn't be resilient to patch and replace.)
+                name.is_empty()
+            }
         }
     }
 }
