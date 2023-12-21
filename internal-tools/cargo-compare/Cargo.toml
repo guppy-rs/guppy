@@ -6,7 +6,7 @@ edition = "2018"
 publish = false
 
 [dependencies]
-anyhow = "1.0.75"
+anyhow = "1.0.76"
 cargo = "0.74.0"
 clap = { version = "3.2.25", features = ["derive"] }
 color-eyre = { version = "0.6.2", default-features = false }
