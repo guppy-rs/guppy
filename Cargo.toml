@@ -19,7 +19,7 @@ members = [
 ]
 
 [workspace.dependencies]
-ahash = "0.8.6"
+ahash = "0.8.7"
 guppy-workspace-hack = "0.1.0"
 
 [patch.crates-io.guppy-workspace-hack]
