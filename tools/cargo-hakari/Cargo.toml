@@ -23,7 +23,7 @@ cfg-if = "1.0.0"
 clap = { version = "4.3.19", features = ["derive"] }
 # disable tracing integration since we don't use it
 color-eyre = { version = "0.6.2", default-features = false }
-dialoguer = "0.10.4"
+dialoguer = "0.11.0"
 duct = "0.13.6"
 enable-ansi-support = "0.2.1"
 env_logger = "0.10.1"
