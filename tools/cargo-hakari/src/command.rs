@@ -544,7 +544,7 @@ fn apply_on_dialog(
         true
     } else {
         let colorful_theme = dialoguer::theme::ColorfulTheme::default();
-        let mut confirm = if output.color.is_enabled() {
+        let confirm = if output.color.is_enabled() {
             dialoguer::Confirm::with_theme(&colorful_theme)
         } else {
             dialoguer::Confirm::with_theme(&dialoguer::theme::SimpleTheme)
