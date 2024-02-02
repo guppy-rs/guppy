@@ -22,7 +22,7 @@ include = [
     # Include default rules with the package.
     "default-rules.toml",
 ]
-rust-version = "1.70"
+rust-version.workspace = true
 
 [dependencies]
 ahash.workspace = true
