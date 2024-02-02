@@ -16,47 +16,57 @@ repository = "https://github.com/guppy-rs/guppy"
 
 ### BEGIN HAKARI SECTION
 [dependencies]
-clap = { version = "4.3.19", features = ["derive"] }
-clap_builder = { version = "4.3.19", default-features = false, features = ["color", "help", "std", "suggestions", "usage"] }
-getrandom = { version = "0.2.10", default-features = false, features = ["std"] }
+aho-corasick = { version = "1.1.2" }
+clap = { version = "4.4.18", features = ["derive"] }
+clap_builder = { version = "4.4.18", default-features = false, features = ["color", "help", "std", "suggestions", "usage"] }
+getrandom = { version = "0.2.12", default-features = false, features = ["std"] }
 indexmap = { version = "1.9.3", default-features = false, features = ["std"] }
-libc = { version = "0.2.149" }
+libc = { version = "0.2.153" }
 log = { version = "0.4.20", default-features = false, features = ["std"] }
-memchr = { version = "2.6.4" }
-num-traits = { version = "0.2.16", features = ["libm"] }
+memchr = { version = "2.7.1", default-features = false, features = ["std"] }
+num-traits = { version = "0.2.17", features = ["libm"] }
 owo-colors = { version = "3.5.0", default-features = false, features = ["supports-colors"] }
 petgraph = { version = "0.6.4", default-features = false, features = ["graphmap"] }
-regex = { version = "1.9.1", default-features = false, features = ["perf", "std"] }
-regex-automata = { version = "0.3.4", default-features = false, features = ["dfa-onepass", "hybrid", "meta", "nfa-backtrack", "perf-inline", "perf-literal"] }
+regex = { version = "1.10.3", default-features = false, features = ["perf", "std"] }
+regex-automata = { version = "0.4.5", default-features = false, features = ["dfa-onepass", "hybrid", "meta", "nfa", "perf"] }
 regex-syntax = { version = "0.8.2" }
-semver = { version = "1.0.20", features = ["serde"] }
-serde = { version = "1.0.193", features = ["alloc", "derive"] }
-serde_json = { version = "1.0.108", features = ["unbounded_depth"] }
+semver = { version = "1.0.21", features = ["serde"] }
+serde = { version = "1.0.196", features = ["alloc", "derive"] }
+serde_json = { version = "1.0.113", features = ["unbounded_depth"] }
 toml = { version = "0.5.11", features = ["preserve_order"] }
 
 [build-dependencies]
-proc-macro2 = { version = "1.0.66" }
-quote = { version = "1.0.32" }
+proc-macro2 = { version = "1.0.78" }
+quote = { version = "1.0.35" }
 syn-dff4ba8e3ae991db = { package = "syn", version = "1.0.109", features = ["extra-traits", "full", "visit"] }
-syn-f595c2ba2a3f28df = { package = "syn", version = "2.0.32", features = ["extra-traits", "full"] }
+syn-f595c2ba2a3f28df = { package = "syn", version = "2.0.48", features = ["extra-traits", "full"] }
 
 [target.x86_64-unknown-linux-gnu.dependencies]
 once_cell = { version = "1.19.0" }
-rustix = { version = "0.38.21", features = ["fs", "termios"] }
+rustix = { version = "0.38.31", features = ["fs", "termios"] }
+
+[target.x86_64-unknown-linux-gnu.build-dependencies]
+libc = { version = "0.2.153" }
 
 [target.x86_64-apple-darwin.dependencies]
-libc = { version = "0.2.149", default-features = false, features = ["extra_traits"] }
+libc = { version = "0.2.153", default-features = false, features = ["extra_traits"] }
 once_cell = { version = "1.19.0" }
-rustix = { version = "0.38.21", features = ["fs", "termios"] }
+rustix = { version = "0.38.31", features = ["fs", "termios"] }
+
+[target.x86_64-apple-darwin.build-dependencies]
+libc = { version = "0.2.153", features = ["extra_traits"] }
 
 [target.aarch64-apple-darwin.dependencies]
-libc = { version = "0.2.149", default-features = false, features = ["extra_traits"] }
+libc = { version = "0.2.153", default-features = false, features = ["extra_traits"] }
 once_cell = { version = "1.19.0" }
-rustix = { version = "0.38.21", features = ["fs", "termios"] }
+rustix = { version = "0.38.31", features = ["fs", "termios"] }
+
+[target.aarch64-apple-darwin.build-dependencies]
+libc = { version = "0.2.153", features = ["extra_traits"] }
 
 [target.x86_64-pc-windows-msvc.dependencies]
 once_cell = { version = "1.19.0" }
-winapi = { version = "0.3.9", default-features = false, features = ["consoleapi", "errhandlingapi", "fileapi", "handleapi", "minwinbase", "minwindef", "processenv", "std", "synchapi", "winbase", "wincon", "winerror", "winnt"] }
-windows-sys = { version = "0.48.0", features = ["Win32_Foundation", "Win32_Security", "Win32_Storage_FileSystem", "Win32_System_Console", "Win32_System_Pipes", "Win32_System_Threading"] }
+winapi = { version = "0.3.9", default-features = false, features = ["consoleapi", "errhandlingapi", "fileapi", "handleapi", "minwinbase", "minwindef", "processenv", "std", "synchapi", "sysinfoapi", "winbase", "wincon", "winerror", "winnt"] }
+windows-sys = { version = "0.52.0", features = ["Win32_Foundation", "Win32_Storage_FileSystem", "Win32_System_Console"] }
 
 ### END HAKARI SECTION
