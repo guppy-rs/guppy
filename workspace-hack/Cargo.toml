@@ -49,6 +49,11 @@ libc = { version = "0.2.149", default-features = false, features = ["extra_trait
 once_cell = { version = "1.19.0" }
 rustix = { version = "0.38.21", features = ["fs", "termios"] }
 
+[target.aarch64-apple-darwin.dependencies]
+libc = { version = "0.2.149", default-features = false, features = ["extra_traits"] }
+once_cell = { version = "1.19.0" }
+rustix = { version = "0.38.21", features = ["fs", "termios"] }
+
 [target.x86_64-pc-windows-msvc.dependencies]
 once_cell = { version = "1.19.0" }
 winapi = { version = "0.3.9", default-features = false, features = ["consoleapi", "errhandlingapi", "fileapi", "handleapi", "minwinbase", "minwindef", "processenv", "std", "synchapi", "winbase", "wincon", "winerror", "winnt"] }
