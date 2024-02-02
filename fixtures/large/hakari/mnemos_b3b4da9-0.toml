@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '4'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['armv6k-nintendo-3ds', 's390x-unknown-linux-musl']
+# platforms = ['armv7-linux-androideabi', 'sparc-unknown-linux-gnu']
 # [[traversal-excludes.ids]]
 # name = 'string_cache_codegen'
 # version = '0.5.2'
@@ -826,7 +826,9 @@ zstd-safe-a490c3000a992113 = { package = "zstd-safe", version = "6", default-fea
 zstd-safe-cdf1610d3e1514e9 = { package = "zstd-safe", version = "5", default-features = false, features = ["arrays", "legacy", "std", "zdict_builder"] }
 zstd-sys = { version = "2", default-features = false, features = ["legacy", "std", "zdict_builder", "zstdmt"] }
 
-[target.armv6k-nintendo-3ds.dependencies]
+[target.armv7-linux-androideabi.dependencies]
+android-tzdata = { version = "0.1", default-features = false }
+android_system_properties = { version = "0.1", default-features = false }
 async-executor = { version = "1", default-features = false }
 async-global-executor = { version = "2" }
 async-io = { version = "1", default-features = false }
@@ -845,6 +847,7 @@ hashbrown-582f2526e08bb6a0 = { package = "hashbrown", version = "0.14", default-
 hashbrown-5ef9efb8ec2df382 = { package = "hashbrown", version = "0.12", default-features = false, features = ["inline-more"] }
 iana-time-zone = { version = "0.1", default-features = false, features = ["fallback"] }
 libc = { version = "0.2", default-features = false, features = ["extra_traits"] }
+linux-raw-sys-468e82937335b1c9 = { package = "linux-raw-sys", version = "0.3", default-features = false, features = ["general", "ioctl", "no_std"] }
 memoffset-3b31131e45eafb45 = { package = "memoffset", version = "0.6" }
 mio = { version = "0.8" }
 nix-2b5c6dc72f624058 = { package = "nix", version = "0.23", default-features = false }
@@ -864,8 +867,10 @@ static_assertions = { version = "1", default-features = false }
 unicode-bidi = { version = "0.3" }
 waker-fn = { version = "1", default-features = false }
 
-[target.armv6k-nintendo-3ds.build-dependencies]
+[target.armv7-linux-androideabi.build-dependencies]
 ahash = { version = "0.8" }
+android-tzdata = { version = "0.1", default-features = false }
+android_system_properties = { version = "0.1", default-features = false }
 arc-swap = { version = "1", default-features = false }
 async-io = { version = "1", default-features = false }
 base16ct = { version = "0.2", default-features = false, features = ["alloc"] }
@@ -960,8 +965,12 @@ idna-6f8ce4dd05d13bba = { package = "idna", version = "0.2", default-features = 
 ignore = { version = "0.4", default-features = false }
 im-rc = { version = "15", default-features = false }
 imara-diff = { version = "0.1" }
+inotify = { version = "0.9", default-features = false }
+inotify-sys = { version = "0.1", default-features = false }
 io-close = { version = "0.3", default-features = false }
 ipnet = { version = "2" }
+is-docker = { version = "0.2", default-features = false }
+is-wsl = { version = "0.4", default-features = false }
 itertools-93f6ce9d446188ac = { package = "itertools", version = "0.10" }
 kstring = { version = "2" }
 lazycell = { version = "1", default-features = false }
@@ -971,6 +980,8 @@ libnghttp2-sys = { version = "0.1", default-features = false }
 libssh2-sys = { version = "0.3", default-features = false }
 libz-sys = { version = "1", default-features = false, features = ["libc"] }
 linked-hash-map = { version = "0.5", default-features = false }
+linux-raw-sys-468e82937335b1c9 = { package = "linux-raw-sys", version = "0.3", default-features = false, features = ["general", "ioctl", "no_std"] }
+linux-raw-sys-9fbad63c4bcf4a8f = { package = "linux-raw-sys", version = "0.4", default-features = false, features = ["general", "ioctl", "no_std"] }
 lru-cache = { version = "0.1", default-features = false }
 match_cfg = { version = "0.1" }
 maybe-async = { version = "0.2", features = ["is_sync"] }
@@ -1016,6 +1027,7 @@ signal-hook-registry = { version = "1", default-features = false }
 signature = { version = "2", default-features = false, features = ["digest", "rand_core", "std"] }
 sized-chunks = { version = "0.6" }
 smallvec = { version = "1", default-features = false, features = ["write"] }
+spin = { version = "0.5", default-features = false }
 spki = { version = "0.7", default-features = false, features = ["pem", "std"] }
 subtle = { version = "2", default-features = false, features = ["i128"] }
 syn-dff4ba8e3ae991db = { package = "syn", version = "1", default-features = false, features = ["visit-mut"] }
@@ -1030,7 +1042,7 @@ vcpkg = { version = "0.2", default-features = false }
 webpki-roots-2ffb4c3fe830441c = { package = "webpki-roots", version = "0.25", default-features = false }
 xattr = { version = "1" }
 
-[target.s390x-unknown-linux-musl.dependencies]
+[target.sparc-unknown-linux-gnu.dependencies]
 async-executor = { version = "1", default-features = false }
 async-global-executor = { version = "2" }
 async-io = { version = "1", default-features = false }
@@ -1049,6 +1061,9 @@ hashbrown-582f2526e08bb6a0 = { package = "hashbrown", version = "0.14", default-
 hashbrown-5ef9efb8ec2df382 = { package = "hashbrown", version = "0.12", default-features = false, features = ["inline-more"] }
 iana-time-zone = { version = "0.1", default-features = false, features = ["fallback"] }
 libc = { version = "0.2", default-features = false, features = ["extra_traits"] }
+libudev-468e82937335b1c9 = { package = "libudev", version = "0.3", default-features = false }
+libudev-6f8ce4dd05d13bba = { package = "libudev", version = "0.2", default-features = false }
+libudev-sys = { version = "0.1", default-features = false }
 linux-raw-sys-468e82937335b1c9 = { package = "linux-raw-sys", version = "0.3", default-features = false, features = ["general", "ioctl", "no_std"] }
 memoffset-3b31131e45eafb45 = { package = "memoffset", version = "0.6" }
 mio = { version = "0.8" }
@@ -1069,7 +1084,7 @@ static_assertions = { version = "1", default-features = false }
 unicode-bidi = { version = "0.3" }
 waker-fn = { version = "1", default-features = false }
 
-[target.s390x-unknown-linux-musl.build-dependencies]
+[target.sparc-unknown-linux-gnu.build-dependencies]
 ahash = { version = "0.8" }
 arc-swap = { version = "1", default-features = false }
 async-io = { version = "1", default-features = false }
@@ -1178,6 +1193,8 @@ libc = { version = "0.2", default-features = false, features = ["extra_traits"] 
 libgit2-sys = { version = "0.15", default-features = false, features = ["https", "ssh", "ssh_key_from_memory"] }
 libnghttp2-sys = { version = "0.1", default-features = false }
 libssh2-sys = { version = "0.3", default-features = false }
+libudev-468e82937335b1c9 = { package = "libudev", version = "0.3", default-features = false }
+libudev-sys = { version = "0.1", default-features = false }
 libz-sys = { version = "1", default-features = false, features = ["libc"] }
 linked-hash-map = { version = "0.5", default-features = false }
 linux-raw-sys-468e82937335b1c9 = { package = "linux-raw-sys", version = "0.3", default-features = false, features = ["general", "ioctl", "no_std"] }

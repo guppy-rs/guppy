@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '4'
 # workspace-hack-line-style = 'full'
-# platforms = ['aarch64-uwp-windows-msvc', 'x86_64h-apple-darwin', 'powerpc-wrs-vxworks']
+# platforms = ['aarch64-uwp-windows-msvc', 'x86_64h-apple-darwin', 'powerpc-wrs-vxworks-spe']
 #
 # [traversal-excludes]
 # [[final-excludes.ids]]

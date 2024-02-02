@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'riscv32imac-unknown-xous-elf'
+triple = 'riscv32imc-unknown-none-elf'
 target-features = ['rdrand']
 flags = ['bar']
 

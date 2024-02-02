@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'i586-unknown-linux-gnu'
+triple = 'i586-unknown-netbsd'
 target-features = 'all'
 flags = ['abc']
 

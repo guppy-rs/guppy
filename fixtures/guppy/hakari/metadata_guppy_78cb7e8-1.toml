@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '1'
 # workspace-hack-line-style = 'full'
-# platforms = ['powerpc-wrs-vxworks', 'riscv32imc-unknown-none-elf', 'mipsel-unknown-linux-musl']
+# platforms = ['powerpc-wrs-vxworks-spe', 'riscv64gc-unknown-freebsd', 'mipsel-unknown-linux-uclibc']
 # [[traversal-excludes.ids]]
 # name = 'pathdiff'
 # version = '0.2.0'
@@ -60,16 +60,22 @@ proc-macro2 = { version = "1", features = ["proc-macro"] }
 quote = { version = "1", features = ["proc-macro"] }
 syn = { version = "1", features = ["clone-impls", "derive", "full", "parsing", "printing", "proc-macro", "quote", "visit"] }
 
-[target.powerpc-wrs-vxworks.dependencies]
+[target.powerpc-wrs-vxworks-spe.dependencies]
 libc = { version = "0.2", features = ["std"] }
 
-[target.powerpc-wrs-vxworks.build-dependencies]
+[target.powerpc-wrs-vxworks-spe.build-dependencies]
 libc = { version = "0.2", features = ["std"] }
 
-[target.mipsel-unknown-linux-musl.dependencies]
+[target.riscv64gc-unknown-freebsd.dependencies]
 libc = { version = "0.2", features = ["std"] }
 
-[target.mipsel-unknown-linux-musl.build-dependencies]
+[target.riscv64gc-unknown-freebsd.build-dependencies]
+libc = { version = "0.2", features = ["std"] }
+
+[target.mipsel-unknown-linux-uclibc.dependencies]
+libc = { version = "0.2", features = ["std"] }
+
+[target.mipsel-unknown-linux-uclibc.build-dependencies]
 libc = { version = "0.2", features = ["std"] }
 
 ### END HAKARI SECTION

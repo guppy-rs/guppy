@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '2'
 # workspace-hack-line-style = 'full'
-# platforms = ['aarch64-unknown-hermit', 'armv7-apple-ios']
+# platforms = ['aarch64-unknown-fuchsia', 'armv7-sony-vita-newlibeabihf']
 #
 # [traversal-excludes]
 # [[final-excludes.ids]]

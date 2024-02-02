@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '1'
 # workspace-hack-line-style = 'full'
-# platforms = ['hexagon-unknown-linux-musl', 'riscv32imac-unknown-none-elf', 'armv4t-unknown-linux-gnueabi']
+# platforms = ['i586-pc-nto-qnx700', 'riscv32imac-unknown-xous-elf', 'armv4t-unknown-linux-gnueabi']
 # [[traversal-excludes.ids]]
 # name = 'lazy_static'
 # version = '0.2.11'

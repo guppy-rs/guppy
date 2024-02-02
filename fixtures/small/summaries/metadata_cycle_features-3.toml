@@ -12,7 +12,7 @@ target-features = 'all'
 flags = ['foo']
 
 [metadata.target-platform]
-triple = 'i386-apple-ios'
+triple = 'i586-pc-windows-msvc'
 target-features = ['bmi2', 'sse', 'sse4.1']
 flags = ['bar', 'flag-test']
 [[metadata.omitted-packages.ids]]

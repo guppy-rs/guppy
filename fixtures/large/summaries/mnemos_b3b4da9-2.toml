@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'riscv64gc-unknown-fuchsia'
+triple = 'riscv64gc-unknown-hermit'
 target-features = 'unknown'
 flags = ['foo']
 

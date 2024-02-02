@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '1'
 # workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['armv7-apple-ios', 'riscv32gc-unknown-linux-gnu', 'x86_64-apple-darwin']
+# platforms = ['armv7-sony-vita-newlibeabihf', 'riscv32gc-unknown-linux-musl', 'x86_64-apple-darwin']
 # [[traversal-excludes.ids]]
 # name = 'testcycles-helper'
 # version = '0.1.0'

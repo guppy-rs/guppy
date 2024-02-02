@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '3'
 # workspace-hack-line-style = 'full'
-# platforms = ['s390x-unknown-linux-gnu']
+# platforms = ['s390x-unknown-linux-musl']
 # [[traversal-excludes.ids]]
 # name = 'bootloader_api'
 # version = '0.11.4'
@@ -196,7 +196,7 @@ unicode-normalization = { version = "0.1" }
 uuid = { version = "1", features = ["serde", "v4"] }
 zeroize = { version = "1" }
 
-[target.s390x-unknown-linux-gnu.dependencies]
+[target.s390x-unknown-linux-musl.dependencies]
 io-lifetimes = { version = "1" }
 libc = { version = "0.2", default-features = false, features = ["use_std"] }
 nix = { version = "0.26", default-features = false, features = ["fs", "ioctl", "poll", "signal", "term"] }
@@ -204,7 +204,7 @@ openssl = { version = "0.10" }
 rustix = { version = "0.37", features = ["fs", "termios"] }
 signal-hook = { version = "0.3", default-features = false, features = ["iterator"] }
 
-[target.s390x-unknown-linux-gnu.build-dependencies]
+[target.s390x-unknown-linux-musl.build-dependencies]
 io-lifetimes = { version = "1" }
 itertools = { version = "0.10" }
 nix = { version = "0.26", default-features = false, features = ["dir", "ioctl", "poll", "signal", "term"] }

@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '1'
 # workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['aarch64-apple-tvos', 'armv7-unknown-linux-musleabihf']
+# platforms = ['aarch64-apple-tvos', 'armv7-unknown-linux-uclibceabihf']
 # [[traversal-excludes.ids]]
 # name = 'quote'
 # version = '1.0.2'

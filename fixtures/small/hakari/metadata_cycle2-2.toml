@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '2'
 # workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['mipsisa32r6el-unknown-linux-gnu', 'aarch64-apple-watchos-sim', 'thumbv8m.main-none-eabi']
+# platforms = ['mipsisa32r6el-unknown-linux-gnu', 'aarch64-apple-tvos-sim', 'thumbv8m.main-none-eabihf']
 # [[traversal-excludes.ids]]
 # name = 'lower-b'
 # version = '0.1.0'

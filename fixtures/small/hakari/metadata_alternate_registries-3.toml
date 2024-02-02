@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '4'
 # workspace-hack-line-style = 'full'
-# platforms = ['powerpc-wrs-vxworks-spe']
+# platforms = ['powerpc64-ibm-aix']
 # [[traversal-excludes.ids]]
 # name = 'proc-macro2'
 # version = '1.0.29'

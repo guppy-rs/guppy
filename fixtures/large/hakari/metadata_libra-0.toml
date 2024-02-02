@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '2'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['x86_64-pc-windows-gnullvm', 'arm-unknown-linux-musleabi', 'armv7-linux-androideabi']
+# platforms = ['x86_64-pc-windows-msvc', 'arm-unknown-linux-musleabi', 'armv7-unknown-freebsd']
 # [[traversal-excludes.ids]]
 # name = 'netcore'
 # version = '0.1.0'
@@ -730,7 +730,7 @@ x25519-dalek-e7fe84ab14e05bdb = { package = "x25519-dalek", git = "https://githu
 x25519-dalek-d8f496e17d97b5cb = { package = "x25519-dalek", version = "0.5", features = ["std", "u64_backend"] }
 zstd-sys = { git = "https://github.com/gyscos/zstd-rs.git", features = ["legacy"] }
 
-[target.x86_64-pc-windows-gnullvm.dependencies]
+[target.x86_64-pc-windows-msvc.dependencies]
 c2-chacha = { version = "0.2", default-features = false, features = ["lazy_static", "simd", "std"] }
 kernel32-sys = { version = "0.2", default-features = false }
 lazy_static = { version = "1", default-features = false, features = ["spin", "spin_no_std"] }
@@ -747,7 +747,7 @@ wincolor = { version = "1", default-features = false }
 winreg = { version = "0.6", default-features = false }
 ws2_32-sys = { version = "0.2", default-features = false }
 
-[target.x86_64-pc-windows-gnullvm.build-dependencies]
+[target.x86_64-pc-windows-msvc.build-dependencies]
 c2-chacha = { version = "0.2", default-features = false, features = ["lazy_static", "simd", "std"] }
 kernel32-sys = { version = "0.2", default-features = false }
 lazy_static = { version = "1", default-features = false, features = ["spin", "spin_no_std"] }
@@ -757,6 +757,7 @@ miow-468e82937335b1c9 = { package = "miow", version = "0.3", default-features = 
 ppv-lite86 = { version = "0.2", features = ["simd", "std"] }
 rand_chacha-6f8ce4dd05d13bba = { package = "rand_chacha", version = "0.2", features = ["simd", "std"] }
 socket2 = { version = "0.3", default-features = false }
+vcpkg = { version = "0.2", default-features = false }
 winapi-6f8ce4dd05d13bba = { package = "winapi", version = "0.2", default-features = false }
 winapi-468e82937335b1c9 = { package = "winapi", version = "0.3", default-features = false, features = ["consoleapi", "errhandlingapi", "fileapi", "handleapi", "impl-debug", "impl-default", "ioapiset", "knownfolders", "libloaderapi", "memoryapi", "minwinbase", "minwindef", "namedpipeapi", "ntdef", "ntsecapi", "ntstatus", "objbase", "processenv", "processthreadsapi", "profileapi", "shlobj", "std", "synchapi", "sysinfoapi", "threadpoollegacyapiset", "timezoneapi", "winbase", "wincon", "winerror", "winnt", "winreg", "winsock2", "winuser", "ws2def", "ws2ipdef", "ws2tcpip", "wtypesbase"] }
 winapi-build = { version = "0.1", default-features = false }
@@ -791,10 +792,9 @@ tokio-uds = { version = "0.2", default-features = false }
 utf8parse = { version = "0.1", default-features = false }
 void = { version = "1", features = ["std"] }
 
-[target.armv7-linux-androideabi.dependencies]
+[target.armv7-unknown-freebsd.dependencies]
 ansi_term = { version = "0.11", default-features = false }
 c2-chacha = { version = "0.2", default-features = false, features = ["lazy_static", "simd", "std"] }
-get_if_addrs-sys = { version = "0.1", default-features = false }
 lazy_static = { version = "1", default-features = false, features = ["spin", "spin_no_std"] }
 mio-uds = { version = "0.6", default-features = false }
 nix = { version = "0.14", default-features = false }
@@ -805,10 +805,9 @@ tokio-uds = { version = "0.2", default-features = false }
 utf8parse = { version = "0.1", default-features = false }
 void = { version = "1", features = ["std"] }
 
-[target.armv7-linux-androideabi.build-dependencies]
+[target.armv7-unknown-freebsd.build-dependencies]
 ansi_term = { version = "0.11", default-features = false }
 c2-chacha = { version = "0.2", default-features = false, features = ["lazy_static", "simd", "std"] }
-get_if_addrs-sys = { version = "0.1", default-features = false }
 lazy_static = { version = "1", default-features = false, features = ["spin", "spin_no_std"] }
 mio-uds = { version = "0.6", default-features = false }
 nix = { version = "0.14", default-features = false }

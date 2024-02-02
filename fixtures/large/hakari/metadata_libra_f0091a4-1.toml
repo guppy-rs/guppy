@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '2'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['armv7r-none-eabihf']
+# platforms = ['avr-unknown-gnu-atmega328']
 # [[traversal-excludes.ids]]
 # name = 'derivative'
 # version = '1.0.3'
@@ -100,7 +100,7 @@ subtle = { version = "2", features = ["i128", "std"] }
 syn = { version = "1", features = ["clone-impls", "derive", "extra-traits", "fold", "full", "parsing", "printing", "proc-macro", "quote", "visit", "visit-mut"] }
 toml = { version = "0.5" }
 
-[target.armv7r-none-eabihf.dependencies]
+[target.avr-unknown-gnu-atmega328.dependencies]
 hyper = { version = "0.13", features = ["net2", "runtime", "stream", "tcp"] }
 
 ### END HAKARI SECTION

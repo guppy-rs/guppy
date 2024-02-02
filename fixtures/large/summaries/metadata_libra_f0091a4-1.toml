@@ -12,7 +12,7 @@ target-features = ['avx', 'sse3']
 flags = ['abc', 'test-flag']
 
 [metadata.target-platform]
-triple = 'riscv64gc-unknown-fuchsia'
+triple = 'riscv64gc-unknown-hermit'
 target-features = 'unknown'
 flags = ['bar', 'test-flag']
 [[metadata.omitted-packages.ids]]

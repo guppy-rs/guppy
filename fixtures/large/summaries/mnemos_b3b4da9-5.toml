@@ -7,12 +7,12 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'thumbv7em-none-eabihf'
+triple = 'thumbv7m-none-eabi'
 target-features = []
 flags = ['flag-test', 'foo']
 
 [metadata.target-platform]
-triple = 'powerpc-wrs-vxworks'
+triple = 'powerpc-wrs-vxworks-spe'
 target-features = 'unknown'
 flags = ['cargo_web', 'test-flag']
 

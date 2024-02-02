@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'powerpc64-unknown-openbsd'
+triple = 'powerpc64-wrs-vxworks'
 target-features = 'all'
 flags = ['bar', 'foo']
 

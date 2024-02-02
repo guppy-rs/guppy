@@ -12,7 +12,7 @@ target-features = 'all'
 flags = ['test-flag']
 
 [metadata.target-platform]
-triple = 'thumbv7m-none-eabi'
+triple = 'thumbv7neon-linux-androideabi'
 target-features = 'unknown'
 flags = ['test-flag']
 [[metadata.omitted-packages.ids]]

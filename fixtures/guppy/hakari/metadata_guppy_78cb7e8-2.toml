@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '4'
 # workspace-hack-line-style = 'full'
-# platforms = ['aarch64-fuchsia']
+# platforms = ['aarch64-apple-watchos-sim']
 #
 # [traversal-excludes]
 # [[final-excludes.ids]]
@@ -333,7 +333,7 @@ void = { version = "1", default-features = false }
 vte = { version = "0.3", default-features = false }
 walkdir = { version = "2", default-features = false }
 
-[target.aarch64-fuchsia.dependencies]
+[target.aarch64-apple-watchos-sim.dependencies]
 foreign-types = { version = "0.3", default-features = false }
 foreign-types-shared = { version = "0.1", default-features = false }
 openssl = { version = "0.10", default-features = false }
@@ -343,7 +343,7 @@ ppv-lite86 = { version = "0.2", default-features = false, features = ["std"] }
 rand_chacha = { version = "0.2", default-features = false, features = ["std"] }
 termios = { version = "0.3", default-features = false }
 
-[target.aarch64-fuchsia.build-dependencies]
+[target.aarch64-apple-watchos-sim.build-dependencies]
 foreign-types = { version = "0.3", default-features = false }
 foreign-types-shared = { version = "0.1", default-features = false }
 openssl = { version = "0.10", default-features = false }
