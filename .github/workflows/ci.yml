@@ -42,8 +42,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ ubuntu-latest, macos-latest, windows-latest ]
-        rust-version: [ "1.70", stable ]
+        os: [ubuntu-latest, macos-14, windows-latest]
+        rust-version: ["1.70", stable]
       fail-fast: false
     env:
       RUSTFLAGS: -D warnings
@@ -81,8 +81,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ ubuntu-latest, macos-latest, windows-latest ]
-        rust-version: [ "1.70", stable ]
+        os: [ubuntu-latest, macos-14, windows-latest]
+        rust-version: ["1.70", stable]
       fail-fast: false
     env:
       RUSTFLAGS: -D warnings
@@ -108,7 +108,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ ubuntu-latest ]
+        os: [ubuntu-latest]
       fail-fast: false
     env:
       RUSTDOCFLAGS: -D warnings
@@ -128,7 +128,7 @@ jobs:
       matrix:
         # Don't run cargo-compare tests on Windows for now. See
         # https://github.com/facebookincubator/cargo-guppy/issues/265.
-        os: [ ubuntu-latest, macos-latest ]
+        os: [ubuntu-latest, macos-14]
       fail-fast: false
     env:
       RUSTFLAGS: -D warnings

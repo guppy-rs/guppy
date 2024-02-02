@@ -4,7 +4,7 @@ name: Publish releases to GitHub
 on:
   push:
     tags:
-      - '*'
+      - "*"
 
 jobs:
   target-spec-release:
@@ -223,7 +223,7 @@ jobs:
             os: windows-latest
             container:
           - target: universal-apple-darwin
-            os: macos-latest
+            os: macos-14
             container:
 
           # Builds using cross
