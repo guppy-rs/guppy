@@ -3416,6 +3416,13 @@ status = 'initial'
 features = []
 
 [[host-package]]
+name = 'anyhow'
+version = '1.0.26'
+crates-io = true
+status = 'direct'
+features = ['default', 'std']
+
+[[host-package]]
 name = 'async-trait'
 version = '0.1.24'
 crates-io = true
@@ -3490,13 +3497,6 @@ features = ['default', 'rustfmt', 'transport']
 [[host-package]]
 name = 'aho-corasick'
 version = '0.7.10'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
-
-[[host-package]]
-name = 'anyhow'
-version = '1.0.26'
 crates-io = true
 status = 'transitive'
 features = ['default', 'std']

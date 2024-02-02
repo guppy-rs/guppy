@@ -34,7 +34,21 @@ features = []
 
 [[host-package]]
 name = 'bytes'
+version = '0.3.0'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
+name = 'bytes'
 version = '0.5.4'
 crates-io = true
 status = 'direct'
 features = ['default', 'std']
+
+[[host-package]]
+name = 'lazy_static'
+version = '0.2.11'
+crates-io = true
+status = 'direct'
+features = []

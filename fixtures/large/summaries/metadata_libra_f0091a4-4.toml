@@ -1166,6 +1166,13 @@ status = 'workspace'
 features = []
 
 [[host-package]]
+name = 'anyhow'
+version = '1.0.26'
+crates-io = true
+status = 'direct'
+features = ['default', 'std']
+
+[[host-package]]
 name = 'proc-macro2'
 version = '1.0.8'
 crates-io = true
@@ -1207,13 +1214,6 @@ version = '0.1.1'
 crates-io = true
 status = 'direct'
 features = ['default', 'rustfmt', 'transport']
-
-[[host-package]]
-name = 'anyhow'
-version = '1.0.26'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
 
 [[host-package]]
 name = 'async-stream-impl'

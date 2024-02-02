@@ -49,6 +49,14 @@ status = 'initial'
 features = []
 
 [[host-package]]
+name = 'futures'
+version = '0.3.4'
+crates-io = true
+status = 'direct'
+features = ['alloc', 'async-await', 'default', 'executor', 'futures-executor', 'std']
+optional-deps = ['futures-executor']
+
+[[host-package]]
 name = 'tokio'
 version = '0.2.13'
 crates-io = true
@@ -86,11 +94,62 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'futures-channel'
+version = '0.3.4'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'default', 'futures-sink', 'sink', 'std']
+optional-deps = ['futures-sink']
+
+[[host-package]]
 name = 'futures-core'
 version = '0.3.4'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'std']
+
+[[host-package]]
+name = 'futures-executor'
+version = '0.3.4'
+crates-io = true
+status = 'transitive'
+features = ['std']
+
+[[host-package]]
+name = 'futures-io'
+version = '0.3.4'
+crates-io = true
+status = 'transitive'
+features = ['std']
+
+[[host-package]]
+name = 'futures-macro'
+version = '0.3.4'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'futures-sink'
+version = '0.3.4'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'default', 'std']
+
+[[host-package]]
+name = 'futures-task'
+version = '0.3.4'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'std']
+
+[[host-package]]
+name = 'futures-util'
+version = '0.3.4'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'async-await', 'async-await-macro', 'channel', 'futures-channel', 'futures-io', 'futures-macro', 'futures-sink', 'io', 'memchr', 'proc-macro-hack', 'proc-macro-nested', 'sink', 'slab', 'std']
+optional-deps = ['futures-channel', 'futures-io', 'futures-macro', 'futures-sink', 'memchr', 'proc-macro-hack', 'proc-macro-nested', 'slab']
 
 [[host-package]]
 name = 'iovec'
@@ -159,6 +218,27 @@ features = []
 [[host-package]]
 name = 'pin-project-lite'
 version = '0.1.4'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'pin-utils'
+version = '0.1.0-alpha.4'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'proc-macro-hack'
+version = '0.5.11'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'proc-macro-nested'
+version = '0.1.3'
 crates-io = true
 status = 'transitive'
 features = []

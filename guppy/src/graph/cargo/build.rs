@@ -201,6 +201,7 @@ impl<'a> CargoSetBuildState<'a> {
                 return false;
             }
 
+            // Dev-dependencies are only considered if `from` is an initial.
             let consider_dev =
                 self.opts.include_dev && query.starts_from(from.id()).expect("valid ID");
             // Build dependencies are only considered if there's a build script.
@@ -253,7 +254,7 @@ impl<'a> CargoSetBuildState<'a> {
         let host_packages = graph
             .package_graph
             .query_from_parts(host_ixs, DependencyDirection::Forward)
-            .resolve_with_fn(|_, link| {
+            .resolve_with_fn(|query, link| {
                 let (from, to) = link.endpoints();
                 if self.is_omitted(to.package_ix()) {
                     // Pretend that the omitted set doesn't exist.
@@ -262,13 +263,18 @@ impl<'a> CargoSetBuildState<'a> {
 
                 // All relevant nodes in host_ixs have already been added to host_direct_deps at [a].
 
+                // Dev-dependencies are only considered if `from` is an initial.
+                let consider_dev =
+                    self.opts.include_dev && query.starts_from(from.id()).expect("valid ID");
                 let consider_build = from.has_build_script();
 
-                // Only normal and build dependencies are considered, regardless of whether this is
-                // an initial. (Dev-dependencies of initials would have been considered in step 2).
+                // Only normal and build dependencies are typically considered. Dev-dependencies of
+                // initials are also considered.
                 let res = is_enabled(host_set, &link, DependencyKind::Normal, host_platform)
                     || (consider_build
-                        && is_enabled(host_set, &link, DependencyKind::Build, host_platform));
+                        && is_enabled(host_set, &link, DependencyKind::Build, host_platform))
+                    || (consider_dev
+                        && is_enabled(host_set, &link, DependencyKind::Development, host_platform));
 
                 if res {
                     if from.in_workspace() {

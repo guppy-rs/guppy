@@ -122,6 +122,13 @@ status = 'direct'
 features = ['default', 'std']
 
 [[host-package]]
+name = 'assert_approx_eq'
+version = '1.1.0'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
 name = 'byteorder'
 version = '1.3.4'
 crates-io = true
@@ -309,6 +316,14 @@ version = '1.0.0'
 crates-io = true
 status = 'direct'
 features = []
+
+[[host-package]]
+name = 'rusty-fork'
+version = '0.2.2'
+crates-io = true
+status = 'direct'
+features = ['default', 'timeout', 'wait-timeout']
+optional-deps = ['wait-timeout']
 
 [[host-package]]
 name = 'serde'
@@ -1014,6 +1029,13 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'quick-error'
+version = '1.2.3'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'rand'
 version = '0.4.6'
 crates-io = true
@@ -1473,6 +1495,13 @@ features = []
 [[host-package]]
 name = 'url'
 version = '2.1.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'wait-timeout'
+version = '0.2.0'
 crates-io = true
 status = 'transitive'
 features = []

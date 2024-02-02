@@ -97,6 +97,13 @@ status = 'direct'
 features = ['default', 'std']
 
 [[host-package]]
+name = 'assert_matches'
+version = '1.4.0'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
 name = 'cargo_metadata'
 version = '0.11.3'
 crates-io = true
