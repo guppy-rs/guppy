@@ -8,10 +8,10 @@ All notable changes to this project will be documented in this file.
 
 New config option `workspace-hack-line-style`, with three possible values:
 
-* *"full"*: `my-workspace-hack = { version = "0.1", path = ... }`. This is the default and a
+- _"full"_: `my-workspace-hack = { version = "0.1", path = ... }`. This is the default and a
   good way to get started.
 
-* *"version-only"*: `my-workspace-hack = { version = "0.1" }`. Specifying versions this way is
+- _"version-only"_: `my-workspace-hack = { version = "0.1" }`. Specifying versions this way is
   useful if you've published a stub crate to crates.io (see the [publishing](crate::publishing)
   section). You can use this in combination with a `patch` directive in the root `Cargo.toml`:
 
@@ -19,7 +19,8 @@ New config option `workspace-hack-line-style`, with three possible values:
   [patch.crates-io.my-workspace-hack]
   path = "workspace-hack"
   ```
-* *"workspace-dotted"*: `my-workspace-hack.workspace = true`. To use this, define a workspace
+
+- _"workspace-dotted"_: `my-workspace-hack.workspace = true`. To use this, define a workspace
   dependency in the root `Cargo.toml`:
 
   ```toml
@@ -33,7 +34,7 @@ New config option `workspace-hack-line-style`, with three possible values:
 ### Changed
 
 - MSRV updated to Rust 1.70.
-- Builtin platforms updated to Rust 1.72.
+- Builtin platforms updated to Rust 1.73.
 
 ## [0.9.27] - 2023-07-29
 
@@ -107,15 +108,14 @@ You can install release binaries:
       tool: cargo-hakari
   ```
 
-
 ## [0.9.18] - 2023-01-08
 
 ### Added
 
 Introduced a new `dep-format-version`, version 3, with these changes:
 
-* Always elide build metadata from version strings (e.g. with the semver string `5.4.0+g7f361a3`, don't show the bit after the + sign). Thanks [Nikhil Benesch](https://github.com/guppy-rs/guppy/pull/57) for your first contribution!
-* Remove private features from the workspace-hack's Cargo.toml. This should simplify the output greatly.
+- Always elide build metadata from version strings (e.g. with the semver string `5.4.0+g7f361a3`, don't show the bit after the + sign). Thanks [Nikhil Benesch](https://github.com/guppy-rs/guppy/pull/57) for your first contribution!
+- Remove private features from the workspace-hack's Cargo.toml. This should simplify the output greatly.
 
 ### Changed
 
@@ -200,7 +200,7 @@ Thanks to [Carol Nichols](https://github.com/carols10cents) for her contribution
 - New config option `dep-format-version`, to control `workspace-hack = ...` lines in other `Cargo.toml`s.
   - Newly initialized workspaces have `dep-format-version = "2"`.
   - Version 2 is required for the alternate publishing method.
-  
+
 ### Changed
 
 - The default config file location is now `.config/hakari.toml`. `.guppy/hakari.toml` continues to be supported

@@ -23,7 +23,7 @@ ahash = "0.8.7"
 guppy-workspace-hack = "0.1.0"
 
 [workspace.package]
-rust-version = "1.72"
+rust-version = "1.73"
 
 [patch.crates-io.guppy-workspace-hack]
 path = "workspace-hack"
