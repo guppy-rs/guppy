@@ -70,7 +70,7 @@ impl GuppyCargoCommon {
             Some(platform) => CompileKind::Target(CompileTarget::new(platform)?),
             None => CompileKind::Host,
         };
-        let target_data = RustcTargetData::new(&workspace, &[compile_kind])?;
+        let mut target_data = RustcTargetData::new(&workspace, &[compile_kind])?;
 
         let cli_features = self.cargo_make_cli_features();
         let packages = &self.pf.packages;
@@ -89,7 +89,7 @@ impl GuppyCargoCommon {
 
         let ws_resolve = resolve_ws_with_opts(
             &workspace,
-            &target_data,
+            &mut target_data,
             &[compile_kind],
             &cli_features,
             &specs,
@@ -100,6 +100,7 @@ impl GuppyCargoCommon {
             },
             // TODO: allow for target to be "any", set this to Yes in that case
             ForceAllTargets::No,
+            None,
         )?;
 
         let targeted_resolve = ws_resolve.targeted_resolve;
