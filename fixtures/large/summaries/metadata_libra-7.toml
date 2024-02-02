@@ -1664,6 +1664,28 @@ status = 'workspace'
 features = []
 
 [[host-package]]
+name = 'libra-failure-ext'
+version = '0.1.0'
+workspace-path = 'common/failure-ext'
+status = 'workspace'
+features = []
+
+[[host-package]]
+name = 'libra-failure-macros'
+version = '0.1.0'
+workspace-path = 'common/failure-ext/failure-macros'
+status = 'workspace'
+features = []
+
+[[host-package]]
+name = 'failure'
+version = '0.1.5'
+crates-io = true
+status = 'direct'
+features = ['backtrace', 'default', 'derive', 'failure_derive', 'std']
+optional-deps = ['backtrace', 'failure_derive']
+
+[[host-package]]
 name = 'grpcio-compiler'
 version = '0.5.0-alpha.2'
 crates-io = true
@@ -1843,14 +1865,6 @@ version = '1.5.2'
 crates-io = true
 status = 'transitive'
 features = ['default', 'use_std']
-
-[[host-package]]
-name = 'failure'
-version = '0.1.5'
-crates-io = true
-status = 'transitive'
-features = ['backtrace', 'default', 'derive', 'failure_derive', 'std']
-optional-deps = ['backtrace', 'failure_derive']
 
 [[host-package]]
 name = 'failure_derive'

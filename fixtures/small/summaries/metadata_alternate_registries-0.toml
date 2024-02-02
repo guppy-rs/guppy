@@ -31,8 +31,36 @@ status = 'initial'
 features = []
 
 [[host-package]]
+name = 'serde_json'
+version = '1.0.68'
+crates-io = true
+status = 'direct'
+features = ['default', 'std']
+
+[[host-package]]
 name = 'unicode-xid'
 version = '0.2.2'
 crates-io = true
 status = 'direct'
 features = ['default']
+
+[[host-package]]
+name = 'itoa'
+version = '0.4.8'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'ryu'
+version = '1.0.5'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'serde'
+version = '1.0.130'
+crates-io = true
+status = 'transitive'
+features = ['std']

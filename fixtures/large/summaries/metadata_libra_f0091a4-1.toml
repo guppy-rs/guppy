@@ -72,9 +72,23 @@ status = 'workspace'
 features = ['default']
 
 [[host-package]]
+name = 'compiler'
+version = '0.1.0'
+workspace-path = 'language/compiler'
+status = 'workspace'
+features = ['default']
+
+[[host-package]]
 name = 'datatest-stable'
 version = '0.1.0'
 workspace-path = 'common/datatest-stable'
+status = 'workspace'
+features = []
+
+[[host-package]]
+name = 'functional-tests'
+version = '0.1.0'
+workspace-path = 'language/functional-tests'
 status = 'workspace'
 features = []
 
@@ -91,6 +105,13 @@ version = '0.1.0'
 workspace-path = 'language/compiler/ir-to-bytecode/syntax'
 status = 'workspace'
 features = ['default']
+
+[[host-package]]
+name = 'language-e2e-tests'
+version = '0.1.0'
+workspace-path = 'language/e2e-tests'
+status = 'workspace'
+features = []
 
 [[host-package]]
 name = 'libra-canonical-serialization'
@@ -252,6 +273,13 @@ features = ['default', 'fuzzing', 'proptest']
 optional-deps = ['proptest']
 
 [[host-package]]
+name = 'aho-corasick'
+version = '0.7.8'
+crates-io = true
+status = 'direct'
+features = ['default', 'std']
+
+[[host-package]]
 name = 'anyhow'
 version = '1.0.26'
 crates-io = true
@@ -367,6 +395,13 @@ source = 'git+https://github.com/calibra/ed25519-dalek.git?branch=fiat#ecb1d36ad
 status = 'direct'
 features = ['serde', 'std', 'u64_backend']
 optional-deps = ['serde']
+
+[[host-package]]
+name = 'filecheck'
+version = '0.4.0'
+crates-io = true
+status = 'direct'
+features = []
 
 [[host-package]]
 name = 'futures'
@@ -699,13 +734,6 @@ version = '0.5.2'
 source = 'git+https://github.com/calibra/x25519-dalek.git?branch=fiat#8d5b63010f8466d75a4fa2fb95f573092aed5611'
 status = 'direct'
 features = ['std', 'u64_backend']
-
-[[host-package]]
-name = 'aho-corasick'
-version = '0.7.8'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
 
 [[host-package]]
 name = 'ansi_term'

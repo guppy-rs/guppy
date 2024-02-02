@@ -1801,6 +1801,14 @@ status = 'workspace'
 features = []
 
 [[host-package]]
+name = 'failure'
+version = '0.1.5'
+crates-io = true
+status = 'direct'
+features = ['backtrace', 'std']
+optional-deps = ['backtrace']
+
+[[host-package]]
 name = 'grpcio-compiler'
 version = '0.5.0-alpha.2'
 crates-io = true
@@ -1979,14 +1987,6 @@ version = '1.5.2'
 crates-io = true
 status = 'transitive'
 features = []
-
-[[host-package]]
-name = 'failure'
-version = '0.1.5'
-crates-io = true
-status = 'transitive'
-features = ['backtrace', 'std']
-optional-deps = ['backtrace']
 
 [[host-package]]
 name = 'failure_derive'

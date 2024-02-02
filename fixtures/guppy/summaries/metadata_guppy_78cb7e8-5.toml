@@ -156,6 +156,13 @@ status = 'direct'
 features = []
 
 [[host-package]]
+name = 'pretty_assertions'
+version = '0.6.1'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
 name = 'proptest'
 version = '0.10.1'
 crates-io = true
@@ -300,6 +307,20 @@ status = 'transitive'
 features = ['default', 'std']
 
 [[host-package]]
+name = 'ctor'
+version = '0.1.16'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'difference'
+version = '2.0.0'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[host-package]]
 name = 'either'
 version = '1.6.1'
 crates-io = true
@@ -396,6 +417,13 @@ version = '0.2.12'
 crates-io = true
 status = 'transitive'
 features = ['std']
+
+[[host-package]]
+name = 'output_vt100'
+version = '0.1.2'
+crates-io = true
+status = 'transitive'
+features = []
 
 [[host-package]]
 name = 'ppv-lite86'

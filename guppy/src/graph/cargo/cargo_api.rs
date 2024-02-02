@@ -63,7 +63,7 @@ impl<'a> CargoOptions<'a> {
     /// This does not affect transitive dependencies -- for example, a build or dev-dependency's
     /// further dev-dependencies are never followed.
     ///
-    /// The default is true, which matches what a plain `cargo build` does.
+    /// The default is false, which matches what a plain `cargo build` does.
     pub fn set_include_dev(&mut self, include_dev: bool) -> &mut Self {
         self.include_dev = include_dev;
         self
