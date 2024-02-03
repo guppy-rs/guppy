@@ -18,13 +18,9 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
       - name: Install cargo release
-        uses: baptiste0928/cargo-install@2cfb0024938d23011106cbf127b393bc83fddba1 # v1
+        uses: taiki-e/install-action@af393be830303534bd94d7b3249fb7ed7792e7ad # v2
         with:
-          crate: cargo-release
-          # Version 0.21.4 has the idempotency behavior we want, until
-          # https://github.com/crate-ci/cargo-release/issues/594 is addressed.
-          version: =0.21.4
-          locked: true
+          tool: cargo-release@0.25.0
       - uses: taiki-e/create-gh-release-action@8df4de6534ceacdaed10a08f73418ca751f31793 # v1
         with:
           prefix: target-spec
@@ -47,13 +43,9 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
       - name: Install cargo release
-        uses: baptiste0928/cargo-install@2cfb0024938d23011106cbf127b393bc83fddba1 # v1
+        uses: taiki-e/install-action@af393be830303534bd94d7b3249fb7ed7792e7ad # v2
         with:
-          crate: cargo-release
-          # Version 0.21.4 has the idempotency behavior we want, until
-          # https://github.com/crate-ci/cargo-release/issues/594 is addressed.
-          version: =0.21.4
-          locked: true
+          tool: cargo-release@0.25.0
       - uses: taiki-e/create-gh-release-action@8df4de6534ceacdaed10a08f73418ca751f31793 # v1
         with:
           prefix: target-spec-miette
@@ -76,13 +68,9 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
       - name: Install cargo release
-        uses: baptiste0928/cargo-install@2cfb0024938d23011106cbf127b393bc83fddba1 # v1
+        uses: taiki-e/install-action@af393be830303534bd94d7b3249fb7ed7792e7ad # v2
         with:
-          crate: cargo-release
-          # Version 0.21.4 has the idempotency behavior we want, until
-          # https://github.com/crate-ci/cargo-release/issues/594 is addressed.
-          version: =0.21.4
-          locked: true
+          tool: cargo-release@0.25.0
       - uses: taiki-e/create-gh-release-action@8df4de6534ceacdaed10a08f73418ca751f31793 # v1
         with:
           prefix: guppy-summaries
@@ -106,13 +94,9 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
       - name: Install cargo release
-        uses: baptiste0928/cargo-install@2cfb0024938d23011106cbf127b393bc83fddba1 # v1
+        uses: taiki-e/install-action@af393be830303534bd94d7b3249fb7ed7792e7ad # v2
         with:
-          crate: cargo-release
-          # Version 0.21.4 has the idempotency behavior we want, until
-          # https://github.com/crate-ci/cargo-release/issues/594 is addressed.
-          version: =0.21.4
-          locked: true
+          tool: cargo-release@0.25.0
       - uses: taiki-e/create-gh-release-action@8df4de6534ceacdaed10a08f73418ca751f31793 # v1
         with:
           prefix: guppy
@@ -135,13 +119,9 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
       - name: Install cargo release
-        uses: baptiste0928/cargo-install@2cfb0024938d23011106cbf127b393bc83fddba1 # v1
+        uses: taiki-e/install-action@af393be830303534bd94d7b3249fb7ed7792e7ad # v2
         with:
-          crate: cargo-release
-          # Version 0.21.4 has the idempotency behavior we want, until
-          # https://github.com/crate-ci/cargo-release/issues/594 is addressed.
-          version: =0.21.4
-          locked: true
+          tool: cargo-release@0.25.0
       - uses: taiki-e/create-gh-release-action@8df4de6534ceacdaed10a08f73418ca751f31793 # v1
         with:
           prefix: determinator
@@ -164,13 +144,9 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
       - name: Install cargo release
-        uses: baptiste0928/cargo-install@2cfb0024938d23011106cbf127b393bc83fddba1 # v1
+        uses: taiki-e/install-action@af393be830303534bd94d7b3249fb7ed7792e7ad # v2
         with:
-          crate: cargo-release
-          # Version 0.21.4 has the idempotency behavior we want, until
-          # https://github.com/crate-ci/cargo-release/issues/594 is addressed.
-          version: =0.21.4
-          locked: true
+          tool: cargo-release@0.25.0
       - uses: taiki-e/create-gh-release-action@8df4de6534ceacdaed10a08f73418ca751f31793 # v1
         with:
           prefix: hakari
@@ -310,11 +286,9 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
       - name: Install cargo release
-        uses: baptiste0928/cargo-install@2cfb0024938d23011106cbf127b393bc83fddba1 # v1
+        uses: taiki-e/install-action@af393be830303534bd94d7b3249fb7ed7792e7ad # v2
         with:
-          crate: cargo-release
-          version: =0.21.4
-          locked: true
+          tool: cargo-release@0.25.0
       - run: ./scripts/cargo-release-publish.sh
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
