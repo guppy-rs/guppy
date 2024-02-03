@@ -18,7 +18,7 @@ use std::{fmt, slice, vec};
 /// This provides a convenient way to query and print out lists of features.
 ///
 /// Returned by methods on `FeatureSet`.
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Eq, PartialEq)]
 pub struct FeatureList<'g> {
     package: PackageMetadata<'g>,
     labels: SortedSet<FeatureLabel<'g>>,
@@ -113,6 +113,15 @@ impl<'g> FeatureList<'g> {
     }
 }
 
+impl<'g> fmt::Debug for FeatureList<'g> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("FeatureList")
+            .field("package", self.package.id())
+            .field("labels", &self.display_features())
+            .finish()
+    }
+}
+
 impl<'g> IntoIterator for FeatureList<'g> {
     type Item = FeatureId<'g>;
     type IntoIter = IntoIter<'g>;
@@ -186,7 +195,7 @@ impl<'g, 'a> Iterator for Iter<'g, 'a> {
 /// A pretty-printer for a list of features.
 ///
 /// Returned by `FeatureList::display_filters`.
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy)]
 pub struct DisplayFeatures<'g, 'a>(&'a [FeatureLabel<'g>]);
 
 impl<'g, 'a> fmt::Display for DisplayFeatures<'g, 'a> {
@@ -199,5 +208,12 @@ impl<'g, 'a> fmt::Display for DisplayFeatures<'g, 'a> {
             }
         }
         Ok(())
+    }
+}
+
+impl<'g, 'a> fmt::Debug for DisplayFeatures<'g, 'a> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // Use the Display impl as the debug one because it's easier to read.
+        write!(f, "{}", self)
     }
 }
