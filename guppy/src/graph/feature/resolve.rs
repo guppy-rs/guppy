@@ -1,6 +1,8 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
+use std::fmt;
+
 use crate::{
     debug_ignore::DebugIgnore,
     graph::{
@@ -62,10 +64,18 @@ impl<'g> FeatureGraph<'g> {
 ///
 /// Created by `FeatureQuery::resolve`, the `FeatureGraph::resolve_` methods, or from
 /// `PackageSet::to_feature_set`.
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct FeatureSet<'g> {
     graph: DebugIgnore<FeatureGraph<'g>>,
     core: ResolveCore<FeatureGraphSpec>,
+}
+
+impl<'g> fmt::Debug for FeatureSet<'g> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_set()
+            .entries(self.packages_with_features(DependencyDirection::Forward))
+            .finish()
+    }
 }
 
 assert_covariant!(FeatureSet);
