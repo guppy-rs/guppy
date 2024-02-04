@@ -53,7 +53,7 @@
 //!
 //! The rest of this section assumes the crate is called `my-workspace-hack`.
 //!
-//! ## 2. Ensure `dep-format-version = "2"` or higher is set in `.config/hakari.toml`
+//! ## 2. Ensure the latest `dep-format-version` is set in `.config/hakari.toml`
 //!
 //! `dep-format-version = "2"` and higher add the `version` field to the `my-workspace-hack = ...`
 //! lines in other `Cargo.toml` files. `cargo publish` uses the `version` field to recognize
@@ -62,8 +62,8 @@
 //! This option is new in cargo-hakari 0.9.8. Configuration files created by older versions of
 //! cargo-hakari may not have this option set.
 //!
-//! Ensure that this option is present in `.config/hakari.toml` and is set to 2 or a value greater
-//! than it. See the [config](crate::config) section for more details.
+//! Ensure that this option is present in `.config/hakari.toml` and is set to the latest version.
+//! See the [config](crate::config) section for more details.
 //!
 //! Then run `cargo hakari manage-deps` to update the `workspace-hack = ...` lines.
 //!

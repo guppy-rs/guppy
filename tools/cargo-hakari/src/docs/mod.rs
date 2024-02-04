@@ -3,4 +3,5 @@
 
 pub mod about;
 pub mod config;
+pub mod patch_directive;
 pub mod publishing;

@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 //! `cargo hakari` is a command-line application to manage workspace-hack crates. Use it to speed up
-//! local `cargo build` and `cargo check` commands by **15-95%**, and cumulatively by
-//! **20-25% or more**.
+//! local `cargo build` and `cargo check` commands by **15-95%**, and cumulatively by **20-25% or
+//! more**.
 //!
 //! For an explanation of what workspace-hack packages are and how they make your builds faster, see
 //! the [`about` module](https://docs.rs/cargo-hakari/latest/cargo_hakari/about).
@@ -16,11 +16,10 @@
 //! # Platform support
 //!
 //! * **Unix platforms**: Hakari works and is supported.
-//! * **Windows**: Hakari works and outputs file paths with forward slashes for
-//!   consistency with Unix. CRLF line endings are not supported in the workspace-hack's
-//!   `Cargo.toml`. Within Git repositories, `cargo hakari init` automatically does this for you.
-//!   [Here's how to do it manually.](https://stackoverflow.com/a/10017566)
-//!   (Pull requests to improve this are welcome.)
+//! * **Windows**: Hakari works and outputs file paths with forward slashes for consistency with
+//!   Unix. CRLF line endings are not supported in the workspace-hack's `Cargo.toml`. Within Git
+//!   repositories, `cargo hakari init` automatically does this for you. [Here's how to do it
+//!   manually.](https://stackoverflow.com/a/10017566) (Pull requests to improve this are welcome.)
 //!
 //! # Installation
 //!
@@ -64,8 +63,8 @@
 //!
 //! For hakari to work correctly, you *must* [add your `Cargo.lock` to version
 //! control](https://doc.rust-lang.org/cargo/faq.html#why-do-binaries-have-cargolock-in-version-control-but-not-libraries),
-//! even if you don't have any binary crates. This is because patch version bumps in
-//! dependencies can add or remove features or even entire transitive dependencies.
+//! even if you don't have any binary crates. This is because patch version bumps in dependencies
+//! can add or remove features or even entire transitive dependencies.
 //!
 //! ### 2. Initialize the workspace-hack
 //!
@@ -109,9 +108,9 @@
 //! Open up `.config/hakari.toml`, then:
 //!
 //! * uncomment or add commonly-used developer platforms
-//! * read the note about the resolver, and strongly consider
-//!   [setting `resolver = "2"`](https://blog.rust-lang.org/2021/03/25/Rust-1.51.0.html#cargos-new-feature-resolver)
-//!   in your workspace's `Cargo.toml`.
+//! * read the note about the resolver, and strongly consider [setting `resolver =
+//!   "2"`](https://blog.rust-lang.org/2021/03/25/Rust-1.51.0.html#cargos-new-feature-resolver) in
+//!   your workspace's `Cargo.toml`.
 //!
 //! Remember to run `cargo hakari generate` after changing the config.
 //!
@@ -124,14 +123,20 @@
 //! cargo hakari manage-deps --dry-run  # all workspace crates depend on workspace-hack
 //! ```
 //!
-//! If either of these commands exits with a non-zero status, you can choose to fail CI or produce
-//! a warning message.
+//! If either of these commands exits with a non-zero status, you can choose to fail CI or produce a
+//! warning message.
 //!
 //! For an example, see [this GitHub action used by
 //! `cargo-guppy`](https://github.com/guppy-rs/guppy/blob/main/.github/workflows/hakari.yml).
 //!
 //! All `cargo hakari` commands take a `--quiet` option to suppress output, though showing diff
 //! output in CI is often useful.
+//!
+//! ### 3. Consider a `[patch]` directive
+//!
+//! If your workspace is depended on as a Git or path dependency, it is **strongly recommended**
+//! that you follow the instructions in the [`[patch]` directive
+//! section](https://docs.rs/cargo-hakari/latest/cargo_hakari/patch_directive).
 //!
 //! ## Information about the workspace-hack
 //!
@@ -157,14 +162,14 @@
 //!
 //! If some dependencies are built with more than one feature set, this command will print out
 //! details about them. **This is always a bug**---if you encounter it, [a bug
-//! report](https://github.com/guppy-rs/guppy/issues/new) with more information would
-//! be greatly appreciated!
+//! report](https://github.com/guppy-rs/guppy/issues/new) with more information would be greatly
+//! appreciated!
 //!
 //! ###
 //! ## Publishing a crate
 //!
-//! If you publish crates to `crates.io` or other registries, see the
-//! [`publishing` module](https://docs.rs/cargo-hakari/latest/cargo_hakari/publishing).
+//! If you publish crates to `crates.io` or other registries, see the [`publishing`
+//! module](https://docs.rs/cargo-hakari/latest/cargo_hakari/publishing).
 //!
 //! ## Disabling and uninstalling
 //!
@@ -216,15 +221,17 @@
 //! ## exact-versions = false
 //! ```
 //!
-//! For more options, including how to exclude crates from the output, see the
-//! [`config` module](https://docs.rs/cargo-hakari/latest/cargo_hakari/config).
+//! For more options, including how to exclude crates from the output, see the [`config`
+//! module](https://docs.rs/cargo-hakari/latest/cargo_hakari/config).
 //!
 //! # Stability guarantees
 //!
 //! `cargo-hakari` follows semantic versioning, where the public API is the command-line interface.
 //!
 //! Within a given series, the command-line interface will be treated as append-only.
+//!
 //! The generated `Cargo.toml` will also be kept the same unless:
+//!
 //! * a new config option is added, in which case the different output will be gated on the new
 //!   option, or
 //! * there is a bugfix involved.

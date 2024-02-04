@@ -1,7 +1,8 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-//! About workspace-hack crates, how `cargo hakari` manages them, and how much faster they make builds.
+//! About workspace-hack crates, how `cargo hakari` manages them, and how much faster they make
+//! builds.
 //!
 //! # What are workspace-hack crates?
 //!
@@ -30,8 +31,8 @@
 //!
 //! One way to resolve this question might be to build `baz` twice with each requested set of
 //! features. But this is likely to cause a combinatorial explosion of crates to build, so Cargo
-//! doesn't do that. Instead,
-//! [Cargo builds `baz` once](https://doc.rust-lang.org/nightly/cargo/reference/features.html?highlight=feature#feature-unification)
+//! doesn't do that. Instead, [Cargo builds `baz`
+//! once](https://doc.rust-lang.org/nightly/cargo/reference/features.html?highlight=feature#feature-unification)
 //! with the *union* of the features enabled for the package: `[a, b, c]`.
 //!
 //! ---
@@ -59,29 +60,32 @@
 //! | `my-crate` and `your-crate` at the same time | `a, b, c, d`        |
 //!
 //! Even in this simplified scenario, there are three separate ways to build `baz`. For a dependency
-//! like [`syn`](https://crates.io/crates/syn) that has
-//! [many optional features](https://github.com/dtolnay/syn#optional-features),
-//! large workspaces end up with a very large number of possible build configurations.
+//! like [`syn`](https://crates.io/crates/syn) that has [many optional
+//! features](https://github.com/dtolnay/syn#optional-features), large workspaces end up with a very
+//! large number of possible build configurations.
 //!
-//! Even worse, the feature set of a package affects everything that depends on it, so `syn`
-//! being built with a slightly different feature set than before would cause *every package that
-//! directly or transitively depends on `syn` to be rebuilt. For large workspaces, this can result
-//! a lot of wasted build time.
+//! Even worse, the feature set of a package affects everything that depends on it, so `syn` being
+//! built with a slightly different feature set than before would cause *every package that directly
+//! or transitively depends on `syn` to be rebuilt. For large workspaces, this can result a lot of
+//! wasted build time.
 //!
 //! ---
 //!
-//! To avoid this problem, many large workspaces contain a `workspace-hack` crate. The
-//! purpose of this package is to ensure that dependencies like `syn` are always built with the same
-//! feature set no matter which workspace packages are currently being built. This is done by:
+//! To avoid this problem, many large workspaces contain a `workspace-hack` crate. The purpose of
+//! this package is to ensure that dependencies like `syn` are always built with the same feature
+//! set no matter which workspace packages are currently being built. This is done by:
 //! 1. adding dependencies like `syn` to `workspace-hack` with the full feature set required by any
 //!   package in the workspace
 //! 2. adding `workspace-hack` as a dependency of every crate in the repository.
 //!
 //! Some examples of `workspace-hack` packages:
 //!
-//! * Rust's [`rustc-workspace-hack`](https://github.com/rust-lang/rust/blob/0bfc45aa859b94cedeffcbd949f9aaad9f3ac8d8/src/tools/rustc-workspace-hack/Cargo.toml)
-//! * Firefox's [`mozilla-central-workspace-hack`](https://hg.mozilla.org/mozilla-central/file/cf6956a5ec8e21896736f96237b1476c9d0aaf45/build/workspace-hack/Cargo.toml)
-//! * Diem's [`diem-workspace-hack`](https://github.com/diem/diem/blob/91578fec8d575294b47b3ee7af691fd9dc6eb240/common/workspace-hack/Cargo.toml)
+//! * Rust's
+//!   [`rustc-workspace-hack`](https://github.com/rust-lang/rust/blob/0bfc45aa859b94cedeffcbd949f9aaad9f3ac8d8/src/tools/rustc-workspace-hack/Cargo.toml)
+//! * Firefox's
+//!   [`mozilla-central-workspace-hack`](https://hg.mozilla.org/mozilla-central/file/cf6956a5ec8e21896736f96237b1476c9d0aaf45/build/workspace-hack/Cargo.toml)
+//! * Diem's
+//!   [`diem-workspace-hack`](https://github.com/diem/diem/blob/91578fec8d575294b47b3ee7af691fd9dc6eb240/common/workspace-hack/Cargo.toml)
 //!
 //! These packages have historically been maintained by hand, on a best-effort basis.
 //!
@@ -99,8 +103,8 @@
 //!
 //! # How does hakari work?
 //!
-//! `cargo hakari` uses [guppy]'s Cargo build simulations to determine the full set of features
-//! that can be built for each package. It then looks for
+//! `cargo hakari` uses [guppy]'s Cargo build simulations to determine the full set of features that
+//! can be built for each package. It then looks for
 //!
 //! For more details about the algorithm, see the documentation for the [`hakari`] library.
 //!
@@ -110,9 +114,9 @@
 //! benefit grows super-linearly with the size of the workspace and the number of crates in it.
 //!
 //! On moderately large workspaces with several hundred third-party dependencies, a cumulative
-//! performance benefit of 20-25% has been seen. Individual commands can be anywhere from 10%
-//! to 95+% faster. `cargo check` often benefits more than `cargo build` because expensive
-//! linker invocations aren't a factor.
+//! performance benefit of 20-25% has been seen. Individual commands can be anywhere from 10% to
+//! 95+% faster. `cargo check` often benefits more than `cargo build` because expensive linker
+//! invocations aren't a factor.
 //!
 //! ## Performance metrics
 //!
@@ -125,8 +129,8 @@
 //!
 //! ---
 //!
-//! On the [Diem repository](https://github.com/diem/diem/), at revision 6fa1c8c0, with the following
-//! `cargo build` commands in sequence:
+//! On the [Diem repository](https://github.com/diem/diem/), at revision 6fa1c8c0, with the
+//! following `cargo build` commands in sequence:
 //!
 //! | Command                               | Before (s) | After (s) | Change   | Notes                                        |
 //! |---------------------------------------|-----------:|----------:|---------:|----------------------------------------------|
@@ -156,8 +160,8 @@
 //! | `-p backup-cli`                       | 13.57      | 5.51      | -59.40% |                                               |
 //! | **Total**                             | 163.44     | 130.50    | -20.15% |                                               |//!
 //!
-//! On the much smaller [cargo-guppy repository](https://github.com/guppy-rs/guppy),
-//! at revision 65e8c8d7, with the following `cargo build` commands in sequence:
+//! On the much smaller [cargo-guppy repository](https://github.com/guppy-rs/guppy), at revision
+//! 65e8c8d7, with the following `cargo build` commands in sequence:
 //!
 //! | Command                    | Before (s) | After (s) | Change  | Notes                                        |
 //! |----------------------------|-----------:|----------:|--------:|----------------------------------------------|
@@ -179,7 +183,9 @@
 //!   - This is not a major issue for repositories that don't release crates to `crates.io`.
 //!   - It can also be caught at publish time, or with a periodic CI job that does a build after
 //!     running `cargo hakari disable`.
+//! * Publishing crates to a registry becomes more complex: see the [publishing
+//!   section](crate::publishing) for more about this.
 //! * Downstream users that import your crate directly from your repository, rather than from the
-//!   registry, are going to import dependencies from the checked in workspace-hack.
-//! * Publishing crates to a registry becomes more complex: see the
-//!   [`publishing` module](crate::publishing) for more about this.
+//!   registry, are going to import dependencies from the checked in workspace-hack. This can be
+//!   avoided by following the instructions in the [`[patch]` directive
+//!   section](crate::patch_directive).
