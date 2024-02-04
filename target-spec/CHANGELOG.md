@@ -5,7 +5,7 @@
 ### Changed
 
 - MSRV updated to Rust 1.73.
-- Internal dependency `cfg-expr` updated to 0.15.6, updating builtin targets to Rust 1.73.
+- Internal dependency `cfg-expr` updated to 0.15.6, updating builtin targets to Rust 1.75.
 
 ## [3.0.1] - 2023-07-29
 
