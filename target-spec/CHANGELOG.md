@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.0] - 2024-02-03
+
+### Changed
+
+- MSRV updated to Rust 1.73.
+- Internal dependency `cfg-expr` updated to 0.15.6, updating builtin targets to Rust 1.73.
+
 ## [3.0.1] - 2023-07-29
 
 ### Changed
@@ -145,7 +152,7 @@ No breaking changes in this release compared to version 0.9.
 ### Fixed
 
 - `target-spec` now uses `cfg-expr`'s builtins by default, falling back to `target-lexicon` if `cfg-expr` isn't
-available.
+  available.
   - This is because `target-lexicon` [may not always produce results](https://github.com/bytecodealliance/target-lexicon/issues/78)
     that match `rustc`'s target JSONs.
 
@@ -216,7 +223,7 @@ available.
   for `Platform` and `TargetFeatures`.
 - `Platform::is_custom` returns true if the platform was created with the `custom`
   constructor.
-  
+
 ### Changed
 
 - The error types have been unified into a single `Error` type.
@@ -238,11 +245,13 @@ available.
 ## [0.2.4] - 2020-05-06
 
 ### Added
+
 - New feature `proptest010` to generate random platforms for property testing.
 
 ## [0.2.3] - 2020-04-15
 
 ### Fixed
+
 - Better handling of unknown flags.
   - Unknown flags now evaluate to false instead of erroring out.
   - Added `Platform::add_flags` to allow setting flags that evaluate to true.
@@ -255,21 +264,27 @@ true for `cargo web build`.
 This was mistakenly published and was yanked.
 
 ## [0.2.1] - 2020-04-07
+
 ### Changed
+
 - Updated repository links.
 
 ## [0.2.0] - 2020-04-05
+
 ### Added
+
 - Added support for parsing specs and platforms separately from evaluating them, making error-less evaluation possible.
 - Added support for target features, including situations when target features are unknown.
 
 ### Changed
+
 - Switched to [`cfg-expr`](https://github.com/EmbarkStudios/cfg-expr) as the backend for `cfg()` expressions.
 
 ## [0.1.0] - 2020-03-20
 
 - Initial release.
 
+[3.1.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.1.0
 [3.0.1]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.0.1
 [3.0.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.0.0
 [2.0.1]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-2.0.1
