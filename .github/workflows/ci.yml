@@ -29,9 +29,9 @@ jobs:
       - name: Lint (rustfmt)
         run: cargo xfmt --check
       - name: Install cargo readme
-        uses: baptiste0928/cargo-install@2cfb0024938d23011106cbf127b393bc83fddba1 # v1
+        uses: taiki-e/install-action@af393be830303534bd94d7b3249fb7ed7792e7ad # v2
         with:
-          crate: cargo-readme
+          tool: cargo-readme
       - name: Run cargo readme
         run: ./scripts/regenerate-readmes.sh
       - name: Check for differences
