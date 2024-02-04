@@ -13,5 +13,5 @@ rust-version.workspace = true
 
 [dependencies]
 target-spec = { version = "3.1.0", path = "../target-spec" }
-miette = "5.10.0"
+miette = "6.0.1"
 guppy-workspace-hack.workspace = true
