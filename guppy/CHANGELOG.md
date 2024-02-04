@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.17.5] - 2024-02-03
+
+### Changed
+
+- The `Debug` impl for `FeatureSet` is now more useful. (PRs welcome to make the `Debug` impls for
+  types like `PackageSet` more useful as well.)
+- MSRV updated to Rust 1.73.
+
+### Fixed
+
+- Cargo build simulations now consider dev-dependencies of proc-macro crates. Previously, we weren't
+  doing so.
+
 ## [0.17.4] - 2023-11-29
 
 ### Fixed
@@ -640,6 +653,7 @@ lazy_static = "0.2"
 
 - Initial release.
 
+[0.17.5]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.5
 [0.17.4]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.4
 [0.17.3]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.3
 [0.17.2]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.2

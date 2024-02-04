@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.9.29-rc.1] - 2024-02-03
+
+### Added
+
+- The default `hakari.toml` template for new projects now suggests Apple Silicon
+  (`aarch64-apple-darwin`) as well.
+
+### Changed
+
+- Builtin platforms updated to Rust 1.75.
+
+### Fixed
+
+- Consider dev-dependencies of proc-macro crates -- previously, we weren't doing so.
+
+This may change some checked-in workspace-hacks, but it is a bugfix and not a breaking change.
+Testing against several real-world workspace-hacks, only one of them changed.
+
 ## [0.9.28] - 2023-10-03
 
 ### Added
@@ -267,6 +285,7 @@ This was tagged, but never released due to
 
 Initial release.
 
+[0.9.29-rc.1]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.29-rc.1
 [0.9.28]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.28
 [0.9.27]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.27
 [0.9.26]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.26

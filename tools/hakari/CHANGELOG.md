@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.17.2] - 2024-02-03
+
+### Added
+
+- The default `hakari.toml` template for new projects now suggests Apple Silicon
+  (`aarch64-apple-darwin`) as well.
+
+### Fixed
+
+- Consider dev-dependencies of proc-macro crates -- previously, we weren't doing so.
+
+This may change some checked-in workspace-hacks, but it is a bugfix and not a breaking change.
+Testing against several real-world workspace-hacks, only one of them changed.
+
 ## [0.17.1] - 2023-10-03
 
 ### Fixed
@@ -12,10 +26,10 @@ Add `WorkspaceHackLineStyle` to list of public exports.
 
 New config option `workspace-hack-line-style`, with three possible values:
 
-* *"full"*: `my-workspace-hack = { version = "0.1", path = ... }`. This is the default and a
+- _"full"_: `my-workspace-hack = { version = "0.1", path = ... }`. This is the default and a
   good way to get started.
 
-* *"version-only"*: `my-workspace-hack = { version = "0.1" }`. Specifying versions this way is
+- _"version-only"_: `my-workspace-hack = { version = "0.1" }`. Specifying versions this way is
   useful if you've published a stub crate to crates.io (see the [publishing](crate::publishing)
   section). You can use this in combination with a `patch` directive in the root `Cargo.toml`:
 
@@ -23,7 +37,8 @@ New config option `workspace-hack-line-style`, with three possible values:
   [patch.crates-io.my-workspace-hack]
   path = "workspace-hack"
   ```
-* *"workspace-dotted"*: `my-workspace-hack.workspace = true`. To use this, define a workspace
+
+- _"workspace-dotted"_: `my-workspace-hack.workspace = true`. To use this, define a workspace
   dependency in the root `Cargo.toml`:
 
   ```toml
@@ -89,8 +104,8 @@ matches the order produced by [cargo-sort](https://crates.io/crates/cargo-sort) 
 
 Introduced a new `dep-format-version`, version 3, with these changes:
 
-* Always elide build metadata from version strings (e.g. with the semver string `5.4.0+g7f361a3`, don't show the bit after the + sign). Thanks [Nikhil Benesch](https://github.com/guppy-rs/guppy/pull/57) for your first contribution!
-* Remove private features from the workspace-hack's Cargo.toml. This should simplify the output greatly.
+- Always elide build metadata from version strings (e.g. with the semver string `5.4.0+g7f361a3`, don't show the bit after the + sign). Thanks [Nikhil Benesch](https://github.com/guppy-rs/guppy/pull/57) for your first contribution!
+- Remove private features from the workspace-hack's Cargo.toml. This should simplify the output greatly.
 
 ### Changed
 
@@ -299,17 +314,18 @@ Internal updates for `cargo-hakari 0.9.8`.
 
 ### Added
 
-* Experimental Windows support. There may still be bugs around path normalization: please [report them](https://github.com/guppy-rs/guppy/issues/new).
+- Experimental Windows support. There may still be bugs around path normalization: please [report them](https://github.com/guppy-rs/guppy/issues/new).
 
 ### Fixed
 
-* Fixed Cargo.toml output for path dependencies.
-* Return an error for non-Unicode paths instead of silently producing incorrect paths.
+- Fixed Cargo.toml output for path dependencies.
+- Return an error for non-Unicode paths instead of silently producing incorrect paths.
 
 ## [0.1.0] - 2021-02-03
 
 Initial release.
 
+[0.17.2]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.17.2
 [0.17.1]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.17.1
 [0.17.0]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.17.0
 [0.16.0]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.16.0
