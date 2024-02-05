@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 
 - The default `hakari.toml` template for new projects now suggests Apple Silicon
   (`aarch64-apple-darwin`) as well.
+- New documentation about using the workspace-hack with a `[patch]` directive.
 
 ### Changed
 
