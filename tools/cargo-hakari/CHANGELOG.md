@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.9.29-rc.1] - 2024-02-04
+## [0.9.29] - 2024-02-04
 
 ### Added
 
@@ -286,7 +286,7 @@ This was tagged, but never released due to
 
 Initial release.
 
-[0.9.29-rc.1]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.29-rc.1
+[0.9.29]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.29
 [0.9.28]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.28
 [0.9.27]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.27
 [0.9.26]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.26
