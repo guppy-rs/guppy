@@ -21,7 +21,7 @@ members = [
 [workspace.dependencies]
 ahash = "0.8.10"
 guppy-workspace-hack = "0.1.0"
-miette = "7.0.0"
+miette = "7.1.0"
 
 [workspace.package]
 rust-version = "1.73"
