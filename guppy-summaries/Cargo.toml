@@ -30,7 +30,7 @@ camino = { version = "1.1.6", features = ["serde1"] }
 cfg-if = "1.0.0"
 diffus = "0.10.0"
 toml = { version = "0.5.11", features = ["preserve_order"] }
-semver = { version = "1.0.21", features = ["serde"] }
+semver = { version = "1.0.22", features = ["serde"] }
 serde = { version = "1.0.196", features = ["derive"] }
 guppy-workspace-hack.workspace = true
 
