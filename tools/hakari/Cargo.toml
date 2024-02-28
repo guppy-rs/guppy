@@ -22,7 +22,7 @@ all-features = true
 rustdoc-args = ["--cfg=doc_cfg"]
 
 [dependencies]
-ahash = "0.8.7"
+ahash = "0.8.10"
 atomicwrites = "0.4.3"
 bimap = "0.6.3"
 camino = "1.1.6"
