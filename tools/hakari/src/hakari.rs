@@ -146,7 +146,7 @@ impl<'g> HakariBuilder<'g> {
 
     /// Returns the platforms set through `set_platforms`, or an empty list if no platforms are
     /// set.
-    pub fn platforms(&self) -> impl Iterator<Item = &str> + ExactSizeIterator + '_ {
+    pub fn platforms(&self) -> impl ExactSizeIterator<Item = &str> + '_ {
         self.platforms.iter().map(|platform| platform.triple_str())
     }
 

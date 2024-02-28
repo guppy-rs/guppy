@@ -356,9 +356,7 @@ impl<'g> CargoSet<'g> {
     /// The returned iterator will include proc macros that are depended on normally or in dev
     /// builds from initials (if `include_dev` is set), but not the ones in the
     /// `[build-dependencies]` section.
-    pub fn proc_macro_links<'a>(
-        &'a self,
-    ) -> impl Iterator<Item = PackageLink<'g>> + ExactSizeIterator + 'a {
+    pub fn proc_macro_links<'a>(&'a self) -> impl ExactSizeIterator<Item = PackageLink<'g>> + 'a {
         let package_graph = self.target_features.graph().package_graph;
         self.proc_macro_edge_ixs
             .iter()
@@ -375,9 +373,7 @@ impl<'g> CargoSet<'g> {
     ///
     /// The returned iterators will not include build dependencies of host packages -- those are
     /// also built on the host.
-    pub fn build_dep_links<'a>(
-        &'a self,
-    ) -> impl Iterator<Item = PackageLink<'g>> + ExactSizeIterator + 'a {
+    pub fn build_dep_links<'a>(&'a self) -> impl ExactSizeIterator<Item = PackageLink<'g>> + 'a {
         let package_graph = self.target_features.graph().package_graph;
         self.build_dep_edge_ixs
             .iter()

@@ -120,7 +120,7 @@ impl Platform {
     }
 
     /// Returns the set of flags enabled for this platform.
-    pub fn flags(&self) -> impl Iterator<Item = &str> + ExactSizeIterator {
+    pub fn flags(&self) -> impl ExactSizeIterator<Item = &str> {
         self.flags.iter().map(|flag| flag.deref())
     }
 

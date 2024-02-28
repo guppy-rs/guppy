@@ -61,7 +61,7 @@ impl<Ix: IndexType> Sccs<Ix> {
     }
 
     /// Returns all the SCCs with more than one element.
-    pub fn multi_sccs(&self) -> impl Iterator<Item = &[NodeIndex<Ix>]> + DoubleEndedIterator {
+    pub fn multi_sccs(&self) -> impl DoubleEndedIterator<Item = &[NodeIndex<Ix>]> {
         self.sccs.iter().filter(|scc| scc.len() > 1)
     }
 

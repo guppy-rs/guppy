@@ -417,7 +417,7 @@ impl<'g> PackageSet<'g> {
     pub fn package_ids<'a>(
         &'a self,
         direction: DependencyDirection,
-    ) -> impl Iterator<Item = &'g PackageId> + ExactSizeIterator + 'a {
+    ) -> impl ExactSizeIterator<Item = &'g PackageId> + 'a {
         let graph = self.graph;
         self.core
             .topo(self.graph.sccs(), direction)
@@ -438,7 +438,7 @@ impl<'g> PackageSet<'g> {
     pub fn packages<'a>(
         &'a self,
         direction: DependencyDirection,
-    ) -> impl Iterator<Item = PackageMetadata<'g>> + ExactSizeIterator + 'a {
+    ) -> impl ExactSizeIterator<Item = PackageMetadata<'g>> + 'a {
         let graph = self.graph;
         self.package_ids(direction)
             .map(move |package_id| graph.metadata(package_id).expect("known package IDs"))
@@ -458,7 +458,7 @@ impl<'g> PackageSet<'g> {
     pub fn root_ids<'a>(
         &'a self,
         direction: DependencyDirection,
-    ) -> impl Iterator<Item = &'g PackageId> + ExactSizeIterator + 'a {
+    ) -> impl ExactSizeIterator<Item = &'g PackageId> + 'a {
         let dep_graph = &self.graph.dep_graph;
         self.core
             .roots(self.graph.dep_graph(), self.graph.sccs(), direction)
@@ -480,7 +480,7 @@ impl<'g> PackageSet<'g> {
     pub fn root_packages<'a>(
         &'a self,
         direction: DependencyDirection,
-    ) -> impl Iterator<Item = PackageMetadata<'g>> + ExactSizeIterator + 'a {
+    ) -> impl ExactSizeIterator<Item = PackageMetadata<'g>> + 'a {
         let package_graph = self.graph;
         self.core
             .roots(self.graph.dep_graph(), self.graph.sccs(), direction)

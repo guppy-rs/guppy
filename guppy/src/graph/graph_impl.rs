@@ -239,12 +239,12 @@ impl PackageGraph {
     }
 
     /// Returns an iterator over all the package IDs in this graph.
-    pub fn package_ids(&self) -> impl Iterator<Item = &PackageId> + ExactSizeIterator {
+    pub fn package_ids(&self) -> impl ExactSizeIterator<Item = &PackageId> {
         self.data.package_ids()
     }
 
     /// Returns an iterator over all the packages in this graph.
-    pub fn packages(&self) -> impl Iterator<Item = PackageMetadata> + ExactSizeIterator {
+    pub fn packages(&self) -> impl ExactSizeIterator<Item = PackageMetadata> {
         self.data
             .packages
             .values()
@@ -425,7 +425,7 @@ impl PackageGraph {
 
 impl PackageGraphData {
     /// Returns an iterator over all the package IDs in this graph.
-    pub fn package_ids(&self) -> impl Iterator<Item = &PackageId> + ExactSizeIterator {
+    pub fn package_ids(&self) -> impl ExactSizeIterator<Item = &PackageId> {
         self.packages.keys()
     }
 
@@ -518,7 +518,7 @@ impl<'g> Workspace<'g> {
     }
 
     /// Returns an iterator over package metadatas, sorted by the path they're in.
-    pub fn iter(&self) -> impl Iterator<Item = PackageMetadata<'g>> + ExactSizeIterator {
+    pub fn iter(&self) -> impl ExactSizeIterator<Item = PackageMetadata<'g>> {
         self.iter_by_path().map(|(_, package)| package)
     }
 
@@ -526,7 +526,7 @@ impl<'g> Workspace<'g> {
     /// they're in.
     pub fn iter_by_path(
         &self,
-    ) -> impl Iterator<Item = (&'g Utf8Path, PackageMetadata<'g>)> + ExactSizeIterator {
+    ) -> impl ExactSizeIterator<Item = (&'g Utf8Path, PackageMetadata<'g>)> {
         let graph = self.graph;
         self.inner.members_by_path.iter().map(move |(path, id)| {
             (
@@ -537,9 +537,7 @@ impl<'g> Workspace<'g> {
     }
 
     /// Returns an iterator over workspace names and package metadatas, sorted by names.
-    pub fn iter_by_name(
-        &self,
-    ) -> impl Iterator<Item = (&'g str, PackageMetadata<'g>)> + ExactSizeIterator {
+    pub fn iter_by_name(&self) -> impl ExactSizeIterator<Item = (&'g str, PackageMetadata<'g>)> {
         let graph = self.graph;
         self.inner
             .members_by_name
@@ -549,7 +547,7 @@ impl<'g> Workspace<'g> {
 
     /// Returns an iterator over package IDs for workspace members. The package IDs will be returned
     /// in the same order as `members`, sorted by the path they're in.
-    pub fn member_ids(&self) -> impl Iterator<Item = &'g PackageId> + ExactSizeIterator {
+    pub fn member_ids(&self) -> impl ExactSizeIterator<Item = &'g PackageId> {
         self.inner.members_by_path.values()
     }
 

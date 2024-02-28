@@ -154,9 +154,7 @@ impl<'g> PackageQuery<'g> {
     /// Returns the list of initial packages specified in the query.
     ///
     /// The order of packages is unspecified.
-    pub fn initials<'a>(
-        &'a self,
-    ) -> impl Iterator<Item = PackageMetadata<'g>> + ExactSizeIterator + 'a {
+    pub fn initials<'a>(&'a self) -> impl ExactSizeIterator<Item = PackageMetadata<'g>> + 'a {
         let graph = self.graph;
         self.params.initials().iter().map(move |package_ix| {
             graph

@@ -272,9 +272,7 @@ impl<'g> FeatureQuery<'g> {
     /// Returns the list of initial features specified in the query.
     ///
     /// The order of features is unspecified.
-    pub fn initials<'a>(
-        &'a self,
-    ) -> impl Iterator<Item = FeatureMetadata<'g>> + ExactSizeIterator + 'a {
+    pub fn initials<'a>(&'a self) -> impl ExactSizeIterator<Item = FeatureMetadata<'g>> + 'a {
         let graph = self.graph;
         self.params
             .initials()

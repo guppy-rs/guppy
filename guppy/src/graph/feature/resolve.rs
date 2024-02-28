@@ -407,7 +407,7 @@ impl<'g> FeatureSet<'g> {
     pub fn feature_ids<'a>(
         &'a self,
         direction: DependencyDirection,
-    ) -> impl Iterator<Item = FeatureId<'g>> + ExactSizeIterator + 'a {
+    ) -> impl ExactSizeIterator<Item = FeatureId<'g>> + 'a {
         let graph = self.graph;
         self.core
             .topo(graph.sccs(), direction)
@@ -426,7 +426,7 @@ impl<'g> FeatureSet<'g> {
     pub fn features<'a>(
         &'a self,
         direction: DependencyDirection,
-    ) -> impl Iterator<Item = FeatureMetadata<'g>> + ExactSizeIterator + 'a {
+    ) -> impl ExactSizeIterator<Item = FeatureMetadata<'g>> + 'a {
         let graph = self.graph;
         self.core
             .topo(graph.sccs(), direction)
@@ -478,7 +478,7 @@ impl<'g> FeatureSet<'g> {
     pub fn root_ids<'a>(
         &'a self,
         direction: DependencyDirection,
-    ) -> impl Iterator<Item = FeatureId<'g>> + ExactSizeIterator + 'a {
+    ) -> impl ExactSizeIterator<Item = FeatureId<'g>> + 'a {
         let dep_graph = self.graph.dep_graph();
         let package_graph = self.graph.package_graph;
         self.core

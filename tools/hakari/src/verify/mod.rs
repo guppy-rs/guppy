@@ -75,9 +75,7 @@ pub struct VerifyErrors<'g> {
 
 impl<'g> VerifyErrors<'g> {
     /// Returns individual verification errors as [`HakariExplain`] instances.
-    pub fn errors<'a>(
-        &'a self,
-    ) -> impl Iterator<Item = HakariExplain<'g, 'a>> + ExactSizeIterator + 'a {
+    pub fn errors<'a>(&'a self) -> impl ExactSizeIterator<Item = HakariExplain<'g, 'a>> + 'a {
         let hakari = &self.hakari;
         self.dependency_ids
             .iter()
