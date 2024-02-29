@@ -455,8 +455,8 @@ dependencies = [
  "guppy-workspace-hack",
  "hakari",
  "log",
- "owo-colors",
- "supports-color",
+ "owo-colors 4.0.0",
+ "supports-color 1.3.1",
  "tempfile",
 ]
 
@@ -675,7 +675,7 @@ dependencies = [
  "eyre",
  "indenter",
  "once_cell",
- "owo-colors",
+ "owo-colors 3.5.0",
 ]
 
 [[package]]
@@ -2174,7 +2174,7 @@ dependencies = [
  "memchr",
  "num-traits",
  "once_cell",
- "owo-colors",
+ "owo-colors 4.0.0",
  "petgraph",
  "proc-macro2",
  "quote",
@@ -2209,7 +2209,7 @@ dependencies = [
  "include_dir",
  "indenter",
  "itertools 0.12.1",
- "owo-colors",
+ "owo-colors 4.0.0",
  "pathdiff",
  "proptest",
  "proptest-derive",
@@ -2864,8 +2864,14 @@ name = "owo-colors"
 version = "3.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c1b04fb49957986fdce4d6ee7a65027d55d4b6d2265e5848bbb507b58ccfdb6f"
+
+[[package]]
+name = "owo-colors"
+version = "4.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "caff54706df99d2a78a5a4e3455ff45448d81ef1bb63c22cd14052ca0e993a3f"
 dependencies = [
- "supports-color",
+ "supports-color 2.1.0",
 ]
 
 [[package]]
@@ -3644,6 +3650,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8ba6faf2ca7ee42fdd458f4347ae0a9bd6bcc445ad7cb57ad82b383f18870d6f"
 dependencies = [
  "atty",
+ "is_ci",
+]
+
+[[package]]
+name = "supports-color"
+version = "2.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d6398cde53adc3c4557306a96ce67b302968513830a77a95b2b17305d9719a89"
+dependencies = [
+ "is-terminal",
  "is_ci",
 ]
 
