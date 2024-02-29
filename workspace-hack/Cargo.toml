@@ -21,7 +21,7 @@ clap = { version = "4.4.18", features = ["derive"] }
 clap_builder = { version = "4.4.18", default-features = false, features = ["color", "help", "std", "suggestions", "usage"] }
 getrandom = { version = "0.2.12", default-features = false, features = ["std"] }
 indexmap = { version = "1.9.3", default-features = false, features = ["std"] }
-log = { version = "0.4.20", default-features = false, features = ["std"] }
+log = { version = "0.4.21", default-features = false, features = ["std"] }
 num-traits = { version = "0.2.17", features = ["libm"] }
 owo-colors = { version = "3.5.0", default-features = false, features = ["supports-colors"] }
 petgraph = { version = "0.6.4", default-features = false, features = ["graphmap"] }
