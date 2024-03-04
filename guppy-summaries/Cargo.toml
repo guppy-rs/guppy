@@ -25,7 +25,7 @@ rust-version.workspace = true
 all-features = true
 
 [dependencies]
-ahash = "0.8.10"
+ahash = "0.8.11"
 camino = { version = "1.1.6", features = ["serde1"] }
 cfg-if = "1.0.0"
 diffus = "0.10.0"
