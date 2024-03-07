@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["about","config","patch_directive","publishing"]};

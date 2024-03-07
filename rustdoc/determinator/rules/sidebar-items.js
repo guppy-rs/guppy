@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["DeterminatorMarkChanged","DeterminatorPostRule","PathMatch","RuleIndex"],"struct":["DeterminatorRules","PackageRule","PathRule"]};

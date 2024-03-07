@@ -1,0 +1,375 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Error management"><title>nom8::error - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="nom8" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0-nightly (7d3702e47 2024-03-06)" data-channel="nightly" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-4c98445ec4002617.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../nom8/index.html">nom8</a><span class="version">0.2.0</span></h2></div><h2 class="location"><a href="#">Module error</a></h2><div class="sidebar-elems"><section><ul class="block"><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#traits">Traits</a></li><li><a href="#functions">Functions</a></li></ul></section><h2><a href="../index.html">In crate nom8</a></h2></div></nav><div class="sidebar-resizer"></div>
+    <main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../../nom8/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1>Module <a href="../index.html">nom8</a>::<wbr><a class="mod" href="#">error</a><button id="copy-path" title="Copy item path to clipboard"><img src="../../static.files/clipboard-7571035ce49a181d.svg" width="19" height="18" alt="Copy item path"></button></h1><span class="out-of-band"><a class="src" href="../../src/nom8/error.rs.html#1-1055">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="error-management"><a class="doc-anchor" href="#error-management">§</a>Error management</h2>
+<p>nom’s errors are designed with multiple needs in mind:</p>
+<ul>
+<li>indicate which parser failed and where in the input data</li>
+<li>accumulate more context as the error goes up the parser chain</li>
+<li>have a very low overhead, as errors are often discarded by the calling parser (examples: <code>many0</code>, <code>alt</code>)</li>
+<li>can be modified according to the user’s needs, because some languages need a lot more information</li>
+</ul>
+<p>To match these requirements, nom parsers have to return the following result
+type:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">pub type </span>IResult&lt;I, O, E=nom8::error::Error&lt;I&gt;&gt; = <span class="prelude-ty">Result</span>&lt;(I, O), nom8::Err&lt;E&gt;&gt;;
+
+<span class="attr">#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+</span><span class="kw">pub enum </span>Needed {
+  Unknown,
+  Size(u32)
+}
+
+<span class="kw">pub enum </span><span class="prelude-val">Err</span>&lt;E&gt; {
+    Incomplete(Needed),
+    Error(E),
+    Failure(E),
+}</code></pre></div>
+<p>The result is either an <code>Ok((I, O))</code> containing the remaining input and the
+parsed value, or an <code>Err(nom8::Err&lt;E&gt;)</code> with <code>E</code> the error type.
+<code>nom8::Err&lt;E&gt;</code> is an enum because combinators can have different behaviours
+depending on the value:</p>
+<ul>
+<li><code>Error</code> is a normal parser error. If a child parser of the <code>alt</code> combinator returns <code>Error</code>, it will try another child parser</li>
+<li><code>Failure</code> is an error from which we cannot recover: The <code>alt</code> combinator will not try other branches if a child parser returns <code>Failure</code>. This is used when we know we were in the right branch of <code>alt</code> and do not need to try other branches</li>
+<li><code>Incomplete</code> indicates that a parser did not have enough data to decide. This can be returned by parsers found in <code>streaming</code> submodules. Parsers in the <code>complete</code> submodules assume that they have the entire input data, so if it was not sufficient, they will instead return a <code>Err::Error</code>. When a parser returns <code>Incomplete</code>, we should accumulate more data in the buffer (example: reading from a socket) and call the parser again</li>
+</ul>
+<p>If we are running a parser and know it will not return <code>Err::Incomplete</code>, we can
+directly extract the error type from <code>Err::Error</code> or <code>Err::Failure</code> with the
+<code>finish()</code> method:</p>
+
+<div class="example-wrap ignore"><a href="#" class="tooltip" title="This example is not tested">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="kw">let </span>parser_result: IResult&lt;<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>&gt; = parser(input);
+<span class="kw">let </span>result: <span class="prelude-ty">Result</span>&lt;<span class="kw">_</span>, <span class="kw">_</span>&gt; = parser_result.finish();</code></pre></div>
+<p>If we used a borrowed type as input, like <code>&amp;[u8]</code> or <code>&amp;str</code>, we might want to
+convert it to an owned type to transmit it somewhere, with the <code>to_owned()</code>
+method:</p>
+
+<div class="example-wrap ignore"><a href="#" class="tooltip" title="This example is not tested">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="kw">let </span>result: <span class="prelude-ty">Result</span>&lt;(<span class="kw-2">&amp;</span>[u8], Value&lt;<span class="lifetime">'_</span>&gt;), <span class="prelude-val">Err</span>&lt;Vec&lt;u8&gt;&gt;&gt; =
+  parser(data).map_err(|e: E&lt;<span class="kw-2">&amp;</span>[u8]&gt;| e.to_owned());</code></pre></div>
+<p>nom provides a powerful error system that can adapt to your needs: you can
+get reduced error information if you want to improve performance, or you can
+get a precise trace of parser application, with fine grained position information.</p>
+<p>This is done through the third type parameter of <code>IResult</code>, nom’s parser result
+type:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">pub type </span>IResult&lt;I, O, E=nom8::error::Error&lt;I&gt;&gt; = <span class="prelude-ty">Result</span>&lt;(I, O), <span class="prelude-val">Err</span>&lt;E&gt;&gt;;
+
+<span class="attr">#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+</span><span class="kw">pub enum </span>Needed {
+  Unknown,
+  Size(u32)
+}
+
+<span class="kw">pub enum </span><span class="prelude-val">Err</span>&lt;E&gt; {
+    Incomplete(Needed),
+    Error(E),
+    Failure(E),
+}</code></pre></div>
+<p>This error type is completely generic in nom’s combinators, so you can choose
+exactly which error type you want to use when you define your parsers, or
+directly at the call site.
+See <a href="https://github.com/Geal/nom/blob/5405e1173f1052f7e006dcb0b9cfda2b06557b65/examples/json.rs#L209-L286">the JSON parser</a>
+for an example of choosing different error types at the call site.</p>
+<p>The <code>Err&lt;E&gt;</code> enum expresses 3 conditions for a parser error:</p>
+<ul>
+<li><code>Incomplete</code> indicates that a parser did not have enough data to decide. This can be returned by parsers found in <code>streaming</code> submodules to indicate that we should buffer more data from a file or socket. Parsers in the <code>complete</code> submodules assume that they have the entire input data, so if it was not sufficient, they will instead return a <code>Err::Error</code></li>
+<li><code>Error</code> is a normal parser error. If a child parser of the <code>alt</code> combinator returns <code>Error</code>, it will try another child parser</li>
+<li><code>Failure</code> is an error from which we cannot recover: The <code>alt</code> combinator will not try other branches if a child parser returns <code>Failure</code>. If we know we were in the right branch (example: we found a correct prefix character but input after that was wrong), we can transform a <code>Err::Error</code> into a <code>Err::Failure</code> with the <code>cut()</code> combinator</li>
+</ul>
+<h3 id="common-error-types"><a class="doc-anchor" href="#common-error-types">§</a>Common error types</h3><h4 id="the-default-error-type-nom8errorerror"><a class="doc-anchor" href="#the-default-error-type-nom8errorerror">§</a>the default error type: nom8::error::Error</h4>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="attr">#[derive(Debug, PartialEq)]
+</span><span class="kw">pub struct </span>Error&lt;I&gt; {
+  <span class="doccomment">/// position of the error in the input data
+  </span><span class="kw">pub </span>input: I,
+  <span class="doccomment">/// nom error code
+  </span><span class="kw">pub </span>code: ErrorKind,
+}</code></pre></div>
+<p>This structure contains a <code>nom8::error::ErrorKind</code> indicating which kind of
+parser encountered an error (example: <code>ErrorKind::Tag</code> for the <code>tag()</code>
+combinator), and the input position of the error.</p>
+<p>This error type is fast and has very low overhead, so it is suitable for
+parsers that are called repeatedly, like in network protocols.
+It is very limited though, it will not tell you about the chain of
+parser calls, so it is not enough to write user friendly errors.</p>
+<p>Example error returned in a JSON-like parser (from <code>examples/json.rs</code>):</p>
+
+<div class="example-wrap ignore"><a href="#" class="tooltip" title="This example is not tested">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="kw">let </span>data = <span class="string">"  { \"a\"\t: 42,
+\"b\": [ \"x\", \"y\", 12 ] ,
+\"c\": { 1\"hello\" : \"world\"
+}
+} "</span>;
+
+<span class="comment">// will print:
+// Err(
+//   Failure(
+//       Error {
+//           input: "1\"hello\" : \"world\"\n  }\n  } ",
+//           code: Char,
+//       },
+//   ),
+// )
+</span><span class="macro">println!</span>(
+  <span class="string">"{:#?}\n"</span>,
+  json::&lt;Error&lt;<span class="kw-2">&amp;</span>str&gt;&gt;(data)
+);</code></pre></div>
+<h4 id="getting-more-information-nom8errorverboseerror"><a class="doc-anchor" href="#getting-more-information-nom8errorverboseerror">§</a>getting more information: nom8::error::VerboseError</h4>
+<p>The  <code>VerboseError&lt;I&gt;</code> type accumulates more information about the chain of
+parsers that encountered an error:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="attr">#[derive(Clone, Debug, PartialEq)]
+</span><span class="kw">pub struct </span>VerboseError&lt;I&gt; {
+  <span class="doccomment">/// List of errors accumulated by `VerboseError`, containing the affected
+  /// part of input data, and some context
+  </span><span class="kw">pub </span>errors: Vec&lt;(I, VerboseErrorKind)&gt;,
+}
+
+<span class="attr">#[derive(Clone, Debug, PartialEq)]
+</span><span class="doccomment">/// Error context for `VerboseError`
+</span><span class="kw">pub enum </span>VerboseErrorKind {
+  <span class="doccomment">/// Static string added by the `context` function
+  </span>Context(<span class="kw-2">&amp;</span><span class="lifetime">'static </span>str),
+  <span class="doccomment">/// Indicates which character was expected by the `char` function
+  </span>Char(char),
+  <span class="doccomment">/// Error kind given by various nom parsers
+  </span>Nom(ErrorKind),
+}</code></pre></div>
+<p>It contains the input position and error code for each of those parsers.
+It does not accumulate errors from the different branches of <code>alt</code>, it will
+only contain errors from the last branch it tried.</p>
+<p>It can be used along with the <code>nom8::error::context</code> combinator to inform about
+the parser chain:</p>
+
+<div class="example-wrap ignore"><a href="#" class="tooltip" title="This example is not tested">ⓘ</a><pre class="rust rust-example-rendered"><code>context(
+  <span class="string">"string"</span>,
+  preceded(<span class="string">'\"'</span>, cut(terminated(parse_str, <span class="string">'\"'</span>))),
+)(i);</code></pre></div>
+<p>It is not very usable if printed directly:</p>
+
+<div class="example-wrap ignore"><a href="#" class="tooltip" title="This example is not tested">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="comment">// parsed verbose: Err(
+//   Failure(
+//       VerboseError {
+//           errors: [
+//               (
+//                   "1\"hello\" : \"world\"\n  }\n  } ",
+//                   Char(
+//                       '}',
+//                   ),
+//               ),
+//               (
+//                   "{ 1\"hello\" : \"world\"\n  }\n  } ",
+//                   Context(
+//                       "map",
+//                   ),
+//               ),
+//               (
+//                   "{ \"a\"\t: 42,\n  \"b\": [ \"x\", \"y\", 12 ] ,\n  \"c\": { 1\"hello\" : \"world\"\n  }\n  } ",
+//                   Context(
+//                       "map",
+//                   ),
+//               ),
+//           ],
+//       },
+//   ),
+// )
+</span><span class="macro">println!</span>(<span class="string">"parsed verbose: {:#?}"</span>, json::&lt;VerboseError&lt;<span class="kw-2">&amp;</span>str&gt;&gt;(data));</code></pre></div>
+<p>But by looking at the original input and the chain of errors, we can build
+a more user friendly error message. The <code>nom8::error::convert_error</code> function
+can build such a message.</p>
+
+<div class="example-wrap ignore"><a href="#" class="tooltip" title="This example is not tested">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="kw">let </span>e = json::&lt;VerboseError&lt;<span class="kw-2">&amp;</span>str&gt;&gt;(data).finish().err().unwrap();
+<span class="comment">// here we use the `convert_error` function, to transform a `VerboseError&lt;&amp;str&gt;`
+// into a printable trace.
+//
+// This will print:
+// verbose errors - `json::&lt;VerboseError&lt;&amp;str&gt;&gt;(data)`:
+// 0: at line 2:
+//   "c": { 1"hello" : "world"
+//          ^
+// expected '}', found 1
+//
+// 1: at line 2, in map:
+//   "c": { 1"hello" : "world"
+//        ^
+//
+// 2: at line 0, in map:
+//   { "a" : 42,
+//   ^
+</span><span class="macro">println!</span>(
+  <span class="string">"verbose errors - `json::&lt;VerboseError&lt;&amp;str&gt;&gt;(data)`:\n{}"</span>,
+  convert_error(data, e)
+);</code></pre></div>
+<p>Note that <code>VerboseError</code> and <code>convert_error</code> are meant as a starting point for
+language errors, but that they cannot cover all use cases. So a custom
+<code>convert_error</code> function should probably be written.</p>
+<h4 id="improving-usability-nom_locate-and-nom-supreme"><a class="doc-anchor" href="#improving-usability-nom_locate-and-nom-supreme">§</a>Improving usability: nom_locate and nom-supreme</h4>
+<p>These crates were developed to improve the user experience when writing nom
+parsers.</p>
+<h5 id="nom_locate"><a class="doc-anchor" href="#nom_locate">§</a>nom_locate</h5>
+<p><a href="https://docs.rs/nom_locate/">nom_locate</a> wraps the input data in a <code>Span</code>
+type that can be understood by nom parsers. That type provides location
+information, like line and column.</p>
+<h5 id="nom-supreme"><a class="doc-anchor" href="#nom-supreme">§</a>nom-supreme</h5>
+<p><a href="https://docs.rs/nom-supreme/">nom-supreme</a> provides the <code>ErrorTree&lt;I&gt;</code> error
+type, that provides the same chain of parser errors as <code>VerboseError</code>, but also
+accumulates errors from the various branches tried by <code>alt</code>.</p>
+<p>With this error type, you can explore everything that has been tried by the
+parser.</p>
+<h3 id="the-parseerror-trait"><a class="doc-anchor" href="#the-parseerror-trait">§</a>The <code>ParseError</code> trait</h3>
+<p>If those error types are not enough, we can define our own, by implementing
+the <code>ParseError&lt;I&gt;</code> trait. All nom combinators are generic over that trait
+for their errors, so we only need to define it in the parser result type,
+and it will be used everywhere.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">pub trait </span>ParseError&lt;I&gt;: Sized {
+    <span class="doccomment">/// Creates an error from the input position and an [ErrorKind]
+    </span><span class="kw">fn </span>from_error_kind(input: I, kind: ErrorKind) -&gt; <span class="self">Self</span>;
+
+    <span class="doccomment">/// Combines an existing error with a new one created from the input
+    /// position and an [ErrorKind]. This is useful when backtracking
+    /// through a parse tree, accumulating error context on the way
+    </span><span class="kw">fn </span>append(input: I, kind: ErrorKind, other: <span class="self">Self</span>) -&gt; <span class="self">Self</span>;
+
+    <span class="doccomment">/// Combines two existing errors. This function is used to compare errors
+    /// generated in various branches of `alt`
+    </span><span class="kw">fn </span>or(<span class="self">self</span>, other: <span class="self">Self</span>) -&gt; <span class="self">Self </span>{
+        other
+    }
+}</code></pre></div>
+<p>Any error type has to implement that trait, that requires ways to build an
+error:</p>
+<ul>
+<li><code>from_error_kind</code>: From the input position and the <code>ErrorKind</code> enum that indicates in which parser we got an error</li>
+<li><code>append</code>: Allows the creation of a chain of errors as we backtrack through the parser tree (various combinators will add more context)</li>
+<li><code>from_char</code>: Creates an error that indicates which character we were expecting</li>
+<li><code>or</code>: In combinators like <code>alt</code>, allows choosing between errors from various branches (or accumulating them)</li>
+</ul>
+<p>We can also implement the <code>ContextError</code> trait to support the <code>context()</code>
+combinator used by <code>VerboseError&lt;I&gt;</code>:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">pub trait </span>ContextError&lt;I, C&gt;: Sized {
+    <span class="kw">fn </span>add_context(_input: I, _ctx: C, other: <span class="self">Self</span>) -&gt; <span class="self">Self </span>{
+        other
+    }
+}</code></pre></div>
+<p>And there is also the <code>FromExternalError&lt;I, E&gt;</code> used by <code>map_res</code> to wrap
+errors returned by other functions:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">pub trait </span>FromExternalError&lt;I, ExternalError&gt; {
+  <span class="kw">fn </span>from_external_error(input: I, kind: ErrorKind, e: ExternalError) -&gt; <span class="self">Self</span>;
+}</code></pre></div>
+<h4 id="example-usage"><a class="doc-anchor" href="#example-usage">§</a>Example usage</h4>
+<p>Let’s define a debugging error type, that will print something every time an
+error is generated. This will give us a good insight into what the parser tried.
+Since errors can be combined with each other, we want it to keep some info on
+the error that was just returned. We’ll just store that in a string:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">struct </span>DebugError {
+    message: String,
+}</code></pre></div>
+<p>Now let’s implement <code>ParseError</code> and <code>ContextError</code> on it:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">impl </span>ParseError&lt;<span class="kw-2">&amp;</span>str&gt; <span class="kw">for </span>DebugError {
+    <span class="comment">// on one line, we show the error code and the input that caused it
+    </span><span class="kw">fn </span>from_error_kind(input: <span class="kw-2">&amp;</span>str, kind: ErrorKind) -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span>message = <span class="macro">format!</span>(<span class="string">"{:?}:\t{:?}\n"</span>, kind, input);
+        <span class="macro">println!</span>(<span class="string">"{}"</span>, message);
+        DebugError { message }
+    }
+
+    <span class="comment">// if combining multiple errors, we show them one after the other
+    </span><span class="kw">fn </span>append(input: <span class="kw-2">&amp;</span>str, kind: ErrorKind, other: <span class="self">Self</span>) -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span>message = <span class="macro">format!</span>(<span class="string">"{}{:?}:\t{:?}\n"</span>, other.message, kind, input);
+        <span class="macro">println!</span>(<span class="string">"{}"</span>, message);
+        DebugError { message }
+    }
+
+    <span class="kw">fn </span>or(<span class="self">self</span>, other: <span class="self">Self</span>) -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span>message = <span class="macro">format!</span>(<span class="string">"{}\tOR\n{}\n"</span>, <span class="self">self</span>.message, other.message);
+        <span class="macro">println!</span>(<span class="string">"{}"</span>, message);
+        DebugError { message }
+    }
+}
+
+<span class="kw">impl </span>ContextError&lt;<span class="kw-2">&amp;</span>str, <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str&gt; <span class="kw">for </span>DebugError {
+    <span class="kw">fn </span>add_context(input: <span class="kw-2">&amp;</span>str, ctx: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str, other: <span class="self">Self</span>) -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span>message = <span class="macro">format!</span>(<span class="string">"{}\"{}\":\t{:?}\n"</span>, other.message, ctx, input);
+        <span class="macro">println!</span>(<span class="string">"{}"</span>, message);
+        DebugError { message }
+    }
+}</code></pre></div>
+<p>So when calling our JSON parser with this error type, we will get a trace
+of all the times a parser stoppped and backtracked:</p>
+
+<div class="example-wrap ignore"><a href="#" class="tooltip" title="This example is not tested">ⓘ</a><pre class="rust rust-example-rendered"><code><span class="macro">println!</span>(<span class="string">"debug: {:#?}"</span>, root::&lt;DebugError&gt;(data));</code></pre></div>
+<div class="example-wrap"><pre class="language-text"><code>AlphaNumeric:   &quot;\&quot;\t: 42,\n  \&quot;b\&quot;: [ \&quot;x\&quot;, \&quot;y\&quot;, 12 ] ,\n  \&quot;c\&quot;: { 1\&quot;hello\&quot; : \&quot;world\&quot;\n  }\n  } &quot;
+
+&#39;{&#39;:    &quot;42,\n  \&quot;b\&quot;: [ \&quot;x\&quot;, \&quot;y\&quot;, 12 ] ,\n  \&quot;c\&quot;: { 1\&quot;hello\&quot; : \&quot;world\&quot;\n  }\n  } &quot;
+
+&#39;{&#39;:    &quot;42,\n  \&quot;b\&quot;: [ \&quot;x\&quot;, \&quot;y\&quot;, 12 ] ,\n  \&quot;c\&quot;: { 1\&quot;hello\&quot; : \&quot;world\&quot;\n  }\n  } &quot;
+&quot;map&quot;:  &quot;42,\n  \&quot;b\&quot;: [ \&quot;x\&quot;, \&quot;y\&quot;, 12 ] ,\n  \&quot;c\&quot;: { 1\&quot;hello\&quot; : \&quot;world\&quot;\n  }\n  } &quot;
+
+[..]
+
+AlphaNumeric:   &quot;\&quot;: { 1\&quot;hello\&quot; : \&quot;world\&quot;\n  }\n  } &quot;
+
+&#39;&quot;&#39;:    &quot;1\&quot;hello\&quot; : \&quot;world\&quot;\n  }\n  } &quot;
+
+&#39;&quot;&#39;:    &quot;1\&quot;hello\&quot; : \&quot;world\&quot;\n  }\n  } &quot;
+&quot;string&quot;:       &quot;1\&quot;hello\&quot; : \&quot;world\&quot;\n  }\n  } &quot;
+
+&#39;}&#39;:    &quot;1\&quot;hello\&quot; : \&quot;world\&quot;\n  }\n  } &quot;
+
+&#39;}&#39;:    &quot;1\&quot;hello\&quot; : \&quot;world\&quot;\n  }\n  } &quot;
+&quot;map&quot;:  &quot;{ 1\&quot;hello\&quot; : \&quot;world\&quot;\n  }\n  } &quot;
+
+&#39;}&#39;:    &quot;1\&quot;hello\&quot; : \&quot;world\&quot;\n  }\n  } &quot;
+&quot;map&quot;:  &quot;{ 1\&quot;hello\&quot; : \&quot;world\&quot;\n  }\n  } &quot;
+&quot;map&quot;:  &quot;{ \&quot;a\&quot;\t: 42,\n  \&quot;b\&quot;: [ \&quot;x\&quot;, \&quot;y\&quot;, 12 ] ,\n  \&quot;c\&quot;: { 1\&quot;hello\&quot; : \&quot;world\&quot;\n  }\n  } &quot;
+
+debug: Err(
+    Failure(
+        DebugError {
+            message: &quot;&#39;}&#39;:\t\&quot;1\\\&quot;hello\\\&quot; : \\\&quot;world\\\&quot;\\n  }\\n  } \&quot;\n\&quot;map\&quot;:\t\&quot;{ 1\\\&quot;hello\\\&quot; : \\\&quot;world
+\\&quot;\\n  }\\n  } \&quot;\n\&quot;map\&quot;:\t\&quot;{ \\\&quot;a\\\&quot;\\t: 42,\\n  \\\&quot;b\\\&quot;: [ \\\&quot;x\\\&quot;, \\\&quot;y\\\&quot;, 12 ] ,\\n  \\\&quot;c\\\&quot;: { 1\
+\&quot;hello\\\&quot; : \\\&quot;world\\\&quot;\\n  }\\n  } \&quot;\n&quot;,
+        },
+    ),
+)
+</code></pre></div>
+<p>Here we can see that when parsing <code>{ 1\&quot;hello\&quot; : \&quot;world\&quot;\n  }\n  }</code>, after
+getting past the initial <code>{</code>, we tried:</p>
+<ul>
+<li>parsing a <code>&quot;</code> because we’re expecting a key name, and that parser was part of the
+“string” parser</li>
+<li>parsing a <code>}</code> because the map might be empty. When this fails, we backtrack,
+through 2 recursive map parsers:</li>
+</ul>
+<div class="example-wrap"><pre class="language-text"><code>&#39;}&#39;:    &quot;1\&quot;hello\&quot; : \&quot;world\&quot;\n  }\n  } &quot;
+&quot;map&quot;:  &quot;{ 1\&quot;hello\&quot; : \&quot;world\&quot;\n  }\n  } &quot;
+&quot;map&quot;:  &quot;{ \&quot;a\&quot;\t: 42,\n  \&quot;b\&quot;: [ \&quot;x\&quot;, \&quot;y\&quot;, 12 ] ,\n  \&quot;c\&quot;: { 1\&quot;hello\&quot; : \&quot;world\&quot;\n  }\n  } &quot;
+</code></pre></div><h3 id="debugging-parsers"><a class="doc-anchor" href="#debugging-parsers">§</a>Debugging parsers</h3>
+<p>While you are writing your parsers, you will sometimes need to follow
+which part of the parser sees which part of the input.</p>
+<p>To that end, nom provides the <code>dbg_err</code> function that will observe
+a parser’s input and output, and print a hexdump of the input if there was an
+error. Here is what it could return:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>nom8::prelude::<span class="kw-2">*</span>;
+<span class="kw">fn </span>f(i: <span class="kw-2">&amp;</span>[u8]) -&gt; IResult&lt;<span class="kw-2">&amp;</span>[u8], <span class="kw-2">&amp;</span>[u8]&gt; {
+    tag(<span class="string">"abcd"</span>).dbg_err(<span class="string">"tag"</span>).parse(i)
+}
+
+<span class="kw">let </span>a = <span class="kw-2">&amp;</span><span class="string">b"efghijkl"</span>[..];
+
+<span class="comment">// Will print the following message:
+// tag: Error(Error(Error { input: [101, 102, 103, 104, 105, 106, 107, 108], code: Tag })) at:
+// 00000000        65 66 67 68 69 6a 6b 6c         efghijkl
+</span>f(a);</code></pre></div>
+<p>You can go further with the <a href="https://github.com/rust-bakery/nom-trace">nom-trace crate</a></p>
+</div></details><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="struct" href="struct.Context.html" title="struct nom8::error::Context">Context</a></div><div class="desc docblock-short">Implementation of <a href="../trait.Parser.html#method.context" title="method nom8::Parser::context"><code>Parser::context</code></a></div></li><li><div class="item-name"><a class="struct" href="struct.DbgErr.html" title="struct nom8::error::DbgErr">DbgErr</a></div><div class="desc docblock-short">Implementation of <a href="../trait.Parser.html#method.dbg_err" title="method nom8::Parser::dbg_err"><code>Parser::dbg_err</code></a></div></li><li><div class="item-name"><a class="struct" href="struct.Error.html" title="struct nom8::error::Error">Error</a></div><div class="desc docblock-short">default error type, only contains the error’ location and code</div></li><li><div class="item-name"><a class="struct" href="struct.VerboseError.html" title="struct nom8::error::VerboseError">VerboseError</a></div><div class="desc docblock-short">This error type accumulates errors and their position when backtracking
+through a parse tree. With some post processing (cf <code>examples/json.rs</code>),
+it can be used to display user friendly error messages</div></li></ul><h2 id="enums" class="section-header">Enums<a href="#enums" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="enum" href="enum.ErrorKind.html" title="enum nom8::error::ErrorKind">ErrorKind</a></div><div class="desc docblock-short">Indicates which parser returned an error</div></li><li><div class="item-name"><a class="enum" href="enum.VerboseErrorKind.html" title="enum nom8::error::VerboseErrorKind">VerboseErrorKind</a></div><div class="desc docblock-short">Error context for <code>VerboseError</code></div></li></ul><h2 id="traits" class="section-header">Traits<a href="#traits" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="trait" href="trait.ContextError.html" title="trait nom8::error::ContextError">ContextError</a></div><div class="desc docblock-short">This trait is required by the <code>context</code> combinator to add a static string
+to an existing error</div></li><li><div class="item-name"><a class="trait" href="trait.FromExternalError.html" title="trait nom8::error::FromExternalError">FromExternalError</a></div><div class="desc docblock-short">This trait is required by the <code>map_res</code> combinator to integrate
+error types from external functions, like <a href="https://doc.rust-lang.org/nightly/core/str/traits/trait.FromStr.html" title="trait core::str::traits::FromStr">std::str::FromStr</a></div></li><li><div class="item-name"><a class="trait" href="trait.ParseError.html" title="trait nom8::error::ParseError">ParseError</a></div><div class="desc docblock-short">This trait must be implemented by the error type of a nom parser.</div></li></ul><h2 id="functions" class="section-header">Functions<a href="#functions" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="fn" href="fn.append_error.html" title="fn nom8::error::append_error">append_error</a><span class="stab deprecated" title="">Deprecated</span></div><div class="desc docblock-short">Combines an existing error with a new one created from the input
+position and an <a href="enum.ErrorKind.html" title="enum nom8::error::ErrorKind">ErrorKind</a>. This is useful when backtracking
+through a parse tree, accumulating error context on the way</div></li><li><div class="item-name"><a class="fn" href="fn.context.html" title="fn nom8::error::context">context</a><span class="stab deprecated" title="">Deprecated</span></div><div class="desc docblock-short">Create a new error from an input position, a static string and an existing error.
+This is used mainly in the <a href="fn.context.html" title="fn nom8::error::context">context</a> combinator, to add user friendly information
+to errors when backtracking through a parse tree</div></li><li><div class="item-name"><a class="fn" href="fn.convert_error.html" title="fn nom8::error::convert_error">convert_error</a></div><div class="desc docblock-short">Transforms a <code>VerboseError</code> into a trace with input position information</div></li><li><div class="item-name"><a class="fn" href="fn.dbg_dmp.html" title="fn nom8::error::dbg_dmp">dbg_dmp</a><span class="stab deprecated" title="">Deprecated</span></div><div class="desc docblock-short">Prints a message and the input if the parser fails.</div></li><li><div class="item-name"><a class="fn" href="fn.make_error.html" title="fn nom8::error::make_error">make_error</a><span class="stab deprecated" title="">Deprecated</span></div><div class="desc docblock-short">Creates an error from the input position and an <a href="enum.ErrorKind.html" title="enum nom8::error::ErrorKind">ErrorKind</a></div></li></ul></section></div></main></body></html>

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"static":["DEFAULT_CONFIG_PATH","FALLBACK_CONFIG_PATH"],"struct":["HakariBuilderSummary","HakariConfig","OutputOptionsSummary"]};

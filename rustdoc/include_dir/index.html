@@ -1,0 +1,66 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="An extension to the `include_str!()` and `include_bytes!()` macro for embedding an entire directory tree into your binary."><title>include_dir - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-e935ef01ae1c1829.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="include_dir" data-themes="" data-resource-suffix="" data-rustdoc-version="1.78.0-nightly (7d3702e47 2024-03-06)" data-channel="nightly" data-search-js="search-dd67cee4cfa65049.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../static.files/storage-4c98445ec4002617.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-12cf3b4f4f9dc36d.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-04d5337699b92874.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../include_dir/index.html">include_dir</a><span class="version">0.7.3</span></h2></div><div class="sidebar-elems"><ul class="block">
+            <li><a id="all-types" href="all.html">All Items</a></li></ul><section><ul class="block"><li><a href="#macros">Macros</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li></ul></section></div></nav><div class="sidebar-resizer"></div>
+    <main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../include_dir/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1>Crate <a class="mod" href="#">include_dir</a><button id="copy-path" title="Copy item path to clipboard"><img src="../static.files/clipboard-7571035ce49a181d.svg" width="19" height="18" alt="Copy item path"></button></h1><span class="out-of-band"><a class="src" href="../src/include_dir/lib.rs.html#1-111">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>An extension to the <code>include_str!()</code> and <code>include_bytes!()</code> macro for
+embedding an entire directory tree into your binary.</p>
+<h2 id="environment-variables"><a class="doc-anchor" href="#environment-variables">§</a>Environment Variables</h2>
+<p>When invoking the <a href="macro.include_dir.html" title="macro include_dir::include_dir"><code>include_dir!()</code></a> macro you should try to avoid using
+relative paths because <code>rustc</code> makes no guarantees about the current
+directory when it is running a procedural macro.</p>
+<p>Environment variable interpolation can be used to remedy this. You might
+want to read the <a href="https://doc.rust-lang.org/cargo/reference/environment-variables.html#environment-variables-cargo-sets-for-crates"><em>Environment Variables</em></a> section of <em>The
+Cargo Book</em> for a list of variables provided by <code>cargo</code>.</p>
+<p>Most crates will want to use the <code>$CARGO_MANIFEST_DIR</code> or <code>$OUT_DIR</code>
+variables. For example, to include a folder relative to your crate you might
+use <code>include_dir!(&quot;$CARGO_MANIFEST_DIR/assets&quot;)</code>.</p>
+<h2 id="examples"><a class="doc-anchor" href="#examples">§</a>Examples</h2>
+<p>Here is an example that embeds the <code>include_dir</code> crate’s source code in a
+<code>static</code> so we can play around with it.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>include_dir::{include_dir, Dir};
+<span class="kw">use </span>std::path::Path;
+
+<span class="kw">static </span>PROJECT_DIR: Dir&lt;<span class="lifetime">'_</span>&gt; = <span class="macro">include_dir!</span>(<span class="string">"$CARGO_MANIFEST_DIR"</span>);
+
+<span class="comment">// of course, you can retrieve a file by its full path
+</span><span class="kw">let </span>lib_rs = PROJECT_DIR.get_file(<span class="string">"src/lib.rs"</span>).unwrap();
+
+<span class="comment">// you can also inspect the file's contents
+</span><span class="kw">let </span>body = lib_rs.contents_utf8().unwrap();
+<span class="macro">assert!</span>(body.contains(<span class="string">"SOME_INTERESTING_STRING"</span>));
+
+<span class="comment">// if you enable the `glob` feature, you can for files (and directories) using glob patterns
+</span><span class="attr">#[cfg(feature = <span class="string">"glob"</span>)]
+</span>{
+    <span class="kw">let </span>glob = <span class="string">"**/*.rs"</span>;
+    <span class="kw">for </span>entry <span class="kw">in </span>PROJECT_DIR.find(glob).unwrap() {
+        <span class="macro">println!</span>(<span class="string">"Found {}"</span>, entry.path().display());
+    }
+}</code></pre></div>
+<h2 id="features"><a class="doc-anchor" href="#features">§</a>Features</h2>
+<p>This library exposes a couple feature flags for enabling and disabling extra
+functionality. These are:</p>
+<ul>
+<li><code>glob</code> - search for files using glob patterns</li>
+<li><code>metadata</code> - include some basic filesystem metadata like last modified
+time. This is not enabled by default to allow for more reproducible builds
+and to hide potentially identifying information.</li>
+<li><code>nightly</code> - enables nightly APIs like <a href="https://github.com/rust-lang/rust/issues/73921"><code>track_path</code></a>
+and  <a href="https://github.com/rust-lang/rust/issues/74690"><code>proc_macro_tracked_env</code></a>. This gives the compiler
+more information about what is accessed by the procedural macro, enabling
+better caching. <strong>Functionality behind this feature flag is unstable and
+may change or stop compiling at any time.</strong></li>
+</ul>
+<h2 id="compile-time-considerations"><a class="doc-anchor" href="#compile-time-considerations">§</a>Compile Time Considerations</h2>
+<p>While the <code>include_dir!()</code> macro executes relatively quickly, it expands
+to a fairly large amount of code (all your files are essentially embedded
+as Rust byte strings) and this may have a flow-on effect on the build
+process.</p>
+<p>In particular, including a large number or files or files which are
+particularly big may cause the compiler to use large amounts of RAM or spend
+a long time parsing your crate.</p>
+<p>As one data point, this crate’s <code>target/</code> directory contained 620 files with
+a total of 64 MB, with a full build taking about 1.5 seconds and 200MB of
+RAM to generate a 7MB binary.</p>
+<p>Using <code>include_dir!(&quot;target/&quot;)</code> increased the compile time to 5 seconds
+and used 730MB of RAM, generating a 72MB binary.</p>
+</div></details><h2 id="macros" class="section-header">Macros<a href="#macros" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="macro" href="macro.include_dir.html" title="macro include_dir::include_dir">include_dir</a></div><div class="desc docblock-short">Embed the contents of a directory in your crate.</div></li></ul><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="struct" href="struct.Dir.html" title="struct include_dir::Dir">Dir</a></div><div class="desc docblock-short">A directory.</div></li><li><div class="item-name"><a class="struct" href="struct.File.html" title="struct include_dir::File">File</a></div><div class="desc docblock-short">A file with its contents stored in a <code>&amp;'static [u8]</code>.</div></li></ul><h2 id="enums" class="section-header">Enums<a href="#enums" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="enum" href="enum.DirEntry.html" title="enum include_dir::DirEntry">DirEntry</a></div><div class="desc docblock-short">A directory entry, roughly analogous to <a href="https://doc.rust-lang.org/nightly/std/fs/struct.DirEntry.html" title="struct std::fs::DirEntry"><code>std::fs::DirEntry</code></a>.</div></li></ul></section></div></main></body></html>

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["CargoResolverVersionCmd","InitialsPlatformCmd"],"fn":["string_to_platform_spec"],"mod":["proptest"],"struct":["CargoMetadataOptions","CargoResolverOpts","PackagesAndFeatures"]};

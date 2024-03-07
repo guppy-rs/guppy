@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ConflictStyle","Line"],"fn":["apply","apply_bytes","create_patch","create_patch_bytes","merge","merge_bytes"],"struct":["ApplyError","DiffOptions","Hunk","HunkRange","MergeOptions","ParsePatchError","Patch","PatchFormatter"]};
