@@ -21,7 +21,7 @@ jobs:
         uses: taiki-e/install-action@4978b3c8549425a60eb2d68446d0b58cef63ad0a # v2
         with:
           tool: cargo-release@0.25.0
-      - uses: taiki-e/create-gh-release-action@8df4de6534ceacdaed10a08f73418ca751f31793 # v1
+      - uses: taiki-e/create-gh-release-action@72d65cee1f8033ef0c8b5d79eaf0c45c7c578ce3 # v1
         with:
           prefix: target-spec
           changelog: target-spec/CHANGELOG.md
@@ -46,7 +46,7 @@ jobs:
         uses: taiki-e/install-action@4978b3c8549425a60eb2d68446d0b58cef63ad0a # v2
         with:
           tool: cargo-release@0.25.0
-      - uses: taiki-e/create-gh-release-action@8df4de6534ceacdaed10a08f73418ca751f31793 # v1
+      - uses: taiki-e/create-gh-release-action@72d65cee1f8033ef0c8b5d79eaf0c45c7c578ce3 # v1
         with:
           prefix: target-spec-miette
           changelog: target-spec-miette/CHANGELOG.md
@@ -71,7 +71,7 @@ jobs:
         uses: taiki-e/install-action@4978b3c8549425a60eb2d68446d0b58cef63ad0a # v2
         with:
           tool: cargo-release@0.25.0
-      - uses: taiki-e/create-gh-release-action@8df4de6534ceacdaed10a08f73418ca751f31793 # v1
+      - uses: taiki-e/create-gh-release-action@72d65cee1f8033ef0c8b5d79eaf0c45c7c578ce3 # v1
         with:
           prefix: guppy-summaries
           changelog: guppy-summaries/CHANGELOG.md
@@ -97,7 +97,7 @@ jobs:
         uses: taiki-e/install-action@4978b3c8549425a60eb2d68446d0b58cef63ad0a # v2
         with:
           tool: cargo-release@0.25.0
-      - uses: taiki-e/create-gh-release-action@8df4de6534ceacdaed10a08f73418ca751f31793 # v1
+      - uses: taiki-e/create-gh-release-action@72d65cee1f8033ef0c8b5d79eaf0c45c7c578ce3 # v1
         with:
           prefix: guppy
           changelog: guppy/CHANGELOG.md
@@ -122,7 +122,7 @@ jobs:
         uses: taiki-e/install-action@4978b3c8549425a60eb2d68446d0b58cef63ad0a # v2
         with:
           tool: cargo-release@0.25.0
-      - uses: taiki-e/create-gh-release-action@8df4de6534ceacdaed10a08f73418ca751f31793 # v1
+      - uses: taiki-e/create-gh-release-action@72d65cee1f8033ef0c8b5d79eaf0c45c7c578ce3 # v1
         with:
           prefix: determinator
           changelog: tools/determinator/CHANGELOG.md
@@ -147,7 +147,7 @@ jobs:
         uses: taiki-e/install-action@4978b3c8549425a60eb2d68446d0b58cef63ad0a # v2
         with:
           tool: cargo-release@0.25.0
-      - uses: taiki-e/create-gh-release-action@8df4de6534ceacdaed10a08f73418ca751f31793 # v1
+      - uses: taiki-e/create-gh-release-action@72d65cee1f8033ef0c8b5d79eaf0c45c7c578ce3 # v1
         with:
           prefix: hakari
           changelog: tools/hakari/CHANGELOG.md
@@ -168,7 +168,7 @@ jobs:
           persist-credentials: false
       # Note: do not publish this to crates.io until binaries are built and uploaded below. This is
       # so that `cargo binstall` keeps working.
-      - uses: taiki-e/create-gh-release-action@8df4de6534ceacdaed10a08f73418ca751f31793 # v1
+      - uses: taiki-e/create-gh-release-action@72d65cee1f8033ef0c8b5d79eaf0c45c7c578ce3 # v1
         id: create-gh-release
         with:
           prefix: cargo-hakari
