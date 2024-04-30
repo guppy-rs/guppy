@@ -11,7 +11,7 @@ publish = false
 [dependencies]
 # disable tracing integration since we don't use it
 clap = { version = "3.2.25", features = ["derive"] }
-color-eyre = { version = "0.6.2", default-features = false }
+color-eyre = { version = "0.6.3", default-features = false }
 guppy = { path = "../guppy" }
 proptest = { version = "1.4.0", optional = true }
 guppy-workspace-hack.workspace = true
