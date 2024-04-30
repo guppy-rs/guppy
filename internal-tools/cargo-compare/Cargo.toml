@@ -9,7 +9,7 @@ publish = false
 anyhow = "1.0.82"
 cargo = { version = "0.76.0", features = ["vendored-libgit2"] }
 clap = { version = "3.2.25", features = ["derive"] }
-color-eyre = { version = "0.6.2", default-features = false }
+color-eyre = { version = "0.6.3", default-features = false }
 diffus = "0.10.0"
 either = "1.10.0"
 fs_extra = "1.3.0"
