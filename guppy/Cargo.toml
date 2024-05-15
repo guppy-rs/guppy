@@ -30,7 +30,7 @@ maintenance = { status = "actively-developed" }
 
 [dependencies]
 ahash.workspace = true
-camino = "1.1.6"
+camino = "1.1.7"
 cargo_metadata = "0.18.1"
 cfg-if = "1.0.0"
 debug-ignore = "1.0.5"
