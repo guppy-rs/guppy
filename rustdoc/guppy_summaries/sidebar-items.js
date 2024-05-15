@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["PackageStatus","SummarySource"],"fn":["serialize_forward_slashes"],"mod":["diff"],"struct":["PackageInfo","Summary","SummaryId"],"type":["PackageMap"]};

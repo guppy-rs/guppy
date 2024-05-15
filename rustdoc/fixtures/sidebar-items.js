@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["package_id"],"mod":["dep_helpers","details","json"]};

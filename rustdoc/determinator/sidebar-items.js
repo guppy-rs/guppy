@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["errors","rules"],"struct":["Determinator","DeterminatorSet","Utf8Paths0"]};

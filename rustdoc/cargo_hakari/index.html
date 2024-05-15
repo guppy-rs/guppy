@@ -1,0 +1,146 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="`cargo hakari` is a command-line application to manage workspace-hack crates. Use it to speed up local `cargo build` and `cargo check` commands by 15-95%, and cumulatively by 20-25% or more."><title>cargo_hakari - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-dd39b87e5fcfba68.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="cargo_hakari" data-themes="" data-resource-suffix="" data-rustdoc-version="1.80.0-nightly (8387315ab 2024-05-14)" data-channel="nightly" data-search-js="search-d52510db62a78183.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-20a3ad099b048cf2.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-df360f571f6edeae.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../cargo_hakari/index.html">cargo_hakari</a><span class="version">0.9.29</span></h2></div><div class="sidebar-elems"><ul class="block"><li><a id="all-types" href="all.html">All Items</a></li></ul><section><ul class="block"><li><a href="#modules">Modules</a></li></ul></section></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Crate <a class="mod" href="#">cargo_hakari</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../src/cargo_hakari/lib.rs.html#4-250">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p><code>cargo hakari</code> is a command-line application to manage workspace-hack crates. Use it to speed up
+local <code>cargo build</code> and <code>cargo check</code> commands by <strong>15-95%</strong>, and cumulatively by <strong>20-25% or
+more</strong>.</p>
+<p>For an explanation of what workspace-hack packages are and how they make your builds faster, see
+the <a href="https://docs.rs/cargo-hakari/latest/cargo_hakari/about"><code>about</code> module</a>.</p>
+<h2 id="examples"><a class="doc-anchor" href="#examples">§</a>Examples</h2>
+<p>The <code>cargo-guppy</code> repository uses a workspace-hack crate managed by <code>cargo hakari</code>. <a href="https://github.com/guppy-rs/guppy/blob/main/workspace-hack/Cargo.toml">See the
+generated <code>Cargo.toml</code>.</a></p>
+<h2 id="platform-support"><a class="doc-anchor" href="#platform-support">§</a>Platform support</h2>
+<ul>
+<li><strong>Unix platforms</strong>: Hakari works and is supported.</li>
+<li><strong>Windows</strong>: Hakari works and outputs file paths with forward slashes for consistency with
+Unix. CRLF line endings are not supported in the workspace-hack’s <code>Cargo.toml</code>. Within Git
+repositories, <code>cargo hakari init</code> automatically does this for you. <a href="https://stackoverflow.com/a/10017566">Here’s how to do it
+manually.</a> (Pull requests to improve this are welcome.)</li>
+</ul>
+<h2 id="installation"><a class="doc-anchor" href="#installation">§</a>Installation</h2><h3 id="release-binaries"><a class="doc-anchor" href="#release-binaries">§</a>Release binaries</h3>
+<p>Release binaries are available on <a href="https://github.com/guppy-rs/guppy/releases?q=cargo-hakari&amp;expanded=true">GitHub
+Releases</a>, via <a href="https://github.com/cargo-bins/cargo-binstall"><code>cargo binstall</code></a>:</p>
+<div class="example-wrap"><pre class="language-sh"><code>cargo binstall cargo-hakari
+</code></pre></div>
+<p>In GitHub Actions CI, use <a href="https://github.com/taiki-e/install-action"><code>taiki-e/install-action</code></a>,
+which uses <code>cargo binstall</code> under the hood:</p>
+<div class="example-wrap"><pre class="language-yml"><code>- name: Install cargo-hakari
+  uses: taiki-e/install-action@v2
+   with:
+     tool: cargo-hakari
+</code></pre></div><h3 id="installing-from-source"><a class="doc-anchor" href="#installing-from-source">§</a>Installing from source</h3>
+<p>To install or update <code>cargo-hakari</code>, run:</p>
+<div class="example-wrap"><pre class="language-sh"><code>cargo install cargo-hakari --locked
+</code></pre></div>
+<p>If <code>$HOME/.cargo/bin</code> is in your <code>PATH</code>, the <code>cargo hakari</code> command will be available.</p>
+<h2 id="usage"><a class="doc-anchor" href="#usage">§</a>Usage</h2><h3 id="getting-started"><a class="doc-anchor" href="#getting-started">§</a>Getting started</h3>
+<p>There are four steps you <em>must</em> take for <code>cargo hakari</code> to work properly.</p>
+<h4 id="1-check-in-your-cargolock"><a class="doc-anchor" href="#1-check-in-your-cargolock">§</a>1. Check in your <code>Cargo.lock</code></h4>
+<p>For hakari to work correctly, you <em>must</em> <a href="https://doc.rust-lang.org/cargo/faq.html#why-do-binaries-have-cargolock-in-version-control-but-not-libraries">add your <code>Cargo.lock</code> to version
+control</a>,
+even if you don’t have any binary crates. This is because patch version bumps in dependencies
+can add or remove features or even entire transitive dependencies.</p>
+<h4 id="2-initialize-the-workspace-hack"><a class="doc-anchor" href="#2-initialize-the-workspace-hack">§</a>2. Initialize the workspace-hack</h4>
+<p>Initialize a workspace-hack crate for a workspace at path <code>my-workspace-hack</code>:</p>
+<div class="example-wrap"><pre class="language-sh"><code>cargo hakari init my-workspace-hack
+</code></pre></div><p align="center">
+<img src="https://user-images.githubusercontent.com/180618/135726175-dc00dd0c-68a1-455f-a13d-0dd24f545ca6.png">
+</p>
+<h4 id="3-generate-the-cargotoml"><a class="doc-anchor" href="#3-generate-the-cargotoml">§</a>3. Generate the <code>Cargo.toml</code></h4>
+<p>Generate or update the contents of a workspace-hack crate:</p>
+<div class="example-wrap"><pre class="language-sh"><code>cargo hakari generate
+</code></pre></div><h4 id="4-add-dependencies-to-the-workspace-hack"><a class="doc-anchor" href="#4-add-dependencies-to-the-workspace-hack">§</a>4. Add dependencies to the workspace-hack</h4>
+<p>Add the workspace-hack crate as a dependency to all other workspace crates:</p>
+<div class="example-wrap"><pre class="language-sh"><code>cargo hakari manage-deps
+</code></pre></div><p align="center">
+<img src="https://user-images.githubusercontent.com/180618/135725773-c71fc4cd-8b7d-4a8e-b97c-d84a2b3b3662.png">
+</p>
+<h3 id="making-hakari-work-well"><a class="doc-anchor" href="#making-hakari-work-well">§</a>Making hakari work well</h3>
+<p>These are things that are not absolutely necessary to do, but will make <code>cargo hakari</code> work
+better.</p>
+<h4 id="1-update-the-hakari-config"><a class="doc-anchor" href="#1-update-the-hakari-config">§</a>1. Update the hakari config</h4>
+<p>Open up <code>.config/hakari.toml</code>, then:</p>
+<ul>
+<li>uncomment or add commonly-used developer platforms</li>
+<li>read the note about the resolver, and strongly consider <a href="https://blog.rust-lang.org/2021/03/25/Rust-1.51.0.html#cargos-new-feature-resolver">setting <code>resolver = &quot;2&quot;</code></a> in
+your workspace’s <code>Cargo.toml</code>.</li>
+</ul>
+<p>Remember to run <code>cargo hakari generate</code> after changing the config.</p>
+<h4 id="2-keep-the-workspace-hack-up-to-date-in-ci"><a class="doc-anchor" href="#2-keep-the-workspace-hack-up-to-date-in-ci">§</a>2. Keep the workspace-hack up-to-date in CI</h4>
+<p>Run the following commands in CI:</p>
+<div class="example-wrap"><pre class="language-sh"><code>cargo hakari generate --diff  # workspace-hack Cargo.toml is up-to-date
+cargo hakari manage-deps --dry-run  # all workspace crates depend on workspace-hack
+</code></pre></div>
+<p>If either of these commands exits with a non-zero status, you can choose to fail CI or produce a
+warning message.</p>
+<p>For an example, see <a href="https://github.com/guppy-rs/guppy/blob/main/.github/workflows/hakari.yml">this GitHub action used by
+<code>cargo-guppy</code></a>.</p>
+<p>All <code>cargo hakari</code> commands take a <code>--quiet</code> option to suppress output, though showing diff
+output in CI is often useful.</p>
+<h4 id="3-consider-a-patch-directive"><a class="doc-anchor" href="#3-consider-a-patch-directive">§</a>3. Consider a <code>[patch]</code> directive</h4>
+<p>If your workspace is depended on as a Git or path dependency, it is <strong>strongly recommended</strong>
+that you follow the instructions in the <a href="https://docs.rs/cargo-hakari/latest/cargo_hakari/patch_directive"><code>[patch]</code> directive
+section</a>.</p>
+<h3 id="information-about-the-workspace-hack"><a class="doc-anchor" href="#information-about-the-workspace-hack">§</a>Information about the workspace-hack</h3>
+<p>The commands in this section provide information about components in the workspace-hack.</p>
+<h4 id="why-is-a-dependency-in-the-workspace-hack"><a class="doc-anchor" href="#why-is-a-dependency-in-the-workspace-hack">§</a>Why is a dependency in the workspace-hack?</h4>
+<p>Print out information about why a dependency is present in the workspace-hack:</p>
+<div class="example-wrap"><pre class="language-sh"><code>cargo hakari explain &lt;dependency-name&gt;
+</code></pre></div><p align="center">
+<img src="https://user-images.githubusercontent.com/180618/144933657-c45cf719-ecaf-49e0-b2c7-c8d12adf11c0.png" width=550>
+</p>
+<h4 id="does-the-workspace-hack-ensure-that-each-dependency-is-built-with-exactly-one-feature-set"><a class="doc-anchor" href="#does-the-workspace-hack-ensure-that-each-dependency-is-built-with-exactly-one-feature-set">§</a>Does the workspace-hack ensure that each dependency is built with exactly one feature set?</h4><div class="example-wrap"><pre class="language-sh"><code>cargo hakari verify
+</code></pre></div>
+<p>If some dependencies are built with more than one feature set, this command will print out
+details about them. <strong>This is always a bug</strong>—if you encounter it, <a href="https://github.com/guppy-rs/guppy/issues/new">a bug
+report</a> with more information would be greatly
+appreciated!</p>
+<h4 id=""><a class="doc-anchor" href="#">§</a></h4><h3 id="publishing-a-crate"><a class="doc-anchor" href="#publishing-a-crate">§</a>Publishing a crate</h3>
+<p>If you publish crates to <code>crates.io</code> or other registries, see the <a href="https://docs.rs/cargo-hakari/latest/cargo_hakari/publishing"><code>publishing</code>
+module</a>.</p>
+<h3 id="disabling-and-uninstalling"><a class="doc-anchor" href="#disabling-and-uninstalling">§</a>Disabling and uninstalling</h3>
+<p>Disable the workspace-hack crate temporarily by removing generated lines from <code>Cargo.toml</code>.
+(Re-enable by running <code>cargo hakari generate</code>.)</p>
+<div class="example-wrap"><pre class="language-sh"><code>cargo hakari disable
+</code></pre></div>
+<p>Remove the workspace-hack crate as a dependency from all other workspace crates:</p>
+<div class="example-wrap"><pre class="language-sh"><code>cargo hakari remove-deps
+</code></pre></div><p align="center">
+<img src="https://user-images.githubusercontent.com/180618/135726181-9fe86782-6471-4a1d-a511-a6c55dffbbd7.png">
+</p>
+<h2 id="configuration"><a class="doc-anchor" href="#configuration">§</a>Configuration</h2>
+<p><code>cargo hakari</code> is configured through <code>.config/hakari.toml</code> at the root of the workspace. Running
+<code>cargo hakari init</code> causes a new file to be created at this location.</p>
+<p>Example configuration:</p>
+<div class="example-wrap"><pre class="language-toml"><code>## The name of the package used for workspace-hack unification.
+hakari-package = &quot;workspace-hack&quot;
+## Cargo resolver version in use -- version 2 is highly recommended.
+resolver = &quot;2&quot;
+
+## Format for `workspace-hack = ...` lines in other Cargo.tomls. Version 2 requires cargo-hakari
+## 0.9.8 or above.
+dep-format-version = &quot;2&quot;
+
+## Add triples corresponding to platforms commonly used by developers here.
+## https://doc.rust-lang.org/rustc/platform-support.html
+platforms = [
+    ## &quot;x86_64-unknown-linux-gnu&quot;,
+    ## &quot;x86_64-apple-darwin&quot;,
+    ## &quot;x86_64-pc-windows-msvc&quot;,
+]
+
+## Write out exact versions rather than specifications. Set this to true if version numbers in
+## `Cargo.toml` and `Cargo.lock` files are kept in sync, e.g. in some configurations of
+## https://dependabot.com/.
+## exact-versions = false
+</code></pre></div>
+<p>For more options, including how to exclude crates from the output, see the <a href="https://docs.rs/cargo-hakari/latest/cargo_hakari/config"><code>config</code>
+module</a>.</p>
+<h2 id="stability-guarantees"><a class="doc-anchor" href="#stability-guarantees">§</a>Stability guarantees</h2>
+<p><code>cargo-hakari</code> follows semantic versioning, where the public API is the command-line interface.</p>
+<p>Within a given series, the command-line interface will be treated as append-only.</p>
+<p>The generated <code>Cargo.toml</code> will also be kept the same unless:</p>
+<ul>
+<li>a new config option is added, in which case the different output will be gated on the new
+option, or</li>
+<li>there is a bugfix involved.</li>
+</ul>
+</div></details><h2 id="modules" class="section-header">Modules<a href="#modules" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="mod" href="about/index.html" title="mod cargo_hakari::about">about</a></div><div class="desc docblock-short">About workspace-hack crates, how <code>cargo hakari</code> manages them, and how much faster they make
+builds.</div></li><li><div class="item-name"><a class="mod" href="config/index.html" title="mod cargo_hakari::config">config</a></div><div class="desc docblock-short">Configuration for <code>cargo hakari</code>.</div></li><li><div class="item-name"><a class="mod" href="patch_directive/index.html" title="mod cargo_hakari::patch_directive">patch_directive</a></div><div class="desc docblock-short">Using a <code>[patch]</code> directive.</div></li><li><div class="item-name"><a class="mod" href="publishing/index.html" title="mod cargo_hakari::publishing">publishing</a></div><div class="desc docblock-short">Publishing a package to <code>crates.io</code> or other registries.</div></li></ul></section></div></main></body></html>

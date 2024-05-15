@@ -1,0 +1,65 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Using a `[patch]` directive."><title>cargo_hakari::patch_directive - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-dd39b87e5fcfba68.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="cargo_hakari" data-themes="" data-resource-suffix="" data-rustdoc-version="1.80.0-nightly (8387315ab 2024-05-14)" data-channel="nightly" data-search-js="search-d52510db62a78183.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../../static.files/storage-118b08c4c78b968e.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../static.files/main-20a3ad099b048cf2.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-df360f571f6edeae.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../cargo_hakari/index.html">cargo_hakari</a><span class="version">0.9.29</span></h2></div><h2 class="location"><a href="#">Module patch_directive</a></h2><div class="sidebar-elems"><h2><a href="../index.html">In crate cargo_hakari</a></h2></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1>Module <a href="../index.html">cargo_hakari</a>::<wbr><a class="mod" href="#">patch_directive</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../../src/cargo_hakari/docs/patch_directive.rs.html#4-112">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Using a <code>[patch]</code> directive.</p>
+<p>To work effectively, <code>cargo hakari</code> requires that all the other crates in your workspace depend
+on it. This is done by adding a <code>workspace-hack</code> dependency to each crate’s <code>Cargo.toml</code> file, a
+process that can be automated by running <code>cargo hakari manage-deps</code> locally.</p>
+<p>By default, the <code>workspace-hack</code> dependency are added like this:</p>
+<div class="example-wrap"><pre class="language-toml"><code>[dependencies]
+my-workspace-hack = { path = &quot;../workspace-hack&quot;, version = &quot;0.1.0&quot; }
+</code></pre></div>
+<p>This is the simplest way to get started with <code>cargo hakari</code>. However, it has a significant
+limitation: if other projects depend on your code as a path or Git dependency, they will pull in
+all the dependencies from your local workspace-hack crate. This is typically undesirable.</p>
+<p>To avoid this outcome, hakari allows you to use a <code>[patch]</code> directive. This page outlines the
+steps to do so.</p>
+<h3 id="1-publish-a-stub-crate-to-cratesio"><a class="doc-anchor" href="#1-publish-a-stub-crate-to-cratesio">§</a>1. Publish a stub crate to crates.io</h3>
+<p>If you haven’t already done so, follow the instructions in the <a href="../publishing/index.html" title="mod cargo_hakari::publishing">publishing
+section</a> section to publish a uniquely-named stub crate to crates.io. This
+needs to only be done once.</p>
+<h3 id="2-refer-to-the-stub-crate-by-default"><a class="doc-anchor" href="#2-refer-to-the-stub-crate-by-default">§</a>2. Refer to the stub crate by default</h3>
+<p>After this step, the workspace-hack dependency will be updated to refer to the stub crate on
+crates.io. (We will restore use of the real workspace-hack in step 3.)</p>
+<p>To do this, add a <code>workspace-hack-line-style</code> option to <code>.config/hakari.toml</code>. There are two
+options, both of which are equivalent from hakari’s perspective.</p>
+<h4 id="a-version-only"><a class="doc-anchor" href="#a-version-only">§</a>A. <code>&quot;version-only&quot;</code></h4>
+<p>This option is the closest to the default.</p>
+<p>Update <code>hakari.toml</code> with:</p>
+<div class="example-wrap"><pre class="language-toml"><code>workspace-hack-line-style = &quot;version-only&quot;
+</code></pre></div>
+<p>Then, run:</p>
+<div class="example-wrap"><pre class="language-sh"><code>cargo hakari remove-deps
+cargo hakari manage-deps
+</code></pre></div>
+<p>This will cause the workspace-hack lines to be updated to be similar to:</p>
+<div class="example-wrap"><pre class="language-toml"><code>[dependencies]
+my-workspace-hack = { version = &quot;0.1.0&quot; }
+</code></pre></div><h4 id="b-workspace-dotted"><a class="doc-anchor" href="#b-workspace-dotted">§</a>B. <code>&quot;workspace-dotted&quot;</code></h4>
+<p>This option lets you specify the path to the workspace-hack crate, once, in the root
+<code>Cargo.toml</code>. You may prefer this if you’ve standardized on this format in your workspace.</p>
+<p>Update <code>hakari.toml</code> with:</p>
+<div class="example-wrap"><pre class="language-toml"><code>workspace-hack-line-style = &quot;workspace-dotted&quot;
+</code></pre></div>
+<p>Also, add the following to your root <code>Cargo.toml</code>:</p>
+<div class="example-wrap"><pre class="language-toml"><code>[workspace.dependencies]
+my-workspace-hack = &quot;0.1.0&quot;  # or another version number if you&#39;ve changed it
+</code></pre></div>
+<p>Then, run</p>
+<div class="example-wrap"><pre class="language-sh"><code>cargo hakari remove-deps
+cargo hakari manage-deps
+</code></pre></div>
+<p>This will cause the workspace-hack lines to be updated to be similar to:</p>
+<div class="example-wrap"><pre class="language-toml"><code>[dependencies]
+my-workspace-hack.workspace = true
+</code></pre></div><h3 id="3-add-a-patch-directive-to-the-root-cargotoml"><a class="doc-anchor" href="#3-add-a-patch-directive-to-the-root-cargotoml">§</a>3. Add a <code>[patch]</code> directive to the root <code>Cargo.toml</code></h3>
+<p>To the workspace’s root <code>Cargo.toml</code>, add a <code>[patch]</code> directive that points to the local
+dependency:</p>
+<div class="example-wrap"><pre class="language-toml"><code>[patch.crates-io.my-workspace-hack]
+path = &quot;workspace-hack&quot;
+</code></pre></div>
+<p>This ensures that while building within the workspace, the real workspace-hack is used. When
+building outside of the workspace, such as via a Git or path dependency, the <code>[patch]</code> directive
+is inactive, and the stub crate from crates.io is used.</p>
+<h2 id="example"><a class="doc-anchor" href="#example">§</a>Example</h2>
+<p>The guppy workspace itself uses a <code>[patch]</code> directive with <code>&quot;workspace-dotted&quot;</code>. Here’s <a href="https://github.com/guppy-rs/guppy/blob/main/Cargo.toml">the
+root <code>Cargo.toml</code></a>, and a <a href="https://github.com/guppy-rs/guppy/blob/main/guppy-summaries/Cargo.toml">crate
+<code>Cargo.toml</code></a>.</p>
+</div></details></section></div></main></body></html>

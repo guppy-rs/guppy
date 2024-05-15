@@ -1,0 +1,1 @@
+searchState.loadedDescShard("proptest_derive", 0, "This is the API documentation for the <code>proptest-derive</code> …\nSee module level documentation for more information.")

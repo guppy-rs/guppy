@@ -1,0 +1,1 @@
+searchState.loadedDescShard("pathdiff", 0, "Construct a relative path from a provided base directory …\nConstruct a relative UTF-8 path from a provided base …")

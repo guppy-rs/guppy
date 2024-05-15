@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["InitError"],"struct":["ApplyError","HakariInit","WorkspaceOps","WorkspaceOpsDisplay"]};
