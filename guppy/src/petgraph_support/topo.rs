@@ -42,7 +42,8 @@ impl<Ix: IndexType> TopoWithCycles<Ix> {
         // order.
         topo.reverse();
 
-        // Because the graph is NodeCompactIndexable, the indexes are in the range (0..topo.len()).
+        // Because the graph is NodeCompactIndexable, the indexes are in the range
+        // (0..graph.node_count()).
         // Use this property to build a reverse map.
         let mut reverse_index = vec![0; graph.node_count()];
         topo.iter().enumerate().for_each(|(topo_ix, node_ix)| {
