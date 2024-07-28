@@ -15,6 +15,8 @@ use std::slice;
 #[derive(Clone, Debug)]
 pub(crate) struct Sccs<Ix: IndexType> {
     sccs: Nested<Vec<NodeIndex<Ix>>>,
+    // Map of node indexes to the index of the SCC they belong to. If a node is not part of an SCC,
+    // then the corresponding index is not stored here.
     multi_map: AHashMap<NodeIndex<Ix>, usize>,
 }
 

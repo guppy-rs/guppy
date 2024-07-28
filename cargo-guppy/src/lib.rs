@@ -61,6 +61,53 @@ use guppy_cmdlib::{
 };
 use std::{borrow::Cow, cmp, collections::HashSet, fmt, fs, io::Write, iter, path::PathBuf};
 
+pub fn cmd_cycles(metadata_opts: CargoMetadataOptions, features: bool) -> Result<()> {
+    let command = metadata_opts.make_command();
+    let pkg_graph = command.build_graph()?;
+
+    if features {
+        let feature_graph = pkg_graph.feature_graph();
+        let cycles = feature_graph.cycles();
+
+        let mut any_cycles = false;
+        for cycle in cycles.all_cycles() {
+            any_cycles = true;
+
+            for (n, feature_id) in cycle.iter().enumerate() {
+                if n > 0 {
+                    print!(" -> ");
+                }
+                println!("{}", feature_id);
+            }
+            println!(" -> {}", cycle[0]);
+        }
+        if !any_cycles {
+            println!("no feature cycles found");
+        }
+    } else {
+        let cycles = pkg_graph.cycles();
+
+        let mut any_cycles = false;
+        for cycle in cycles.all_cycles() {
+            any_cycles = true;
+
+            for (n, package_id) in cycle.iter().enumerate() {
+                if n > 0 {
+                    print!(" -> ");
+                }
+                println!("{}", package_id);
+            }
+            println!(" -> {}", cycle[0]);
+        }
+
+        if !any_cycles {
+            println!("no cycles found");
+        }
+    }
+
+    Ok(())
+}
+
 pub fn cmd_diff(json: bool, old: &str, new: &str) -> Result<()> {
     let old_json = fs::read_to_string(old)?;
     let new_json = fs::read_to_string(new)?;

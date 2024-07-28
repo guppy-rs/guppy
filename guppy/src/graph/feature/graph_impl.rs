@@ -909,6 +909,13 @@ impl FeatureNode {
     pub(in crate::graph) fn package_ix(&self) -> NodeIndex<PackageIx> {
         self.package_ix
     }
+
+    pub(in crate::graph) fn debug(&self, package_graph: &PackageGraph) -> String {
+        let package_id = &package_graph.dep_graph[self.package_ix];
+        let package_metadata = package_graph.metadata(package_id).unwrap();
+        let feature_label = package_metadata.feature_idx_to_label(self.feature_idx);
+        format!("{}/{}", package_id, feature_label)
+    }
 }
 
 /// Information about why a feature depends on another feature.
