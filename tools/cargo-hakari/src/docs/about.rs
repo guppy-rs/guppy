@@ -75,7 +75,7 @@
 //! this package is to ensure that dependencies like `syn` are always built with the same feature
 //! set no matter which workspace packages are currently being built. This is done by:
 //! 1. adding dependencies like `syn` to `workspace-hack` with the full feature set required by any
-//!   package in the workspace
+//!    package in the workspace
 //! 2. adding `workspace-hack` as a dependency of every crate in the repository.
 //!
 //! Some examples of `workspace-hack` packages:

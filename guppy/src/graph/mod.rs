@@ -107,7 +107,7 @@ macro_rules! graph_ix {
             }
             #[inline(always)]
             fn max() -> Self {
-                $ix_type(::std::u32::MAX)
+                $ix_type(u32::MAX)
             }
         }
     };

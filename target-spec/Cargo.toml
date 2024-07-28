@@ -37,3 +37,6 @@ toml = "0.5.11"
 custom = ["dep:serde", "dep:serde_json"]
 proptest1 = ["proptest"]
 summaries = ["dep:serde"]
+
+[lints]
+workspace = true
