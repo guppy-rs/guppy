@@ -6,7 +6,7 @@
 use crate::{
     cli_ops::{WorkspaceOp, WorkspaceOps},
     hakari::DepFormatVersion,
-    HakariBuilder,
+    HakariBuilder, WorkspaceHackLineStyle,
 };
 use guppy::{
     graph::{DependencyDirection, PackageLink, PackageMetadata, PackageSet},
@@ -38,7 +38,8 @@ impl<'g> HakariBuilder<'g> {
                     (Some(link), true) => match self.dep_format_version {
                         DepFormatVersion::V1 => None,
                         DepFormatVersion::V2 | DepFormatVersion::V3 | DepFormatVersion::V4 => {
-                            needs_update_v2(hakari_package, link).then_some(true)
+                            needs_update_v2(hakari_package, link, self.workspace_hack_line_style)
+                                .then_some(true)
                         }
                     },
                     (None, false) => None,
@@ -90,7 +91,9 @@ impl<'g> HakariBuilder<'g> {
                     .link_to(hakari_package.id())
                     .expect("valid package ID");
                 match link_opt {
-                    Some(link) => needs_update_v2(hakari_package, link),
+                    Some(link) => {
+                        needs_update_v2(hakari_package, link, self.workspace_hack_line_style)
+                    }
                     None => true,
                 }
             })
@@ -151,13 +154,20 @@ impl<'g> HakariBuilder<'g> {
 }
 
 #[allow(clippy::if_same_then_else, clippy::needless_bool)]
-fn needs_update_v2(hakari_package: &PackageMetadata<'_>, link: PackageLink<'_>) -> bool {
+fn needs_update_v2(
+    hakari_package: &PackageMetadata<'_>,
+    link: PackageLink<'_>,
+    line_style: WorkspaceHackLineStyle,
+) -> bool {
     if !link.version_req().matches(hakari_package.version()) {
         // The version number doesn't match: it must be updated.
         true
     } else if link.version_req() == &VersionReq::STAR {
-        // The version number isn't specified and force_version is true.
-        true
+        // The version number isn't specified. Require it in case line_style isn't workspace-dotted.
+        match line_style {
+            WorkspaceHackLineStyle::Full | WorkspaceHackLineStyle::VersionOnly => true,
+            WorkspaceHackLineStyle::WorkspaceDotted => false,
+        }
     } else {
         false
     }

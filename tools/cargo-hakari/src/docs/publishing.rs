@@ -53,7 +53,25 @@
 //!
 //! The rest of this section assumes the crate is called `my-workspace-hack`.
 //!
-//! ## 2. Ensure the latest `dep-format-version` is set in `.config/hakari.toml`
+//! ## 2. Ensure that workspace-hack dependencies have a version set
+//!
+//! Depending on how workspace-hack dependencies are set up:
+//!
+//! ### i. Using `workspace-dotted`
+//!
+//! If you're using [the `workspace-dotted` line
+//! style](crate::docs::config#workspace-hack-line-style), ensure that the `workspace-hack` line in
+//! the root `Cargo.toml` has a `version` field set.
+//!
+//! ```toml
+//! [workspace.dependencies]
+//! my-workspace-hack = { version = "0.1", path = "..." }
+//! ```
+//!
+//! ### ii. Specifying dependencies directly
+//!
+//! If you're using a different line style, ensure that [the latest
+//! `dep-format-version`](crate::docs::config#dep-format-version) is set in `.config/hakari.toml`.
 //!
 //! `dep-format-version = "2"` and higher add the `version` field to the `my-workspace-hack = ...`
 //! lines in other `Cargo.toml` files. `cargo publish` uses the `version` field to recognize
@@ -101,3 +119,9 @@
 //!
 //! Run `cargo hakari generate` to restore the workspace-hack's contents. You can also use your
 //! source control system's commands to do so, such as with `git restore`.
+//!
+//! ## 7. Consider using a `[patch]` directive
+//!
+//! To allow Cargo workspaces that depend on a Git or path dependency to use the published
+//! workspace-hack, consider using a `[patch]` directive. Steps to do so are described in the [patch
+//! directive](crate::docs::patch_directive) section.
