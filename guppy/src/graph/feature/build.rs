@@ -78,12 +78,13 @@ impl FeatureGraphBuildState {
             .named_features_full()
             .for_each(|(n, from_feature, feature_deps)| {
                 let from_node = FeatureNode::new(metadata.package_ix(), n);
+
                 let to_nodes_edges: Vec<_> = feature_deps
                     .iter()
                     .flat_map(|feature_dep| {
                         self.nodes_for_named_feature_dep(
                             metadata,
-                            FeatureLabel::Named(from_feature),
+                            from_feature,
                             feature_dep,
                             &dep_name_to_link,
                         )
@@ -94,17 +95,18 @@ impl FeatureGraphBuildState {
 
                 // Don't create a map to the base 'from' node since it is already created in
                 // add_nodes.
-                self.add_edges(from_node, to_nodes_edges);
+                self.add_edges(from_node, to_nodes_edges, metadata.graph());
             })
     }
 
     fn nodes_for_named_feature_dep(
         &mut self,
         metadata: PackageMetadata<'_>,
-        from_label: FeatureLabel<'_>,
+        from_named_feature: &str,
         feature_dep: &NamedFeatureDep,
         dep_name_to_link: &AHashMap<&str, PackageLink>,
     ) -> SmallVec<[(FeatureNode, FeatureEdge); 3]> {
+        let from_label = FeatureLabel::Named(from_named_feature);
         let mut nodes_edges: SmallVec<[(FeatureNode, FeatureEdge); 3]> = SmallVec::new();
 
         match feature_dep {
@@ -153,7 +155,21 @@ impl FeatureGraphBuildState {
                     // Finally, (`main`, `a`) to (`main`, `dep`) -- if this is a non-weak dependency
                     // and a named feature by this name is present, it also gets activated (even if
                     // the named feature has no relation to the optional dependency).
-                    if !*weak {
+                    //
+                    // For example:
+                    //
+                    // server = ["hyper/server"]
+                    //
+                    // will also activate the named feature `hyper`.
+                    //
+                    // One thing to be careful of here is that we don't want to insert self-edges.
+                    // For example:
+                    //
+                    // tokio = ["dep:tokio", "tokio/net"]
+                    //
+                    // should not insert a self-edge from `tokio` to `tokio`. The second condition
+                    // checks this.
+                    if !*weak && &**dep_name != from_named_feature {
                         if let Some(same_named_feature_node) = self.make_named_feature_node(
                             &metadata,
                             from_label,
@@ -335,7 +351,11 @@ impl FeatureGraphBuildState {
         }
 
         // Add the required edges (base -> features).
-        self.add_edges(FeatureNode::base(from.package_ix()), required_req.finish());
+        self.add_edges(
+            FeatureNode::base(from.package_ix()),
+            required_req.finish(),
+            link.from().graph(),
+        );
 
         if !optional_req.is_empty() {
             // This means that there is at least one instance of this dependency with optional =
@@ -352,7 +372,7 @@ impl FeatureGraphBuildState {
                     );
                     }),
             );
-            self.add_edges(from_node, optional_req.finish());
+            self.add_edges(from_node, optional_req.finish(), link.from().graph());
         }
     }
 
@@ -367,6 +387,7 @@ impl FeatureGraphBuildState {
         &mut self,
         from_node: FeatureNode,
         to_nodes_edges: impl IntoIterator<Item = (FeatureNode, FeatureEdge)>,
+        graph: &PackageGraph,
     ) {
         // The from node should always be present because it is a known node.
         let from_ix = self.lookup_node(&from_node).unwrap_or_else(|| {
@@ -375,10 +396,21 @@ impl FeatureGraphBuildState {
                 from_node
             );
         });
+
+        let to_nodes_edges = to_nodes_edges.into_iter().collect::<Vec<_>>();
+
         to_nodes_edges.into_iter().for_each(|(to_node, edge)| {
             let to_ix = self.lookup_node(&to_node).unwrap_or_else(|| {
                 panic!("while adding feature edges, missing 'to': {:?}", to_node)
             });
+
+            if from_ix == to_ix {
+                panic!(
+                    "attempted to add self-loop (please report this bug): {:?} ({})",
+                    from_ix,
+                    from_node.debug(graph),
+                );
+            }
 
             match self.graph.find_edge(from_ix, to_ix) {
                 Some(edge_ix) => {

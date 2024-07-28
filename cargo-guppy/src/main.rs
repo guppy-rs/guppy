@@ -7,6 +7,7 @@ use cargo_guppy::{
 };
 use clap::Parser;
 use color_eyre::Result;
+use guppy_cmdlib::CargoMetadataOptions;
 
 #[derive(Debug, Parser)]
 #[structopt(about = "Cargo.lock file analysis")]
@@ -18,6 +19,16 @@ struct Args {
 // Ensure this list is kept up to date with the doc comment in lib.rs.
 #[derive(Debug, Parser)]
 enum Command {
+    #[structopt(name = "cycles")]
+    /// Print cycles in the dependency graph
+    Cycles {
+        #[structopt(flatten)]
+        metadata_opts: CargoMetadataOptions,
+
+        #[structopt(long)]
+        /// Print cycles in the feature graph
+        features: bool,
+    },
     #[structopt(name = "diff")]
     /// Perform a diff of two cargo metadata JSON files
     Diff {
@@ -81,6 +92,10 @@ fn main() -> Result<()> {
     let args = Args::parse_from(args());
 
     match args.cmd {
+        Command::Cycles {
+            metadata_opts,
+            features,
+        } => cargo_guppy::cmd_cycles(metadata_opts, features),
         Command::Diff { json, old, new } => cargo_guppy::cmd_diff(json, &old, &new),
         Command::DiffSummaries(options) => options.exec(),
         Command::Duplicates(ref options) => cargo_guppy::cmd_dups(options),
