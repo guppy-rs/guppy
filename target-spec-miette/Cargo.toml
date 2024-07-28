@@ -15,3 +15,6 @@ rust-version.workspace = true
 target-spec = { version = "3.1.0", path = "../target-spec" }
 miette.workspace = true
 guppy-workspace-hack.workspace = true
+
+[lints]
+workspace = true

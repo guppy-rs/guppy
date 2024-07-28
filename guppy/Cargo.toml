@@ -62,3 +62,6 @@ pretty_assertions = "1.4.0"
 proptest1 = ["proptest", "proptest-derive", "target-spec/proptest1"]
 rayon1 = ["rayon"]
 summaries = ["guppy-summaries", "target-spec/summaries", "toml"]
+
+[lints]
+workspace = true

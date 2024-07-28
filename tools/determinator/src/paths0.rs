@@ -12,8 +12,8 @@ use std::str::Utf8Error;
 ///
 /// Paths as produced by tools like `git diff --name-only` are typically separated by newline
 /// characters (`\n`). However, on Unix platforms filenames can themselves have newlines embedded in
-/// them, so source control systems often end up
-/// [quoting newlines and other "unusual" characters](https://git-scm.com/docs/git-config#Documentation/git-config.txt-corequotePath).
+/// them, so source control systems often end up [quoting newlines and other "unusual"
+/// characters](https://git-scm.com/docs/git-config#Documentation/git-config.txt-corequotePath).
 ///
 /// A robust, lossless way to retrieve a list of paths is by separating them with null characters.
 /// Both Unix and Windows platforms guarantee that a path can never have embedded null characters.
@@ -23,31 +23,33 @@ use std::str::Utf8Error;
 /// Most source control systems can provide null-separated paths. These examples are expected to be
 /// run from the Cargo workspace root (which is assumed to be the same as the repository root).
 ///
-/// In most cases, you'll want to compare the current working directory against the [*merge base*][mb],
-/// or [*nearest/greatest/lowest common ancestor*](https://en.wikipedia.org/wiki/Lowest_common_ancestor),
-/// of the current commit with a specified upstream revision, such as `origin/main`. To do so,
-/// run:
+/// In most cases, you'll want to compare the current working directory against the [*merge
+/// base*][mb], or [*nearest/greatest/lowest common
+/// ancestor*](https://en.wikipedia.org/wiki/Lowest_common_ancestor), of the current commit with a
+/// specified upstream revision, such as `origin/main`. To do so, run:
 ///
 /// * Git: `git diff -z --name-only $(git merge-base <upstream rev> HEAD)`
 /// * Mercurial: `hg status --print0 -mard --no-status --rev 'ancestor(<upstream rev>,.)'`
 ///
-/// [mb]: https://stackoverflow.com/questions/1549146/git-find-the-most-recent-common-ancestor-of-two-branches
+/// [mb]:
+///     https://stackoverflow.com/questions/1549146/git-find-the-most-recent-common-ancestor-of-two-branches
 ///
 /// ---
 ///
 /// **NOTE:**
-/// * The `$()` syntax in Bash and other shells means "run the command and insert its contents here".
-/// * Git provides a syntax `<upstream rev>...` which purports to use the merge base,
-/// but it ignores uncommitted changes. Executing `git merge-base` as a separate command is the only
-/// way to include uncommitted changes.
+/// * The `$()` syntax in Bash and other shells means "run the command and insert its contents
+///   here".
+/// * Git provides a syntax `<upstream rev>...` which purports to use the merge base, but it ignores
+///   uncommitted changes. Executing `git merge-base` as a separate command is the only way to
+///   include uncommitted changes.
 /// * The `-mard` flag to `hg status` means that untracked files are not included. `git diff` does
 ///   not have an option to display untracked files. For more discussion, see the documentation for
 ///   [`add_changed_paths`](crate::Determinator::add_changed_paths).
 ///
 /// ---
 ///
-/// In general, to obtain a list of changed paths between two revisions (omit `<new rev>`
-/// if comparing against the working directory):
+/// In general, to obtain a list of changed paths between two revisions (omit `<new rev>` if
+/// comparing against the working directory):
 ///
 /// * Git: `git diff -z --name-only <old rev> <new rev>`
 /// * Mercurial: `hg status --print0 -mard --no-status <old rev> <new rev>`

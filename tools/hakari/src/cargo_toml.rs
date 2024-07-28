@@ -13,8 +13,8 @@ use std::{error, fmt, io};
 ///
 /// # Structure of the Cargo.toml file
 ///
-/// The `Cargo.toml` file is treated as partially generated. It is expected to have a section
-/// marked off as, for example:
+/// The `Cargo.toml` file is treated as partially generated. It is expected to have a section marked
+/// off as, for example:
 ///
 /// ```toml
 /// [package]
@@ -40,8 +40,8 @@ use std::{error, fmt, io};
 ///
 /// For Hakari to manage a package, a bit of initial prep work must be done:
 ///
-/// 1. Add a new library package in a desired location within your workspace, for example:
-///   `cargo new --lib hakari-package`.
+/// 1. Add a new library package in a desired location within your workspace, for example: `cargo
+///    new --lib hakari-package`.
 /// 2. Copy and paste the following lines of code to the end of the package's `Cargo.toml` file. Be
 ///    sure to put in a trailing newline.
 ///
