@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+### Changed
+
+- MSRV updated to Rust 1.75.
+
 ## [0.9.29] - 2024-02-04
 
 ### Added

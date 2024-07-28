@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- MSRV updated to Rust 1.75.
+
 ## [0.17.5] - 2024-02-03
 
 ### Changed
