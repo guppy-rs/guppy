@@ -12,7 +12,7 @@ edition = "2021"
 rust-version.workspace = true
 
 [dependencies]
-target-spec = { version = "3.1.0", path = "../target-spec" }
+target-spec = { version = "3.2.0", path = "../target-spec" }
 miette.workspace = true
 guppy-workspace-hack.workspace = true
 
