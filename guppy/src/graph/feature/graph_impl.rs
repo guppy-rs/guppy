@@ -593,7 +593,7 @@ impl<'g> fmt::Display for FeatureLabel<'g> {
 }
 
 /// Metadata for a feature within a package.
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy)]
 pub struct FeatureMetadata<'g> {
     graph: DebugIgnore<FeatureGraph<'g>>,
     node: FeatureNode,
@@ -638,6 +638,14 @@ impl<'g> FeatureMetadata<'g> {
     #[inline]
     pub(in crate::graph) fn feature_ix(&self) -> NodeIndex<FeatureIx> {
         self.inner.feature_ix
+    }
+}
+
+impl fmt::Debug for FeatureMetadata<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("FeatureMetadata")
+            .field("id", &self.feature_id())
+            .finish()
     }
 }
 
@@ -722,7 +730,7 @@ impl FeatureGraphImpl {
 /// If a dependency, for example `unix-dep` above, is optional, an implicit feature is created in
 /// the package `main` with the name `unix-dep`. In this case, the dependency from `main/feat` to
 /// `main/unix-dep` is also a `ConditionalLink` representing the same `cfg(unix)` condition.
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone)]
 pub struct ConditionalLink<'g> {
     graph: DebugIgnore<FeatureGraph<'g>>,
     from: &'g FeatureMetadataImpl,
@@ -829,6 +837,18 @@ impl<'g> ConditionalLink<'g> {
     #[allow(dead_code)]
     pub(in crate::graph) fn package_edge_ix(&self) -> EdgeIndex<PackageIx> {
         self.inner.package_edge_ix
+    }
+}
+
+impl fmt::Debug for ConditionalLink<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("ConditionalLink")
+            .field("from", &self.from())
+            .field("to", &self.to())
+            .field("normal", &self.normal())
+            .field("build", &self.build())
+            .field("dev", &self.dev())
+            .finish()
     }
 }
 
