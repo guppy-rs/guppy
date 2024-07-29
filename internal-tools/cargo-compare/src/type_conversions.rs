@@ -16,12 +16,7 @@ impl ToGuppy for cargo::core::PackageId {
 
     fn to_guppy(&self) -> Self::Guppy {
         // This is the same format as the Serialize impl of cargo's PackageId.
-        guppy::PackageId::new(format!(
-            "{} {} ({})",
-            self.name(),
-            self.version(),
-            self.source_id().as_url(),
-        ))
+        guppy::PackageId::new(self.to_spec().to_string())
     }
 }
 

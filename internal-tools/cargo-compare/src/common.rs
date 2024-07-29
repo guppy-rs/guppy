@@ -10,7 +10,6 @@ use cargo::{
     },
     ops::resolve_ws_with_opts,
     util::interning::InternedString,
-    Config,
 };
 use clap::Parser;
 use color_eyre::eyre::{bail, Result};
@@ -58,7 +57,7 @@ pub struct GuppyCargoCommon {
 impl GuppyCargoCommon {
     /// Resolves data for this query using Cargo.
     pub fn resolve_cargo(&self, ctx: &GlobalContext<'_>) -> anyhow::Result<FeatureMap> {
-        let config = self.cargo_make_config(ctx)?;
+        let config = self.cargo_make_gctx(ctx)?;
         let root_manifest = self.cargo_discover_root(&config)?;
         let mut workspace = self.cargo_make_workspace(&config, &root_manifest)?;
         // See the comment in resolve_guppy about avoid-dev-deps for why this is necessary.
@@ -78,13 +77,13 @@ impl GuppyCargoCommon {
             // Pass in the entire workspace.
             workspace
                 .members()
-                .map(|package| PackageIdSpec::from_package_id(package.package_id()))
+                .map(|package| package.package_id().to_spec())
                 .collect()
         } else {
             packages
                 .iter()
                 .map(|spec| PackageIdSpec::parse(spec))
-                .collect::<anyhow::Result<_>>()?
+                .collect::<Result<_, _>>()?
         };
 
         let ws_resolve = resolve_ws_with_opts(
@@ -100,7 +99,6 @@ impl GuppyCargoCommon {
             },
             // TODO: allow for target to be "any", set this to Yes in that case
             ForceAllTargets::No,
-            None,
         )?;
 
         let targeted_resolve = ws_resolve.targeted_resolve;
@@ -207,40 +205,40 @@ impl GuppyCargoCommon {
     // Helper methods
     // ---
 
-    fn cargo_make_config(&self, _ctx: &GlobalContext) -> anyhow::Result<Config> {
+    fn cargo_make_gctx(&self, _ctx: &GlobalContext) -> anyhow::Result<cargo::GlobalContext> {
         // XXX This should use the home dir from ctx, but that appears to cause caching to break???
         // XXX Use default() for now, figure this out at some point.
-        let mut config = Config::default()?;
+        let mut gctx = cargo::GlobalContext::default()?;
 
         // Prevent cargo from accessing the network.
         let frozen = true;
         let locked = true;
         let offline = true;
 
-        config.configure(2, false, None, frozen, locked, offline, &None, &[], &[])?;
+        gctx.configure(2, false, None, frozen, locked, offline, &None, &[], &[])?;
 
-        Ok(config)
+        Ok(gctx)
     }
 
-    fn cargo_discover_root(&self, config: &Config) -> anyhow::Result<PathBuf> {
+    fn cargo_discover_root(&self, gctx: &cargo::GlobalContext) -> anyhow::Result<PathBuf> {
         let manifest_path = self
             .metadata_opts
             .abs_manifest_path()
             .expect("failed to fetch absolute manifest path");
         // Create a workspace to discover the root manifest.
-        let workspace = Workspace::new(&manifest_path, config)?;
+        let workspace = Workspace::new(&manifest_path, gctx)?;
 
         let root_dir = workspace.root();
         Ok(root_dir.join("Cargo.toml"))
     }
 
-    fn cargo_make_workspace<'cfg>(
+    fn cargo_make_workspace<'gctx>(
         &self,
-        config: &'cfg Config,
+        gctx: &'gctx cargo::GlobalContext,
         root_manifest: &Path,
-    ) -> anyhow::Result<Workspace<'cfg>> {
+    ) -> anyhow::Result<Workspace<'gctx>> {
         // Now create another workspace with the root that was found.
-        Workspace::new(root_manifest, config)
+        Workspace::new(root_manifest, gctx)
     }
 
     fn cargo_make_cli_features(&self) -> CliFeatures {

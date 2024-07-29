@@ -43,6 +43,9 @@ impl DiffOpts {
         let cargo_map = anyhow_to_eyre(self.common.resolve_cargo(ctx))?;
         let guppy_map = self.common.resolve_guppy(ctx)?;
 
+        // println!("guppy_map: {:#?}", guppy_map.host_map);
+        // println!("cargo_map: {:#?}", cargo_map.host_map);
+
         let target_diff = FeatureDiff {
             graph: ctx.graph(),
             a: guppy_map.target_map,
