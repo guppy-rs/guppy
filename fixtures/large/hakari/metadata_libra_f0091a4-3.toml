@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '2'
 # workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['x86_64-sun-solaris']
+# platforms = ['x86_64-pc-windows-msvc']
 #
 # [traversal-excludes]
 # [[final-excludes.ids]]
@@ -77,8 +77,12 @@ subtle = { version = "2", features = ["i128", "std"] }
 syn-3575ec1268b04181 = { package = "syn", version = "0.15", features = ["clone-impls", "derive", "extra-traits", "full", "parsing", "printing", "proc-macro", "quote", "visit"] }
 syn-dff4ba8e3ae991db = { package = "syn", version = "1", features = ["clone-impls", "derive", "extra-traits", "fold", "full", "parsing", "printing", "proc-macro", "quote", "visit", "visit-mut"] }
 
-[target.x86_64-sun-solaris.dependencies]
+[target.x86_64-pc-windows-msvc.dependencies]
 hyper = { version = "0.13", features = ["net2", "runtime", "stream", "tcp"] }
+winapi = { version = "0.3", default-features = false, features = ["consoleapi", "errhandlingapi", "fileapi", "handleapi", "impl-debug", "impl-default", "ioapiset", "knownfolders", "libloaderapi", "lmcons", "memoryapi", "minschannel", "minwinbase", "minwindef", "namedpipeapi", "ntdef", "ntsecapi", "ntstatus", "objbase", "processenv", "processthreadsapi", "profileapi", "schannel", "securitybaseapi", "shlobj", "sspi", "std", "synchapi", "sysinfoapi", "threadpoollegacyapiset", "timezoneapi", "winbase", "wincon", "wincrypt", "winerror", "winnt", "winreg", "winsock2", "winuser", "ws2def", "ws2ipdef", "ws2tcpip", "wtypesbase"] }
+
+[target.x86_64-pc-windows-msvc.build-dependencies]
+winapi = { version = "0.3", default-features = false, features = ["consoleapi", "errhandlingapi", "fileapi", "handleapi", "impl-debug", "impl-default", "ioapiset", "knownfolders", "libloaderapi", "lmcons", "memoryapi", "minschannel", "minwinbase", "minwindef", "namedpipeapi", "ntdef", "ntsecapi", "ntstatus", "objbase", "processenv", "processthreadsapi", "profileapi", "schannel", "securitybaseapi", "shlobj", "sspi", "std", "synchapi", "sysinfoapi", "threadpoollegacyapiset", "timezoneapi", "winbase", "wincon", "wincrypt", "winerror", "winnt", "winreg", "winsock2", "winuser", "ws2def", "ws2ipdef", "ws2tcpip", "wtypesbase"] }
 
 ### END HAKARI SECTION
 

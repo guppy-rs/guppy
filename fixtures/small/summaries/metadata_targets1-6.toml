@@ -7,12 +7,12 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'riscv32imc-unknown-none-elf'
+triple = 'riscv32imafc-unknown-none-elf'
 target-features = ['rdrand']
 flags = ['bar']
 
 [metadata.target-platform]
-triple = 'mips64-unknown-linux-muslabi64'
+triple = 'mips64-openwrt-linux-musl'
 target-features = 'all'
 [[metadata.omitted-packages.ids]]
 name = 'dep-a'

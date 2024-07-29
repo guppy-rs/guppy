@@ -7,12 +7,12 @@ include-dev = true
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'riscv32i-unknown-none-elf'
+triple = 'riscv32im-risc0-zkvm-elf'
 target-features = ['ssse3', 'xsaves']
 flags = ['cargo_web', 'foo']
 
 [metadata.target-platform]
-triple = 'x86_64-unknown-hermit'
+triple = 'x86_64-unknown-illumos'
 target-features = 'unknown'
 flags = ['test-flag']
 

@@ -10,7 +10,7 @@ initials-platform = 'host'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'm68k-unknown-linux-gnu'
+triple = 'loongarch64-unknown-none'
 target-features = ['bmi1', 'xsaveopt']
 [[metadata.omitted-packages.ids]]
 name = 'guppy-summaries'

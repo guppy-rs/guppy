@@ -10,7 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'mips-unknown-linux-gnu'
+triple = 'loongarch64-unknown-none-softfloat'
 target-features = 'unknown'
 flags = ['test-flag']
 [[metadata.omitted-packages.ids]]

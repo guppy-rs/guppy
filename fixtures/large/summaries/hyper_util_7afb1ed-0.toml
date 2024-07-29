@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'thumbv4t-none-eabi'
+triple = 'sparcv9-sun-solaris'
 target-features = ['sha', 'sse']
 flags = ['bar', 'foo']
 [[metadata.omitted-packages.ids]]
@@ -98,7 +98,7 @@ version = '1.39.2'
 crates-io = true
 status = 'direct'
 features = ['default', 'libc', 'macros', 'mio', 'net', 'rt', 'signal', 'signal-hook-registry', 'socket2', 'sync', 'test-util', 'time', 'tokio-macros']
-optional-deps = ['mio', 'tokio-macros']
+optional-deps = ['libc', 'mio', 'signal-hook-registry', 'tokio-macros']
 
 [[target-package]]
 name = 'tokio-test'
@@ -173,6 +173,13 @@ status = 'transitive'
 features = []
 
 [[target-package]]
+name = 'libc'
+version = '0.2.155'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
 name = 'log'
 version = '0.4.22'
 crates-io = true
@@ -215,6 +222,13 @@ version = '0.8.4'
 crates-io = true
 status = 'transitive'
 features = ['std']
+
+[[target-package]]
+name = 'signal-hook-registry'
+version = '1.4.2'
+crates-io = true
+status = 'transitive'
+features = []
 
 [[target-package]]
 name = 'termcolor'

@@ -10,7 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'sparc64-unknown-linux-gnu'
+triple = 'sparc-unknown-none-elf'
 target-features = 'all'
 [[metadata.omitted-packages.ids]]
 name = 'serde'

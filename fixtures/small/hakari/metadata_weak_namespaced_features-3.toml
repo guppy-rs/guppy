@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '3'
 # workspace-hack-line-style = 'full'
-# platforms = ['sparc-unknown-linux-gnu', 'riscv32imc-esp-espidf', 'powerpc64le-unknown-linux-gnu']
+# platforms = ['s390x-unknown-linux-musl', 'riscv32imac-unknown-xous-elf', 'powerpc64le-unknown-linux-musl']
 # [[traversal-excludes.ids]]
 # name = 'arrayvec'
 # version = '0.7.2'

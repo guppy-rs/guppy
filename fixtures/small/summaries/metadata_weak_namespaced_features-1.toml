@@ -7,11 +7,11 @@ include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'm68k-unknown-linux-gnu'
+triple = 'loongarch64-unknown-none'
 target-features = 'unknown'
 
 [metadata.target-platform]
-triple = 'arm-unknown-linux-gnueabihf'
+triple = 'arm-linux-androideabi'
 target-features = ['xsave', 'xsavec', 'xsaves']
 flags = ['bar', 'cargo_web']
 [[metadata.omitted-packages.ids]]

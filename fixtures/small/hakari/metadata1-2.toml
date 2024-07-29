@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '4'
 # workspace-hack-line-style = 'full'
-# platforms = ['aarch64-unknown-uefi']
+# platforms = ['aarch64-unknown-redox']
 # [[traversal-excludes.ids]]
 # name = 'regex'
 # version = '1.3.1'

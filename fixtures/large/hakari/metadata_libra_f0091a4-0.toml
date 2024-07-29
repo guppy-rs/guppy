@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '3'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['powerpc-unknown-linux-gnuspe', 'sparc64-unknown-netbsd']
+# platforms = ['powerpc-unknown-linux-gnuspe', 'sparc-unknown-none-elf']
 # [[traversal-excludes.ids]]
 # name = 'crypto-mac'
 # version = '0.7.0'
@@ -136,7 +136,7 @@ toml = { version = "0.5" }
 [target.powerpc-unknown-linux-gnuspe.dependencies]
 hyper = { version = "0.13" }
 
-[target.sparc64-unknown-netbsd.dependencies]
+[target.sparc-unknown-none-elf.dependencies]
 hyper = { version = "0.13" }
 
 ### END HAKARI SECTION

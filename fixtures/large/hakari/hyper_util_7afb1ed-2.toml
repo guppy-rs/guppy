@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '4'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['i686-pc-windows-gnullvm', 'armv7-unknown-linux-ohos']
+# platforms = ['i686-linux-android', 'armv7-unknown-linux-gnueabihf']
 # [[traversal-excludes.ids]]
 # name = 'async-stream-impl'
 # version = '0.3.5'
@@ -64,12 +64,6 @@ tokio = { version = "1", features = ["macros", "net", "signal", "test-util"] }
 [build-dependencies]
 futures-core = { version = "0.3" }
 tokio = { version = "1", features = ["macros", "net", "signal", "test-util"] }
-
-[target.i686-pc-windows-gnullvm.dependencies]
-windows-sys = { version = "0.52", features = ["Wdk_Foundation", "Wdk_Storage_FileSystem", "Wdk_System_IO", "Win32_Foundation", "Win32_Networking_WinSock", "Win32_Security", "Win32_Storage_FileSystem", "Win32_System_Console", "Win32_System_IO", "Win32_System_Pipes", "Win32_System_SystemInformation", "Win32_System_SystemServices", "Win32_System_WindowsProgramming"] }
-
-[target.i686-pc-windows-gnullvm.build-dependencies]
-windows-sys = { version = "0.52", features = ["Wdk_Foundation", "Wdk_Storage_FileSystem", "Wdk_System_IO", "Win32_Foundation", "Win32_Networking_WinSock", "Win32_Security", "Win32_Storage_FileSystem", "Win32_System_Console", "Win32_System_IO", "Win32_System_Pipes", "Win32_System_SystemInformation", "Win32_System_SystemServices", "Win32_System_WindowsProgramming"] }
 
 ### END HAKARI SECTION
 

@@ -10,7 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'avr-unknown-gnu-atmega328'
+triple = 'armv7s-apple-ios'
 target-features = 'all'
 [[metadata.omitted-packages.ids]]
 name = 'testcrate'

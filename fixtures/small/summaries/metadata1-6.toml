@@ -7,12 +7,12 @@ include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'i586-unknown-netbsd'
+triple = 'i586-unknown-linux-gnu'
 target-features = 'all'
 flags = ['abc']
 
 [metadata.target-platform]
-triple = 'x86_64-apple-ios'
+triple = 'wasm64-unknown-unknown'
 target-features = ['avx2', 'sse2', 'ssse3', 'xsave']
 flags = ['abc']
 
@@ -80,13 +80,6 @@ version = '0.5.2'
 crates-io = true
 status = 'transitive'
 features = []
-
-[[target-package]]
-name = 'mach'
-version = '0.2.3'
-crates-io = true
-status = 'transitive'
-features = ['default', 'deprecated', 'use_std']
 
 [[target-package]]
 name = 'memchr'

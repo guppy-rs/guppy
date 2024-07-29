@@ -7,11 +7,11 @@ include-dev = false
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'x86_64-uwp-windows-msvc'
+triple = 'x86_64-win7-windows-msvc'
 target-features = 'all'
 
 [metadata.target-platform]
-triple = 'armv5te-unknown-linux-musleabi'
+triple = 'armv4t-unknown-linux-gnueabi'
 target-features = 'all'
 
 [[target-package]]

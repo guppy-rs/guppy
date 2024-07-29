@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '3'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['i686-apple-darwin', 'riscv64gc-unknown-hermit']
+# platforms = ['i586-unknown-netbsd', 'riscv64gc-unknown-freebsd']
 #
 # [traversal-excludes]
 # [[final-excludes.ids]]

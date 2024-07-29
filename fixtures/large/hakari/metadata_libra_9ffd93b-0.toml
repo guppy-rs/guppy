@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '1'
 # workspace-hack-line-style = 'full'
-# platforms = ['aarch64-nintendo-switch-freestanding', 'x86_64-apple-tvos']
+# platforms = ['aarch64-kmc-solid_asp3', 'x86_64-apple-ios-macabi']
 # [[traversal-excludes.ids]]
 # name = 'c_linked_list'
 # version = '1.1.1'
@@ -171,17 +171,17 @@ toml = { version = "0.5" }
 ureq = { version = "0.11", features = ["cookie", "cookies", "json", "rustls", "serde_json", "tls", "webpki", "webpki-roots"] }
 x25519-dalek = { git = "https://github.com/calibra/x25519-dalek.git", branch = "fiat", default-features = false, features = ["fiat_u64_backend", "std", "u64_backend"] }
 
-[target.aarch64-nintendo-switch-freestanding.dependencies]
+[target.aarch64-kmc-solid_asp3.dependencies]
 hyper = { version = "0.13", features = ["net2", "runtime", "stream", "tcp"] }
 
-[target.aarch64-nintendo-switch-freestanding.build-dependencies]
+[target.aarch64-kmc-solid_asp3.build-dependencies]
 hyper = { version = "0.13", features = ["net2", "runtime", "stream", "tcp"] }
 
-[target.x86_64-apple-tvos.dependencies]
+[target.x86_64-apple-ios-macabi.dependencies]
 hyper = { version = "0.13", features = ["net2", "runtime", "stream", "tcp"] }
 libc = { version = "0.2", default-features = false, features = ["extra_traits"] }
 
-[target.x86_64-apple-tvos.build-dependencies]
+[target.x86_64-apple-ios-macabi.build-dependencies]
 hyper = { version = "0.13", features = ["net2", "runtime", "stream", "tcp"] }
 libc = { version = "0.2", default-features = false, features = ["extra_traits"] }
 

@@ -10,7 +10,7 @@ initials-platform = 'host'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'armv5te-unknown-linux-uclibceabi'
+triple = 'armv5te-none-eabi'
 target-features = 'unknown'
 flags = ['abc', 'cargo_web']
 

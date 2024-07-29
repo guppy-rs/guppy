@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '2'
 # workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['riscv64gc-unknown-linux-gnu', 'armv7r-none-eabihf']
+# platforms = ['riscv64gc-unknown-fuchsia', 'armv7r-none-eabi']
 # [[traversal-excludes.ids]]
 # name = 'linked-hash-map'
 # version = '0.5.2'
