@@ -104,7 +104,13 @@
 //! # How does hakari work?
 //!
 //! `cargo hakari` uses [guppy]'s Cargo build simulations to determine the full set of features that
-//! can be built for each package. It then looks for
+//! can be built for each package. It then looks for dependencies that are built in more than one
+//! way. With this information:
+//!
+//! * `cargo hakari` constructs a `workspace-hack` package with the union of the feature sets for
+//!   each dependency.
+//! * `cargo hakari` can also add lines to the `Cargo.toml` files of all workspace crates, to
+//!   ensure that the `workspace-hack` package is always included.
 //!
 //! For more details about the algorithm, see the documentation for the [`hakari`] library.
 //!
