@@ -1,0 +1,137 @@
+{
+  "packages": [
+    {
+      "name": "a",
+      "version": "0.1.0",
+      "id": "path+file:///home/fakeuser/dev/tmp/named-feature-self/a#0.1.0",
+      "license": null,
+      "license_file": null,
+      "description": null,
+      "source": null,
+      "dependencies": [],
+      "targets": [
+        {
+          "kind": [
+            "lib"
+          ],
+          "crate_types": [
+            "lib"
+          ],
+          "name": "a",
+          "src_path": "/home/fakeuser/dev/tmp/named-feature-self/a/src/lib.rs",
+          "edition": "2021",
+          "doc": true,
+          "doctest": true,
+          "test": true
+        }
+      ],
+      "features": {
+        "feat1": []
+      },
+      "manifest_path": "/home/fakeuser/dev/tmp/named-feature-self/a/Cargo.toml",
+      "metadata": null,
+      "publish": null,
+      "authors": [],
+      "categories": [],
+      "keywords": [],
+      "readme": null,
+      "repository": null,
+      "homepage": null,
+      "documentation": null,
+      "edition": "2021",
+      "links": null,
+      "default_run": null,
+      "rust_version": null
+    },
+    {
+      "name": "b",
+      "version": "0.1.0",
+      "id": "path+file:///home/fakeuser/dev/tmp/named-feature-self/b#0.1.0",
+      "license": null,
+      "license_file": null,
+      "description": null,
+      "source": null,
+      "dependencies": [
+        {
+          "name": "a",
+          "source": null,
+          "req": "*",
+          "kind": null,
+          "rename": null,
+          "optional": true,
+          "uses_default_features": true,
+          "features": [],
+          "target": null,
+          "registry": null,
+          "path": "/home/fakeuser/dev/tmp/named-feature-self/a"
+        }
+      ],
+      "targets": [
+        {
+          "kind": [
+            "lib"
+          ],
+          "crate_types": [
+            "lib"
+          ],
+          "name": "b",
+          "src_path": "/home/fakeuser/dev/tmp/named-feature-self/b/src/lib.rs",
+          "edition": "2021",
+          "doc": true,
+          "doctest": true,
+          "test": true
+        }
+      ],
+      "features": {
+        "a": [
+          "dep:a",
+          "a/feat1",
+          "a"
+        ]
+      },
+      "manifest_path": "/home/fakeuser/dev/tmp/named-feature-self/b/Cargo.toml",
+      "metadata": null,
+      "publish": null,
+      "authors": [],
+      "categories": [],
+      "keywords": [],
+      "readme": null,
+      "repository": null,
+      "homepage": null,
+      "documentation": null,
+      "edition": "2021",
+      "links": null,
+      "default_run": null,
+      "rust_version": null
+    }
+  ],
+  "workspace_members": [
+    "path+file:///home/fakeuser/dev/tmp/named-feature-self/a#0.1.0",
+    "path+file:///home/fakeuser/dev/tmp/named-feature-self/b#0.1.0"
+  ],
+  "workspace_default_members": [
+    "path+file:///home/fakeuser/dev/tmp/named-feature-self/a#0.1.0",
+    "path+file:///home/fakeuser/dev/tmp/named-feature-self/b#0.1.0"
+  ],
+  "resolve": {
+    "nodes": [
+      {
+        "id": "path+file:///home/fakeuser/dev/tmp/named-feature-self/a#0.1.0",
+        "dependencies": [],
+        "deps": [],
+        "features": []
+      },
+      {
+        "id": "path+file:///home/fakeuser/dev/tmp/named-feature-self/b#0.1.0",
+        "dependencies": [],
+        "deps": [],
+        "features": []
+      }
+    ],
+    "root": null
+  },
+  "target_directory": "/home/fakeuser/dev/tmp/named-feature-self/target",
+  "version": 1,
+  "workspace_root": "/home/fakeuser/dev/tmp/named-feature-self",
+  "metadata": null
+}

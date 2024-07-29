@@ -405,11 +405,11 @@ impl FeatureGraphBuildState {
             });
 
             if from_ix == to_ix {
-                panic!(
-                    "attempted to add self-loop (please report this bug): {:?} ({})",
-                    from_ix,
-                    from_node.debug(graph),
-                );
+                let (package_id, feature_label) = from_node.package_id_and_feature_label(graph);
+                self.warnings.push(FeatureGraphWarning::SelfLoop {
+                    package_id: package_id.clone(),
+                    feature_name: feature_label.to_string(),
+                });
             }
 
             match self.graph.find_edge(from_ix, to_ix) {

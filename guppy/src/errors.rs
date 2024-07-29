@@ -189,6 +189,14 @@ pub enum FeatureGraphWarning {
         /// The name of the feature.
         feature_name: String,
     },
+
+    /// A self-loop was discovered.
+    SelfLoop {
+        /// The package ID for which the self-loop was discovered.
+        package_id: PackageId,
+        /// The name of the feature for which the self-loop was discovered.
+        feature_name: String,
+    },
 }
 
 impl fmt::Display for FeatureGraphWarning {
@@ -203,6 +211,14 @@ impl fmt::Display for FeatureGraphWarning {
                 f,
                 "{}: for package '{}', missing feature '{}'",
                 stage, package_id, feature_name
+            ),
+            SelfLoop {
+                package_id,
+                feature_name,
+            } => write!(
+                f,
+                "for package '{}', self-loop detected for named feature '{}'",
+                package_id, feature_name
             ),
         }
     }
