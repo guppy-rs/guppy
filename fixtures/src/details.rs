@@ -316,6 +316,9 @@ impl FixtureDetails {
                 }
             }
         }
+
+        // Just ensure that this doesn't crash for now -- we should add more checks later.
+        let _: Vec<_> = graph.feature_graph().cycles().all_cycles().collect();
     }
 }
 

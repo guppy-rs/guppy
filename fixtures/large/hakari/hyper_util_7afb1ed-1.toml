@@ -1,0 +1,60 @@
+# This file is @generated. To regenerate, run:
+#    cargo run -p fixture-manager -- generate-hakari --fixture hyper_util_7afb1ed
+
+### BEGIN HAKARI SECTION
+# resolver = 'install'
+# unify-target-host = 'auto'
+# output-single-feature = false
+# dep-format-version = '2'
+# workspace-hack-line-style = 'workspace-dotted'
+# platforms = []
+# [[traversal-excludes.ids]]
+# name = 'regex-automata'
+# version = '0.4.7'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'serde'
+# version = '1.0.204'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'slab'
+# version = '0.4.9'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'tracing'
+# version = '0.1.40'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'windows_aarch64_gnullvm'
+# version = '0.52.6'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'windows_aarch64_msvc'
+# version = '0.52.6'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'windows_i686_msvc'
+# version = '0.52.6'
+# crates-io = true
+#
+# [final-excludes]
+
+[dependencies]
+futures-core = { version = "0.3", features = ["alloc", "std"] }
+hyper = { version = "1", features = ["client", "full", "http1", "http2", "server"] }
+tokio = { version = "1", features = ["bytes", "io-util", "libc", "macros", "mio", "net", "rt", "signal", "signal-hook-registry", "socket2", "sync", "test-util", "time", "tokio-macros", "windows-sys"] }
+
+[build-dependencies]
+proc-macro2 = { version = "1", features = ["proc-macro"] }
+quote = { version = "1", features = ["proc-macro"] }
+syn = { version = "2", features = ["clone-impls", "derive", "full", "parsing", "printing", "proc-macro", "visit-mut"] }
+
+### END HAKARI SECTION
+
+# This part of the file should be preserved at the end.

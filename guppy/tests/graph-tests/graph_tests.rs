@@ -452,6 +452,15 @@ mod large {
     }
 
     proptest_suite!(mnemos_b3b4da9);
+
+    #[test]
+
+    fn hyper_util_7afb1ed() {
+        let metadata = JsonFixture::hyper_util_7afb1ed();
+        metadata.verify();
+    }
+
+    proptest_suite!(hyper_util_7afb1ed);
 }
 
 mod guppy_tests {
