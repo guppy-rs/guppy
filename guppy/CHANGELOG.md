@@ -1,10 +1,20 @@
 # Changelog
 
-## Unreleased
+## [0.17.6] - 2024-07-29
 
 ### Changed
 
 - MSRV updated to Rust 1.75.
+
+### Fixed
+
+- Fixed feature graph construction accidentally inserting self-loops in some cases ([#292]). This
+  was causing cargo-hakari to crash in some workspaces.
+- Fixed a small bug in Cargo resolution where packages were incorrectly being marked as activated on
+  the host platform ([`8666ebc`]).
+
+[#292]: https://github.com/guppy-rs/guppy/pull/292
+[`8666ebc`]: https://github.com/guppy-rs/guppy/commit/8666ebce44e27dae3a59f22a5ce70b7bdb252183
 
 ## [0.17.5] - 2024-02-03
 
@@ -659,6 +669,7 @@ lazy_static = "0.2"
 
 - Initial release.
 
+[0.17.6]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.6
 [0.17.5]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.5
 [0.17.4]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.4
 [0.17.3]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.3

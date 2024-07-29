@@ -2,11 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## [0.9.30] - 2024-07-29
+
+### Fixed
+
+- Fixed a crash in some workspaces ([#292]).
+- The `workspace-dotted` line style no longer requires that the root `Cargo.toml`'s `workspace.dependencies.workspace-hack` have a version set.
 
 ### Changed
 
 - MSRV updated to Rust 1.75.
+- Builtin targets updated to Rust 1.80.
+
+[#292]: https://github.com/guppy-rs/guppy/pull/292
 
 ## [0.9.29] - 2024-02-04
 
@@ -292,6 +300,7 @@ This was tagged, but never released due to
 
 Initial release.
 
+[0.9.30]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.30
 [0.9.29]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.29
 [0.9.28]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.28
 [0.9.27]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.27

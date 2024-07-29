@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.17.3] - 2024-07-29
+
+### Fixed
+
+- Fixed a crash in some workspaces ([#292]).
+
+### Changed
+
+- Updated MSRV to Rust 1.75.
+- Builtin targets updated to Rust 1.80.
+
+[#292]: https://github.com/guppy-rs/guppy/pull/292
+
 ## [0.17.2] - 2024-02-04
 
 ### Added
@@ -325,6 +338,7 @@ Internal updates for `cargo-hakari 0.9.8`.
 
 Initial release.
 
+[0.17.3]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.17.3
 [0.17.2]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.17.2
 [0.17.1]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.17.1
 [0.17.0]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.17.0
