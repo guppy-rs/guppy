@@ -910,11 +910,14 @@ impl FeatureNode {
         self.package_ix
     }
 
-    pub(in crate::graph) fn debug(&self, package_graph: &PackageGraph) -> String {
-        let package_id = &package_graph.dep_graph[self.package_ix];
-        let package_metadata = package_graph.metadata(package_id).unwrap();
-        let feature_label = package_metadata.feature_idx_to_label(self.feature_idx);
-        format!("{}/{}", package_id, feature_label)
+    pub(in crate::graph) fn package_id_and_feature_label<'g>(
+        &self,
+        graph: &'g PackageGraph,
+    ) -> (&'g PackageId, FeatureLabel<'g>) {
+        let package_id = &graph.dep_graph[self.package_ix];
+        let metadata = graph.metadata(package_id).unwrap();
+        let feature_label = metadata.feature_idx_to_label(self.feature_idx);
+        (package_id, feature_label)
     }
 }
 

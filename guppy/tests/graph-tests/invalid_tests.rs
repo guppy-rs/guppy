@@ -1,6 +1,6 @@
 use cargo_metadata::{Metadata, Target};
 use fixtures::json::JsonFixture;
-use guppy::{graph::PackageGraph, Error};
+use guppy::{errors::FeatureGraphWarning, graph::PackageGraph, Error, PackageId};
 
 #[test]
 fn optional_dev_dep() {
@@ -39,6 +39,33 @@ fn build_targets_duplicate_lib() {
     assert_invalid(
         include_str!("../../../fixtures/invalid/build_targets_duplicate_lib.json"),
         "duplicate build targets for Library",
+    );
+}
+
+static SELF_LOOP_B: &str = "path+file:///home/fakeuser/dev/tmp/named-feature-self/b#0.1.0";
+
+#[test]
+fn named_feature_self_loop() {
+    // This is not detected as invalid at construction time, but is instead detected while
+    // constructing the feature graph.
+    //
+    // TODO: ideally, this would be detected at PackageGraph construction time.
+    //
+    // TODO: We currently do not detect loops consisting of multiple named features. We should do
+    // this at construction time.
+    let graph = PackageGraph::from_json(include_str!(
+        "../../../fixtures/invalid/named_feature_self_loop.json"
+    ))
+    .expect("expected metadata to be valid");
+    let feature_graph = graph.feature_graph();
+    let warnings = feature_graph.build_warnings();
+    assert_eq!(warnings.len(), 1);
+    assert_eq!(
+        warnings[0],
+        FeatureGraphWarning::SelfLoop {
+            package_id: PackageId::new(SELF_LOOP_B),
+            feature_name: "a".into(),
+        }
     );
 }
 
