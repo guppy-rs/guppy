@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '4'
 # workspace-hack-line-style = 'full'
-# platforms = ['armv7s-apple-ios', 'riscv32gc-unknown-linux-gnu', 'powerpc64-unknown-linux-musl']
+# platforms = ['armv7r-none-eabi', 'riscv32gc-unknown-linux-gnu', 'powerpc64-unknown-linux-musl']
 #
 # [traversal-excludes]
 # [[final-excludes.ids]]

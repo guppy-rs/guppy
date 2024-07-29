@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'thumbv7m-none-eabi'
+triple = 'thumbv7em-none-eabihf'
 target-features = []
 flags = ['flag-test', 'foo']
 

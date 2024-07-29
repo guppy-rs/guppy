@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '3'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['aarch64-unknown-uefi', 'mips64el-unknown-linux-muslabi64', 'riscv32gc-unknown-linux-gnu']
+# platforms = ['aarch64-unknown-redox', 'mips64el-unknown-linux-gnuabi64', 'riscv32gc-unknown-linux-musl']
 # [[traversal-excludes.ids]]
 # name = 'quote'
 # version = '1.0.2'

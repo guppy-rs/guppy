@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'aarch64-unknown-linux-musl'
+triple = 'aarch64-unknown-illumos'
 target-features = 'unknown'
 flags = ['cargo_web', 'test-flag']
 

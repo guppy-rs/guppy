@@ -7,12 +7,12 @@ include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'sparc64-unknown-openbsd'
+triple = 'sparc64-unknown-netbsd'
 target-features = 'unknown'
 flags = ['bar', 'flag-test']
 
 [metadata.target-platform]
-triple = 'aarch64-unknown-netbsd'
+triple = 'aarch64-unknown-linux-musl'
 target-features = 'all'
 [[metadata.omitted-packages.ids]]
 name = 'log'
@@ -86,6 +86,13 @@ version = '0.2.14'
 crates-io = true
 status = 'direct'
 features = []
+
+[[target-package]]
+name = 'pnet_datalink'
+version = '0.35.0'
+crates-io = true
+status = 'direct'
+features = ['default', 'std']
 
 [[target-package]]
 name = 'pretty_env_logger'
@@ -224,6 +231,14 @@ status = 'transitive'
 features = ['default', 'std']
 
 [[target-package]]
+name = 'ipnetwork'
+version = '0.20.0'
+crates-io = true
+status = 'transitive'
+features = ['default', 'serde']
+optional-deps = ['serde']
+
+[[target-package]]
 name = 'is-terminal'
 version = '0.4.12'
 crates-io = true
@@ -259,6 +274,13 @@ status = 'transitive'
 features = ['net', 'os-ext', 'os-poll']
 
 [[target-package]]
+name = 'no-std-net'
+version = '0.6.0'
+crates-io = true
+status = 'transitive'
+features = ['std']
+
+[[target-package]]
 name = 'once_cell'
 version = '1.19.0'
 crates-io = true
@@ -268,6 +290,20 @@ features = ['alloc', 'default', 'race', 'std']
 [[target-package]]
 name = 'pin-utils'
 version = '0.1.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'pnet_base'
+version = '0.35.0'
+crates-io = true
+status = 'transitive'
+features = ['std']
+
+[[target-package]]
+name = 'pnet_sys'
+version = '0.35.0'
 crates-io = true
 status = 'transitive'
 features = []
@@ -294,6 +330,13 @@ version = '0.8.4'
 crates-io = true
 status = 'transitive'
 features = ['std']
+
+[[target-package]]
+name = 'serde'
+version = '1.0.204'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
 
 [[target-package]]
 name = 'signal-hook-registry'

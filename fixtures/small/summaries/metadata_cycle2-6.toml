@@ -7,12 +7,12 @@ include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'arm-linux-androideabi'
+triple = 'aarch64_be-unknown-netbsd'
 target-features = 'unknown'
 flags = ['bar', 'flag-test']
 
 [metadata.target-platform]
-triple = 'armv4t-none-eabi'
+triple = 'arm64ec-pc-windows-msvc'
 target-features = 'unknown'
 
 [[metadata.features-only]]

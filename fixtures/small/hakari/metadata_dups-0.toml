@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '3'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['mipsel-unknown-none', 'i686-unknown-uefi']
+# platforms = ['mipsel-unknown-netbsd', 'i686-unknown-openbsd']
 # [[traversal-excludes.ids]]
 # name = 'bytes'
 # version = '0.3.0'

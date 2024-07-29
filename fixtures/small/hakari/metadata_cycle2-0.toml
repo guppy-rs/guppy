@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '2'
 # workspace-hack-line-style = 'full'
-# platforms = ['aarch64-apple-ios-macabi', 'x86_64-pc-windows-msvc']
+# platforms = ['aarch64-apple-ios-macabi', 'x86_64-pc-windows-gnullvm']
 # [[traversal-excludes.ids]]
 # name = 'lower-a'
 # version = '0.1.0'

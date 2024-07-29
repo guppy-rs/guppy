@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'wasm32-wasi-preview1-threads'
+triple = 'wasm32-wasip1-threads'
 target-features = 'unknown'
 flags = ['cargo_web']
 

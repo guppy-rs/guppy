@@ -7,11 +7,11 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'armeb-unknown-linux-gnueabi'
+triple = 'arm64_32-apple-watchos'
 target-features = 'unknown'
 
 [metadata.target-platform]
-triple = 'x86_64-apple-darwin'
+triple = 'wasm32-wasip2'
 target-features = 'unknown'
 [[metadata.omitted-packages.ids]]
 name = 'multipart'

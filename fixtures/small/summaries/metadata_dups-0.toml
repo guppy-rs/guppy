@@ -7,12 +7,12 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'x86_64-apple-ios-macabi'
+triple = 'x86_64-apple-darwin'
 target-features = 'all'
 flags = ['bar']
 
 [metadata.target-platform]
-triple = 'riscv32imac-esp-espidf'
+triple = 'riscv32ima-unknown-none-elf'
 target-features = []
 flags = ['cargo_web', 'foo']
 [[metadata.omitted-packages.ids]]

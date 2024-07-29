@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'loongarch64-unknown-none-softfloat'
+triple = 'loongarch64-unknown-linux-musl'
 target-features = 'unknown'
 flags = ['abc']
 

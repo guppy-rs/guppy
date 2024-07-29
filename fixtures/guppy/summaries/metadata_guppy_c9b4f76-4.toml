@@ -10,7 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'aarch64-nintendo-switch-freestanding'
+triple = 'aarch64-kmc-solid_asp3'
 target-features = 'unknown'
 flags = ['abc']
 [[metadata.omitted-packages.ids]]
