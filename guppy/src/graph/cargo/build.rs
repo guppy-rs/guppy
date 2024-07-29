@@ -403,7 +403,26 @@ impl<'a> CargoSetBuildState<'a> {
             let proc_macro_redirect = follow_target && to.package().is_proc_macro();
 
             // Build dependencies are evaluated against the host platform.
-            let build_dep_redirect = is_enabled(&link, DependencyKind::Build, host_platform);
+            let build_dep_redirect = {
+                // If this is a dependency like:
+                //
+                // ```
+                // [build-dependencies]
+                // cc = { version = "1.0", optional = true }
+                //
+                // [features]
+                // bundled = ["cc"]
+                // ```
+                //
+                // Then, there is an implicit named feature here called "cc" on the target platform,
+                // which enables the optional dependency "cc". But this does not mean that this
+                // package itself is built on the host platform!
+                //
+                // Detect this situation by ensuring that the package ID of the `from` and `to`
+                // nodes are different.
+                from.package_id() != to.package_id()
+                    && is_enabled(&link, DependencyKind::Build, host_platform)
+            };
 
             // Finally, process what needs to be done.
             if build_dep_redirect || proc_macro_redirect {
