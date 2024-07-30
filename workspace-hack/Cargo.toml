@@ -68,7 +68,7 @@ libc = { version = "0.2.155", features = ["extra_traits"] }
 
 [target.x86_64-pc-windows-msvc.dependencies]
 once_cell = { version = "1.19.0" }
-winapi = { version = "0.3.9", default-features = false, features = ["consoleapi", "errhandlingapi", "fileapi", "handleapi", "minwinbase", "minwindef", "processenv", "std", "synchapi", "sysinfoapi", "winbase", "wincon", "winerror", "winnt"] }
+winapi = { version = "0.3.9", default-features = false, features = ["consoleapi", "errhandlingapi", "fileapi", "minwinbase", "minwindef", "processenv", "std", "synchapi", "sysinfoapi", "winbase", "wincon", "winerror", "winnt"] }
 windows-sys = { version = "0.52.0", features = ["Win32_Foundation", "Win32_Security", "Win32_Storage_FileSystem", "Win32_System_Console", "Win32_System_Pipes", "Win32_System_Threading", "Win32_UI_Input_KeyboardAndMouse"] }
 
 ### END HAKARI SECTION
