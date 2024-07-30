@@ -38,7 +38,7 @@ pathdiff = { version = "0.2.1", features = ["camino"] }
 proptest = { version = "1.4.0", optional = true }
 proptest-derive = { version = "0.4.0", optional = true }
 rayon = "1.10.0"
-serde = { version = "1.0.202", features = ["derive"], optional = true }
+serde = { version = "1.0.204", features = ["derive"], optional = true }
 tabular = { version = "0.2.0", features = ["ansi-cell"], optional = true }
 target-spec = { version = "3.2.0", path = "../../target-spec" }
 toml = { version = "0.5.11", optional = true }
