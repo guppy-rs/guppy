@@ -1,5 +1,11 @@
 # Changelog
 
+## [3.2.1] - 2024-07-31
+
+### Fixed
+
+- Update minimum version of `target-lexicon` dependency to 0.12.16, to ensure that minimal-version builds work.
+
 ## [3.2.0] - 2024-07-29
 
 ### Changed
@@ -291,6 +297,7 @@ This was mistakenly published and was yanked.
 
 - Initial release.
 
+[3.2.1]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.2.1
 [3.2.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.2.0
 [3.1.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.1.0
 [3.0.1]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.0.1

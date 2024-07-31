@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.17.7] - 2024-07-31
+
+### Changed
+
+- Update `target-spec` to 3.2.1.
+
 ## [0.17.6] - 2024-07-29
 
 ### Changed
@@ -669,6 +675,7 @@ lazy_static = "0.2"
 
 - Initial release.
 
+[0.17.7]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.7
 [0.17.6]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.6
 [0.17.5]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.5
 [0.17.4]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.4
