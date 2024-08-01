@@ -1,0 +1,1 @@
+searchState.loadedDescShard("debug_ignore", 0, "This library contains <code>DebugIgnore</code>, a newtype wrapper that …\nA newtype wrapper that causes the field within to be …\nReturns the argument unchanged.\nCalls <code>U::from(self)</code>.")

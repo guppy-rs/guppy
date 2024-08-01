@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Error"],"macro":["row","table"],"struct":["Row","Table"],"type":["Result"]};
