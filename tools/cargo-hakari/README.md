@@ -166,7 +166,6 @@ details about them. **This is always a bug**---if you encounter it, [a bug
 report](https://github.com/guppy-rs/guppy/issues/new) with more information would be greatly
 appreciated!
 
-####
 ### Publishing a crate
 
 If you publish crates to `crates.io` or other registries, see the [`publishing`

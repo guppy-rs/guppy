@@ -165,7 +165,6 @@
 //! report](https://github.com/guppy-rs/guppy/issues/new) with more information would be greatly
 //! appreciated!
 //!
-//! ###
 //! ## Publishing a crate
 //!
 //! If you publish crates to `crates.io` or other registries, see the [`publishing`
