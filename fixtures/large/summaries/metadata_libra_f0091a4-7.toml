@@ -7,11 +7,11 @@ include-dev = false
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'riscv64gc-unknown-hermit'
+triple = 'riscv64gc-unknown-none-elf'
 target-features = 'all'
 
 [metadata.target-platform]
-triple = 'armv6k-nintendo-3ds'
+triple = 'armv7-sony-vita-newlibeabihf'
 target-features = 'unknown'
 [[metadata.omitted-packages.ids]]
 name = 'base64'

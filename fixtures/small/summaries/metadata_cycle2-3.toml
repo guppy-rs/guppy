@@ -10,7 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'wasm32-unknown-unknown'
+triple = 'wasm32-wasip2'
 target-features = 'unknown'
 flags = ['bar']
 [[metadata.omitted-packages.ids]]

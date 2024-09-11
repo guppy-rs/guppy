@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'x86_64-fuchsia'
+triple = 'x86_64-pc-windows-gnullvm'
 target-features = []
 flags = ['abc']
 

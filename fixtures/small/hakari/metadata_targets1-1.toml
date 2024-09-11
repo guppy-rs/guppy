@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '4'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['armv7-wrs-vxworks-eabihf', 'mips64-unknown-linux-gnuabi64', 'i686-linux-android']
+# platforms = ['armv7a-kmc-solid_asp3-eabihf', 'mips64el-unknown-linux-muslabi64', 'i686-pc-windows-msvc']
 # [[traversal-excludes.ids]]
 # name = 'serde'
 # version = '1.0.105'
@@ -20,14 +20,14 @@ bytes = { version = "0.5", features = ["serde"] }
 dep-a = { path = "/Users/fakeuser/local/testcrates/testcrate-targets/../dep-a", default-features = false, features = ["bar", "baz", "foo", "quux"] }
 lazy_static-dff4ba8e3ae991db = { package = "lazy_static", version = "1", default-features = false }
 
-[target.armv7-wrs-vxworks-eabihf.dependencies]
+[target.armv7a-kmc-solid_asp3-eabihf.dependencies]
 lazy_static-6f8ce4dd05d13bba = { package = "lazy_static", version = "0.2", default-features = false }
 
-[target.mips64-unknown-linux-gnuabi64.dependencies]
+[target.mips64el-unknown-linux-muslabi64.dependencies]
 lazy_static-6f8ce4dd05d13bba = { package = "lazy_static", version = "0.2", default-features = false }
 
-[target.i686-linux-android.dependencies]
-lazy_static-6f8ce4dd05d13bba = { package = "lazy_static", version = "0.2", default-features = false }
+[target.i686-pc-windows-msvc.dependencies]
+lazy_static-c65f7effa3be6d31 = { package = "lazy_static", version = "0.1", default-features = false }
 
 ### END HAKARI SECTION
 

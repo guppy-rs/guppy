@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'armv5te-unknown-linux-uclibceabi'
+triple = 'armv6-unknown-freebsd'
 target-features = 'unknown'
 flags = ['cargo_web']
 
@@ -2573,13 +2573,6 @@ features = ['std']
 [[host-package]]
 name = 'opaque-debug'
 version = '0.2.3'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'openssl-probe'
-version = '0.1.2'
 crates-io = true
 status = 'transitive'
 features = []

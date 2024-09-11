@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '4'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['x86_64-wrs-vxworks']
+# platforms = ['xtensa-esp32s3-espidf']
 # [[traversal-excludes.ids]]
 # name = 'serde_derive'
 # version = '1.0.104'
@@ -833,7 +833,7 @@ zeroize = { version = "1", default-features = false, features = ["alloc", "zeroi
 zeroize_derive = { version = "1", default-features = false }
 zstd-sys = { git = "https://github.com/gyscos/zstd-rs.git" }
 
-[target.x86_64-wrs-vxworks.dependencies]
+[target.xtensa-esp32s3-espidf.dependencies]
 ansi_term-a6292c17cd707f01 = { package = "ansi_term", version = "0.11", default-features = false }
 async-compression = { version = "0.3", default-features = false, features = ["gzip", "stream"] }
 c2-chacha = { version = "0.2", default-features = false, features = ["simd", "std"] }
@@ -859,7 +859,7 @@ tokio-uds = { version = "0.2", default-features = false }
 utf8parse = { version = "0.1", default-features = false }
 void = { version = "1" }
 
-[target.x86_64-wrs-vxworks.build-dependencies]
+[target.xtensa-esp32s3-espidf.build-dependencies]
 ansi_term-a6292c17cd707f01 = { package = "ansi_term", version = "0.11", default-features = false }
 async-compression = { version = "0.3", default-features = false, features = ["gzip", "stream"] }
 c2-chacha = { version = "0.2", default-features = false, features = ["simd", "std"] }

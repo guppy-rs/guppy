@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '4'
 # workspace-hack-line-style = 'full'
-# platforms = ['aarch64-unknown-teeos', 'x86_64h-apple-darwin', 'powerpc-wrs-vxworks-spe']
+# platforms = ['aarch64-unknown-uefi', 'xtensa-esp32s3-none-elf', 'powerpc64-unknown-linux-gnu']
 #
 # [traversal-excludes]
 # [[final-excludes.ids]]

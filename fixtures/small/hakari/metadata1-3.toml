@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '4'
 # workspace-hack-line-style = 'full'
-# platforms = ['x86_64-pc-windows-gnullvm', 'i686-apple-darwin', 'armv7a-kmc-solid_asp3-eabi']
+# platforms = ['x86_64-unknown-haiku', 'i686-pc-windows-gnullvm', 'armv7a-none-eabi']
 # [[traversal-excludes.ids]]
 # name = 'bitflags'
 # version = '1.1.0'
@@ -52,9 +52,6 @@ quote = { path = "/fakepath/testcrate/../quote" }
 syn = { version = "1", features = ["fold", "full"] }
 unicode-xid = { version = "0.2" }
 version_check = { version = "0.9", default-features = false }
-
-[target.i686-apple-darwin.dependencies]
-mach = { version = "0.2" }
 
 ### END HAKARI SECTION
 

@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'x86_64-unknown-linux-gnu'
+triple = 'x86_64-unknown-netbsd'
 target-features = ['xsaves']
 flags = ['foo']
 

@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'sparc64-unknown-netbsd'
+triple = 'thumbv5te-none-eabi'
 target-features = 'unknown'
 flags = ['bar', 'flag-test']
 

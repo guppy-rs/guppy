@@ -7,12 +7,12 @@ include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'i586-unknown-linux-gnu'
+triple = 'i686-apple-darwin'
 target-features = 'all'
 flags = ['abc']
 
 [metadata.target-platform]
-triple = 'wasm64-unknown-unknown'
+triple = 'x86_64-apple-watchos-sim'
 target-features = ['avx2', 'sse2', 'ssse3', 'xsave']
 flags = ['abc']
 

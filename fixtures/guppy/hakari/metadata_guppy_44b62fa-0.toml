@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '3'
 # workspace-hack-line-style = 'full'
-# platforms = ['powerpc-wrs-vxworks', 'thumbv7a-uwp-windows-msvc']
+# platforms = ['powerpc64-unknown-freebsd', 'thumbv7neon-unknown-linux-gnueabihf']
 # [[traversal-excludes.ids]]
 # name = 'cargo-compare'
 # version = '0.1.0'

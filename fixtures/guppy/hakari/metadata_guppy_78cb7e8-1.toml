@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '1'
 # workspace-hack-line-style = 'full'
-# platforms = ['powerpc-wrs-vxworks-spe', 'riscv32imc-unknown-none-elf', 'mipsel-unknown-linux-musl']
+# platforms = ['powerpc64-unknown-linux-gnu', 'riscv64gc-unknown-hermit', 'mipsel-unknown-none']
 # [[traversal-excludes.ids]]
 # name = 'pathdiff'
 # version = '0.2.0'
@@ -60,16 +60,13 @@ proc-macro2 = { version = "1", features = ["proc-macro"] }
 quote = { version = "1", features = ["proc-macro"] }
 syn = { version = "1", features = ["clone-impls", "derive", "full", "parsing", "printing", "proc-macro", "quote", "visit"] }
 
-[target.powerpc-wrs-vxworks-spe.dependencies]
+[target.powerpc64-unknown-linux-gnu.dependencies]
 libc = { version = "0.2", features = ["std"] }
 
-[target.powerpc-wrs-vxworks-spe.build-dependencies]
+[target.powerpc64-unknown-linux-gnu.build-dependencies]
 libc = { version = "0.2", features = ["std"] }
 
-[target.mipsel-unknown-linux-musl.dependencies]
-libc = { version = "0.2", features = ["std"] }
-
-[target.mipsel-unknown-linux-musl.build-dependencies]
+[target.riscv64gc-unknown-hermit.dependencies]
 libc = { version = "0.2", features = ["std"] }
 
 ### END HAKARI SECTION

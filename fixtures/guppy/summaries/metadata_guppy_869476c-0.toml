@@ -7,12 +7,12 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'x86_64-uwp-windows-gnu'
+triple = 'xtensa-esp32-espidf'
 target-features = 'all'
 flags = ['cargo_web']
 
 [metadata.target-platform]
-triple = 'x86_64-unknown-uefi'
+triple = 'xtensa-esp32-espidf'
 target-features = 'unknown'
 flags = ['flag-test', 'test-flag']
 [[metadata.omitted-packages.ids]]
@@ -95,7 +95,7 @@ version = '2.33.3'
 crates-io = true
 status = 'direct'
 features = ['ansi_term', 'atty', 'color', 'default', 'strsim', 'suggestions', 'vec_map']
-optional-deps = ['atty', 'strsim', 'vec_map']
+optional-deps = ['ansi_term', 'atty', 'strsim', 'vec_map']
 
 [[host-package]]
 name = 'dialoguer'
@@ -227,6 +227,13 @@ status = 'direct'
 features = []
 
 [[host-package]]
+name = 'ansi_term'
+version = '0.11.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'ascii'
 version = '0.9.3'
 crates-io = true
@@ -288,7 +295,7 @@ version = '0.4.19'
 crates-io = true
 status = 'transitive'
 features = ['clock', 'default', 'libc', 'oldtime', 'std', 'time', 'winapi']
-optional-deps = ['libc', 'time', 'winapi']
+optional-deps = ['libc', 'time']
 
 [[host-package]]
 name = 'combine'
@@ -303,7 +310,7 @@ version = '0.11.3'
 crates-io = true
 status = 'transitive'
 features = ['ansi-parsing', 'default', 'regex', 'unicode-width', 'winapi-util', 'windows-console-colors']
-optional-deps = ['regex', 'unicode-width', 'winapi-util']
+optional-deps = ['regex', 'unicode-width']
 
 [[host-package]]
 name = 'either'
@@ -311,13 +318,6 @@ version = '1.6.1'
 crates-io = true
 status = 'transitive'
 features = ['use_std']
-
-[[host-package]]
-name = 'encode_unicode'
-version = '0.3.6'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
 
 [[host-package]]
 name = 'fnv'
@@ -466,7 +466,7 @@ version = '0.7.3'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'getrandom', 'getrandom_package', 'libc', 'std']
-optional-deps = ['getrandom_package']
+optional-deps = ['getrandom_package', 'libc']
 
 [[host-package]]
 name = 'rand_chacha'
@@ -585,6 +585,13 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'termios'
+version = '0.3.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'textwrap'
 version = '0.11.0'
 crates-io = true
@@ -657,20 +664,6 @@ features = []
 [[host-package]]
 name = 'wait-timeout'
 version = '0.2.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'winapi'
-version = '0.3.9'
-crates-io = true
-status = 'transitive'
-features = ['consoleapi', 'errhandlingapi', 'fileapi', 'handleapi', 'minwinbase', 'minwindef', 'ntdef', 'processenv', 'profileapi', 'std', 'sysinfoapi', 'timezoneapi', 'winbase', 'wincon', 'winerror', 'winnt', 'winuser']
-
-[[host-package]]
-name = 'winapi-util'
-version = '0.1.5'
 crates-io = true
 status = 'transitive'
 features = []

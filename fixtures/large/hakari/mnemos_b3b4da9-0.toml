@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '4'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['armv6-unknown-freebsd', 's390x-unknown-linux-gnu']
+# platforms = ['armv6-unknown-netbsd-eabihf', 'sparc64-unknown-linux-gnu']
 # [[traversal-excludes.ids]]
 # name = 'string_cache_codegen'
 # version = '0.5.2'
@@ -826,7 +826,7 @@ zstd-safe-a490c3000a992113 = { package = "zstd-safe", version = "6", default-fea
 zstd-safe-cdf1610d3e1514e9 = { package = "zstd-safe", version = "5", default-features = false, features = ["arrays", "legacy", "std", "zdict_builder"] }
 zstd-sys = { version = "2", default-features = false, features = ["legacy", "std", "zdict_builder", "zstdmt"] }
 
-[target.armv6-unknown-freebsd.dependencies]
+[target.armv6-unknown-netbsd-eabihf.dependencies]
 async-executor = { version = "1", default-features = false }
 async-global-executor = { version = "2" }
 async-io = { version = "1", default-features = false }
@@ -864,7 +864,7 @@ static_assertions = { version = "1", default-features = false }
 unicode-bidi = { version = "0.3" }
 waker-fn = { version = "1", default-features = false }
 
-[target.armv6-unknown-freebsd.build-dependencies]
+[target.armv6-unknown-netbsd-eabihf.build-dependencies]
 ahash = { version = "0.8" }
 arc-swap = { version = "1", default-features = false }
 async-io = { version = "1", default-features = false }
@@ -1034,7 +1034,7 @@ vcpkg = { version = "0.2", default-features = false }
 webpki-roots-2ffb4c3fe830441c = { package = "webpki-roots", version = "0.25", default-features = false }
 xattr = { version = "1" }
 
-[target.s390x-unknown-linux-gnu.dependencies]
+[target.sparc64-unknown-linux-gnu.dependencies]
 async-executor = { version = "1", default-features = false }
 async-global-executor = { version = "2" }
 async-io = { version = "1", default-features = false }
@@ -1076,7 +1076,7 @@ static_assertions = { version = "1", default-features = false }
 unicode-bidi = { version = "0.3" }
 waker-fn = { version = "1", default-features = false }
 
-[target.s390x-unknown-linux-gnu.build-dependencies]
+[target.sparc64-unknown-linux-gnu.build-dependencies]
 ahash = { version = "0.8" }
 arc-swap = { version = "1", default-features = false }
 async-io = { version = "1", default-features = false }
