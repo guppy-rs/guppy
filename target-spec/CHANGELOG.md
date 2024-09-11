@@ -1,5 +1,11 @@
 # Changelog
 
+## [3.2.2] - 2024-09-11
+
+### Changed
+
+- Internal dependency `cfg-expr` updated to 0.17.0, updating builtin targets to Rust 1.81.
+
 ## [3.2.1] - 2024-07-31
 
 ### Fixed
@@ -297,6 +303,7 @@ This was mistakenly published and was yanked.
 
 - Initial release.
 
+[3.2.2]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.2.2
 [3.2.1]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.2.1
 [3.2.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.2.0
 [3.1.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.1.0

@@ -10,6 +10,7 @@ publish = true
 readme = "README.md"
 license = "CC0-1.0"
 repository = "https://github.com/guppy-rs/guppy"
+edition = "2021"
 
 # The parts of the file between the BEGIN HAKARI SECTION and END HAKARI SECTION comments
 # are managed by hakari.

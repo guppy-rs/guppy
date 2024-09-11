@@ -99,6 +99,7 @@ impl GuppyCargoCommon {
             },
             // TODO: allow for target to be "any", set this to Yes in that case
             ForceAllTargets::No,
+            /* dry-run */ true,
         )?;
 
         let targeted_resolve = ws_resolve.targeted_resolve;
