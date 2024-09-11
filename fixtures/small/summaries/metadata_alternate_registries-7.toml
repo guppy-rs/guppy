@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'loongarch64-unknown-linux-gnu'
+triple = 'loongarch64-unknown-none'
 target-features = 'all'
 flags = ['flag-test', 'foo']
 

@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '2'
 # workspace-hack-line-style = 'full'
-# platforms = ['armeb-unknown-linux-gnueabi']
+# platforms = ['armebv7r-none-eabi']
 # [[traversal-excludes.ids]]
 # name = 'bytes'
 # version = '0.3.0'

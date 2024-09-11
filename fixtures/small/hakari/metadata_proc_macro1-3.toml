@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '4'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['arm-unknown-linux-musleabi', 'armv7-unknown-linux-uclibceabihf', 'aarch64-unknown-nto-qnx710']
+# platforms = ['arm-unknown-linux-musleabihf', 'armv7-wrs-vxworks-eabihf', 'aarch64-unknown-nto-qnx710']
 # [[traversal-excludes.ids]]
 # name = 'build-user'
 # version = '0.1.0'

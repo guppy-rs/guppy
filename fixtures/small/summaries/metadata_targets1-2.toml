@@ -7,11 +7,11 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'mips64-unknown-linux-gnuabi64'
+triple = 'mips64el-unknown-linux-muslabi64'
 target-features = 'unknown'
 
 [metadata.target-platform]
-triple = 'armv5te-none-eabi'
+triple = 'armv5te-unknown-linux-gnueabi'
 target-features = 'unknown'
 flags = ['abc', 'bar']
 [[metadata.omitted-packages.ids]]

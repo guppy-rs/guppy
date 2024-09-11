@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '3'
 # workspace-hack-line-style = 'full'
-# platforms = ['riscv64imac-unknown-none-elf']
+# platforms = ['sparc-unknown-none-elf']
 # [[traversal-excludes.ids]]
 # name = 'bootloader_api'
 # version = '0.11.4'
@@ -196,12 +196,12 @@ unicode-normalization = { version = "0.1" }
 uuid = { version = "1", features = ["serde", "v4"] }
 zeroize = { version = "1" }
 
-[target.riscv64imac-unknown-none-elf.dependencies]
+[target.sparc-unknown-none-elf.dependencies]
 io-lifetimes = { version = "1" }
 openssl = { version = "0.10" }
 rustix = { version = "0.37", features = ["fs", "termios"] }
 
-[target.riscv64imac-unknown-none-elf.build-dependencies]
+[target.sparc-unknown-none-elf.build-dependencies]
 io-lifetimes = { version = "1" }
 openssl = { version = "0.10", features = ["vendored"] }
 openssl-sys = { version = "0.9", default-features = false, features = ["vendored"] }

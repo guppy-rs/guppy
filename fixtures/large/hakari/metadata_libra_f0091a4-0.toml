@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '3'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['powerpc-unknown-linux-gnuspe', 'sparc-unknown-none-elf']
+# platforms = ['powerpc-unknown-openbsd', 'thumbv4t-none-eabi']
 # [[traversal-excludes.ids]]
 # name = 'crypto-mac'
 # version = '0.7.0'
@@ -133,10 +133,10 @@ syn-3575ec1268b04181 = { package = "syn", version = "0.15", features = ["extra-t
 syn-dff4ba8e3ae991db = { package = "syn", version = "1", features = ["extra-traits", "fold", "full", "visit", "visit-mut"] }
 toml = { version = "0.5" }
 
-[target.powerpc-unknown-linux-gnuspe.dependencies]
+[target.powerpc-unknown-openbsd.dependencies]
 hyper = { version = "0.13" }
 
-[target.sparc-unknown-none-elf.dependencies]
+[target.thumbv4t-none-eabi.dependencies]
 hyper = { version = "0.13" }
 
 ### END HAKARI SECTION

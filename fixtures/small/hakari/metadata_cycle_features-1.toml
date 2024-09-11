@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '3'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['x86_64-apple-tvos', 'loongarch64-unknown-none-softfloat']
+# platforms = ['x86_64-pc-nto-qnx710', 'mips-unknown-linux-musl']
 # [[traversal-excludes.ids]]
 # name = 'testcycles-base'
 # version = '0.1.0'

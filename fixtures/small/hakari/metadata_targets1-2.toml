@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '3'
 # workspace-hack-line-style = 'full'
-# platforms = ['i686-pc-windows-gnu', 'arm64e-apple-ios', 'powerpc64-ibm-aix']
+# platforms = ['i686-unknown-freebsd', 'armeb-unknown-linux-gnueabi', 'powerpc64-unknown-linux-musl']
 # [[traversal-excludes.ids]]
 # name = 'dep-a'
 # version = '0.1.0'
@@ -25,9 +25,6 @@
 [dependencies]
 bytes = { version = "0.5", features = ["serde"] }
 serde = { version = "1" }
-
-[target.i686-pc-windows-gnu.dependencies]
-lazy_static = { version = "0.1", default-features = false }
 
 ### END HAKARI SECTION
 

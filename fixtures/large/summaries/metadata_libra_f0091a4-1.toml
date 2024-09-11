@@ -7,12 +7,12 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'x86_64-unknown-l4re-uclibc'
+triple = 'x86_64-unknown-linux-ohos'
 target-features = ['avx', 'sse3']
 flags = ['abc', 'test-flag']
 
 [metadata.target-platform]
-triple = 'riscv64gc-unknown-freebsd'
+triple = 'riscv64gc-unknown-linux-gnu'
 target-features = 'unknown'
 flags = ['bar', 'test-flag']
 [[metadata.omitted-packages.ids]]

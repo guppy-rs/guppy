@@ -7,12 +7,12 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'aarch64-pc-windows-msvc'
+triple = 'aarch64-unknown-freebsd'
 target-features = 'all'
 flags = ['flag-test', 'test-flag']
 
 [metadata.target-platform]
-triple = 'armv7-unknown-linux-uclibceabi'
+triple = 'armv7-unknown-netbsd-eabihf'
 target-features = 'all'
 [[metadata.omitted-packages.ids]]
 name = 'libc'
@@ -324,6 +324,13 @@ status = 'transitive'
 features = ['std']
 
 [[host-package]]
+name = 'signal-hook-registry'
+version = '1.4.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'slab'
 version = '0.4.9'
 crates-io = true
@@ -405,34 +412,6 @@ features = []
 [[host-package]]
 name = 'want'
 version = '0.3.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'winapi-util'
-version = '0.1.8'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'windows-sys'
-version = '0.52.0'
-crates-io = true
-status = 'transitive'
-features = ['Wdk', 'Wdk_Foundation', 'Wdk_Storage', 'Wdk_Storage_FileSystem', 'Wdk_System', 'Wdk_System_IO', 'Win32', 'Win32_Foundation', 'Win32_Networking', 'Win32_Networking_WinSock', 'Win32_Security', 'Win32_Storage', 'Win32_Storage_FileSystem', 'Win32_System', 'Win32_System_Console', 'Win32_System_IO', 'Win32_System_Pipes', 'Win32_System_SystemInformation', 'Win32_System_WindowsProgramming', 'default']
-
-[[host-package]]
-name = 'windows-targets'
-version = '0.52.6'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'windows_aarch64_msvc'
-version = '0.52.6'
 crates-io = true
 status = 'transitive'
 features = []

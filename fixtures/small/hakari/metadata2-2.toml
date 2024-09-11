@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '3'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['i586-unknown-netbsd', 'riscv64gc-unknown-freebsd']
+# platforms = ['i686-linux-android', 'riscv64gc-unknown-linux-gnu']
 #
 # [traversal-excludes]
 # [[final-excludes.ids]]

@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'wasm32-unknown-emscripten'
+triple = 'wasm32-wasip2'
 target-features = 'all'
 
 [metadata.target-platform]

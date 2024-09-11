@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '1'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['aarch64-unknown-uefi']
+# platforms = ['aarch64-uwp-windows-msvc']
 # [[traversal-excludes.ids]]
 # name = 'openssl'
 # version = '0.10.30'
@@ -356,6 +356,24 @@ version_check = { version = "0.9", default-features = false }
 void = { version = "1", default-features = false }
 wait-timeout = { version = "0.2", default-features = false }
 walkdir = { version = "2", default-features = false }
+
+[target.aarch64-uwp-windows-msvc.dependencies]
+encode_unicode = { version = "0.3", features = ["std"] }
+miow = { version = "0.3", default-features = false }
+output_vt100 = { version = "0.1", default-features = false }
+schannel = { version = "0.1", default-features = false }
+winapi = { version = "0.3", default-features = false, features = ["basetsd", "consoleapi", "errhandlingapi", "fileapi", "handleapi", "ioapiset", "jobapi", "jobapi2", "libloaderapi", "lmcons", "memoryapi", "minschannel", "minwinbase", "minwindef", "namedpipeapi", "ntdef", "ntstatus", "processenv", "processthreadsapi", "profileapi", "psapi", "schannel", "securitybaseapi", "shellapi", "shlobj", "sspi", "std", "synchapi", "sysinfoapi", "timezoneapi", "winbase", "wincon", "wincrypt", "winerror", "winnt", "winsock2", "winuser", "ws2def", "ws2ipdef", "ws2tcpip"] }
+winapi-util = { version = "0.1", default-features = false }
+
+[target.aarch64-uwp-windows-msvc.build-dependencies]
+ctor = { version = "0.1", default-features = false }
+encode_unicode = { version = "0.3", features = ["std"] }
+miow = { version = "0.3", default-features = false }
+output_vt100 = { version = "0.1", default-features = false }
+schannel = { version = "0.1", default-features = false }
+vcpkg = { version = "0.2", default-features = false }
+winapi = { version = "0.3", default-features = false, features = ["basetsd", "consoleapi", "errhandlingapi", "fileapi", "handleapi", "ioapiset", "jobapi", "jobapi2", "libloaderapi", "lmcons", "memoryapi", "minschannel", "minwinbase", "minwindef", "namedpipeapi", "ntdef", "ntstatus", "processenv", "processthreadsapi", "profileapi", "psapi", "schannel", "securitybaseapi", "shellapi", "shlobj", "sspi", "std", "synchapi", "sysinfoapi", "timezoneapi", "winbase", "wincon", "wincrypt", "winerror", "winnt", "winsock2", "winuser", "ws2def", "ws2ipdef", "ws2tcpip"] }
+winapi-util = { version = "0.1", default-features = false }
 
 ### END HAKARI SECTION
 

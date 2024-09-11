@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '1'
 # workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['armv7k-apple-watchos', 'sparc-unknown-linux-gnu', 'wasm64-unknown-unknown']
+# platforms = ['armv7s-apple-ios', 'sparc64-unknown-openbsd', 'x86_64-apple-tvos']
 # [[traversal-excludes.ids]]
 # name = 'futures-core'
 # version = '0.3.30'
@@ -91,16 +91,16 @@ syn = { version = "2", features = ["clone-impls", "derive", "full", "parsing", "
 tokio-macros = { version = "2", default-features = false }
 unicode-ident = { version = "1", default-features = false }
 
-[target.armv7k-apple-watchos.dependencies]
+[target.armv7s-apple-ios.dependencies]
 libc = { version = "0.2", features = ["std"] }
 signal-hook-registry = { version = "1", default-features = false }
 
-[target.sparc-unknown-linux-gnu.dependencies]
-ipnetwork = { version = "0.20", features = ["serde"] }
+[target.sparc64-unknown-openbsd.dependencies]
 libc = { version = "0.2", features = ["std"] }
-no-std-net = { version = "0.6", default-features = false, features = ["std"] }
-pnet_base = { version = "0.35", default-features = false, features = ["std"] }
-pnet_datalink = { version = "0.35", features = ["std"] }
+signal-hook-registry = { version = "1", default-features = false }
+
+[target.x86_64-apple-tvos.dependencies]
+libc = { version = "0.2", features = ["std"] }
 signal-hook-registry = { version = "1", default-features = false }
 
 ### END HAKARI SECTION

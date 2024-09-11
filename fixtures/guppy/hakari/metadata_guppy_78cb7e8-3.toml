@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '4'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['msp430-none-elf', 'x86_64-unknown-redox', 'aarch64-unknown-teeos']
+# platforms = ['powerpc-unknown-linux-gnu', 'x86_64h-apple-darwin', 'aarch64-unknown-uefi']
 # [[traversal-excludes.ids]]
 # name = 'fixtures'
 # version = '0.1.0'
@@ -75,10 +75,16 @@ proc-macro2 = { version = "1" }
 quote = { version = "1" }
 syn = { version = "1", features = ["full", "visit"] }
 
-[target.x86_64-unknown-redox.dependencies]
+[target.powerpc-unknown-linux-gnu.dependencies]
 libc = { version = "0.2" }
 
-[target.x86_64-unknown-redox.build-dependencies]
+[target.powerpc-unknown-linux-gnu.build-dependencies]
+libc = { version = "0.2" }
+
+[target.x86_64h-apple-darwin.dependencies]
+libc = { version = "0.2" }
+
+[target.x86_64h-apple-darwin.build-dependencies]
 libc = { version = "0.2" }
 
 ### END HAKARI SECTION

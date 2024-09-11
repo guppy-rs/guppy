@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'aarch64_be-unknown-netbsd'
+triple = 'arm-linux-androideabi'
 target-features = 'all'
 flags = ['cargo_web', 'foo']
 

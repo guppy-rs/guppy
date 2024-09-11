@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'powerpc64-ibm-aix'
+triple = 'powerpc64-unknown-linux-musl'
 target-features = 'all'
 flags = ['abc']
 

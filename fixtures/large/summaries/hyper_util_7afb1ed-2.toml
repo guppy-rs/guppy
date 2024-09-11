@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'armv7-unknown-linux-gnueabi'
+triple = 'armv7-unknown-linux-gnueabihf'
 target-features = 'all'
 
 [[metadata.features-only]]

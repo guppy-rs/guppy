@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '3'
 # workspace-hack-line-style = 'full'
-# platforms = ['powerpc-unknown-linux-gnuspe']
+# platforms = ['powerpc-unknown-openbsd']
 # [[traversal-excludes.ids]]
 # name = 'riscv-atomic-emulation-trap'
 # version = '0.4.0'
@@ -164,7 +164,7 @@ unicode-normalization = { version = "0.1" }
 uuid = { version = "1", features = ["serde", "v4"] }
 zeroize = { version = "1" }
 
-[target.powerpc-unknown-linux-gnuspe.dependencies]
+[target.powerpc-unknown-openbsd.dependencies]
 crossbeam-utils = { version = "0.8" }
 io-lifetimes = { version = "1" }
 libc = { version = "0.2", features = ["extra_traits", "use_std"] }
@@ -174,7 +174,7 @@ openssl-sys = { version = "0.9", default-features = false, features = ["vendored
 rustix = { version = "0.37", features = ["fs", "termios"] }
 signal-hook = { version = "0.3" }
 
-[target.powerpc-unknown-linux-gnuspe.build-dependencies]
+[target.powerpc-unknown-openbsd.build-dependencies]
 crossbeam-utils = { version = "0.8" }
 io-lifetimes = { version = "1" }
 itertools = { version = "0.10" }

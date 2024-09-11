@@ -10,7 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'arm64_32-apple-watchos'
+triple = 'arm64e-apple-darwin'
 target-features = 'unknown'
 flags = ['cargo_web']
 [[metadata.omitted-packages.ids]]
@@ -82,6 +82,13 @@ version = '0.5.2'
 crates-io = true
 status = 'transitive'
 features = []
+
+[[target-package]]
+name = 'mach'
+version = '0.2.3'
+crates-io = true
+status = 'transitive'
+features = ['default', 'deprecated', 'use_std']
 
 [[target-package]]
 name = 'memchr'
