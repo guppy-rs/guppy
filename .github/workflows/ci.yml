@@ -24,8 +24,6 @@ jobs:
         run: cargo clippy --all-features --all-targets
       - name: Install cargo-hack
         uses: taiki-e/install-action@cargo-hack
-      - name: Clippy feature powerset for target-spec
-        run: cargo hack --feature-powerset --package target-spec clippy
       - name: Lint (rustfmt)
         run: cargo xfmt --check
       - name: Install cargo readme
@@ -36,6 +34,10 @@ jobs:
         run: ./scripts/regenerate-readmes.sh
       - name: Check for differences
         run: git diff --exit-code
+      # cargo hack might cause changes to Cargo.lock which can cause the git diff above to fail. Put
+      # this at the end.
+      - name: Clippy feature powerset for target-spec
+        run: cargo hack --feature-powerset --package target-spec clippy
 
   build:
     name: Build and test core crates
