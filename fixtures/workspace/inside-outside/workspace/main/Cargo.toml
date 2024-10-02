@@ -9,16 +9,16 @@ build = "build.rs"
 
 [dependencies]
 external = { path = "../../external" }
-internal = { path = "../internal" }
+internal-package = { path = "../internal" }
 
 [build-dependencies]
 external = { path = "../../external", features = ["main-build-feature"] }
-internal = { path = "../internal", features = ["build-feature"] }
+internal-package = { path = "../internal", features = ["build-feature"] }
 internal-macro = { path = "../internal-macro", features = ["main-build-feature"] }
 
 [dev-dependencies]
 external = { path = "../../external", features = ["main-dev-feature"] }
-internal = { path = "../internal", features = ["dev-feature"] }
+internal-package = { path = "../internal", features = ["dev-feature"] }
 
 [target.'cfg(all(unix, not(unix)))'.build-dependencies]
 inactive = { path = "../../inactive", optional = true }

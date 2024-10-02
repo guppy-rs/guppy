@@ -1,5 +1,6 @@
 [package]
-name = "internal"
+# Use a hyphen in the package name to test behavior around underscores in package names.
+name = "internal-package"
 version = "0.1.0"
 authors = ["Fake Author <fakeauthor@example.com>"]
 edition = "2018"
@@ -15,6 +16,7 @@ internal-macro = { path = "../internal-macro", features = ["internal-normal-feat
 lazy_static = {version = "1", features = ["spin"] }
 bytes = "0.5"
 external = { path = "../../external", features = ["internal-dev-feature"] }
+other-internal-name = { path = ".", package = "internal-package" }
 
 [build-dependencies]
 external = { path = "../../external", features = ["internal-build-feature"] }

@@ -490,33 +490,38 @@ enum ResolvedName {
     NoLibTarget,
 }
 
+/// Matcher for the resolved name of a dependency.
+///
+/// The "rename" field in a dependency, if present, is generally used. (But not always! There are
+/// cases where even if a rename is present, the package name is used instead.)
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
-enum ReqResolvedName<'g> {
-    Renamed(String),
-    LibNameSpecified(&'g str),
-    LibNameNotSpecified(&'g str),
-    NoLibTarget,
+struct ReqResolvedName<'g> {
+    // A renamed name, if any.
+    renamed: Option<String>,
+
+    // A resolved name created from the lib.name field.
+    resolved_name: &'g ResolvedName,
 }
 
 impl<'g> ReqResolvedName<'g> {
-    fn from_renamed(rename: &str) -> Self {
-        Self::Renamed(rename.replace('-', "_"))
-    }
-
-    fn from_resolved_name(resolved_name: &'g ResolvedName) -> Self {
-        match resolved_name {
-            ResolvedName::LibNameSpecified(name) => Self::LibNameSpecified(name),
-            ResolvedName::LibNameNotSpecified(name) => Self::LibNameNotSpecified(name),
-            ResolvedName::NoLibTarget => Self::NoLibTarget,
+    fn new(renamed: Option<&str>, resolved_name: &'g ResolvedName) -> Self {
+        Self {
+            renamed: renamed.map(|s| s.replace('-', "_")),
+            resolved_name,
         }
     }
 
     fn matches(&self, name: &str) -> bool {
-        match self {
-            Self::Renamed(rename) => rename == name,
-            Self::LibNameSpecified(resolved_name) => *resolved_name == name,
-            Self::LibNameNotSpecified(resolved_name) => *resolved_name == name,
-            Self::NoLibTarget => {
+        if let Some(rename) = &self.renamed {
+            if rename == name {
+                return true;
+            }
+        }
+
+        match self.resolved_name {
+            ResolvedName::LibNameSpecified(resolved_name) => *resolved_name == name,
+            ResolvedName::LibNameNotSpecified(resolved_name) => *resolved_name == name,
+            ResolvedName::NoLibTarget => {
                 // This code path is only hit with nightly Rust as of 2023-11. It depends on Rust
                 // RFC 3028. at https://github.com/rust-lang/cargo/issues/9096.
                 //
@@ -723,18 +728,15 @@ impl<'g> DependencyResolver<'g> {
             };
             for package in packages {
                 if cargo_version_matches(&dep.req, &package.version) {
-                    // The cargo `resolve.deps` map uses, in order of preference:
+                    // The cargo `resolve.deps` map uses one of two things:
+                    //
                     // 1. dep.rename with - turned into _, if specified.
-                    // 2. lib.name, if specified.
-                    // 3. package.name with - turned into _.
-                    if let Some(rename) = &dep.rename {
-                        dep_reqs.push(ReqResolvedName::from_renamed(rename), dep);
-                    } else {
-                        dep_reqs.push(
-                            ReqResolvedName::from_resolved_name(&package.resolved_name),
-                            dep,
-                        );
-                    }
+                    // 2. lib.name, if specified, otherwise package.name with - turned into _.
+                    //
+                    // ReqResolvedName tracks both of these.
+                    let req_resolved_name =
+                        ReqResolvedName::new(dep.rename.as_deref(), &package.resolved_name);
+                    dep_reqs.push(req_resolved_name, dep);
                 }
             }
         }
