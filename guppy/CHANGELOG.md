@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.17.8] - 2024-10-02
+
+### Fixed
+
+- Fixed a case of dependency matching with renamed packages ([#317]).
+
+### Changed
+
+- Update `target-spec` to 3.2.2.
+
+[#317]: https://github.com/guppy-rs/guppy/pull/317
+
 ## [0.17.7] - 2024-07-31
 
 ### Changed
@@ -675,6 +687,7 @@ lazy_static = "0.2"
 
 - Initial release.
 
+[0.17.8]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.8
 [0.17.7]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.7
 [0.17.6]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.6
 [0.17.5]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.5

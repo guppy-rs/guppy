@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.9.32] - 2024-10-02
+
+### Fixed
+
+- Fixed a case of dependency matching with renamed packages ([#317]).
+
+[#317]: https://github.com/guppy-rs/guppy/pull/317
+
 ## [0.9.31] - 2024-09-11
 
 ### Changed
@@ -306,6 +314,7 @@ This was tagged, but never released due to
 
 Initial release.
 
+[0.9.32]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.32
 [0.9.31]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.31
 [0.9.30]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.30
 [0.9.29]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.29
