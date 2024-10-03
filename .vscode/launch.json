@@ -1,0 +1,34 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug guppy against workspace",
+            "cargo": {
+                "args": [
+                    "build",
+                    "-p",
+                    "cargo-guppy",
+                ],
+                "filter": {
+                    "name": "cargo-guppy",
+                    "kind": "bin"
+                }
+            },
+            "args": ["cycles", "--manifest-path", "${input:workspaceDir}/Cargo.toml"],
+            "cwd": "${workspaceFolder}"
+        },
+    ],
+    "inputs": [
+        {
+            "id": "workspaceDir",
+            "description": "Workspace directory",
+            "default": "${workspaceFolder}",
+            "type": "promptString"
+        },
+    ]
+}
