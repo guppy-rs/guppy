@@ -1,0 +1,136 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Configuration for `cargo hakari`."><title>cargo_hakari::config - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-6d8951b3ccd3cbca.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="cargo_hakari" data-themes="" data-resource-suffix="" data-rustdoc-version="1.83.0-nightly (9096f4faf 2024-10-05)" data-channel="nightly" data-search-js="search-e056c65ede92db13.js" data-settings-js="settings-805db61a62df4bd2.js" ><script src="../../static.files/storage-1d39b6787ed640ff.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../static.files/main-f070b9041d14864c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-0111fcff984fae8f.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../cargo_hakari/index.html">cargo_<wbr>hakari</a><span class="version">0.9.33</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Module config</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#configuration-file-location" title="Configuration file location">Configuration file location</a></li><li><a href="#common-options" title="Common options">Common options</a><ul><li><a href="#hakari-package" title="hakari-package">hakari-package</a></li><li><a href="#resolver" title="resolver">resolver</a></li><li><a href="#dep-format-version" title="dep-format-version">dep-format-version</a></li><li><a href="#workspace-hack-line-style" title="workspace-hack-line-style">workspace-hack-line-style</a></li><li><a href="#platforms" title="platforms">platforms</a></li><li><a href="#traversal-excludes" title="traversal-excludes">traversal-excludes</a></li><li><a href="#final-excludes" title="final-excludes">final-excludes</a></li><li><a href="#registries" title="registries">registries</a></li></ul></li><li><a href="#output-options" title="Output options">Output options</a><ul><li><a href="#exact-versions" title="exact-versions">exact-versions</a></li></ul></li><li><a href="#advanced-options" title="Advanced options">Advanced options</a><ul><li><a href="#unify-target-host" title="unify-target-host">unify-target-host</a></li><li><a href="#output-single-feature" title="output-single-feature">output-single-feature</a></li></ul></li></ul></section><div id="rustdoc-modnav"><h2 class="in-crate"><a href="../index.html">In crate cargo_<wbr>hakari</a></h2></div></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><span class="rustdoc-breadcrumbs"><a href="../index.html">cargo_hakari</a></span><h1>Module <span>config</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../src/cargo_hakari/docs/config.rs.html#4-228">source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Configuration for <code>cargo hakari</code>.</p>
+<h2 id="configuration-file-location"><a class="doc-anchor" href="#configuration-file-location">§</a>Configuration file location</h2>
+<p>The default config path for cargo-hakari versions 0.9.8 or above is <code>.config/hakari.toml</code>,
+relative to the root of the workspace. Previous versions used <code>.guppy/hakari.toml</code>, which
+continues to be supported as a fallback.</p>
+<h2 id="common-options"><a class="doc-anchor" href="#common-options">§</a>Common options</h2><h3 id="hakari-package"><a class="doc-anchor" href="#hakari-package">§</a>hakari-package</h3>
+<p>The name of the hakari-managed crate in the workspace. Must be specified. For example:</p>
+<div class="example-wrap"><pre class="language-toml"><code>hakari-package = &quot;my-workspace-hack&quot;</code></pre></div><h3 id="resolver"><a class="doc-anchor" href="#resolver">§</a>resolver</h3>
+<p>The version of the Cargo feature resolver to use. Version 2 is highly recommended.
+For more, see this <a href="https://blog.rust-lang.org/2021/03/25/Rust-1.51.0.html#cargos-new-feature-resolver">Rust blog post</a>.</p>
+<p>Defaults to “1”, but <code>.config/hakari.toml</code> files created by <code>cargo hakari init</code> set it to “2”.</p>
+<div class="example-wrap"><pre class="language-toml"><code>resolver = &quot;2&quot;</code></pre></div><h3 id="dep-format-version"><a class="doc-anchor" href="#dep-format-version">§</a>dep-format-version</h3>
+<p>The format version to use.</p>
+<p>Possible values:</p>
+<ul>
+<li><em>“1”</em>: <code>workspace-hack = { path = ...}</code> in other <code>Cargo.toml</code> files. (Note the lack of a
+trailing space.)</li>
+<li><em>“2”</em>: <code>workspace-hack = { version = "0.1", path = ... }</code> in other <code>Cargo.toml</code> files. This is
+required for the advanced setup documented in the <a href="../publishing/index.html" title="mod cargo_hakari::publishing">Publishing</a> section.</li>
+<li><em>“3”</em>: Has the following changes:
+<ul>
+<li>Simplifies workspace-hack output by eliding private and other non-root features from its
+<code>Cargo.toml</code>.</li>
+<li>Elides build metadata from version strings in the workspace-hack’s <code>Cargo.toml</code>. (Cargo
+warns if build metadata is added to version strings.)</li>
+</ul>
+</li>
+<li><em>“4”</em>: Fixes dependency name sorting in the workspace-hack’s <code>Cargo.toml</code> to always be
+alphabetical. Previously, dependencies would sometimes not be sorted correctly.</li>
+</ul>
+<p>Defaults to “1”, but</p>
+<ul>
+<li>starting <code>cargo hakari 0.9.8</code>, <code>.config/hakari.toml</code> files created by
+<code>cargo hakari init</code> set it to “2”.</li>
+<li>starting <code>cargo hakari 0.9.18</code>, <code>.config/hakari.toml</code> files created by
+<code>cargo hakari init</code> set it to “3”.</li>
+<li>starting <code>cargo hakari 0.9.22</code>, <code>.config/hakari.toml</code> files created by
+<code>cargo hakari init</code> set it to “4”.</li>
+</ul>
+<p>In general, it is best to be on the latest version.</p>
+<div class="example-wrap"><pre class="language-toml"><code>dep-format-version = &quot;4&quot;</code></pre></div><h3 id="workspace-hack-line-style"><a class="doc-anchor" href="#workspace-hack-line-style">§</a>workspace-hack-line-style</h3>
+<p>Style of <code>workspace-hack</code> lines to output. After changing this, you must run:</p>
+<div class="example-wrap"><pre class="language-sh"><code>cargo hakari remove-deps
+cargo hakari manage-deps</code></pre></div>
+<p>Possible values:</p>
+<ul>
+<li><em>“full”</em>: <code>my-workspace-hack = { version = "0.1", path = ... }</code>.</li>
+<li><em>“version-only”</em>: <code>my-workspace-hack = { version = "0.1" }</code>.</li>
+<li><em>“workspace-dotted”</em>: <code>my-workspace-hack.workspace = true</code>.</li>
+</ul>
+<p>For more about this, see the <a href="../patch_directive/index.html" title="mod cargo_hakari::patch_directive"><code>[patch]</code> directive</a> section.</p>
+<h3 id="platforms"><a class="doc-anchor" href="#platforms">§</a>platforms</h3>
+<p>Platforms to run specific queries on.</p>
+<p>By default, <code>cargo hakari</code> produces the minimal set of features that can be unified across
+all possible platforms. However, in practice, most developers on a codebase use one of a
+few platforms. <code>cargo hakari</code> can run specific queries for a few platforms, producing better
+results for them.</p>
+<p>Defaults to an empty list.</p>
+<div class="example-wrap"><pre class="language-toml"><code>## Unify features on x86_64 Linux, Mac and Windows.
+platforms = [
+     &quot;x86_64-unknown-linux-gnu&quot;,
+     &quot;x86_64-apple-darwin&quot;,
+     &quot;x86_64-pc-windows-msvc&quot;,
+]</code></pre></div><h3 id="traversal-excludes"><a class="doc-anchor" href="#traversal-excludes">§</a>traversal-excludes</h3>
+<p>Crates to exclude while traversing the dependency graph.</p>
+<p>Packages specified in <code>traversal-excludes</code> will be omitted while searching for dependencies.
+These packages will not be included in the final output. Any transitive dependencies of
+these packages will not be included in the final result, unless those dependencies are reachable
+from other crates.</p>
+<p>Workspace crates excluded from traversals will not depend on the workspace-hack crate, and
+<code>cargo hakari manage-deps</code> will <em>remove</em> dependency edges rather than adding them.</p>
+<p>This is generally useful for crates that have mutually exclusive features, and that turn on
+mutually exclusive features in their transitive dependencies.</p>
+<p>Defaults to an empty set.</p>
+<div class="example-wrap"><pre class="language-toml"><code>[traversal-excludes]
+workspace-members = [&quot;my-crate&quot;, &quot;my-other-crate&quot;]
+third-party = [
+    ## Third-party crates accept semver ranges.
+    { name = &quot;mutually-exclusive-crate&quot;, version = &quot;1.0&quot; },
+
+    ## The version specifier can be skipped to include all versions of a crate.
+    ## (Cryptography-related crates often use features to switch on different backends.)
+    { name = &quot;my-cryptography&quot; },
+
+    ## Git and path dependencies can also be specified
+    { name = &quot;git-dependency&quot;, git = &quot;https://github.com/my-org/git-dependency&quot; },
+    { name = &quot;path-dependency&quot;, path = &quot;../my/path/dependency&quot; }
+]</code></pre></div><h3 id="final-excludes"><a class="doc-anchor" href="#final-excludes">§</a>final-excludes</h3>
+<p>Crates to remove at the end of computation.</p>
+<p>Packages specified in <code>final-excludes</code> will be removed from the output at the very end. This
+means that any transitive dependencies of theirs will still be included.</p>
+<p>Workspace crates excluded from the final output will not depend on the workspace-hack crate, and
+<code>cargo hakari manage-deps</code> will <em>remove</em> dependency edges rather than adding them.</p>
+<p>This is generally useful for crates that have mutually exclusive features.</p>
+<p>This accepts configuration in the same format as <code>traversal-excludes</code> above.</p>
+<p>Defaults to an empty set.</p>
+<div class="example-wrap"><pre class="language-toml"><code>[final-excludes]
+workspace-members = [&quot;my-crate&quot;, &quot;your-crate&quot;]
+third-party = [
+    ## The &quot;fail&quot; crate uses the &quot;failpoints&quot; feature to enable random errors at runtime.
+    ## It is a good candidate for exclusion from the final output.
+    { name = &quot;fail&quot; },
+
+    ## Version specifiers and git/path dependencies work similarly to traversal-excludes
+    ## above.
+]</code></pre></div><h3 id="registries"><a class="doc-anchor" href="#registries">§</a>registries</h3>
+<p>Alternate registries,
+<a href="https://doc.rust-lang.org/cargo/reference/registries.html">in the same format</a> as
+<code>.cargo/config.toml</code>.</p>
+<p>This is a temporary workaround until <a href="https://github.com/rust-lang/cargo/issues/9052">Cargo issue #9052</a>
+is resolved.</p>
+<p>Defaults to an empty set.</p>
+<div class="example-wrap"><pre class="language-toml"><code>[registries]
+my-registry = { index = &quot;https://my-intranet:8080/git/index&quot; }</code></pre></div><h2 id="output-options"><a class="doc-anchor" href="#output-options">§</a>Output options</h2><h3 id="exact-versions"><a class="doc-anchor" href="#exact-versions">§</a>exact-versions</h3>
+<p>By default, the workspace-hack crate’s <code>Cargo.toml</code> file will contain a semver range. With
+<code>exact-versions</code> turned on, the exact version currently in use will be output.</p>
+<p>This is most useful for situations where the <code>Cargo.lock</code> file is checked in, and if
+version numbers are kept in sync across <code>Cargo.toml</code> and <code>Cargo.lock</code>. This includes some
+configurations of <a href="https://dependabot.com/">Dependabot</a>.</p>
+<p>Defaults to false.</p>
+<div class="example-wrap"><pre class="language-toml"><code>exact-versions = true</code></pre></div><h2 id="advanced-options"><a class="doc-anchor" href="#advanced-options">§</a>Advanced options</h2><h3 id="unify-target-host"><a class="doc-anchor" href="#unify-target-host">§</a>unify-target-host</h3>
+<p>Controls unification across target and host platforms.</p>
+<p>If the same dependency is built on both the target and host platforms, this option controls
+whether and how they should be unified.</p>
+<p>The possible options are <code>"none"</code>, <code>"auto"</code>, <code>"unify-if-both"</code>, and
+<code>"replicate-target-on-host"</code>. For more about these options, see the documentation for
+<a href="../../hakari/hakari/enum.UnifyTargetHost.html" title="enum hakari::hakari::UnifyTargetHost"><code>UnifyTargetHost</code></a>.</p>
+<p>Defaults to <code>"auto"</code>.</p>
+<div class="example-wrap"><pre class="language-toml"><code>unify-target-host = &quot;replicate-target-on-host&quot;</code></pre></div><h3 id="output-single-feature"><a class="doc-anchor" href="#output-single-feature">§</a>output-single-feature</h3>
+<p>By default, <code>cargo hakari</code> only outputs lines corresponding to third-party dependencies which
+are built with at least two different sets of features. Setting this option to true will
+cause <code>cargo hakari</code> to output lines corresponding to dependencies built with just one set
+of features.</p>
+<p>This is generally not needed but may be useful in some situations.</p>
+<p>Defaults to false.</p>
+<div class="example-wrap"><pre class="language-toml"><code>output-single-feature = true</code></pre></div></div></details></section></div></main></body></html>

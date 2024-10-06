@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["SummaryDiffStatus","SummaryDiffTag"],"struct":["PackageDiff","SummaryDiff","SummaryReport"],"type":["UnchangedInfo"]};
