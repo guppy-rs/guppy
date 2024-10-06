@@ -451,7 +451,7 @@ dependencies = [
 
 [[package]]
 name = "cargo-hakari"
-version = "0.9.32"
+version = "0.9.33"
 dependencies = [
  "camino",
  "cfg-if",
