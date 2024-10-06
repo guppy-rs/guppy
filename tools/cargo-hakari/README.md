@@ -3,8 +3,8 @@
 [![cargo-hakari on crates.io](https://img.shields.io/crates/v/cargo-hakari)](https://crates.io/crates/cargo-hakari) [![Documentation (latest release)](https://docs.rs/cargo-hakari/badge.svg)](https://docs.rs/cargo-hakari/) [![Documentation (main)](https://img.shields.io/badge/docs-main-brightgreen)](https://guppy-rs.github.io/guppy/rustdoc/cargo_hakari/) [![License](https://img.shields.io/badge/license-Apache-green.svg)](../../LICENSE-APACHE) [![License](https://img.shields.io/badge/license-MIT-green.svg)](../../LICENSE-MIT)
 
 `cargo hakari` is a command-line application to manage workspace-hack crates. Use it to speed up
-local `cargo build` and `cargo check` commands by **15-95%**, and cumulatively by **20-25% or
-more**.
+local `cargo build` and `cargo check` commands by up to **100x**, and cumulatively by up to
+**1.7x** or more.
 
 For an explanation of what workspace-hack packages are and how they make your builds faster, see
 the [`about` module](https://docs.rs/cargo-hakari/latest/cargo_hakari/about).
@@ -203,9 +203,8 @@ hakari-package = "workspace-hack"
 # Cargo resolver version in use -- version 2 is highly recommended.
 resolver = "2"
 
-# Format for `workspace-hack = ...` lines in other Cargo.tomls. Version 2 requires cargo-hakari
-# 0.9.8 or above.
-dep-format-version = "2"
+# Format for `workspace-hack = ...` lines in other Cargo.tomls.
+dep-format-version = "4"
 
 # Add triples corresponding to platforms commonly used by developers here.
 # https://doc.rust-lang.org/rustc/platform-support.html

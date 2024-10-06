@@ -84,8 +84,8 @@
 //!   [`rustc-workspace-hack`](https://github.com/rust-lang/rust/blob/0bfc45aa859b94cedeffcbd949f9aaad9f3ac8d8/src/tools/rustc-workspace-hack/Cargo.toml)
 //! * Firefox's
 //!   [`mozilla-central-workspace-hack`](https://hg.mozilla.org/mozilla-central/file/cf6956a5ec8e21896736f96237b1476c9d0aaf45/build/workspace-hack/Cargo.toml)
-//! * Diem's
-//!   [`diem-workspace-hack`](https://github.com/diem/diem/blob/91578fec8d575294b47b3ee7af691fd9dc6eb240/common/workspace-hack/Cargo.toml)
+//! * Oxide's
+//!   [`omicron-workspace-hack`](https://github.com/oxidecomputer/omicron/blob/a8176d58352dedf6e8a90fd97de21ec854ee57d9/workspace-hack/Cargo.toml)
 //!
 //! These packages have historically been maintained by hand, on a best-effort basis.
 //!
@@ -109,8 +109,8 @@
 //!
 //! * `cargo hakari` constructs a `workspace-hack` package with the union of the feature sets for
 //!   each dependency.
-//! * `cargo hakari` can also add lines to the `Cargo.toml` files of all workspace crates, to
-//!   ensure that the `workspace-hack` package is always included.
+//! * `cargo hakari` can also add lines to the `Cargo.toml` files of all workspace crates, to ensure
+//!   that the `workspace-hack` package is always included.
 //!
 //! For more details about the algorithm, see the documentation for the [`hakari`] library.
 //!
@@ -120,70 +120,31 @@
 //! benefit grows super-linearly with the size of the workspace and the number of crates in it.
 //!
 //! On moderately large workspaces with several hundred third-party dependencies, a cumulative
-//! performance benefit of 20-25% has been seen. Individual commands can be anywhere from 10% to
-//! 95+% faster. `cargo check` often benefits more than `cargo build` because expensive linker
-//! invocations aren't a factor.
+//! performance benefit of up to **1.7x** has been seen. Individual commands can be anywhere from
+//! **1.1x** to **100x** faster. `cargo check` often benefits more than `cargo build` because
+//! expensive linker invocations aren't a factor.
 //!
-//! ## Performance metrics
+//! ## Benchmarks
 //!
-//! All measurements were taken on the following system:
+//! For a moderately large workspace, here's a chart of cumulative build times across a range of
+//! `cargo build` commands, with and without hakari:
 //!
-//! * **Processor:** AMD Ryzen 9 3900X processor (12 cores, 24 threads)
-//! * **Memory:** 64GB
-//! * **Operating system:** [Pop!_OS 21.04](https://pop.system76.com/), running Linux kernel 5.13
-//! * **Filesystem:** btrfs
+//! ![](https://raw.githubusercontent.com/guppy-rs/hakari-on-omicron-perf/refs/heads/main/cumulative.png)
 //!
-//! ---
+//! The orange line ("Without Hakari") is the default experience provided by Cargo, while the blue
+//! line ("With Hakari") is the default experience with `cargo hakari` enabled. The green line
+//! ("Hakari without target-host unification") is an advanced option: see
+//! [`UnifyTargetHost`](hakari::UnifyTargetHost) for more.
 //!
-//! On the [Diem repository](https://github.com/diem/diem/), at revision 6fa1c8c0, with the
-//! following `cargo build` commands in sequence:
-//!
-//! | Command                               | Before (s) | After (s) | Change   | Notes                                        |
-//! |---------------------------------------|-----------:|----------:|---------:|----------------------------------------------|
-//! | `-p move-lang`                        | 35.56      | 53.06     | 49.21%   | First command has to build more dependencies |
-//! | `-p move-lang --all-targets`          | 46.64      | 25.45     | -45.44%  |                                              |
-//! | `-p move-vm-types`                    | 10.56      | 0.29      | -97.24%  | This didn't have to build anything           |
-//! | `-p network`                          | 19.16      | 14.10     | -26.42%  |                                              |
-//! | `-p network --all-features`           | 21.59      | 18.20     | -15.70%  |                                              |
-//! | `-p storage-interface`                | 7.04       | 2.97      | -57.83%  |                                              |
-//! | `-p storage-interface --all-features` | 12.78      | 1.15      | -91.03%  |                                              |
-//! | `-p diem-node`                        | 102.32     | 84.65     | -17.27%  | This command built a large C++ dependency    |
-//! | `-p backup-cli`                       | 52.47      | 33.26     | -36.61%  | Linked several binaries                      |
-//! | **Total**                             | 308.12     | 233.12    | -24.34%  |                                              |
-//!
-//! With the following `cargo check` commands in sequence:
-//!
-//! | Command                               | Before (s) | After (s) | Change  | Notes                                         |
-//! |---------------------------------------|-----------:|----------:|--------:|-----------------------------------------------|
-//! | `-p move-lang`                        | 16.04      | 36.55     | 127.83% | First command has to build more dependencies  |
-//! | `-p move-lang --all-targets`          | 26.73      | 13.22     | -50.56% |                                               |
-//! | `-p move-vm-types`                    | 9.41       | 0.29      | -96.91% | This didn't have to build anything            |
-//! | `-p network`                          | 12.41      | 9.43      | -24.01% |                                               |
-//! | `-p network --all-features`           | 15.12      | 11.54     | -23.69% |                                               |
-//! | `-p storage-interface`                | 5.33       | 1.65      | -68.98% |                                               |
-//! | `-p storage-interface --all-features` | 8.22       | 1.02      | -87.59% |                                               |
-//! | `-p diem-node`                        | 56.60      | 51.29     | -9.38%  | This command built two large C++ dependencies |
-//! | `-p backup-cli`                       | 13.57      | 5.51      | -59.40% |                                               |
-//! | **Total**                             | 163.44     | 130.50    | -20.15% |                                               |//!
-//!
-//! On the much smaller [cargo-guppy repository](https://github.com/guppy-rs/guppy), at revision
-//! 65e8c8d7, with the following `cargo build` commands in sequence:
-//!
-//! | Command                    | Before (s) | After (s) | Change  | Notes                                        |
-//! |----------------------------|-----------:|----------:|--------:|----------------------------------------------|
-//! | `-p guppy`                 | 11.77      | 13.48     | 14.53%  | First command has to build more dependencies |
-//! | `-p guppy --all-features`  | 9.83       | 9.72      | -1.12%  |                                              |
-//! | `-p hakari`                | 6.03       | 3.75      | -37.94% |                                              |
-//! | `-p hakari --all-features` | 10.78      | 10.28     | -4.68%  |                                              |
-//! | `-p determinator`          | 4.60       | 3.90      | -15.22% |                                              |
-//! | `-p cargo-hakari`          | 17.72      | 7.22      | -59.26% |                                              |
-//! | **Total**                  | 60.73      | 48.34     | -20.41% |                                              |
+//! For more information including the raw data, see [this
+//! repository](https://github.com/guppy-rs/hakari-on-omicron-perf).
 //!
 //! # Drawbacks
 //!
-//! * The first build in a workspace will take longer because more dependencies have to be cached.
+//! * The first build in a workspace might take longer because more dependencies have to be cached.
 //!   - This also applies to builds performed after `cargo clean`, or after Rust version upgrades.
-//!   - However, this usually pays off over time.
+//!   - However, in some cases the first build has been observed to be faster.
+//!   - In any case, the first build is a relatively small part of overall interactive build times.
 //! * Some crates may accidentally start skipping features they really need, because the
 //!   workspace-hack turns those features on for them.
 //!   - This is not a major issue for repositories that don't release crates to `crates.io`.
