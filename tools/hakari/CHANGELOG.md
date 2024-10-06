@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.17.5] - 2024-10-06
+
+### Fixed
+
+`cargo hakari init` now sets `edition = "2021"` in the created workspace-hack's `Cargo.toml`. This
+silences a Cargo warning about a missing edition.
+
 ## [0.17.4] - 2024-09-11
 
 ### Changed
@@ -344,6 +351,7 @@ Internal updates for `cargo-hakari 0.9.8`.
 
 Initial release.
 
+[0.17.5]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.17.5
 [0.17.4]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.17.4
 [0.17.3]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.17.3
 [0.17.2]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.17.2
