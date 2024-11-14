@@ -399,15 +399,21 @@ impl<'a> GraphBuildState<'a> {
         id: &PackageId,
         manifest_path: &Utf8Path,
     ) -> Result<Box<Utf8Path>, Box<Error>> {
-        // Strip off the workspace path from the manifest path.
-        let workspace_path = manifest_path
-            .strip_prefix(self.workspace_root)
-            .map_err(|_| {
-                Error::PackageGraphConstructError(format!(
-                    "workspace member '{}' at path {} not in workspace (root: {})",
-                    id, manifest_path, self.workspace_root
-                ))
-            })?;
+        // Try to strip off the workspace path from the manifest path.
+        let path_buf : Utf8PathBuf;
+        let workspace_path;
+        if let Ok(stripped_workspace_path) = manifest_path
+            .strip_prefix(self.workspace_root) {
+            workspace_path = stripped_workspace_path;
+        } else {
+            // Error::PackageGraphConstructError(format!(
+            //     "workspace member '{}' at path {} not in workspace (root: {})",
+            //     id, manifest_path, self.workspace_root
+            // ));
+            // If manifest path is out of workspace root, try find relative path instead
+            path_buf = crate::graph::build_path_out_of_root_helper::find_relative_path_utf8(self.workspace_root, manifest_path);
+            workspace_path = path_buf.as_path();
+        }
         let workspace_path = workspace_path.parent().ok_or_else(|| {
             Error::PackageGraphConstructError(format!(
                 "workspace member '{}' has invalid manifest path {:?}",

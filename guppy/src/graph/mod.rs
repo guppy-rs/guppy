@@ -11,6 +11,7 @@ use petgraph::prelude::*;
 use std::fmt;
 
 mod build;
+mod build_path_out_of_root_helper;
 mod build_targets;
 pub mod cargo;
 mod cycles;
