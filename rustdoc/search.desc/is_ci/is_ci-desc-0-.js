@@ -1,0 +1,1 @@
+searchState.loadedDescShard("is_ci", 0, "Returns true if the current environment is found to …\nReturns true if the current environment is found to …\nReturns true if the current environment is found to …")

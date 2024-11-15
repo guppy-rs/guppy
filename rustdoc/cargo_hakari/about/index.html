@@ -1,0 +1,128 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="About workspace-hack crates, how `cargo hakari` manages them, and how much faster they make builds."><title>cargo_hakari::about - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-42caa33d.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="cargo_hakari" data-themes="" data-resource-suffix="" data-rustdoc-version="1.84.0-nightly (90ab8eaed 2024-11-14)" data-channel="nightly" data-search-js="search-6851d9ab.js" data-settings-js="settings-0f613d39.js" ><script src="../../static.files/storage-59e33391.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../cargo_hakari/index.html">cargo_<wbr>hakari</a><span class="version">0.9.33</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Module about</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#what-are-workspace-hack-crates" title="What are workspace-hack crates?">What are workspace-hack crates?</a></li><li><a href="#what-can-hakari-do" title="What can hakari do?">What can hakari do?</a></li><li><a href="#how-does-hakari-work" title="How does hakari work?">How does hakari work?</a></li><li><a href="#how-much-faster-do-builds-get" title="How much faster do builds get?">How much faster do builds get?</a><ul><li><a href="#benchmarks" title="Benchmarks">Benchmarks</a></li></ul></li><li><a href="#drawbacks" title="Drawbacks">Drawbacks</a></li></ul></section><div id="rustdoc-modnav"><h2 class="in-crate"><a href="../index.html">In crate cargo_<wbr>hakari</a></h2></div></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><span class="rustdoc-breadcrumbs"><a href="../index.html">cargo_hakari</a></span><h1>Module <span>about</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../src/cargo_hakari/docs/about.rs.html#4-158">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>About workspace-hack crates, how <code>cargo hakari</code> manages them, and how much faster they make
+builds.</p>
+<h2 id="what-are-workspace-hack-crates"><a class="doc-anchor" href="#what-are-workspace-hack-crates">§</a>What are workspace-hack crates?</h2>
+<p>Let’s say you have a Rust crate <code>my-crate</code> with two dependencies:</p>
+<div class="example-wrap"><pre class="language-toml"><code># my-crate/Cargo.toml
+[dependencies]
+foo = &quot;1.0&quot;
+bar = &quot;2.0&quot;</code></pre></div>
+<p>Let’s say that <code>foo</code> and <code>bar</code> both depend on <code>baz</code>:</p>
+<div class="example-wrap"><pre class="language-toml"><code># foo-1.0/Cargo.toml
+[dependencies]
+baz = { version = &quot;1&quot;, features = [&quot;a&quot;, &quot;b&quot;] }
+
+# bar-2.0/Cargo.toml
+[dependencies]
+baz = { version = &quot;1&quot;, features = [&quot;b&quot;, &quot;c&quot;] }</code></pre></div>
+<p>What features is <code>baz</code> built with?</p>
+<p>One way to resolve this question might be to build <code>baz</code> twice with each requested set of
+features. But this is likely to cause a combinatorial explosion of crates to build, so Cargo
+doesn’t do that. Instead, <a href="https://doc.rust-lang.org/nightly/cargo/reference/features.html?highlight=feature#feature-unification">Cargo builds <code>baz</code>
+once</a>
+with the <em>union</em> of the features enabled for the package: <code>[a, b, c]</code>.</p>
+<hr />
+<p><strong>NOTE:</strong> This description elides some details around unifying build and dev-dependencies: for
+more about this, see the documentation for guppy’s
+<a href="../../guppy/graph/cargo/cargo_api/enum.CargoResolverVersion.html" title="enum guppy::graph::cargo::cargo_api::CargoResolverVersion"><code>CargoResolverVersion</code></a>.</p>
+<hr />
+<p>Now let’s say you’re in a workspace, with a second crate <code>your-crate</code>:</p>
+<div class="example-wrap"><pre class="language-toml"><code># your-crate/Cargo.toml
+[dependencies]
+baz = { version = &quot;1&quot;, features = [&quot;c&quot;, &quot;d&quot;] }</code></pre></div>
+<p>In this situation:</p>
+<div><table><thead><tr><th>if you build</th><th><code>baz</code> is built with</th></tr></thead><tbody>
+<tr><td>just <code>my-crate</code></td><td><code>a, b, c</code></td></tr>
+<tr><td>just <code>your-crate</code></td><td><code>c, d</code></td></tr>
+<tr><td><code>my-crate</code> and <code>your-crate</code> at the same time</td><td><code>a, b, c, d</code></td></tr>
+</tbody></table>
+</div>
+<p>Even in this simplified scenario, there are three separate ways to build <code>baz</code>. For a dependency
+like <a href="https://crates.io/crates/syn"><code>syn</code></a> that has <a href="https://github.com/dtolnay/syn#optional-features">many optional
+features</a>, large workspaces end up with a very
+large number of possible build configurations.</p>
+<p>Even worse, the feature set of a package affects everything that depends on it, so <code>syn</code> being
+built with a slightly different feature set than before would cause *every package that directly
+or transitively depends on <code>syn</code> to be rebuilt. For large workspaces, this can result a lot of
+wasted build time.</p>
+<hr />
+<p>To avoid this problem, many large workspaces contain a <code>workspace-hack</code> crate. The purpose of
+this package is to ensure that dependencies like <code>syn</code> are always built with the same feature
+set no matter which workspace packages are currently being built. This is done by:</p>
+<ol>
+<li>adding dependencies like <code>syn</code> to <code>workspace-hack</code> with the full feature set required by any
+package in the workspace</li>
+<li>adding <code>workspace-hack</code> as a dependency of every crate in the repository.</li>
+</ol>
+<p>Some examples of <code>workspace-hack</code> packages:</p>
+<ul>
+<li>Rust’s
+<a href="https://github.com/rust-lang/rust/blob/0bfc45aa859b94cedeffcbd949f9aaad9f3ac8d8/src/tools/rustc-workspace-hack/Cargo.toml"><code>rustc-workspace-hack</code></a></li>
+<li>Firefox’s
+<a href="https://hg.mozilla.org/mozilla-central/file/cf6956a5ec8e21896736f96237b1476c9d0aaf45/build/workspace-hack/Cargo.toml"><code>mozilla-central-workspace-hack</code></a></li>
+<li>Oxide’s
+<a href="https://github.com/oxidecomputer/omicron/blob/a8176d58352dedf6e8a90fd97de21ec854ee57d9/workspace-hack/Cargo.toml"><code>omicron-workspace-hack</code></a></li>
+</ul>
+<p>These packages have historically been maintained by hand, on a best-effort basis.</p>
+<h2 id="what-can-hakari-do"><a class="doc-anchor" href="#what-can-hakari-do">§</a>What can hakari do?</h2>
+<p>Maintaining workspace-hack packages manually can result in:</p>
+<ul>
+<li>Missing crates</li>
+<li>Missing feature lists for crates</li>
+<li>Outdated feature lists for crates</li>
+</ul>
+<p>All of these can result in longer than optimal build times.</p>
+<p><code>cargo hakari</code> can automate the maintenance of these packages, greatly reducing the amount of
+time and effort it takes to maintain these packages.</p>
+<h2 id="how-does-hakari-work"><a class="doc-anchor" href="#how-does-hakari-work">§</a>How does hakari work?</h2>
+<p><code>cargo hakari</code> uses <a href="../../guppy/index.html" title="mod guppy">guppy</a>’s Cargo build simulations to determine the full set of features that
+can be built for each package. It then looks for dependencies that are built in more than one
+way. With this information:</p>
+<ul>
+<li><code>cargo hakari</code> constructs a <code>workspace-hack</code> package with the union of the feature sets for
+each dependency.</li>
+<li><code>cargo hakari</code> can also add lines to the <code>Cargo.toml</code> files of all workspace crates, to ensure
+that the <code>workspace-hack</code> package is always included.</li>
+</ul>
+<p>For more details about the algorithm, see the documentation for the <a href="../../hakari/index.html" title="mod hakari"><code>hakari</code></a> library.</p>
+<h2 id="how-much-faster-do-builds-get"><a class="doc-anchor" href="#how-much-faster-do-builds-get">§</a>How much faster do builds get?</h2>
+<p>The amount to which builds get faster depends on the size of the repository. In general, the
+benefit grows super-linearly with the size of the workspace and the number of crates in it.</p>
+<p>On moderately large workspaces with several hundred third-party dependencies, a cumulative
+performance benefit of up to <strong>1.7x</strong> has been seen. Individual commands can be anywhere from
+<strong>1.1x</strong> to <strong>100x</strong> faster. <code>cargo check</code> often benefits more than <code>cargo build</code> because
+expensive linker invocations aren’t a factor.</p>
+<h3 id="benchmarks"><a class="doc-anchor" href="#benchmarks">§</a>Benchmarks</h3>
+<p>For a moderately large workspace, here’s a chart of cumulative build times across a range of
+<code>cargo build</code> commands, with and without hakari:</p>
+<p><img src="https://raw.githubusercontent.com/guppy-rs/hakari-on-omicron-perf/refs/heads/main/cumulative.png" alt="" /></p>
+<p>The orange line (“Without Hakari”) is the default experience provided by Cargo, while the blue
+line (“With Hakari”) is the default experience with <code>cargo hakari</code> enabled. The green line
+(“Hakari without target-host unification”) is an advanced option: see
+<a href="../../hakari/hakari/enum.UnifyTargetHost.html" title="enum hakari::hakari::UnifyTargetHost"><code>UnifyTargetHost</code></a> for more.</p>
+<p>For more information including the raw data, see <a href="https://github.com/guppy-rs/hakari-on-omicron-perf">this
+repository</a>.</p>
+<h2 id="drawbacks"><a class="doc-anchor" href="#drawbacks">§</a>Drawbacks</h2>
+<ul>
+<li>The first build in a workspace might take longer because more dependencies have to be cached.
+<ul>
+<li>This also applies to builds performed after <code>cargo clean</code>, or after Rust version upgrades.</li>
+<li>However, in some cases the first build has been observed to be faster.</li>
+<li>In any case, the first build is a relatively small part of overall interactive build times.</li>
+</ul>
+</li>
+<li>Some crates may accidentally start skipping features they really need, because the
+workspace-hack turns those features on for them.
+<ul>
+<li>This is not a major issue for repositories that don’t release crates to <code>crates.io</code>.</li>
+<li>It can also be caught at publish time, or with a periodic CI job that does a build after
+running <code>cargo hakari disable</code>.</li>
+</ul>
+</li>
+<li>Publishing crates to a registry becomes more complex: see the <a href="../publishing/index.html" title="mod cargo_hakari::publishing">publishing
+section</a> for more about this.</li>
+<li>Downstream users that import your crate directly from your repository, rather than from the
+registry, are going to import dependencies from the checked in workspace-hack. This can be
+avoided by following the instructions in the <a href="../patch_directive/index.html" title="mod cargo_hakari::patch_directive"><code>[patch]</code> directive
+section</a>.</li>
+</ul>
+</div></details></section></div></main></body></html>

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Err","Needed"],"macro":["error_node_position","error_position"],"mod":["bits","branch","bytes","character","combinator","error","input","lib","multi","number","prelude","sequence"],"trait":["FinishIResult","IntoOutputIResult","Parser"],"type":["IResult"]};

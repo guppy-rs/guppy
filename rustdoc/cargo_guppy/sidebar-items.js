@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["BuildKind","Kind"],"fn":["cmd_cycles","cmd_diff","cmd_dups","cmd_resolve_cargo","cmd_select","cmd_subtree_size"],"struct":["BaseFilterOptions","CmdSelectOptions","DiffSummariesOptions","DupsOptions","FilterOptions","MvOptions","QueryOptions","ResolveCargoOptions","SubtreeSizeOptions"]};

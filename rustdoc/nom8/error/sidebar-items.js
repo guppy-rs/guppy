@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ErrorKind","VerboseErrorKind"],"fn":["append_error","context","convert_error","dbg_dmp","make_error"],"struct":["Context","DbgErr","Error","VerboseError"],"trait":["ContextError","FromExternalError","ParseError"]};

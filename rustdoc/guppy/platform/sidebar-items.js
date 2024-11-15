@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["EnabledTernary","PlatformSpec","PlatformSpecSummary","PlatformStatus","TargetFeatures","TargetFeaturesSummary"],"struct":["Platform","PlatformEval","PlatformSummary","Triple"]};

@@ -1,0 +1,1 @@
+searchState.loadedDescShard("structopt_derive", 0, "This crate is custom derive for <code>StructOpt</code>. It should not …\nGenerates the <code>StructOpt</code> impl.")

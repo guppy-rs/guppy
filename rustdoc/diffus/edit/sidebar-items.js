@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Edit"],"mod":["collection","enm","map","set","string"]};
