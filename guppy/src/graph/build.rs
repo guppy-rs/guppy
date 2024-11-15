@@ -141,7 +141,7 @@ impl WorkspaceImpl {
     }
 }
 
-/// DEBUG_PRINT struct for building up dependency graph.
+/// Helper struct for building up dependency graph.
 struct GraphBuildState<'a> {
     dep_graph: Graph<PackageId, PackageLinkImpl, Directed, PackageIx>,
     package_data: AHashMap<PackageId, Rc<PackageDataValue>>,
@@ -400,7 +400,7 @@ impl<'a> GraphBuildState<'a> {
         manifest_path: &Utf8Path,
     ) -> Result<Box<Utf8Path>, Box<Error>> {
         // Try to strip off the workspace path from the manifest path.
-        let _utf8_path_buf: Utf8PathBuf; // relative path lifetime DEBUG_PRINT
+        let _utf8_path_buf; // relative path lifetime helper
         let workspace_path = if let Ok(stripped_workspace_path) =
             manifest_path.strip_prefix(self.workspace_root)
         {
