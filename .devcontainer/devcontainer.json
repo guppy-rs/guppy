@@ -1,0 +1,16 @@
+{
+	"image": "mcr.microsoft.com/devcontainers/universal:2",
+	"features": {
+		"ghcr.io/devcontainers/features/rust:1": {
+			"version": "latest",
+			"profile": "complete",
+			"targets": "x86_64-unknown-redox,x86_64-unknown-uefi"
+		},
+		"ghcr.io/devcontainers-extra/features/nim-asdf:2": {
+			"version": "latest"
+		},
+		"ghcr.io/devcontainers-extra/features/zig:1": {
+			"version": "latest"
+		}
+	}
+}
