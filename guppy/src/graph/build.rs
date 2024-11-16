@@ -392,28 +392,19 @@ impl<'a> GraphBuildState<'a> {
         Ok((package_data, build_targets))
     }
 
-    /// Computes the workspace path for this package. Errors if this package is not in the
-    /// workspace.
+    /// Computes the relative path from workspace root to this package, which might be out of root sub tree.
     fn workspace_path(
         &self,
         id: &PackageId,
         manifest_path: &Utf8Path,
     ) -> Result<Box<Utf8Path>, Box<Error>> {
-        // Try to strip off the workspace path from the manifest path.
-        let _utf8_path_buf; // relative path lifetime helper
-        let workspace_path = if let Ok(stripped_workspace_path) =
-            manifest_path.strip_prefix(self.workspace_root)
-        {
-            stripped_workspace_path
-        } else {
-            // Error::PackageGraphConstructError(format!(
-            //     "workspace member '{}' at path {} not in workspace (root: {})",
-            //     id, manifest_path, self.workspace_root
-            // ));
-            // If manifest path is out of workspace root, try find relative path instead
-            _utf8_path_buf = find_relative_path_utf8(self.workspace_root, manifest_path);
-            _utf8_path_buf.as_path()
-        };
+        // Get relative path from workspace root to manifest path.
+        let workspace_path = pathdiff::diff_utf8_paths(manifest_path, self.workspace_root).ok_or_else(|| {
+            Error::PackageGraphConstructError(format!(
+                "failed to find relative path from workspace (root: {}) to member '{}' at path {}",
+                self.workspace_root, id, manifest_path 
+            ))
+        })?;
         let workspace_path = workspace_path.parent().ok_or_else(|| {
             Error::PackageGraphConstructError(format!(
                 "workspace member '{}' has invalid manifest path {:?}",
@@ -993,11 +984,6 @@ impl PackagePublishImpl {
 #[track_caller]
 fn convert_forward_slashes<'a>(rel_path: impl Into<Cow<'a, Utf8Path>>) -> Utf8PathBuf {
     let rel_path = rel_path.into();
-    debug_assert!(
-        rel_path.is_relative(),
-        "path {} should be relative",
-        rel_path,
-    );
 
     cfg_if::cfg_if! {
         if #[cfg(windows)] {
@@ -1006,42 +992,6 @@ fn convert_forward_slashes<'a>(rel_path: impl Into<Cow<'a, Utf8Path>>) -> Utf8Pa
             rel_path.into_owned()
         }
     }
-}
-
-// Calculate the relative path from `from` to `to`.
-// This function finds the relative path between two given paths.
-// It first identifies the common prefix between the two paths and then
-// constructs the relative path by adding ".." for each remaining component
-// in the `from` path and appending the remaining components from the `to` path.
-#[track_caller]
-pub fn find_relative_path_utf8(from: &Utf8Path, to: &Utf8Path) -> Utf8PathBuf {
-    let from_path = from;
-    let to_path = to;
-
-    let mut from_components = from_path.components();
-    let mut to_components = to_path.components();
-
-    // Initialize an empty Utf8PathBuf to store the relative path
-    let mut relative_path = Utf8PathBuf::new();
-
-    // Iterate through the components of both paths to find the common prefix
-    while let (Some(f), Some(t)) = (from_components.next(), to_components.next()) {
-        if f != t {
-            // If the components differ, add ".." for each remaining component in the `from` path
-            relative_path.push("..");
-            let from_remaining = from_components.as_path();
-            for _ in from_remaining.components() {
-                relative_path.push("..");
-            }
-            // Add the current component from the `to` path
-            relative_path.push(t);
-            break;
-        }
-    }
-
-    // Append the remaining components from the `to` path
-    relative_path.extend(to_components.as_path().components());
-    relative_path
 }
 
 #[cfg(test)]
@@ -1104,17 +1054,48 @@ mod tests {
         assert_eq!(path.as_str(), "../../foo/bar/baz.txt");
     }
 
-    #[test]
-    fn test_workspace_path_out_of_pocket() {
-        let path_workspace_root = "/workspace/a/b/.cargo/workspace";
-        let path_manifest = "/workspace/a/b/Crate/Cargo.toml";
+    mod for_nextest_issue_1684 {
+        use super::convert_forward_slashes;
+        use crate::graph::build::Utf8Path;
+        #[track_caller]
+        fn verify_result_of_diff_utf8_paths(path_manifest: &str, path_workspace_root: &str, expected_relative_path: &str) {
+            let relative_path = pathdiff::diff_utf8_paths(
+                Utf8Path::new(path_manifest),
+                Utf8Path::new(path_workspace_root),
+            ).unwrap();
+            assert_eq!(convert_forward_slashes(relative_path), expected_relative_path);
+        }
 
-        let expected_relative_path = r"../../Crate/Cargo.toml";
+        #[test]
+        fn test_nextest_issue_1684_workspace_path_out_of_pocket() {
+            verify_result_of_diff_utf8_paths(
+                "/workspace/a/b/Crate/Cargo.toml",
+                "/workspace/a/b/.cargo/workspace",
+                r"../../Crate/Cargo.toml"
+            );
+        }
 
-        let relative_path = find_relative_path_utf8(
-            Utf8Path::new(path_workspace_root),
-            Utf8Path::new(path_manifest),
-        );
-        assert_eq!(convert_forward_slashes(relative_path), expected_relative_path);
+        cfg_if::cfg_if! {
+            if #[cfg(windows)] {
+                // These cases can only pass on Windows platform
+                #[test]
+                fn test_nextest_issue_1684_workspace_path_out_of_pocket_on_windows_same_driver() {
+                    verify_result_of_diff_utf8_paths(
+                        r"C:\workspace\a\b\Crate\Cargo.toml",
+                        r"C:\workspace\a\b\.cargo\workspace",
+                        r"../../Crate/Cargo.toml"
+                    );
+                }
+
+                #[test]
+                fn test_nextest_issue_1684_workspace_path_out_of_pocket_on_windows_different_driver() {
+                    verify_result_of_diff_utf8_paths(
+                        r"D:\workspace\a\b\Crate\Cargo.toml",
+                        r"C:\workspace\a\b\.cargo\workspace",
+                        r"D:/workspace/a/b/Crate/Cargo.toml"
+                    );
+                }
+            }
+        }
     }
 }
