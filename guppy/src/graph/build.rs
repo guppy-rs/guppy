@@ -399,15 +399,13 @@ impl<'a> GraphBuildState<'a> {
         id: &PackageId,
         manifest_path: &Utf8Path,
     ) -> Result<Box<Utf8Path>, Box<Error>> {
-        // Strip off the workspace path from the manifest path.
-        let workspace_path = manifest_path
-            .strip_prefix(self.workspace_root)
-            .map_err(|_| {
-                Error::PackageGraphConstructError(format!(
-                    "workspace member '{}' at path {} not in workspace (root: {})",
-                    id, manifest_path, self.workspace_root
-                ))
-            })?;
+        // Get relative path from workspace root to manifest path.
+        let workspace_path = pathdiff::diff_utf8_paths(manifest_path, self.workspace_root).ok_or_else(|| {
+            Error::PackageGraphConstructError(format!(
+                "failed to find relative path from workspace (root: {}) to member '{}' at path {}",
+                self.workspace_root, id, manifest_path 
+            ))
+        })?;
         let workspace_path = workspace_path.parent().ok_or_else(|| {
             Error::PackageGraphConstructError(format!(
                 "workspace member '{}' has invalid manifest path {:?}",
@@ -987,11 +985,6 @@ impl PackagePublishImpl {
 #[track_caller]
 fn convert_forward_slashes<'a>(rel_path: impl Into<Cow<'a, Utf8Path>>) -> Utf8PathBuf {
     let rel_path = rel_path.into();
-    debug_assert!(
-        rel_path.is_relative(),
-        "path {} should be relative",
-        rel_path,
-    );
 
     cfg_if::cfg_if! {
         if #[cfg(windows)] {
@@ -1060,5 +1053,57 @@ mod tests {
         let path = convert_forward_slashes(path);
         // This should have forward slashes, even on Windows.
         assert_eq!(path.as_str(), "../../foo/bar/baz.txt");
+    }
+
+    mod for_nextest_issue_1684 {
+        use super::convert_forward_slashes;
+        use crate::graph::build::Utf8Path;
+
+        #[test]
+        fn test_nextest_issue_1684_workspace_path_out_of_pocket() {
+            let path_workspace_root = "/workspace/a/b/.cargo/workspace";
+            let path_manifest = "/workspace/a/b/Crate/Cargo.toml";
+
+            let expected_relative_path = r"../../Crate/Cargo.toml";
+
+            let relative_path = pathdiff::diff_utf8_paths(
+                Utf8Path::new(path_manifest),
+                Utf8Path::new(path_workspace_root),
+            ).unwrap();
+            assert_eq!(convert_forward_slashes(relative_path), expected_relative_path);
+        }
+
+        cfg_if::cfg_if! {
+            if #[cfg(windows)] {
+                // These cases can only pass on Windows platform
+                #[test]
+                fn test_nextest_issue_1684_workspace_path_out_of_pocket_on_windows_same_driver() {
+                    let path_workspace_root = r"C:\workspace\a\b\.cargo\workspace";
+                    let path_manifest = r"C:\workspace\a\b\Crate\Cargo.toml";
+
+                    let expected_relative_path = r"../../Crate/Cargo.toml";
+
+                    let relative_path = pathdiff::diff_utf8_paths(
+                        Utf8Path::new(path_manifest),
+                        Utf8Path::new(path_workspace_root),
+                    ).unwrap();
+                    assert_eq!(convert_forward_slashes(relative_path), expected_relative_path);
+                }
+
+                #[test]
+                fn test_nextest_issue_1684_workspace_path_out_of_pocket_on_windows_different_driver() {
+                    let path_workspace_root = r"C:\workspace\a\b\.cargo\workspace";
+                    let path_manifest = r"D:\workspace\a\b\Crate\Cargo.toml";
+        
+                    let expected_relative_path = r"D:/workspace/a/b/Crate/Cargo.toml";
+        
+                    let relative_path = pathdiff::diff_utf8_paths(
+                        Utf8Path::new(path_manifest),
+                        Utf8Path::new(path_workspace_root),
+                    ).unwrap();
+                    assert_eq!(convert_forward_slashes(relative_path), expected_relative_path);
+                }
+            }
+        }
     }
 }
