@@ -19,7 +19,6 @@ use cargo_metadata::{
 use fixedbitset::FixedBitSet;
 use indexmap::{IndexMap, IndexSet};
 use once_cell::sync::OnceCell;
-use pathdiff::diff_utf8_paths;
 use petgraph::prelude::*;
 use semver::{Version, VersionReq};
 use smallvec::SmallVec;
@@ -401,10 +400,7 @@ impl<'a> GraphBuildState<'a> {
         manifest_path: &Utf8Path,
     ) -> Result<Box<Utf8Path>, Box<Error>> {
         // Get relative path from workspace root to manifest path.
-        let workspace_path = (if let Some(relative_path) = diff_utf8_paths(manifest_path, self.workspace_root)
-        {
-            Ok(relative_path)
-        } else {
+        let workspace_path = pathdiff::diff_utf8_paths(manifest_path, self.workspace_root).ok_or_else(|| {
             Error::PackageGraphConstructError(format!(
                 "failed to find relative path from workspace (root: {}) to member '{}' at path {}",
                 self.workspace_root, id, manifest_path 
@@ -995,49 +991,13 @@ fn convert_forward_slashes<'a>(rel_path: impl Into<Cow<'a, Utf8Path>>) -> Utf8Pa
         rel_path,
     );
 
-    cfg_if::cfg_if! {
-        if #[cfg(windows)] {
+    //cfg_if::cfg_if! {
+        //if #[cfg(windows)] {
             rel_path.as_str().replace("\\", "/").into()
-        } else {
-            rel_path.into_owned()
-        }
-    }
-}
-
-// Calculate the relative path from `from` to `to`.
-// This function finds the relative path between two given paths.
-// It first identifies the common prefix between the two paths and then
-// constructs the relative path by adding ".." for each remaining component
-// in the `from` path and appending the remaining components from the `to` path.
-#[track_caller]
-pub fn find_relative_path_utf8(from: &Utf8Path, to: &Utf8Path) -> Utf8PathBuf {
-    let from_path = from;
-    let to_path = to;
-
-    let mut from_components = from_path.components();
-    let mut to_components = to_path.components();
-
-    // Initialize an empty Utf8PathBuf to store the relative path
-    let mut relative_path = Utf8PathBuf::new();
-
-    // Iterate through the components of both paths to find the common prefix
-    while let (Some(f), Some(t)) = (from_components.next(), to_components.next()) {
-        if f != t {
-            // If the components differ, add ".." for each remaining component in the `from` path
-            relative_path.push("..");
-            let from_remaining = from_components.as_path();
-            for _ in from_remaining.components() {
-                relative_path.push("..");
-            }
-            // Add the current component from the `to` path
-            relative_path.push(t);
-            break;
-        }
-    }
-
-    // Append the remaining components from the `to` path
-    relative_path.extend(to_components.as_path().components());
-    relative_path
+        //} else {
+        //    rel_path.into_owned()
+        //}
+    //}
 }
 
 #[cfg(test)]
@@ -1100,17 +1060,50 @@ mod tests {
         assert_eq!(path.as_str(), "../../foo/bar/baz.txt");
     }
 
-    #[test]
-    fn test_workspace_path_out_of_pocket() {
-        let path_workspace_root = "/workspace/a/b/.cargo/workspace";
-        let path_manifest = "/workspace/a/b/Crate/Cargo.toml";
+    mod for_nextest_issue_1684 {
+        use super::convert_forward_slashes;
+        use crate::graph::build::Utf8Path;
 
-        let expected_relative_path = r"../../Crate/Cargo.toml";
+        #[test]
+        fn test_nextest_issue_1684_workspace_path_out_of_pocket() {
+            let path_workspace_root = "/workspace/a/b/.cargo/workspace";
+            let path_manifest = "/workspace/a/b/Crate/Cargo.toml";
 
-        let relative_path = find_relative_path_utf8(
-            Utf8Path::new(path_workspace_root),
-            Utf8Path::new(path_manifest),
-        );
-        assert_eq!(convert_forward_slashes(relative_path), expected_relative_path);
+            let expected_relative_path = r"../../Crate/Cargo.toml";
+
+            let relative_path = pathdiff::diff_utf8_paths(
+                Utf8Path::new(path_manifest),
+                Utf8Path::new(path_workspace_root),
+            ).unwrap();
+            assert_eq!(convert_forward_slashes(relative_path), expected_relative_path);
+        }
+
+        #[test]
+        fn test_nextest_issue_1684_workspace_path_out_of_pocket_on_windows_same_driver() {
+            let path_workspace_root = r"C:\workspace\a\b\.cargo\workspace";
+            let path_manifest = r"C:\workspace\a\b\Crate\Cargo.toml";
+
+            let expected_relative_path = r"../../Crate/Cargo.toml";
+
+            let relative_path = pathdiff::diff_utf8_paths(
+                convert_forward_slashes(Utf8Path::new(path_manifest)),
+                convert_forward_slashes(Utf8Path::new(path_workspace_root)),
+            ).unwrap();
+            assert_eq!(convert_forward_slashes(relative_path), expected_relative_path);
+        }
+
+        #[test]
+        fn test_nextest_issue_1684_workspace_path_out_of_pocket_on_windows_different_driver() {
+            let path_workspace_root = r"C:\workspace\a\b\.cargo\workspace";
+            let path_manifest = r"D:\workspace\a\b\Crate\Cargo.toml";
+
+            let expected_relative_path = r"../../../../../../D:/workspace/a/b/Crate/Cargo.toml";
+
+            let relative_path = pathdiff::diff_utf8_paths(
+                convert_forward_slashes(Utf8Path::new(path_manifest)),
+                convert_forward_slashes(Utf8Path::new(path_workspace_root)),
+            ).unwrap();
+            assert_eq!(convert_forward_slashes(relative_path), expected_relative_path);
+        }
     }
 }
