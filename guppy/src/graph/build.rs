@@ -19,6 +19,7 @@ use cargo_metadata::{
 use fixedbitset::FixedBitSet;
 use indexmap::{IndexMap, IndexSet};
 use once_cell::sync::OnceCell;
+use pathdiff::diff_utf8_paths;
 use petgraph::prelude::*;
 use semver::{Version, VersionReq};
 use smallvec::SmallVec;
@@ -399,21 +400,16 @@ impl<'a> GraphBuildState<'a> {
         id: &PackageId,
         manifest_path: &Utf8Path,
     ) -> Result<Box<Utf8Path>, Box<Error>> {
-        // Try to strip off the workspace path from the manifest path.
-        let _utf8_path_buf; // relative path lifetime helper
-        let workspace_path = if let Ok(stripped_workspace_path) =
-            manifest_path.strip_prefix(self.workspace_root)
+        // Get relative path from workspace root to manifest path.
+        let workspace_path = (if let Some(relative_path) = diff_utf8_paths(manifest_path, self.workspace_root)
         {
-            stripped_workspace_path
+            Ok(relative_path)
         } else {
-            // Error::PackageGraphConstructError(format!(
-            //     "workspace member '{}' at path {} not in workspace (root: {})",
-            //     id, manifest_path, self.workspace_root
-            // ));
-            // If manifest path is out of workspace root, try find relative path instead
-            _utf8_path_buf = find_relative_path_utf8(self.workspace_root, manifest_path);
-            _utf8_path_buf.as_path()
-        };
+            Error::PackageGraphConstructError(format!(
+                "failed to find relative path from workspace (root: {}) to member '{}' at path {}",
+                self.workspace_root, id, manifest_path 
+            ))
+        })?;
         let workspace_path = workspace_path.parent().ok_or_else(|| {
             Error::PackageGraphConstructError(format!(
                 "workspace member '{}' has invalid manifest path {:?}",
