@@ -1060,6 +1060,7 @@ mod tests {
         assert_eq!(path.as_str(), "../../foo/bar/baz.txt");
     }
 
+    #[cfg(windows)]
     #[test]
     fn test_convert_relative_forward_slashes_absolute() {
         let components = vec![r"D:\", "X", "..", "foo", "bar", "baz.txt"];
