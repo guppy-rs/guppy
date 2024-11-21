@@ -403,7 +403,7 @@ impl<'a> GraphBuildState<'a> {
             .ok_or_else(|| {
                 Error::PackageGraphConstructError(format!(
                     "failed to find relative path from workspace (root: {}) to member '{}' at path {}",
-                    self.workspace_root, id, manifest_path 
+                    self.workspace_root, id, manifest_path
                 ))
             })?;
         let workspace_path = workspace_path.parent().ok_or_else(|| {
@@ -413,7 +413,7 @@ impl<'a> GraphBuildState<'a> {
             ))
         })?;
         let workspace_path_buf = if workspace_path.is_absolute() {
-            workspace_path.into_path_buf()
+            workspace_path.to_path_buf()
         } else {
             convert_forward_slashes(workspace_path)
         };
@@ -1065,12 +1065,17 @@ mod tests {
     }
 
     #[track_caller]
-    fn verify_result_of_diff_utf8_paths(path_manifest: &str, path_workspace_root: &str, expected_relative_path: &str) {
+    fn verify_result_of_diff_utf8_paths(
+        path_manifest: &str,
+        path_workspace_root: &str,
+        expected_relative_path: &str,
+    ) {
         use crate::graph::build::Utf8Path;
         let relative_path = pathdiff::diff_utf8_paths(
             Utf8Path::new(path_manifest),
             Utf8Path::new(path_workspace_root),
-        ).unwrap();
+        )
+        .unwrap();
         assert_eq!(relative_path, expected_relative_path);
     }
 
@@ -1079,7 +1084,7 @@ mod tests {
         verify_result_of_diff_utf8_paths(
             "/workspace/a/b/Crate/Cargo.toml",
             "/workspace/a/b/.cargo/workspace",
-            r"../../Crate/Cargo.toml"
+            r"../../Crate/Cargo.toml",
         );
     }
 
