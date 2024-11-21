@@ -402,8 +402,8 @@ impl<'a> GraphBuildState<'a> {
         let workspace_path = pathdiff::diff_utf8_paths(manifest_path, self.workspace_root)
             .ok_or_else(|| {
                 Error::PackageGraphConstructError(format!(
-                    "failed to find relative path from workspace (root: {}) to member '{}' at path {}",
-                    self.workspace_root, id, manifest_path
+                    "failed to find relative path from workspace (root: {2}) to member '{0}' at path {1}",
+                    id, manifest_path, self.workspace_root
                 ))
             })?;
         let workspace_path = workspace_path.parent().ok_or_else(|| {
@@ -412,12 +412,7 @@ impl<'a> GraphBuildState<'a> {
                 id, manifest_path
             ))
         })?;
-        let workspace_path_buf = if workspace_path.is_absolute() {
-            workspace_path.to_path_buf()
-        } else {
-            convert_forward_slashes(workspace_path)
-        };
-        Ok(workspace_path_buf.into_boxed_path())
+        Ok(convert_relative_forward_slashes(workspace_path).into_boxed_path())
     }
 
     fn finish(self) -> Graph<PackageId, PackageLinkImpl, Directed, PackageIx> {
@@ -551,7 +546,7 @@ impl PackageSourceImpl {
         let path_diff = if path_diff.is_absolute() {
             path_diff
         } else {
-            convert_forward_slashes(path_diff)
+            convert_relative_forward_slashes(path_diff)
         };
         Self::Path(path_diff.into_boxed_path())
     }
@@ -988,20 +983,21 @@ impl PackagePublishImpl {
 
 /// Replace backslashes in a relative path with forward slashes on Windows.
 #[track_caller]
-fn convert_forward_slashes<'a>(rel_path: impl Into<Cow<'a, Utf8Path>>) -> Utf8PathBuf {
+fn convert_relative_forward_slashes<'a>(rel_path: impl Into<Cow<'a, Utf8Path>>) -> Utf8PathBuf {
     let rel_path = rel_path.into();
-    debug_assert!(
-        rel_path.is_relative(),
-        "path {} should be relative",
-        rel_path,
-    );
-    cfg_if::cfg_if! {
-        if #[cfg(windows)] {
+    cfg_if::cfg_if! { if #[cfg(windows)] {
+
+        if rel_path.is_relative() {
             rel_path.as_str().replace("\\", "/").into()
         } else {
             rel_path.into_owned()
         }
-    }
+
+    } else {
+
+        rel_path.into_owned()
+
+    }}
 }
 
 #[cfg(test)]
@@ -1059,7 +1055,7 @@ mod tests {
     fn test_convert_forward_slashes() {
         let components = vec!["..", "..", "foo", "bar", "baz.txt"];
         let path: Utf8PathBuf = components.into_iter().collect();
-        let path = convert_forward_slashes(path);
+        let path = convert_relative_forward_slashes(path);
         // This should have forward slashes, even on Windows.
         assert_eq!(path.as_str(), "../../foo/bar/baz.txt");
     }
