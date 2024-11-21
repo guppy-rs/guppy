@@ -1052,12 +1052,21 @@ mod tests {
     }
 
     #[test]
-    fn test_convert_forward_slashes() {
+    fn test_convert_relative_forward_slashes() {
         let components = vec!["..", "..", "foo", "bar", "baz.txt"];
         let path: Utf8PathBuf = components.into_iter().collect();
         let path = convert_relative_forward_slashes(path);
-        // This should have forward slashes, even on Windows.
+        // This should have forward-slashes, even on Windows.
         assert_eq!(path.as_str(), "../../foo/bar/baz.txt");
+    }
+
+    #[test]
+    fn test_convert_relative_forward_slashes_absolute() {
+        let components = vec![r"D:\", "X", "..", "foo", "bar", "baz.txt"];
+        let path: Utf8PathBuf = components.into_iter().collect();
+        let path = convert_relative_forward_slashes(path);
+        // Absolute path keep using backslash on Windows.
+        assert_eq!(path.as_str(), r"D:\X\..\foo\bar\baz.txt");
     }
 
     #[track_caller]
