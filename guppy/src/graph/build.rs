@@ -412,7 +412,12 @@ impl<'a> GraphBuildState<'a> {
                 id, manifest_path
             ))
         })?;
-        Ok(convert_forward_slashes(workspace_path).into_boxed_path())
+        let workspace_path_buf = if workspace_path.is_absolute() {
+            workspace_path.into_path_buf()
+        } else {
+            convert_forward_slashes(workspace_path)
+        };
+        Ok(workspace_path_buf.into_boxed_path())
     }
 
     fn finish(self) -> Graph<PackageId, PackageLinkImpl, Directed, PackageIx> {
@@ -981,16 +986,20 @@ impl PackagePublishImpl {
     }
 }
 
-/// Replace backslashes in a path with forward slashes on Windows.
+/// Replace backslashes in a relative path with forward slashes on Windows.
 #[track_caller]
-fn convert_forward_slashes<'a>(path: impl Into<Cow<'a, Utf8Path>>) -> Utf8PathBuf {
-    let path = path.into();
-
+fn convert_forward_slashes<'a>(rel_path: impl Into<Cow<'a, Utf8Path>>) -> Utf8PathBuf {
+    let rel_path = rel_path.into();
+    debug_assert!(
+        rel_path.is_relative(),
+        "path {} should be relative",
+        rel_path,
+    );
     cfg_if::cfg_if! {
         if #[cfg(windows)] {
-            path.as_str().replace("\\", "/").into()
+            rel_path.as_str().replace("\\", "/").into()
         } else {
-            path.into_owned()
+            rel_path.into_owned()
         }
     }
 }
@@ -1055,48 +1064,43 @@ mod tests {
         assert_eq!(path.as_str(), "../../foo/bar/baz.txt");
     }
 
-    mod for_nextest_issue_1684 {
-        use super::convert_forward_slashes;
+    #[track_caller]
+    fn verify_result_of_diff_utf8_paths(path_manifest: &str, path_workspace_root: &str, expected_relative_path: &str) {
         use crate::graph::build::Utf8Path;
-        #[track_caller]
-        fn verify_result_of_diff_utf8_paths(path_manifest: &str, path_workspace_root: &str, expected_relative_path: &str) {
-            let relative_path = pathdiff::diff_utf8_paths(
-                Utf8Path::new(path_manifest),
-                Utf8Path::new(path_workspace_root),
-            ).unwrap();
-            assert_eq!(convert_forward_slashes(relative_path), expected_relative_path);
-        }
+        let relative_path = pathdiff::diff_utf8_paths(
+            Utf8Path::new(path_manifest),
+            Utf8Path::new(path_workspace_root),
+        ).unwrap();
+        assert_eq!(relative_path, expected_relative_path);
+    }
 
+    #[test]
+    fn test_workspace_path_out_of_pocket() {
+        verify_result_of_diff_utf8_paths(
+            "/workspace/a/b/Crate/Cargo.toml",
+            "/workspace/a/b/.cargo/workspace",
+            r"../../Crate/Cargo.toml"
+        );
+    }
+
+    cfg_if::cfg_if! { if #[cfg(windows)] {
+        // These cases can only run on Windows.
         #[test]
-        fn test_nextest_issue_1684_workspace_path_out_of_pocket() {
+        fn test_workspace_path_out_of_pocket_on_windows_same_driver() {
             verify_result_of_diff_utf8_paths(
-                "/workspace/a/b/Crate/Cargo.toml",
-                "/workspace/a/b/.cargo/workspace",
-                r"../../Crate/Cargo.toml"
+                r"C:\workspace\a\b\Crate\Cargo.toml",
+                r"C:\workspace\a\b\.cargo\workspace",
+                r"..\..\Crate\Cargo.toml"
             );
         }
 
-        cfg_if::cfg_if! {
-            if #[cfg(windows)] {
-                // These cases can only pass on Windows platform
-                #[test]
-                fn test_nextest_issue_1684_workspace_path_out_of_pocket_on_windows_same_driver() {
-                    verify_result_of_diff_utf8_paths(
-                        r"C:\workspace\a\b\Crate\Cargo.toml",
-                        r"C:\workspace\a\b\.cargo\workspace",
-                        r"../../Crate/Cargo.toml"
-                    );
-                }
-
-                #[test]
-                fn test_nextest_issue_1684_workspace_path_out_of_pocket_on_windows_different_driver() {
-                    verify_result_of_diff_utf8_paths(
-                        r"D:\workspace\a\b\Crate\Cargo.toml",
-                        r"C:\workspace\a\b\.cargo\workspace",
-                        r"D:/workspace/a/b/Crate/Cargo.toml"
-                    );
-                }
-            }
+        #[test]
+        fn test_workspace_path_out_of_pocket_on_windows_different_driver() {
+            verify_result_of_diff_utf8_paths(
+                r"D:\workspace\a\b\Crate\Cargo.toml",
+                r"C:\workspace\a\b\.cargo\workspace",
+                r"D:\workspace\a\b\Crate\Cargo.toml"
+            );
         }
-    }
+    }}
 }
