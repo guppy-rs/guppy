@@ -541,14 +541,10 @@ impl PackageSourceImpl {
     fn create_path(path: &Utf8Path, workspace_root: &Utf8Path) -> Self {
         let path_diff =
             pathdiff::diff_utf8_paths(path, workspace_root).expect("workspace root is absolute");
-        // On Windows, the directory name and the workspace root might be on different drives,
-        // in which case the path can't be relative.
-        let path_diff = if path_diff.is_absolute() {
-            path_diff
-        } else {
-            convert_relative_forward_slashes(path_diff)
-        };
-        Self::Path(path_diff.into_boxed_path())
+        // convert_relative_forward_slashes() can handle both situations, i.e.,
+        // on windows and for relative path, convert forward slashes, otherwise,
+        // (absolute path, or not on windows) just clone.
+        Self::Path(convert_relative_forward_slashes(path_diff).into_boxed_path())
     }
 }
 
