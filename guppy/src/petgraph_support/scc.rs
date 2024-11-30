@@ -135,7 +135,7 @@ pub(crate) struct NodeIter<'a, Ix> {
     direction: Direction,
 }
 
-impl<'a, Ix> NodeIter<'a, Ix> {
+impl<Ix> NodeIter<'_, Ix> {
     /// Returns the direction this iteration is happening in.
     #[allow(dead_code)]
     pub fn direction(&self) -> Direction {
@@ -143,7 +143,7 @@ impl<'a, Ix> NodeIter<'a, Ix> {
     }
 }
 
-impl<'a, Ix: IndexType> Iterator for NodeIter<'a, Ix> {
+impl<Ix: IndexType> Iterator for NodeIter<'_, Ix> {
     type Item = NodeIndex<Ix>;
 
     fn next(&mut self) -> Option<NodeIndex<Ix>> {

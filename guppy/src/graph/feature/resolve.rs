@@ -70,7 +70,7 @@ pub struct FeatureSet<'g> {
     core: ResolveCore<FeatureGraphSpec>,
 }
 
-impl<'g> fmt::Debug for FeatureSet<'g> {
+impl fmt::Debug for FeatureSet<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_set()
             .entries(self.packages_with_features(DependencyDirection::Forward))
@@ -605,11 +605,11 @@ impl<'g> FeatureSet<'g> {
     }
 }
 
-impl<'g> PartialEq for FeatureSet<'g> {
+impl PartialEq for FeatureSet<'_> {
     fn eq(&self, other: &Self) -> bool {
         ::std::ptr::eq(self.graph.package_graph, other.graph.package_graph)
             && self.core == other.core
     }
 }
 
-impl<'g> Eq for FeatureSet<'g> {}
+impl Eq for FeatureSet<'_> {}

@@ -178,7 +178,6 @@ impl Platform {
     /// let platform = Platform::new("armv5te-apple-darwin", TargetFeatures::Unknown).unwrap();
     /// assert!(platform.is_heuristic());
     /// ```
-
     pub fn is_heuristic(&self) -> bool {
         self.triple.is_heuristic()
     }

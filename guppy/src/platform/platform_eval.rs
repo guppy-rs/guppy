@@ -159,7 +159,7 @@ pub struct PlatformEval<'g> {
 
 assert_covariant!(PlatformEval);
 
-impl<'g> PlatformEval<'g> {
+impl PlatformEval<'_> {
     /// Runs this evaluator against the given platform.
     pub fn eval(&self, platform: &Platform) -> EnabledTernary {
         let mut res = EnabledTernary::Disabled;

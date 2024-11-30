@@ -48,7 +48,7 @@ impl<'g, 'a, 'explain> HakariExplainDisplay<'g, 'a, 'explain> {
 
 const DITTO_MARK: &str = "\"";
 
-impl<'g, 'a, 'explain> fmt::Display for HakariExplainDisplay<'g, 'a, 'explain> {
+impl fmt::Display for HakariExplainDisplay<'_, '_, '_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut table = Table::new("  {:^}  |  {:^}  {:^}  {:^}");
         // header row
@@ -186,7 +186,7 @@ struct FeatureDisplay<'g, 'a> {
     features: &'a BTreeSet<&'g str>,
 }
 
-impl<'g, 'a> fmt::Display for FeatureDisplay<'g, 'a> {
+impl fmt::Display for FeatureDisplay<'_, '_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         if self.features.is_empty() {
             return write!(f, "(no features)");

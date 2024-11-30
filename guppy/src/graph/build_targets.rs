@@ -235,7 +235,7 @@ pub(super) trait BuildTargetKey {
     fn key(&self) -> BuildTargetId;
 }
 
-impl<'g> BuildTargetKey for BuildTargetId<'g> {
+impl BuildTargetKey for BuildTargetId<'_> {
     fn key(&self) -> BuildTargetId {
         *self
     }
@@ -253,23 +253,23 @@ impl<'g> Borrow<dyn BuildTargetKey + 'g> for OwnedBuildTargetId {
     }
 }
 
-impl<'g> PartialEq for (dyn BuildTargetKey + 'g) {
+impl PartialEq for (dyn BuildTargetKey + '_) {
     fn eq(&self, other: &Self) -> bool {
         self.key() == other.key()
     }
 }
 
-impl<'g> Eq for (dyn BuildTargetKey + 'g) {}
+impl Eq for (dyn BuildTargetKey + '_) {}
 
 // For Borrow to be upheld, PartialOrd and Ord should be consistent. This is checked by the proptest
 // below.
-impl<'g> PartialOrd for (dyn BuildTargetKey + 'g) {
+impl PartialOrd for (dyn BuildTargetKey + '_) {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
     }
 }
 
-impl<'g> Ord for (dyn BuildTargetKey + 'g) {
+impl Ord for (dyn BuildTargetKey + '_) {
     fn cmp(&self, other: &Self) -> Ordering {
         self.key().cmp(&other.key())
     }
