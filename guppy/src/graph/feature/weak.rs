@@ -135,7 +135,7 @@ pub(super) enum SingleBufferState<'g> {
     Accepted,
 }
 
-impl<'g> Default for SingleBufferState<'g> {
+impl Default for SingleBufferState<'_> {
     fn default() -> Self {
         Self::Buffered(SingleBufferVec::new())
     }

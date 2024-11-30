@@ -37,7 +37,7 @@ pub trait FeatureFilter<'g> {
     fn accept(&mut self, graph: &FeatureGraph<'g>, feature_id: FeatureId<'g>) -> bool;
 }
 
-impl<'g, 'a, T> FeatureFilter<'g> for &'a mut T
+impl<'g, T> FeatureFilter<'g> for &mut T
 where
     T: FeatureFilter<'g>,
 {
@@ -46,13 +46,13 @@ where
     }
 }
 
-impl<'g, 'a> FeatureFilter<'g> for Box<dyn FeatureFilter<'g> + 'a> {
+impl<'g> FeatureFilter<'g> for Box<dyn FeatureFilter<'g> + '_> {
     fn accept(&mut self, graph: &FeatureGraph<'g>, feature_id: FeatureId<'g>) -> bool {
         (**self).accept(graph, feature_id)
     }
 }
 
-impl<'g, 'a> FeatureFilter<'g> for &'a mut dyn FeatureFilter<'g> {
+impl<'g> FeatureFilter<'g> for &mut dyn FeatureFilter<'g> {
     fn accept(&mut self, graph: &FeatureGraph<'g>, feature_id: FeatureId<'g>) -> bool {
         (**self).accept(graph, feature_id)
     }
@@ -348,7 +348,7 @@ pub trait FeatureResolver<'g> {
     fn accept(&mut self, query: &FeatureQuery<'g>, link: ConditionalLink<'g>) -> bool;
 }
 
-impl<'g, 'a, T> FeatureResolver<'g> for &'a mut T
+impl<'g, T> FeatureResolver<'g> for &mut T
 where
     T: FeatureResolver<'g>,
 {
@@ -357,13 +357,13 @@ where
     }
 }
 
-impl<'g, 'a> FeatureResolver<'g> for Box<dyn FeatureResolver<'g> + 'a> {
+impl<'g> FeatureResolver<'g> for Box<dyn FeatureResolver<'g> + '_> {
     fn accept(&mut self, query: &FeatureQuery<'g>, link: ConditionalLink<'g>) -> bool {
         (**self).accept(query, link)
     }
 }
 
-impl<'g, 'a> FeatureResolver<'g> for &'a mut dyn FeatureResolver<'g> {
+impl<'g> FeatureResolver<'g> for &mut dyn FeatureResolver<'g> {
     fn accept(&mut self, query: &FeatureQuery<'g>, link: ConditionalLink<'g>) -> bool {
         (**self).accept(query, link)
     }

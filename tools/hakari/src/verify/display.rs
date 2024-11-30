@@ -33,7 +33,7 @@ impl<'g, 'verify> VerifyErrorsDisplay<'g, 'verify> {
     }
 }
 
-impl<'g, 'verify> fmt::Display for VerifyErrorsDisplay<'g, 'verify> {
+impl fmt::Display for VerifyErrorsDisplay<'_, '_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         for explain in self.verify.errors() {
             writeln!(

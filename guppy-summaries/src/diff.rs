@@ -247,7 +247,7 @@ pub(crate) fn changed_sort_key<'a>(
     (status.tag(), status.latest_status(), summary_id)
 }
 
-impl<'a> Serialize for PackageDiff<'a> {
+impl Serialize for PackageDiff<'_> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: serde::Serializer,

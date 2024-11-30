@@ -87,7 +87,7 @@ impl<'g> TargetHostDiff<'g> {
     }
 }
 
-impl<'g> fmt::Display for TargetHostDiff<'g> {
+impl fmt::Display for TargetHostDiff<'_> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(
             f,
@@ -105,14 +105,14 @@ pub struct FeatureDiff<'g> {
     pub verbose: bool,
 }
 
-impl<'g> FeatureDiff<'g> {
+impl FeatureDiff<'_> {
     /// Returns true if there's a diff.
     pub fn any_diff(&self) -> bool {
         self.a.diff(&self.b).is_change()
     }
 }
 
-impl<'g> fmt::Display for FeatureDiff<'g> {
+impl fmt::Display for FeatureDiff<'_> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self.a.diff(&self.b) {
             edit::Edit::Change(diff) => {

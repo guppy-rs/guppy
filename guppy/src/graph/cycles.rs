@@ -269,7 +269,6 @@ use crate::{
 /// [serde_github]: https://github.com/serde-rs/serde
 /// [serde_toml]: https://github.com/serde-rs/serde/blob/072145e0e913df7686f001dbf29e43a0ff7afac4/serde/Cargo.toml#L17-L18
 /// [serde_derive_toml]: https://github.com/serde-rs/serde/blob/072145e0e913df7686f001dbf29e43a0ff7afac4/serde_derive/Cargo.toml#L29-L30
-
 pub struct Cycles<'g> {
     package_graph: &'g PackageGraph,
     sccs: &'g Sccs<PackageIx>,

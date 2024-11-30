@@ -114,7 +114,7 @@ impl<'a> CargoOptions<'a> {
     }
 }
 
-impl<'a> Default for CargoOptions<'a> {
+impl Default for CargoOptions<'_> {
     fn default() -> Self {
         Self::new()
     }
