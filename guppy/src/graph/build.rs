@@ -402,8 +402,8 @@ impl<'a> GraphBuildState<'a> {
         let workspace_path = pathdiff::diff_utf8_paths(manifest_path, self.workspace_root)
             .ok_or_else(|| {
                 Error::PackageGraphConstructError(format!(
-                    "failed to find relative path from workspace (root: {2}) to member '{0}' at path {1}",
-                    id, manifest_path, self.workspace_root
+                    "failed to find path from workspace (root: {}) to member '{id}' at path {manifest_path}",
+                    self.workspace_root
                 ))
             })?;
         let workspace_path = workspace_path.parent().ok_or_else(|| {
@@ -1032,21 +1032,6 @@ mod tests {
         );
     }
 
-    #[cfg(windows)]
-    #[test]
-    fn test_create_path_windows() {
-        // Ensure that relative paths are stored with forward slashes.
-        assert_eq!(
-            PackageSourceImpl::create_path("C:\\data\\foo".as_ref(), "C:\\data\\bar".as_ref()),
-            PackageSourceImpl::Path("../foo".into())
-        );
-        // Paths that span drives cannot be stored as relative.
-        assert_eq!(
-            PackageSourceImpl::create_path("D:\\tmp\\foo".as_ref(), "C:\\data\\bar".as_ref()),
-            PackageSourceImpl::Path("D:\\tmp\\foo".into())
-        );
-    }
-
     #[test]
     fn test_convert_relative_forward_slashes() {
         let components = vec!["..", "..", "foo", "bar", "baz.txt"];
@@ -1054,16 +1039,6 @@ mod tests {
         let path = convert_relative_forward_slashes(path);
         // This should have forward-slashes, even on Windows.
         assert_eq!(path.as_str(), "../../foo/bar/baz.txt");
-    }
-
-    #[cfg(windows)]
-    #[test]
-    fn test_convert_relative_forward_slashes_absolute() {
-        let components = vec![r"D:\", "X", "..", "foo", "bar", "baz.txt"];
-        let path: Utf8PathBuf = components.into_iter().collect();
-        let path = convert_relative_forward_slashes(path);
-        // Absolute path keep using backslash on Windows.
-        assert_eq!(path.as_str(), r"D:\X\..\foo\bar\baz.txt");
     }
 
     #[track_caller]
@@ -1090,8 +1065,33 @@ mod tests {
         );
     }
 
-    cfg_if::cfg_if! { if #[cfg(windows)] {
-        // These cases can only run on Windows.
+    #[cfg(windows)] // Test for '\\' and 'X:\' etc on windows
+    mod windows {
+        use super::*;
+
+        #[test]
+        fn test_create_path_windows() {
+            // Ensure that relative paths are stored with forward slashes.
+            assert_eq!(
+                PackageSourceImpl::create_path("C:\\data\\foo".as_ref(), "C:\\data\\bar".as_ref()),
+                PackageSourceImpl::Path("../foo".into())
+            );
+            // Paths that span drives cannot be stored as relative.
+            assert_eq!(
+                PackageSourceImpl::create_path("D:\\tmp\\foo".as_ref(), "C:\\data\\bar".as_ref()),
+                PackageSourceImpl::Path("D:\\tmp\\foo".into())
+            );
+        }
+
+        #[test]
+        fn test_convert_relative_forward_slashes_absolute() {
+            let components = vec![r"D:\", "X", "..", "foo", "bar", "baz.txt"];
+            let path: Utf8PathBuf = components.into_iter().collect();
+            let path = convert_relative_forward_slashes(path);
+            // Absolute path keep using backslash on Windows.
+            assert_eq!(path.as_str(), r"D:\X\..\foo\bar\baz.txt");
+        }
+    
         #[test]
         fn test_workspace_path_out_of_pocket_on_windows_same_driver() {
             verify_result_of_diff_utf8_paths(
@@ -1109,5 +1109,5 @@ mod tests {
                 r"D:\workspace\a\b\Crate\Cargo.toml"
             );
         }
-    }}
+    }
 }
