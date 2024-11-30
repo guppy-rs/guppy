@@ -58,7 +58,7 @@ where
     fn filter(&mut self, edge: G::EdgeRef) -> Self::Iter;
 }
 
-impl<'a, G, T> BufferedEdgeFilter<G> for &'a mut T
+impl<G, T> BufferedEdgeFilter<G> for &mut T
 where
     T: BufferedEdgeFilter<G>,
     G: IntoEdges,

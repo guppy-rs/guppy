@@ -695,7 +695,7 @@ pub struct PackageMetadata<'g> {
     inner: &'g PackageMetadataImpl,
 }
 
-impl<'g> fmt::Debug for PackageMetadata<'g> {
+impl fmt::Debug for PackageMetadata<'_> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         f.debug_struct("PackageMetadata")
             .field("package_id", &self.id().repr())
@@ -1168,7 +1168,7 @@ pub(crate) enum FeatureIndexInPackage {
 }
 
 /// `PackageMetadata`'s `PartialEq` implementation uses pointer equality for the `PackageGraph`.
-impl<'g> PartialEq for PackageMetadata<'g> {
+impl PartialEq for PackageMetadata<'_> {
     fn eq(&self, other: &Self) -> bool {
         // Checking for the same package ix is enough as each package is guaranteed to be a 1:1 map
         // with ixs.
@@ -1176,7 +1176,7 @@ impl<'g> PartialEq for PackageMetadata<'g> {
     }
 }
 
-impl<'g> Eq for PackageMetadata<'g> {}
+impl Eq for PackageMetadata<'_> {}
 
 #[derive(Clone, Debug)]
 pub(crate) struct PackageMetadataImpl {
@@ -1326,7 +1326,7 @@ impl<'g> PackageSource<'g> {
     }
 }
 
-impl<'g> fmt::Display for PackageSource<'g> {
+impl fmt::Display for PackageSource<'_> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             PackageSource::Workspace(path) => write!(f, "{}", path),
@@ -1551,7 +1551,7 @@ impl<'g> ExternalSource<'g> {
 ///     "git+https://github.com/rust-lang/cargo.git?branch=main#0227f048fcb7c798026ede6cc20c92befc84c3a4",
 /// );
 /// ```
-impl<'g> fmt::Display for ExternalSource<'g> {
+impl fmt::Display for ExternalSource<'_> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             ExternalSource::Registry(url) => write!(f, "{}{}", Self::REGISTRY_PLUS, url),

@@ -196,7 +196,7 @@ impl HakariBuilderSummary {
     }
 }
 
-impl<'g> HakariBuilder<'g> {
+impl HakariBuilder<'_> {
     /// Converts this `HakariBuilder` to a serializable summary.
     ///
     /// Requires the `cli-support` feature to be enabled.

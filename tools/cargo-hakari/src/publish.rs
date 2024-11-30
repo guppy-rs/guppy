@@ -127,7 +127,7 @@ impl<'g> TempRemoveDep<'g> {
     }
 }
 
-impl<'g> Drop for TempRemoveDep<'g> {
+impl Drop for TempRemoveDep<'_> {
     fn drop(&mut self) {
         // Ignore errors in this impl.
         let _ = self.finish(false);
@@ -141,7 +141,7 @@ struct TempRemoveDepInner<'g> {
     output: OutputContext,
 }
 
-impl<'g> TempRemoveDepInner<'g> {
+impl TempRemoveDepInner<'_> {
     fn finish(self, success: bool) -> Result<()> {
         let package_set = self.package.to_package_set();
         let add_ops = self

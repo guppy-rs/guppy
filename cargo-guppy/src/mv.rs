@@ -345,7 +345,7 @@ struct ManifestEdit<'g> {
     edit_path: Utf8PathBuf,
 }
 
-impl<'g> fmt::Display for ManifestEdit<'g> {
+impl fmt::Display for ManifestEdit<'_> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(
             f,

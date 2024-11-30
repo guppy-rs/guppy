@@ -76,7 +76,7 @@ impl<'a> DirectionDesc<'a> {
     }
 }
 
-impl<'a> From<DependencyDirection> for DirectionDesc<'a> {
+impl From<DependencyDirection> for DirectionDesc<'_> {
     fn from(direction: DependencyDirection) -> Self {
         Self::new(direction)
     }

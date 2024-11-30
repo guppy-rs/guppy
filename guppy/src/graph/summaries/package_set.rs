@@ -125,7 +125,7 @@ pub struct PackageSetSummary {
     pub third_party: Vec<ThirdPartySummary>,
 }
 
-impl<'g> PackageSet<'g> {
+impl PackageSet<'_> {
     /// Converts this `PackageSet` to a serializable [`PackageSetSummary`].
     pub fn to_summary(&self) -> PackageSetSummary {
         PackageSetSummary::new(self)
@@ -323,7 +323,7 @@ pub enum GitReqSummary {
     Default,
 }
 
-impl<'g> GitReq<'g> {
+impl GitReq<'_> {
     /// Converts `self` into a [`GitReqSummary`].
     ///
     /// Requires the `summaries` feature to be enabled.

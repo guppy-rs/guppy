@@ -87,7 +87,7 @@ pub(crate) enum WorkspaceOp<'g, 'a> {
     },
 }
 
-impl<'g, 'a> WorkspaceOp<'g, 'a> {
+impl<'g> WorkspaceOp<'g, '_> {
     fn apply(&self, canonical_workspace_root: &Utf8Path) -> Result<(), ApplyError> {
         match self {
             WorkspaceOp::NewCrate {
@@ -571,7 +571,7 @@ impl<'g, 'a, 'ops> WorkspaceOpsDisplay<'g, 'a, 'ops> {
     }
 }
 
-impl<'g, 'a, 'ops> fmt::Display for WorkspaceOpsDisplay<'g, 'a, 'ops> {
+impl fmt::Display for WorkspaceOpsDisplay<'_, '_, '_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let workspace_root = self.ops.graph.workspace().root();
         let workspace_root_manifest = workspace_root.join("Cargo.toml");
