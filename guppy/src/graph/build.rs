@@ -1047,7 +1047,6 @@ mod tests {
         path_workspace_root: &str,
         expected_relative_path: &str,
     ) {
-        use crate::graph::build::Utf8Path;
         let relative_path = pathdiff::diff_utf8_paths(
             Utf8Path::new(path_manifest),
             Utf8Path::new(path_workspace_root),
