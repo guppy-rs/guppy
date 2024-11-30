@@ -1090,13 +1090,13 @@ mod tests {
             // Absolute path keep using backslash on Windows.
             assert_eq!(path.as_str(), r"D:\X\..\foo\bar\baz.txt");
         }
-    
+
         #[test]
         fn test_workspace_path_out_of_pocket_on_windows_same_driver() {
             verify_result_of_diff_utf8_paths(
                 r"C:\workspace\a\b\Crate\Cargo.toml",
                 r"C:\workspace\a\b\.cargo\workspace",
-                r"..\..\Crate\Cargo.toml"
+                r"..\..\Crate\Cargo.toml",
             );
         }
 
@@ -1105,7 +1105,7 @@ mod tests {
             verify_result_of_diff_utf8_paths(
                 r"D:\workspace\a\b\Crate\Cargo.toml",
                 r"C:\workspace\a\b\.cargo\workspace",
-                r"D:\workspace\a\b\Crate\Cargo.toml"
+                r"D:\workspace\a\b\Crate\Cargo.toml",
             );
         }
     }
