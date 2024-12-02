@@ -392,20 +392,18 @@ impl<'a> GraphBuildState<'a> {
         Ok((package_data, build_targets))
     }
 
-    /// Computes the workspace path for this package. Errors if this package is not in the
-    /// workspace.
+    /// Computes the relative path from workspace root to this package, which might be out of root sub tree.
     fn workspace_path(
         &self,
         id: &PackageId,
         manifest_path: &Utf8Path,
     ) -> Result<Box<Utf8Path>, Box<Error>> {
-        // Strip off the workspace path from the manifest path.
-        let workspace_path = manifest_path
-            .strip_prefix(self.workspace_root)
-            .map_err(|_| {
+        // Get relative path from workspace root to manifest path.
+        let workspace_path = pathdiff::diff_utf8_paths(manifest_path, self.workspace_root)
+            .ok_or_else(|| {
                 Error::PackageGraphConstructError(format!(
-                    "workspace member '{}' at path {} not in workspace (root: {})",
-                    id, manifest_path, self.workspace_root
+                    "failed to find path from workspace (root: {}) to member '{id}' at path {manifest_path}",
+                    self.workspace_root
                 ))
             })?;
         let workspace_path = workspace_path.parent().ok_or_else(|| {
@@ -414,7 +412,7 @@ impl<'a> GraphBuildState<'a> {
                 id, manifest_path
             ))
         })?;
-        Ok(convert_forward_slashes(workspace_path).into_boxed_path())
+        Ok(convert_relative_forward_slashes(workspace_path).into_boxed_path())
     }
 
     fn finish(self) -> Graph<PackageId, PackageLinkImpl, Directed, PackageIx> {
@@ -543,14 +541,10 @@ impl PackageSourceImpl {
     fn create_path(path: &Utf8Path, workspace_root: &Utf8Path) -> Self {
         let path_diff =
             pathdiff::diff_utf8_paths(path, workspace_root).expect("workspace root is absolute");
-        // On Windows, the directory name and the workspace root might be on different drives,
-        // in which case the path can't be relative.
-        let path_diff = if path_diff.is_absolute() {
-            path_diff
-        } else {
-            convert_forward_slashes(path_diff)
-        };
-        Self::Path(path_diff.into_boxed_path())
+        // convert_relative_forward_slashes() can handle both situations, i.e.,
+        // on windows and for relative path, convert forward slashes, otherwise,
+        // (absolute path, or not on windows) just clone.
+        Self::Path(convert_relative_forward_slashes(path_diff).into_boxed_path())
     }
 }
 
@@ -985,21 +979,21 @@ impl PackagePublishImpl {
 
 /// Replace backslashes in a relative path with forward slashes on Windows.
 #[track_caller]
-fn convert_forward_slashes<'a>(rel_path: impl Into<Cow<'a, Utf8Path>>) -> Utf8PathBuf {
+fn convert_relative_forward_slashes<'a>(rel_path: impl Into<Cow<'a, Utf8Path>>) -> Utf8PathBuf {
     let rel_path = rel_path.into();
-    debug_assert!(
-        rel_path.is_relative(),
-        "path {} should be relative",
-        rel_path,
-    );
+    cfg_if::cfg_if! { if #[cfg(windows)] {
 
-    cfg_if::cfg_if! {
-        if #[cfg(windows)] {
+        if rel_path.is_relative() {
             rel_path.as_str().replace("\\", "/").into()
         } else {
             rel_path.into_owned()
         }
-    }
+
+    } else {
+
+        rel_path.into_owned()
+
+    }}
 }
 
 #[cfg(test)]
@@ -1038,27 +1032,81 @@ mod tests {
         );
     }
 
-    #[cfg(windows)]
     #[test]
-    fn test_create_path_windows() {
-        // Ensure that relative paths are stored with forward slashes.
-        assert_eq!(
-            PackageSourceImpl::create_path("C:\\data\\foo".as_ref(), "C:\\data\\bar".as_ref()),
-            PackageSourceImpl::Path("../foo".into())
-        );
-        // Paths that span drives cannot be stored as relative.
-        assert_eq!(
-            PackageSourceImpl::create_path("D:\\tmp\\foo".as_ref(), "C:\\data\\bar".as_ref()),
-            PackageSourceImpl::Path("D:\\tmp\\foo".into())
-        );
+    fn test_convert_relative_forward_slashes() {
+        let components = vec!["..", "..", "foo", "bar", "baz.txt"];
+        let path: Utf8PathBuf = components.into_iter().collect();
+        let path = convert_relative_forward_slashes(path);
+        // This should have forward-slashes, even on Windows.
+        assert_eq!(path.as_str(), "../../foo/bar/baz.txt");
+    }
+
+    #[track_caller]
+    fn verify_result_of_diff_utf8_paths(
+        path_manifest: &str,
+        path_workspace_root: &str,
+        expected_relative_path: &str,
+    ) {
+        let relative_path = pathdiff::diff_utf8_paths(
+            Utf8Path::new(path_manifest),
+            Utf8Path::new(path_workspace_root),
+        )
+        .unwrap();
+        assert_eq!(relative_path, expected_relative_path);
     }
 
     #[test]
-    fn test_convert_forward_slashes() {
-        let components = vec!["..", "..", "foo", "bar", "baz.txt"];
-        let path: Utf8PathBuf = components.into_iter().collect();
-        let path = convert_forward_slashes(path);
-        // This should have forward slashes, even on Windows.
-        assert_eq!(path.as_str(), "../../foo/bar/baz.txt");
+    fn test_workspace_path_out_of_pocket() {
+        verify_result_of_diff_utf8_paths(
+            "/workspace/a/b/Crate/Cargo.toml",
+            "/workspace/a/b/.cargo/workspace",
+            r"../../Crate/Cargo.toml",
+        );
+    }
+
+    #[cfg(windows)] // Test for '\\' and 'X:\' etc on windows
+    mod windows {
+        use super::*;
+
+        #[test]
+        fn test_create_path_windows() {
+            // Ensure that relative paths are stored with forward slashes.
+            assert_eq!(
+                PackageSourceImpl::create_path("C:\\data\\foo".as_ref(), "C:\\data\\bar".as_ref()),
+                PackageSourceImpl::Path("../foo".into())
+            );
+            // Paths that span drives cannot be stored as relative.
+            assert_eq!(
+                PackageSourceImpl::create_path("D:\\tmp\\foo".as_ref(), "C:\\data\\bar".as_ref()),
+                PackageSourceImpl::Path("D:\\tmp\\foo".into())
+            );
+        }
+
+        #[test]
+        fn test_convert_relative_forward_slashes_absolute() {
+            let components = vec![r"D:\", "X", "..", "foo", "bar", "baz.txt"];
+            let path: Utf8PathBuf = components.into_iter().collect();
+            let path = convert_relative_forward_slashes(path);
+            // Absolute path keep using backslash on Windows.
+            assert_eq!(path.as_str(), r"D:\X\..\foo\bar\baz.txt");
+        }
+
+        #[test]
+        fn test_workspace_path_out_of_pocket_on_windows_same_driver() {
+            verify_result_of_diff_utf8_paths(
+                r"C:\workspace\a\b\Crate\Cargo.toml",
+                r"C:\workspace\a\b\.cargo\workspace",
+                r"..\..\Crate\Cargo.toml",
+            );
+        }
+
+        #[test]
+        fn test_workspace_path_out_of_pocket_on_windows_different_driver() {
+            verify_result_of_diff_utf8_paths(
+                r"D:\workspace\a\b\Crate\Cargo.toml",
+                r"C:\workspace\a\b\.cargo\workspace",
+                r"D:\workspace\a\b\Crate\Cargo.toml",
+            );
+        }
     }
 }
