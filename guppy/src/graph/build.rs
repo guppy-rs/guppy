@@ -599,7 +599,7 @@ impl<'a> BuildTargets<'a> {
             target
                 .crate_types
                 .into_iter()
-                .map(|ct| crate_type_to_string(ct))
+                .map(crate_type_to_string)
                 .collect::<Vec<_>>(),
         );
 
