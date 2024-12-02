@@ -1,4 +1,4 @@
-use cargo_metadata::{Metadata, Target};
+use cargo_metadata::{CrateType, Metadata, Target, TargetKind};
 use fixtures::json::JsonFixture;
 use guppy::{errors::FeatureGraphWarning, graph::PackageGraph, Error, PackageId};
 
@@ -88,7 +88,7 @@ fn proc_macro_mixed_kinds() {
         .expect("parsing metadata JSON should succeed");
     {
         let target = macro_target(&mut metadata);
-        target.kind = vec!["lib".to_string(), "proc-macro".to_string()];
+        target.kind = vec![TargetKind::Lib, TargetKind::ProcMacro];
     }
 
     let json = serde_json::to_string(&metadata).expect("serializing worked");
@@ -98,9 +98,9 @@ fn proc_macro_mixed_kinds() {
         let target = macro_target(&mut metadata);
 
         // Reset target.kind to its old value.
-        target.kind = vec!["proc-macro".to_string()];
+        target.kind = vec![TargetKind::ProcMacro];
 
-        target.crate_types = vec!["lib".to_string(), "proc-macro".to_string()];
+        target.crate_types = vec![CrateType::Lib, CrateType::ProcMacro];
     }
 
     let json = serde_json::to_string(&metadata).expect("serializing worked");

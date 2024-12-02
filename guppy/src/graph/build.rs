@@ -14,7 +14,8 @@ use crate::{
 use ahash::AHashMap;
 use camino::{Utf8Path, Utf8PathBuf};
 use cargo_metadata::{
-    DepKindInfo, Dependency, DependencyKind, Metadata, Node, NodeDep, Package, Target,
+    CrateType, DepKindInfo, Dependency, DependencyKind, Metadata, Node, NodeDep, Package, Target,
+    TargetKind,
 };
 use fixedbitset::FixedBitSet;
 use indexmap::{IndexMap, IndexSet};
@@ -586,9 +587,21 @@ impl<'a> BuildTargets<'a> {
         use std::collections::btree_map::Entry;
 
         // Figure out the id and kind using target.kind and target.crate_types.
-        let mut target_kinds = target.kind;
+        let mut target_kinds = target
+            .kind
+            .into_iter()
+            .map(target_kind_to_string)
+            .collect::<Vec<_>>();
         let target_name = target.name.into_boxed_str();
-        let crate_types = SortedSet::new(target.crate_types);
+        // Store crate types as strings to avoid exposing cargo_metadata in the
+        // public API.
+        let crate_types = SortedSet::new(
+            target
+                .crate_types
+                .into_iter()
+                .map(|ct| crate_type_to_string(ct))
+                .collect::<Vec<_>>(),
+        );
 
         // The "proc-macro" crate type cannot mix with any other types or kinds.
         if target_kinds.len() > 1 && Self::is_proc_macro(&target_kinds) {
@@ -684,11 +697,49 @@ impl<'a> BuildTargets<'a> {
     }
 
     fn is_proc_macro(list: &[String]) -> bool {
-        list.iter().any(|kind| kind.as_str() == "proc-macro")
+        list.iter().any(|kind| *kind == "proc-macro")
     }
 
     fn finish(self) -> BuildTargetMap {
         self.targets
+    }
+}
+
+fn crate_type_to_string(ct: CrateType) -> String {
+    match ct {
+        CrateType::Bin => "bin".to_string(),
+        CrateType::CDyLib => "cdylib".to_string(),
+        CrateType::DyLib => "dylib".to_string(),
+        CrateType::Lib => "lib".to_string(),
+        CrateType::ProcMacro => "proc-macro".to_string(),
+        CrateType::RLib => "rlib".to_string(),
+        CrateType::StaticLib => "staticlib".to_string(),
+        CrateType::Unknown(s) => s,
+        _ => panic!(
+            "unknown crate type -- this impl should have been \
+             replaced with https://github.com/oli-obk/cargo_metadata/issues/275"
+        ),
+    }
+}
+
+fn target_kind_to_string(tk: TargetKind) -> String {
+    match tk {
+        TargetKind::Bench => "bench".to_string(),
+        TargetKind::Bin => "bin".to_string(),
+        TargetKind::CustomBuild => "custom-build".to_string(),
+        TargetKind::CDyLib => "cdylib".to_string(),
+        TargetKind::DyLib => "dylib".to_string(),
+        TargetKind::Example => "example".to_string(),
+        TargetKind::Lib => "lib".to_string(),
+        TargetKind::ProcMacro => "proc-macro".to_string(),
+        TargetKind::RLib => "rlib".to_string(),
+        TargetKind::StaticLib => "staticlib".to_string(),
+        TargetKind::Test => "test".to_string(),
+        TargetKind::Unknown(s) => s,
+        _ => panic!(
+            "unknown target kind {tk:?} -- this impl should have been \
+             replaced with https://github.com/oli-obk/cargo_metadata/issues/275"
+        ),
     }
 }
 

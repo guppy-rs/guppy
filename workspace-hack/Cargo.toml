@@ -30,18 +30,17 @@ regex = { version = "1.10.5", default-features = false, features = ["perf", "std
 regex-automata = { version = "0.4.5", default-features = false, features = ["dfa-onepass", "hybrid", "meta", "nfa", "perf"] }
 regex-syntax = { version = "0.8.2" }
 semver = { version = "1.0.23", features = ["serde"] }
-serde = { version = "1.0.204", features = ["alloc", "derive"] }
-serde_json = { version = "1.0.117", features = ["unbounded_depth"] }
+serde = { version = "1.0.215", features = ["alloc", "derive"] }
+serde_json = { version = "1.0.133", features = ["unbounded_depth"] }
 toml = { version = "0.5.11", features = ["preserve_order"] }
 
 [build-dependencies]
-proc-macro2 = { version = "1.0.78" }
-quote = { version = "1.0.35" }
-syn = { version = "2.0.48", features = ["extra-traits", "full", "visit"] }
+proc-macro2 = { version = "1.0.92" }
+quote = { version = "1.0.37" }
+syn = { version = "2.0.90", features = ["extra-traits", "full", "visit"] }
 
 [target.x86_64-unknown-linux-gnu.dependencies]
 libc = { version = "0.2.155" }
-memchr = { version = "2.7.4", default-features = false, features = ["std"] }
 once_cell = { version = "1.19.0" }
 rustix = { version = "0.38.31", features = ["fs", "termios"] }
 
@@ -50,7 +49,6 @@ libc = { version = "0.2.155" }
 
 [target.x86_64-apple-darwin.dependencies]
 libc = { version = "0.2.155", features = ["extra_traits"] }
-memchr = { version = "2.7.4", default-features = false, features = ["std"] }
 once_cell = { version = "1.19.0" }
 rustix = { version = "0.38.31", features = ["fs", "termios"] }
 
@@ -59,7 +57,6 @@ libc = { version = "0.2.155", features = ["extra_traits"] }
 
 [target.aarch64-apple-darwin.dependencies]
 libc = { version = "0.2.155", features = ["extra_traits"] }
-memchr = { version = "2.7.4", default-features = false, features = ["std"] }
 once_cell = { version = "1.19.0" }
 rustix = { version = "0.38.31", features = ["fs", "termios"] }
 

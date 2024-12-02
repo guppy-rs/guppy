@@ -31,7 +31,7 @@ maintenance = { status = "actively-developed" }
 [dependencies]
 ahash.workspace = true
 camino = "1.1.7"
-cargo_metadata = "0.18.1"
+cargo_metadata = "0.19.0"
 cfg-if = "1.0.0"
 debug-ignore = "1.0.5"
 guppy-summaries = { version = "0.7.1", path = "../guppy-summaries", optional = true }
