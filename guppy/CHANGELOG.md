@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.17.10] - 2024-12-03
+
+### Changed
+
+- Internal dependency update: `cargo_metadata` updated to 0.19.1.
+- MSRV updated to Rust 1.78.
+
 ## [0.17.9] - 2024-12-02
 
 ### Fixed
@@ -698,6 +705,7 @@ lazy_static = "0.2"
 
 - Initial release.
 
+[0.17.10]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.10
 [0.17.9]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.9
 [0.17.8]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.8
 [0.17.7]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.7

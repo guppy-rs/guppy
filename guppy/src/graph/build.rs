@@ -14,8 +14,7 @@ use crate::{
 use ahash::AHashMap;
 use camino::{Utf8Path, Utf8PathBuf};
 use cargo_metadata::{
-    CrateType, DepKindInfo, Dependency, DependencyKind, Metadata, Node, NodeDep, Package, Target,
-    TargetKind,
+    DepKindInfo, Dependency, DependencyKind, Metadata, Node, NodeDep, Package, Target,
 };
 use fixedbitset::FixedBitSet;
 use indexmap::{IndexMap, IndexSet};
@@ -590,7 +589,7 @@ impl<'a> BuildTargets<'a> {
         let mut target_kinds = target
             .kind
             .into_iter()
-            .map(target_kind_to_string)
+            .map(|kind| kind.to_string())
             .collect::<Vec<_>>();
         let target_name = target.name.into_boxed_str();
         // Store crate types as strings to avoid exposing cargo_metadata in the
@@ -599,7 +598,7 @@ impl<'a> BuildTargets<'a> {
             target
                 .crate_types
                 .into_iter()
-                .map(crate_type_to_string)
+                .map(|ct| ct.to_string())
                 .collect::<Vec<_>>(),
         );
 
@@ -702,44 +701,6 @@ impl<'a> BuildTargets<'a> {
 
     fn finish(self) -> BuildTargetMap {
         self.targets
-    }
-}
-
-fn crate_type_to_string(ct: CrateType) -> String {
-    match ct {
-        CrateType::Bin => "bin".to_string(),
-        CrateType::CDyLib => "cdylib".to_string(),
-        CrateType::DyLib => "dylib".to_string(),
-        CrateType::Lib => "lib".to_string(),
-        CrateType::ProcMacro => "proc-macro".to_string(),
-        CrateType::RLib => "rlib".to_string(),
-        CrateType::StaticLib => "staticlib".to_string(),
-        CrateType::Unknown(s) => s,
-        _ => panic!(
-            "unknown crate type -- this impl should have been \
-             replaced with https://github.com/oli-obk/cargo_metadata/issues/275"
-        ),
-    }
-}
-
-fn target_kind_to_string(tk: TargetKind) -> String {
-    match tk {
-        TargetKind::Bench => "bench".to_string(),
-        TargetKind::Bin => "bin".to_string(),
-        TargetKind::CustomBuild => "custom-build".to_string(),
-        TargetKind::CDyLib => "cdylib".to_string(),
-        TargetKind::DyLib => "dylib".to_string(),
-        TargetKind::Example => "example".to_string(),
-        TargetKind::Lib => "lib".to_string(),
-        TargetKind::ProcMacro => "proc-macro".to_string(),
-        TargetKind::RLib => "rlib".to_string(),
-        TargetKind::StaticLib => "staticlib".to_string(),
-        TargetKind::Test => "test".to_string(),
-        TargetKind::Unknown(s) => s,
-        _ => panic!(
-            "unknown target kind {tk:?} -- this impl should have been \
-             replaced with https://github.com/oli-obk/cargo_metadata/issues/275"
-        ),
     }
 }
 
