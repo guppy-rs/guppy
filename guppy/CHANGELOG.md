@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.17.9] - 2024-12-02
+
+### Fixed
+
+- Graphs can now be generated even if the workspace `Cargo.toml` is within a subdirectory of one
+  of its members. (This is an uncommon situation, but one that is supported by Cargo.)
+
+### Changed
+
+- Internal dependency update: `cargo_metadata` updated to 0.19.0.
+
 ## [0.17.8] - 2024-10-02
 
 ### Fixed
@@ -687,6 +698,7 @@ lazy_static = "0.2"
 
 - Initial release.
 
+[0.17.9]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.9
 [0.17.8]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.8
 [0.17.7]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.7
 [0.17.6]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.6
