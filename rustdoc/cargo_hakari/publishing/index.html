@@ -1,0 +1,70 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Publishing a package to `crates.io` or other registries."><title>cargo_hakari::publishing - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-dbdb5eec.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="cargo_hakari" data-themes="" data-resource-suffix="" data-rustdoc-version="1.85.0-nightly (acabb5248 2024-12-04)" data-channel="nightly" data-search-js="search-92e6798f.js" data-settings-js="settings-0f613d39.js" ><script src="../../static.files/storage-59e33391.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../cargo_hakari/index.html">cargo_<wbr>hakari</a><span class="version">0.9.33</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Module publishing</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#a-temporarily-remove-the-workspace-hack-dependency-before-publishing" title="A. Temporarily remove the workspace-hack dependency before publishing">A. Temporarily remove the workspace-hack dependency before publishing</a></li><li><a href="#b-publish-your-own-workspace-hack-crate-to-the-registry" title="B. Publish your own workspace-hack crate to the registry">B. Publish your own workspace-hack crate to the registry</a><ul><li><a href="#1-ensure-the-local-crate-is-unique-on-the-registry" title="1. Ensure the local crate is unique on the registry">1. Ensure the local crate is unique on the registry</a></li><li><a href="#2-ensure-that-workspace-hack-dependencies-have-a-version-set" title="2. Ensure that workspace-hack dependencies have a version set">2. Ensure that workspace-hack dependencies have a version set</a></li><li><a href="#3-set-options-in-the-workspace-hacks-cargotoml" title="3. Set options in the workspace-hack’s `Cargo.toml`">3. Set options in the workspace-hack’s <code>Cargo.toml</code></a></li><li><a href="#4-temporarily-disable-the-workspace-hack-crate" title="4. Temporarily disable the workspace-hack crate">4. Temporarily disable the workspace-hack crate</a></li><li><a href="#5-publish-the-stub-workspace-hack-crate" title="5. Publish the stub workspace-hack crate">5. Publish the stub workspace-hack crate</a></li><li><a href="#6-re-enable-the-workspace-hack-crate" title="6. Re-enable the workspace-hack crate">6. Re-enable the workspace-hack crate</a></li><li><a href="#7-consider-using-a-patch-directive" title="7. Consider using a `[patch]` directive">7. Consider using a <code>[patch]</code> directive</a></li></ul></li></ul></section><div id="rustdoc-modnav"><h2 class="in-crate"><a href="../index.html">In crate cargo_<wbr>hakari</a></h2></div></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><span class="rustdoc-breadcrumbs"><a href="../index.html">cargo_hakari</a></span><h1>Module <span>publishing</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../src/cargo_hakari/docs/publishing.rs.html#4-127">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Publishing a package to <code>crates.io</code> or other registries.</p>
+<p><em>This section can be ignored if your workspace doesn’t publish any crates to registries.</em></p>
+<p>Many projects using <code>cargo hakari</code> may wish to publish their crates to <code>crates.io</code> or other
+registries. However, if you attempt to publish a crate from a Hakari-managed workspace, <code>cargo publish</code> may reject it for containing the local-only workspace-hack dependency.</p>
+<p><code>cargo hakari</code> provides two ways to handle this.</p>
+<h2 id="a-temporarily-remove-the-workspace-hack-dependency-before-publishing"><a class="doc-anchor" href="#a-temporarily-remove-the-workspace-hack-dependency-before-publishing">§</a>A. Temporarily remove the workspace-hack dependency before publishing</h2>
+<p>Simply run:</p>
+<div class="example-wrap"><pre class="language-sh"><code>cargo hakari publish -p &lt;crate&gt;</code></pre></div>
+<p>This command temporarily removes the dependency on the <code>workspace-hack</code> before publishing the
+crate. The dependency will be re-added afterwards, unless the command is interrupted with ctrl-C
+(in which case you can use <code>cargo hakari manage-deps</code> to finish the job.)</p>
+<p>This works out of the box. However, it has the downside of requiring <code>cargo hakari publish</code>. If
+you don’t have control over the commands run while publishing the package, it won’t be possible
+to use this method.</p>
+<h2 id="b-publish-your-own-workspace-hack-crate-to-the-registry"><a class="doc-anchor" href="#b-publish-your-own-workspace-hack-crate-to-the-registry">§</a>B. Publish your own workspace-hack crate to the registry</h2>
+<p>This method preserves workspace-hack dependencies in <code>Cargo.toml</code>s by targeting a stub crate on
+the registry.</p>
+<h3 id="1-ensure-the-local-crate-is-unique-on-the-registry"><a class="doc-anchor" href="#1-ensure-the-local-crate-is-unique-on-the-registry">§</a>1. Ensure the local crate is unique on the registry</h3>
+<p>Rename it to something unique if necessary.</p>
+<blockquote>
+<p><strong>TIP:</strong> On Unix platforms, to rename <code>workspace-hack</code> to <code>my-workspace-hack</code> in other
+<code>Cargo.toml</code> files: run this from the root of the workspace:</p>
+<div class="example-wrap"><pre class="language-sh"><code>git ls-files | grep Cargo.toml | xargs perl -p -i -e &#39;s/^workspace-hack = /my-workspace-hack = /&#39;</code></pre></div>
+<p>If not in the context of a Git repository, run:</p>
+<div class="example-wrap"><pre class="language-sh"><code>find . -name Cargo.toml | xargs perl -p -i -e &#39;s/^workspace-hack = /my-workspace-hack = /&#39;`</code></pre></div></blockquote>
+<p>Remember to update <code>.config/hakari.toml</code> (or <code>.guppy/hakari.toml</code>) with the new name.</p>
+<p>The rest of this section assumes the crate is called <code>my-workspace-hack</code>.</p>
+<h3 id="2-ensure-that-workspace-hack-dependencies-have-a-version-set"><a class="doc-anchor" href="#2-ensure-that-workspace-hack-dependencies-have-a-version-set">§</a>2. Ensure that workspace-hack dependencies have a version set</h3>
+<p>Depending on how workspace-hack dependencies are set up:</p>
+<h4 id="i-using-workspace-dotted"><a class="doc-anchor" href="#i-using-workspace-dotted">§</a>i. Using <code>workspace-dotted</code></h4>
+<p>If you’re using <a href="../config/index.html#workspace-hack-line-style" title="mod cargo_hakari::config">the <code>workspace-dotted</code> line
+style</a>, ensure that the <code>workspace-hack</code> line in
+the root <code>Cargo.toml</code> has a <code>version</code> field set.</p>
+<div class="example-wrap"><pre class="language-toml"><code>[workspace.dependencies]
+my-workspace-hack = { version = &quot;0.1&quot;, path = &quot;...&quot; }</code></pre></div><h4 id="ii-specifying-dependencies-directly"><a class="doc-anchor" href="#ii-specifying-dependencies-directly">§</a>ii. Specifying dependencies directly</h4>
+<p>If you’re using a different line style, ensure that <a href="../config/index.html#dep-format-version" title="mod cargo_hakari::config">the latest
+<code>dep-format-version</code></a> is set in <code>.config/hakari.toml</code>.</p>
+<p><code>dep-format-version = "2"</code> and higher add the <code>version</code> field to the <code>my-workspace-hack = ...</code>
+lines in other <code>Cargo.toml</code> files. <code>cargo publish</code> uses the <code>version</code> field to recognize
+published dependencies.</p>
+<p>This option is new in cargo-hakari 0.9.8. Configuration files created by older versions of
+cargo-hakari may not have this option set.</p>
+<p>Ensure that this option is present in <code>.config/hakari.toml</code> and is set to the latest version.
+See the <a href="../config/index.html" title="mod cargo_hakari::config">config</a> section for more details.</p>
+<p>Then run <code>cargo hakari manage-deps</code> to update the <code>workspace-hack = ...</code> lines.</p>
+<hr />
+<p>After performing the above actions, simply run <code>cargo publish</code> as usual to publish the crate.</p>
+<h3 id="3-set-options-in-the-workspace-hacks-cargotoml"><a class="doc-anchor" href="#3-set-options-in-the-workspace-hacks-cargotoml">§</a>3. Set options in the workspace-hack’s <code>Cargo.toml</code></h3>
+<p>In <code>my-workspace-hack</code>’s <code>Cargo.toml</code> file, set the <code>package.publish</code> option to anything other
+than <code>false</code>. This enables its publication.</p>
+<div class="example-wrap"><pre class="language-toml"><code>[package]
+publish = true  # to allow publishing to any registry
+## or
+publish = [&quot;crates-io&quot;]  # to allow publishing to crates.io only</code></pre></div>
+<p>While you’re here, you may also wish to set other options like <code>repository</code> or <code>homepage</code>.</p>
+<h3 id="4-temporarily-disable-the-workspace-hack-crate"><a class="doc-anchor" href="#4-temporarily-disable-the-workspace-hack-crate">§</a>4. Temporarily disable the workspace-hack crate</h3>
+<p><strong>This step is really important.</strong> Not doing it will cause the full dependency set in the
+workspace-hack to be published, which is not what you want.</p>
+<p>Run <code>cargo hakari disable</code> to disable the workspace-hack crate`.</p>
+<h3 id="5-publish-the-stub-workspace-hack-crate"><a class="doc-anchor" href="#5-publish-the-stub-workspace-hack-crate">§</a>5. Publish the stub workspace-hack crate</h3>
+<p>Run <code>cargo publish -p my-workspace-hack --allow-dirty</code> to publish the crate to <code>crates.io</code>. For
+other registries, use the <code>--registry</code> flag.</p>
+<h3 id="6-re-enable-the-workspace-hack-crate"><a class="doc-anchor" href="#6-re-enable-the-workspace-hack-crate">§</a>6. Re-enable the workspace-hack crate</h3>
+<p>Run <code>cargo hakari generate</code> to restore the workspace-hack’s contents. You can also use your
+source control system’s commands to do so, such as with <code>git restore</code>.</p>
+<h3 id="7-consider-using-a-patch-directive"><a class="doc-anchor" href="#7-consider-using-a-patch-directive">§</a>7. Consider using a <code>[patch]</code> directive</h3>
+<p>To allow Cargo workspaces that depend on a Git or path dependency to use the published
+workspace-hack, consider using a <code>[patch]</code> directive. Steps to do so are described in the <a href="../patch_directive/index.html" title="mod cargo_hakari::patch_directive">patch
+directive</a> section.</p>
+</div></details></section></div></main></body></html>

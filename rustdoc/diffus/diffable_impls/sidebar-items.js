@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["borrow","collection","map","option","primitives","set","string"]};

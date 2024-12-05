@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["CargoTomlError","DepFormatVersion","TomlOutError","UnifyTargetHost","WorkspaceHackLineStyle"],"mod":["cli_ops","explain","internals","summaries","verify"],"struct":["Hakari","HakariBuilder","HakariCargoToml","HakariOutputOptions"]};

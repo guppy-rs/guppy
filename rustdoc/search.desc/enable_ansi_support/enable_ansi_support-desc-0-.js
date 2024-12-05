@@ -1,0 +1,1 @@
+searchState.loadedDescShard("enable_ansi_support", 0, "Enable ANSI code support on Windows 10 and above.\nEnables ANSI code support on Windows 10.")
