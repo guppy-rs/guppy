@@ -56,7 +56,7 @@ guppy-workspace-hack.workspace = true
 
 [dev-dependencies]
 fixtures = { path = "../fixtures" }
-pretty_assertions = "1.4.0"
+pretty_assertions = "1.4.1"
 
 [features]
 proptest1 = ["proptest", "proptest-derive", "target-spec/proptest1"]
