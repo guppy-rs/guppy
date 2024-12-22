@@ -16,5 +16,15 @@ target-spec = { version = "3.2.2", path = "../target-spec" }
 miette.workspace = true
 guppy-workspace-hack.workspace = true
 
+[dev-dependencies]
+datatest-stable.workspace = true
+insta.workspace = true
+miette = { workspace = true, features = ["fancy"] }
+target-spec = { version = "3.2.2", path = "../target-spec", features = ["custom"] }
+
 [lints]
 workspace = true
+
+[[test]]
+name = "snapshot"
+harness = false

@@ -1,0 +1,13 @@
+---
+source: target-spec-miette/tests/snapshot/custom.rs
+expression: "format!(\"{:?}\", miette::Report::new_boxed(diagnostic))"
+snapshot_kind: text
+---
+  × error deserializing custom target JSON for `my-target`
+  ╰─▶ missing field `arch` at line 35 column 1
+    ╭─[35:1]
+ 34 │     "target-pointer-width": "64"
+ 35 │ }
+    · ▲
+    · ╰── missing field `arch`
+    ╰────

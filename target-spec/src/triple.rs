@@ -77,8 +77,9 @@ impl Triple {
 
         let triple_str = triple_str.into();
         let target_def: TargetDefinition = serde_json::from_str(json).map_err(|error| {
-            crate::errors::CustomTripleCreateError::Deserialize {
+            crate::errors::CustomTripleCreateError::DeserializeJson {
                 triple: triple_str.to_string(),
+                input: json.to_string(),
                 error: error.into(),
             }
         })?;

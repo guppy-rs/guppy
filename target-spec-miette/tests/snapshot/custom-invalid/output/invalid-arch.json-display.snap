@@ -1,0 +1,14 @@
+---
+source: target-spec-miette/tests/snapshot/custom.rs
+expression: "format!(\"{:?}\", miette::Report::new_boxed(diagnostic))"
+snapshot_kind: text
+---
+  × error deserializing custom target JSON for `my-target`
+  ╰─▶ invalid type: integer `123`, expected a string at line 2 column 13
+   ╭─[2:13]
+ 1 │ {
+ 2 │   "arch": 123,
+   ·             ▲
+   ·             ╰── invalid type: integer `123`, expected a string
+ 3 │   "cpu": "x86-64",
+   ╰────
