@@ -24,8 +24,6 @@ jobs:
         uses: taiki-e/install-action@just
       - name: Lint (clippy)
         run: just bootstrap clippy
-        env:
-          RUSTC_BOOTSTRAP: 1
       - name: Install cargo-hack
         uses: taiki-e/install-action@cargo-hack
       - name: Lint (rustfmt)
