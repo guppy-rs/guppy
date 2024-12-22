@@ -60,6 +60,7 @@ impl<'g, 'a> HakariInit<'g, 'a> {
                 // The path exists.
                 return Err(InitError::WorkspacePathExists { abs_path });
             }
+            #[cfg_attr(guppy_nightly, expect(non_exhaustive_omitted_patterns))]
             Err(err) => match err.kind() {
                 io::ErrorKind::NotFound => {}
                 _ => {

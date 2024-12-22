@@ -21,6 +21,9 @@ rust-version.workspace = true
 all-features = true
 rustdoc-args = ["--cfg=doc_cfg"]
 
+[lints]
+workspace = true
+
 [dependencies]
 ahash = "0.8.11"
 atomicwrites = "0.4.4"
