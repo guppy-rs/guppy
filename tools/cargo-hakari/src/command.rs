@@ -306,7 +306,14 @@ impl CommandWithBuilder {
                         // 102 is picked pretty arbitrarily because regular errors exit with 101.
                         return Ok(102);
                     }
-                    Err(err) => Err(err).with_context(|| "error generating new hakari.toml")?,
+                    Err(
+                        err @ TomlOutError::Platform(_)
+                        | err @ TomlOutError::Toml { .. }
+                        | err @ TomlOutError::FmtWrite(_)
+                        | err @ TomlOutError::UnrecognizedExternal { .. }
+                        | err @ TomlOutError::PathWithoutHakari { .. }
+                        | err,
+                    ) => Err(err).with_context(|| "error generating new hakari.toml")?,
                 };
 
                 let existing_toml = hakari

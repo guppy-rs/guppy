@@ -29,7 +29,7 @@ miette = "7.2.0"
 rust-version = "1.78"
 
 [workspace.lints.rust]
-unexpected_cfgs = { level = "warn", check-cfg = ['cfg(doc_cfg)'] }
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(doc_cfg)', 'cfg(guppy_nightly)'] }
 
 [patch.crates-io.guppy-workspace-hack]
 path = "workspace-hack"

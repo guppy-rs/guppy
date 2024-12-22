@@ -331,13 +331,16 @@ mod small {
             .metadata(&package_id(json::METADATA_PROC_MACRO1_MACRO))
             .expect("valid package ID");
         assert!(package.is_proc_macro(), "is proc macro");
-        assert!(matches!(
-            package
-                .build_target(&BuildTargetId::Library)
-                .expect("library package is present")
-                .kind(),
-            BuildTargetKind::ProcMacro
-        ));
+
+        let build_target_kind = package
+            .build_target(&BuildTargetId::Library)
+            .expect("library package is present")
+            .kind();
+        assert_eq!(
+            build_target_kind,
+            BuildTargetKind::ProcMacro,
+            "build target kind matches"
+        );
     }
 
     // No need for proptests because this is a really simple test.
