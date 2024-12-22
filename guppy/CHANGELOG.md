@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.17.11] - 2024-12-22
+
+### Added
+
+Added support for the upcoming [Cargo resolver version
+3](https://doc.rust-lang.org/beta/cargo/reference/resolver.html#resolver-versions):
+within guppy, `CargoResolverVersion::V3`. Resolver version 3 enables MSRV-aware
+version resolution in Cargo.
+
+The portion of dependency resolution that guppy works with (package and feature
+resolution) happens after dependency versions have been resolved and
+`Cargo.lock` is refreshed. This means that from guppy's perspective, resolver
+version 3 is the same as version 2, and `CargoResolverVersion::V3` acts as an
+alias for `CargoResolverVersion::V2`.
+
 ## [0.17.10] - 2024-12-03
 
 ### Changed
@@ -705,6 +720,7 @@ lazy_static = "0.2"
 
 - Initial release.
 
+[0.17.11]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.11
 [0.17.10]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.10
 [0.17.9]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.9
 [0.17.8]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.8

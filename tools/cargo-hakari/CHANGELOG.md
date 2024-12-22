@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.9.34] - 2024-12-22
+
+### Added
+
+Added support for the upcoming [Cargo resolver version
+3](https://doc.rust-lang.org/beta/cargo/reference/resolver.html#resolver-versions):
+`resolver = "3"` in `.config/hakari.toml`. Resolver version 3 enables MSRV-aware
+version resolution in Cargo.
+
+The portion of dependency resolution that hakari works with (package and feature
+resolution) happens after dependency versions have been resolved and
+`Cargo.lock` is refreshed. This means that from hakari's perspective, resolver
+version 3 is the same as version 2. You are welcome to keep using `resolver = "2"` if you like.
+
 ## [0.9.33] - 2024-10-06
 
 ### Fixed
@@ -321,6 +335,7 @@ This was tagged, but never released due to
 
 Initial release.
 
+[0.9.34]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.34
 [0.9.33]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.33
 [0.9.32]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.32
 [0.9.31]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.31

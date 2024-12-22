@@ -20,6 +20,7 @@ pub enum Error {
         since = "3.3.0",
         note = "this variant is no longer returned: instead, use CustomPlatformCreate"
     )]
+    #[doc(hidden)]
     CustomTripleCreate(CustomTripleCreateError),
     /// An error occurred while creating a custom platform.
     CustomPlatformCreate(CustomTripleCreateError),
@@ -319,25 +320,13 @@ impl error::Error for TripleParseErrorKind {
 #[non_exhaustive]
 pub enum CustomTripleCreateError {
     #[cfg(feature = "custom")]
-    /// An error occurred while deserializing serde data.
-    DeserializeJson {
-        /// The specified triple.
-        triple: String,
-
-        /// The input string that caused the error.
-        input: String,
-
-        /// The deserialization error that occurred.
-        error: std::sync::Arc<serde_json::Error>,
-    },
-
-    #[cfg(feature = "custom")]
     /// Deprecated, and no longer used: instead, use [`Self::DeserializeJson`].
     #[deprecated(
         since = "3.3.0",
         note = "this variant is no longer returned: instead, \
                 use DeserializeJson which also includes the input string"
     )]
+    #[doc(hidden)]
     Deserialize {
         /// The specified triple.
         triple: String,
@@ -351,6 +340,19 @@ pub enum CustomTripleCreateError {
     /// Currently, this can only happen if a custom platform is deserialized from a
     /// [`PlatformSummary`](crate::summaries::PlatformSummary),
     Unavailable,
+
+    #[cfg(feature = "custom")]
+    /// An error occurred while deserializing serde data.
+    DeserializeJson {
+        /// The specified triple.
+        triple: String,
+
+        /// The input string that caused the error.
+        input: String,
+
+        /// The deserialization error that occurred.
+        error: std::sync::Arc<serde_json::Error>,
+    },
 }
 
 impl CustomTripleCreateError {

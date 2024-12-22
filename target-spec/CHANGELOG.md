@@ -1,5 +1,33 @@
 # Changelog
 
+## [3.3.0] - 2024-12-22
+
+### Added
+
+- `CustomTripleCreateError` now has `input`, `input_string`, `line_and_column`,
+  and `label` methods. These methods aid in implementing
+  [`target-spec-miette`](https://docs.rs/target-spec-miette), and also allow
+  dependencies to be oblivious to whether the `custom` feature is enabled.
+
+### Fixed
+
+- Custom platforms now deserialize the `target-family` and `target-endian`
+  fields correctly. Previously, these fields were ignored and always treated
+  as empty.
+
+### Deprecated
+
+- `Error::CustomTripleCreate` is now deprecated. This error was never actually
+  created, and will be removed in the future.
+- `CustomTripleCreateError::Deserialize` is now deprecated. target-spec now creates
+  a different `DeserializeJson` variant when deserialization fails. This variant
+  also contains the original input being deserialized.
+
+### Changed
+
+- MSRV updated to Rust 1.78.
+- Internal dependency `cfg-expr` updated to 0.17.2, updating builtin targets to Rust 1.83.
+
 ## [3.2.2] - 2024-09-11
 
 ### Changed
@@ -303,6 +331,7 @@ This was mistakenly published and was yanked.
 
 - Initial release.
 
+[3.3.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.3.0
 [3.2.2]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.2.2
 [3.2.1]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.2.1
 [3.2.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.2.0
