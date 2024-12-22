@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '2'
 # workspace-hack-line-style = 'full'
-# platforms = ['xtensa-esp32-none-elf']
+# platforms = ['xtensa-esp32-espidf']
 # [[traversal-excludes.ids]]
 # name = 'git2-curl'
 # version = '0.14.1'
@@ -216,11 +216,16 @@ unicode-xid-c65f7effa3be6d31 = { package = "unicode-xid", version = "0.1" }
 unicode-xid-6f8ce4dd05d13bba = { package = "unicode-xid", version = "0.2" }
 version_check = { version = "0.9", default-features = false }
 
-[target.xtensa-esp32-none-elf.dependencies]
+[target.xtensa-esp32-espidf.dependencies]
 foreign-types = { version = "0.3", default-features = false }
 foreign-types-shared = { version = "0.1", default-features = false }
 openssl = { version = "0.10", default-features = false }
+openssl-probe = { version = "0.1", default-features = false }
 openssl-sys = { version = "0.9", default-features = false }
+termios = { version = "0.3", default-features = false }
+
+[target.xtensa-esp32-espidf.build-dependencies]
+libc = { version = "0.2", features = ["std"] }
 
 ### END HAKARI SECTION
 

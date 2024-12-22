@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '3'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['mipsisa32r6el-unknown-linux-gnu', 'i686-uwp-windows-gnu']
+# platforms = ['powerpc-unknown-linux-musl', 'loongarch64-unknown-linux-ohos']
 # [[traversal-excludes.ids]]
 # name = 'bytes'
 # version = '0.3.0'

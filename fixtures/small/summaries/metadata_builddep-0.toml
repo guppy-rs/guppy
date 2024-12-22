@@ -7,12 +7,12 @@ include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'i686-wrs-vxworks'
+triple = 'mips-unknown-linux-gnu'
 target-features = 'all'
 flags = ['test-flag']
 
 [metadata.target-platform]
-triple = 'thumbv8m.main-none-eabi'
+triple = 'thumbv8m.base-none-eabi'
 target-features = 'unknown'
 flags = ['test-flag']
 [[metadata.omitted-packages.ids]]

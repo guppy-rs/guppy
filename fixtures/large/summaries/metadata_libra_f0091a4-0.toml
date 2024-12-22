@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'x86_64-unknown-dragonfly'
+triple = 'x86_64-unikraft-linux-musl'
 target-features = 'unknown'
 
 [metadata.target-platform]
@@ -1500,13 +1500,6 @@ status = 'transitive'
 features = []
 
 [[host-package]]
-name = 'errno-dragonfly'
-version = '0.1.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
 name = 'failure'
 version = '0.1.6'
 crates-io = true
@@ -1599,13 +1592,6 @@ crates-io = true
 status = 'transitive'
 features = ['alloc', 'async-await', 'async-await-macro', 'channel', 'compat', 'futures-channel', 'futures-io', 'futures-macro', 'futures-sink', 'futures_01', 'io', 'io-compat', 'memchr', 'proc-macro-hack', 'proc-macro-nested', 'sink', 'slab', 'std', 'tokio-io']
 optional-deps = ['futures-channel', 'futures-io', 'futures-macro', 'futures-sink', 'futures_01', 'memchr', 'proc-macro-hack', 'proc-macro-nested', 'slab', 'tokio-io']
-
-[[host-package]]
-name = 'gcc'
-version = '0.3.55'
-crates-io = true
-status = 'transitive'
-features = []
 
 [[host-package]]
 name = 'generic-array'

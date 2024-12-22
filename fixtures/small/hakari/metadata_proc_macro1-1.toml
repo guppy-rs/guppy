@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '1'
 # workspace-hack-line-style = 'full'
-# platforms = ['x86_64-linux-android', 'armv7r-none-eabi', 'armv7-unknown-netbsd-eabihf']
+# platforms = ['x86_64-apple-watchos-sim', 'armv8r-none-eabihf', 'armv7a-kmc-solid_asp3-eabihf']
 # [[traversal-excludes.ids]]
 # name = 'dev-user'
 # version = '0.1.0'

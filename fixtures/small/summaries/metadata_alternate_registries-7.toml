@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'loongarch64-unknown-none'
+triple = 'mips64-openwrt-linux-musl'
 target-features = 'all'
 flags = ['flag-test', 'foo']
 

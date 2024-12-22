@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '2'
 # workspace-hack-line-style = 'full'
-# platforms = ['i686-unknown-uefi', 'arm-unknown-linux-musleabihf']
+# platforms = ['loongarch64-unknown-linux-musl', 'arm64e-apple-ios']
 #
 # [traversal-excludes]
 # [[final-excludes.ids]]

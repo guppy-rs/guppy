@@ -7,12 +7,12 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'aarch64-unknown-freebsd'
+triple = 'aarch64-unknown-hermit'
 target-features = 'all'
 flags = ['flag-test', 'test-flag']
 
 [metadata.target-platform]
-triple = 'armv7-unknown-netbsd-eabihf'
+triple = 'armv7a-kmc-solid_asp3-eabi'
 target-features = 'all'
 [[metadata.omitted-packages.ids]]
 name = 'libc'
@@ -210,6 +210,13 @@ status = 'transitive'
 features = ['raw']
 
 [[host-package]]
+name = 'hermit-abi'
+version = '0.3.9'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[host-package]]
 name = 'httparse'
 version = '1.9.4'
 crates-io = true
@@ -322,13 +329,6 @@ version = '0.8.4'
 crates-io = true
 status = 'transitive'
 features = ['std']
-
-[[host-package]]
-name = 'signal-hook-registry'
-version = '1.4.2'
-crates-io = true
-status = 'transitive'
-features = []
 
 [[host-package]]
 name = 'slab'

@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '2'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['mipsel-unknown-netbsd', 'powerpc-wrs-vxworks']
+# platforms = ['nvptx64-nvidia-cuda', 'powerpc64le-unknown-freebsd']
 # [[traversal-excludes.ids]]
 # name = 'build-user'
 # version = '0.1.0'

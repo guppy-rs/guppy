@@ -7,12 +7,12 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'arm-unknown-linux-gnueabihf'
+triple = 'arm64_32-apple-watchos'
 target-features = 'unknown'
 flags = ['flag-test', 'foo']
 
 [metadata.target-platform]
-triple = 'sparc-unknown-none-elf'
+triple = 'sparc64-unknown-netbsd'
 target-features = 'all'
 flags = ['foo']
 [[metadata.omitted-packages.ids]]

@@ -10,7 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'sparcv9-sun-solaris'
+triple = 'thumbv5te-none-eabi'
 target-features = 'all'
 [[metadata.omitted-packages.ids]]
 name = 'serde'

@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '1'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['x86_64-uwp-windows-msvc']
+# platforms = ['x86_64-uwp-windows-gnu']
 #
 # [traversal-excludes]
 #

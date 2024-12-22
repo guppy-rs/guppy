@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '4'
 # workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['aarch64-apple-ios-sim', 'armv7-unknown-freebsd']
+# platforms = ['aarch64-apple-ios-sim', 'armv7-unknown-linux-musleabi']
 # [[traversal-excludes.ids]]
 # name = 'dep-a'
 # version = '0.1.0'

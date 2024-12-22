@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '3'
 # workspace-hack-line-style = 'full'
-# platforms = ['aarch64-linux-android', 'i686-unknown-linux-gnu', 'x86_64-unknown-linux-none']
+# platforms = ['aarch64-pc-windows-msvc', 'i686-uwp-windows-gnu', 'x86_64-unknown-linux-none']
 # [[traversal-excludes.ids]]
 # name = 'cargo-compare'
 # version = '0.1.0'
@@ -142,15 +142,27 @@ unicode-xid-c65f7effa3be6d31 = { package = "unicode-xid", version = "0.1" }
 unicode-xid-6f8ce4dd05d13bba = { package = "unicode-xid", version = "0.2" }
 version_check = { version = "0.9", default-features = false }
 
-[target.aarch64-linux-android.dependencies]
+[target.aarch64-pc-windows-msvc.dependencies]
+encode_unicode = { version = "0.3" }
+output_vt100 = { version = "0.1", default-features = false }
 ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }
 rand_chacha = { version = "0.2", default-features = false, features = ["std"] }
-termios = { version = "0.3", default-features = false }
+winapi = { version = "0.3", default-features = false, features = ["consoleapi", "errhandlingapi", "fileapi", "handleapi", "minwinbase", "minwindef", "ntdef", "processenv", "profileapi", "std", "sysinfoapi", "timezoneapi", "winbase", "wincon", "winerror", "winnt", "winuser"] }
+winapi-util = { version = "0.1", default-features = false }
 
-[target.i686-unknown-linux-gnu.dependencies]
+[target.aarch64-pc-windows-msvc.build-dependencies]
+ctor = { version = "0.1", default-features = false }
+
+[target.i686-uwp-windows-gnu.dependencies]
+encode_unicode = { version = "0.3" }
+output_vt100 = { version = "0.1", default-features = false }
 ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }
 rand_chacha = { version = "0.2", default-features = false, features = ["std"] }
-termios = { version = "0.3", default-features = false }
+winapi = { version = "0.3", default-features = false, features = ["consoleapi", "errhandlingapi", "fileapi", "handleapi", "minwinbase", "minwindef", "ntdef", "processenv", "profileapi", "std", "sysinfoapi", "timezoneapi", "winbase", "wincon", "winerror", "winnt", "winuser"] }
+winapi-util = { version = "0.1", default-features = false }
+
+[target.i686-uwp-windows-gnu.build-dependencies]
+ctor = { version = "0.1", default-features = false }
 
 [target.x86_64-unknown-linux-none.dependencies]
 ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }

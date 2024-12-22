@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'aarch64_be-unknown-netbsd'
+triple = 'arm-unknown-linux-gnueabi'
 target-features = 'all'
 flags = ['abc', 'cargo_web']
 

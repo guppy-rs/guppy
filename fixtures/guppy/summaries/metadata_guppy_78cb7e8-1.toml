@@ -7,12 +7,12 @@ include-dev = false
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'riscv32gc-unknown-linux-gnu'
+triple = 'riscv32im-unknown-none-elf'
 target-features = 'all'
 flags = ['bar', 'foo']
 
 [metadata.target-platform]
-triple = 'mipsel-unknown-linux-gnu'
+triple = 'mipsisa64r6el-unknown-linux-gnuabi64'
 target-features = 'all'
 flags = ['foo']
 [[metadata.omitted-packages.ids]]
@@ -1009,13 +1009,6 @@ version = '0.1.21'
 crates-io = true
 status = 'transitive'
 features = []
-
-[[host-package]]
-name = 'libc'
-version = '0.2.79'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
 
 [[host-package]]
 name = 'pkg-config'

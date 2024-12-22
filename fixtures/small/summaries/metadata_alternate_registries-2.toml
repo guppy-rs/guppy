@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'loongarch64-unknown-linux-musl'
+triple = 'mips-unknown-linux-uclibc'
 target-features = 'all'
 
 [metadata.target-platform]

@@ -7,11 +7,11 @@ include-dev = false
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'xtensa-esp32s2-none-elf'
+triple = 'xtensa-esp32s2-espidf'
 target-features = 'all'
 
 [metadata.target-platform]
-triple = 'armv5te-unknown-linux-gnueabi'
+triple = 'armv6-unknown-freebsd'
 target-features = 'all'
 
 [[target-package]]

@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'riscv64gc-unknown-none-elf'
+triple = 'riscv64imac-unknown-none-elf'
 target-features = ['avx', 'bmi2', 'rdrand', 'sse', 'sse2']
 flags = ['abc', 'test-flag']
 

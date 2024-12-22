@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '4'
 # workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['x86_64-fuchsia']
+# platforms = ['x86_64-apple-watchos-sim']
 # [[traversal-excludes.ids]]
 # name = 'aho-corasick'
 # version = '1.1.3'
@@ -114,7 +114,7 @@ quote = { version = "1" }
 syn = { version = "2", features = ["full"] }
 tokio-macros = { version = "2", default-features = false }
 
-[target.x86_64-fuchsia.dependencies]
+[target.x86_64-apple-watchos-sim.dependencies]
 libc = { version = "0.2" }
 signal-hook-registry = { version = "1", default-features = false }
 

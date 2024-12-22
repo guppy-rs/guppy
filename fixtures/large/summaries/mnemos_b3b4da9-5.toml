@@ -7,12 +7,12 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'thumbv7neon-unknown-linux-musleabihf'
+triple = 'thumbv7neon-unknown-linux-gnueabihf'
 target-features = []
 flags = ['flag-test', 'foo']
 
 [metadata.target-platform]
-triple = 'powerpc64-unknown-linux-gnu'
+triple = 'riscv32e-unknown-none-elf'
 target-features = 'unknown'
 flags = ['cargo_web', 'test-flag']
 
