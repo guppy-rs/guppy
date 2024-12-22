@@ -46,7 +46,7 @@ proptest = { version = "1.5.0", optional = true }
 proptest-derive = { version = "0.5.1", optional = true }
 rayon = { version = "1.10.0", optional = true }
 semver = "1.0.24"
-serde = { version = "1.0.215", features = ["derive"] }
+serde = { version = "1.0.216", features = ["derive"] }
 serde_json = "1.0.133"
 smallvec = "1.13.2"
 static_assertions = "1.1.0"
