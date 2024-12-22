@@ -18,10 +18,9 @@ rustdoc:
     @# should really fix this at some point.
     @
     @# Also, cargo-compare currently pulls in cargo which bloats build times massively.
-    @RUSTC_BOOTSTRAP=1 RUSTDOCFLAGS='--cfg=doc_cfg' \
-        cargo tree --depth 1 -e normal --prefix none --workspace --exclude cargo-compare \
+    @cargo tree --depth 1 -e normal --prefix none --workspace --exclude cargo-compare \
         | grep -v '^clap v[23].' \
         | grep -v '^cargo-compare v' \
         | gawk '{ gsub(" v", "@", $0); printf("%s\n", $1); }' \
         | xargs printf -- '-p %s\n' \
-        | xargs cargo doc --no-deps --lib --all-features
+        | RUSTC_BOOTSTRAP=1 RUSTDOCFLAGS='--cfg=doc_cfg' xargs cargo doc --no-deps --lib --all-features
