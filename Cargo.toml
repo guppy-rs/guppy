@@ -20,7 +20,9 @@ members = [
 
 [workspace.dependencies]
 ahash = "0.8.11"
+datatest-stable = "0.2.10"
 guppy-workspace-hack = "0.1.0"
+insta = "1.41.1"
 miette = "7.2.0"
 
 [workspace.package]

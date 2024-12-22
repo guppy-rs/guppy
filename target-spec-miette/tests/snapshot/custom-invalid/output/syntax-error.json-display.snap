@@ -1,0 +1,13 @@
+---
+source: target-spec-miette/tests/snapshot/custom.rs
+expression: "format!(\"{:?}\", miette::Report::new_boxed(diagnostic))"
+snapshot_kind: text
+---
+  × error deserializing custom target JSON for `my-target`
+  ╰─▶ EOF while parsing a value at line 40 column 13
+    ╭─[40:13]
+ 39 │     "leak",
+ 40 │     "memory",
+    ·             ▲
+    ·             ╰── EOF while parsing a value
+    ╰────

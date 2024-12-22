@@ -15,8 +15,11 @@ pub enum Error {
     InvalidTargetSpecString(PlainStringParseError),
     /// The provided platform triple was unknown.
     UnknownPlatformTriple(TripleParseError),
-    /// An error occurred while creating a custom triple (in the position that a `cfg()` expression
-    /// would be).
+    /// Deprecated: this variant is no longer used.
+    #[deprecated(
+        since = "3.3.0",
+        note = "this variant is no longer returned: instead, use CustomPlatformCreate"
+    )]
     CustomTripleCreate(CustomTripleCreateError),
     /// An error occurred while creating a custom platform.
     CustomPlatformCreate(CustomTripleCreateError),
@@ -32,6 +35,7 @@ impl fmt::Display for Error {
             Error::UnknownPlatformTriple(_) => {
                 write!(f, "unknown platform triple")
             }
+            #[allow(deprecated)]
             Error::CustomTripleCreate(_) => write!(f, "error creating custom triple"),
             Error::CustomPlatformCreate(_) => {
                 write!(f, "error creating custom platform")
@@ -46,6 +50,7 @@ impl error::Error for Error {
             Error::InvalidExpression(err) => Some(err),
             Error::InvalidTargetSpecString(err) => Some(err),
             Error::UnknownPlatformTriple(err) => Some(err),
+            #[allow(deprecated)]
             Error::CustomTripleCreate(err) => Some(err),
             Error::CustomPlatformCreate(err) => Some(err),
         }
@@ -315,6 +320,24 @@ impl error::Error for TripleParseErrorKind {
 pub enum CustomTripleCreateError {
     #[cfg(feature = "custom")]
     /// An error occurred while deserializing serde data.
+    DeserializeJson {
+        /// The specified triple.
+        triple: String,
+
+        /// The input string that caused the error.
+        input: String,
+
+        /// The deserialization error that occurred.
+        error: std::sync::Arc<serde_json::Error>,
+    },
+
+    #[cfg(feature = "custom")]
+    /// Deprecated, and no longer used: instead, use [`Self::DeserializeJson`].
+    #[deprecated(
+        since = "3.3.0",
+        note = "this variant is no longer returned: instead, \
+                use DeserializeJson which also includes the input string"
+    )]
     Deserialize {
         /// The specified triple.
         triple: String,
@@ -330,11 +353,76 @@ pub enum CustomTripleCreateError {
     Unavailable,
 }
 
+impl CustomTripleCreateError {
+    /// Returns the provided input that caused the error, if available.
+    #[inline]
+    pub fn input(&self) -> Option<&str> {
+        self.input_string().map(String::as_str)
+    }
+
+    /// A version of [`Self::input`] that returns a `&String` rather than a
+    /// `&str`.
+    ///
+    /// This is a workaround for a miette limitation -- `&str` can't be cast to
+    /// `&dyn SourceCode`, but `&String` can.
+    pub fn input_string(&self) -> Option<&String> {
+        match self {
+            #[cfg(feature = "custom")]
+            Self::DeserializeJson { input, .. } => Some(input),
+            #[cfg(feature = "custom")]
+            #[allow(deprecated)]
+            Self::Deserialize { .. } => None,
+            Self::Unavailable => None,
+        }
+    }
+
+    /// Returns the line and column number that caused the error, if available
+    /// and the error is not an I/O error.
+    ///
+    /// The line and column number are 1-based, though the column number can be
+    /// 0 if the error occurred between lines.
+    #[inline]
+    pub fn line_and_column(&self) -> Option<(usize, usize)> {
+        match self {
+            #[cfg(feature = "custom")]
+            Self::DeserializeJson { error, .. } => Some((error.line(), error.column())),
+            #[cfg(feature = "custom")]
+            #[allow(deprecated)]
+            Self::Deserialize { .. } => None,
+            Self::Unavailable => None,
+        }
+    }
+
+    /// Returns a label suitable for the error message to label at
+    /// [`Self::line_and_column`].
+    ///
+    /// This label drops line and column information if available.
+    pub fn label(&self) -> Option<String> {
+        match self {
+            #[cfg(feature = "custom")]
+            Self::DeserializeJson { error, .. } => {
+                let label = error.to_string();
+                // serde_json appends " at line M column N" -- remove it.
+                let trimmed = match label.rfind(" at line ") {
+                    Some(idx) => label[..idx].to_string(),
+                    None => label,
+                };
+                Some(trimmed)
+            }
+            #[cfg(feature = "custom")]
+            #[allow(deprecated)]
+            Self::Deserialize { .. } => None,
+            Self::Unavailable => None,
+        }
+    }
+}
+
 impl fmt::Display for CustomTripleCreateError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             #[cfg(feature = "custom")]
-            Self::Deserialize { triple, .. } => {
+            #[allow(deprecated)]
+            Self::DeserializeJson { triple, .. } | Self::Deserialize { triple, .. } => {
                 write!(f, "error deserializing custom target JSON for `{triple}`")
             }
             Self::Unavailable => {
@@ -348,7 +436,8 @@ impl error::Error for CustomTripleCreateError {
     fn source(&self) -> Option<&(dyn error::Error + 'static)> {
         match self {
             #[cfg(feature = "custom")]
-            Self::Deserialize { error, .. } => Some(error),
+            #[allow(deprecated)]
+            Self::DeserializeJson { error, .. } | Self::Deserialize { error, .. } => Some(error),
             Self::Unavailable => None,
         }
     }

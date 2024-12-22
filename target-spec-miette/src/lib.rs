@@ -15,10 +15,11 @@
 #![forbid(unsafe_code)]
 #![cfg_attr(doc_cfg, feature(doc_cfg, doc_auto_cfg))]
 
-use miette::{Diagnostic, LabeledSpan, SourceCode};
+use miette::{Diagnostic, LabeledSpan, SourceCode, SourceOffset, SourceSpan};
 use std::{error::Error as StdError, fmt};
 use target_spec::errors::{
-    Error as TargetSpecError, ExpressionParseError, PlainStringParseError, TripleParseError,
+    CustomTripleCreateError, Error as TargetSpecError, ExpressionParseError, PlainStringParseError,
+    TripleParseError,
 };
 
 /// Extension trait that converts errors into a [`miette::Diagnostic`].
@@ -40,6 +41,9 @@ impl IntoMietteDiagnostic for TargetSpecError {
             Self::InvalidExpression(error) => Box::new(error.into_diagnostic()),
             Self::InvalidTargetSpecString(error) => Box::new(error.into_diagnostic()),
             Self::UnknownPlatformTriple(error) => Box::new(error.into_diagnostic()),
+            #[allow(deprecated)]
+            Self::CustomTripleCreate(error) => Box::new(error.into_diagnostic()),
+            Self::CustomPlatformCreate(error) => Box::new(error.into_diagnostic()),
             other => Box::<dyn Diagnostic + Send + Sync + 'static>::from(other.to_string()),
         }
     }
@@ -209,5 +213,62 @@ impl IntoMietteDiagnostic for PlainStringParseError {
 
     fn into_diagnostic(self) -> Self::IntoDiagnostic {
         PlainStringParseDiagnostic::new(self)
+    }
+}
+
+impl IntoMietteDiagnostic for CustomTripleCreateError {
+    type IntoDiagnostic = CustomTripleCreateDiagnostic;
+
+    fn into_diagnostic(self) -> Self::IntoDiagnostic {
+        CustomTripleCreateDiagnostic::new(self)
+    }
+}
+
+/// A wrapper around [`CustomTripleCreateError`] that implements [`Diagnostic`].
+pub struct CustomTripleCreateDiagnostic(CustomTripleCreateError);
+
+impl CustomTripleCreateDiagnostic {
+    /// Creates a new `CustomTripleCreateDiagnostic`.
+    pub fn new(error: CustomTripleCreateError) -> Self {
+        Self(error)
+    }
+}
+
+impl fmt::Debug for CustomTripleCreateDiagnostic {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Debug::fmt(&self.0, f)
+    }
+}
+
+impl fmt::Display for CustomTripleCreateDiagnostic {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Display::fmt(&self.0, f)
+    }
+}
+
+impl StdError for CustomTripleCreateDiagnostic {
+    fn source(&self) -> Option<&(dyn StdError + 'static)> {
+        self.0.source()
+    }
+}
+
+impl Diagnostic for CustomTripleCreateDiagnostic {
+    fn source_code(&self) -> Option<&dyn SourceCode> {
+        self.0.input_string().map(|input| input as &dyn SourceCode)
+    }
+
+    fn labels(&self) -> Option<Box<dyn Iterator<Item = LabeledSpan> + '_>> {
+        // ughhh, clippy warns about `?` here but I don't like it:
+        // https://github.com/rust-lang/rust-clippy/issues/13804
+        let input = self.0.input()?;
+        let (line, column) = self.0.line_and_column()?;
+
+        let source_offset = SourceOffset::from_location(input, line, column);
+        // serde_json doesn't return the span of the error, just a single
+        // offset.
+        let span = SourceSpan::new(source_offset, 0);
+
+        let label = LabeledSpan::new_with_span(self.0.label(), span);
+        Some(Box::new(std::iter::once(label)))
     }
 }
