@@ -375,7 +375,7 @@ dependencies = [
  "humantime",
  "ignore",
  "im-rc",
- "indexmap 2.3.0",
+ "indexmap 2.7.0",
  "itertools 0.13.0",
  "jobserver",
  "lazycell",
@@ -2269,7 +2269,7 @@ dependencies = [
  "fixtures",
  "guppy-summaries",
  "guppy-workspace-hack",
- "indexmap 2.3.0",
+ "indexmap 2.7.0",
  "itertools 0.13.0",
  "nested",
  "once_cell",
@@ -2416,6 +2416,12 @@ dependencies = [
  "ahash",
  "allocator-api2",
 ]
+
+[[package]]
+name = "hashbrown"
+version = "0.15.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bf151400ff0baff5465007dd2f3e717f3fe502074ca563069ce3a6629d07b289"
 
 [[package]]
 name = "hashlink"
@@ -2588,12 +2594,12 @@ dependencies = [
 
 [[package]]
 name = "indexmap"
-version = "2.3.0"
+version = "2.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "de3fc2e30ba82dd1b3911c8de1ffc143c74a914a14e99514d7637e3099df5ea0"
+checksum = "62f822373a4fe84d4bb149bf54e584a7f4abec90e072ed49cda0edea5b95471f"
 dependencies = [
  "equivalent",
- "hashbrown 0.14.3",
+ "hashbrown 0.15.2",
 ]
 
 [[package]]
@@ -3215,7 +3221,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b4c5cc86750666a3ed20bdaf5ca2a0344f9c67674cae0515bec2da16fbaa47db"
 dependencies = [
  "fixedbitset",
- "indexmap 2.3.0",
+ "indexmap 2.7.0",
 ]
 
 [[package]]
@@ -4279,7 +4285,7 @@ version = "0.22.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4ae48d6208a266e853d946088ed816055e556cc6028c5e8e2b84d9fa5dd7c7f5"
 dependencies = [
- "indexmap 2.3.0",
+ "indexmap 2.7.0",
  "serde",
  "serde_spanned",
  "toml_datetime 0.6.8",
