@@ -26,7 +26,7 @@ console = { version = "0.15.8" }
 getrandom = { version = "0.2.12", default-features = false, features = ["std"] }
 indexmap = { version = "1.9.3", default-features = false, features = ["std"] }
 log = { version = "0.4.22", default-features = false, features = ["std"] }
-miette = { version = "7.2.0", features = ["fancy"] }
+miette = { version = "7.4.0", features = ["fancy"] }
 num-traits = { version = "0.2.17", features = ["libm"] }
 owo-colors = { version = "3.5.0", default-features = false, features = ["supports-colors"] }
 petgraph = { version = "0.6.5", default-features = false, features = ["graphmap"] }
@@ -35,7 +35,7 @@ regex-automata = { version = "0.4.5", default-features = false, features = ["dfa
 regex-syntax = { version = "0.8.2" }
 serde = { version = "1.0.216", features = ["alloc", "derive"] }
 serde_json = { version = "1.0.134", features = ["unbounded_depth"] }
-textwrap = { version = "0.16.0" }
+textwrap = { version = "0.16.0", default-features = false, features = ["unicode-linebreak", "unicode-width"] }
 toml = { version = "0.5.11", features = ["preserve_order"] }
 
 [build-dependencies]

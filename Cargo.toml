@@ -24,7 +24,7 @@ cfg-expr = "0.17.2"
 datatest-stable = "0.2.10"
 guppy-workspace-hack = "0.1.0"
 insta = "1.41.1"
-miette = "7.2.0"
+miette = "7.4.0"
 
 [workspace.package]
 rust-version = "1.78"
