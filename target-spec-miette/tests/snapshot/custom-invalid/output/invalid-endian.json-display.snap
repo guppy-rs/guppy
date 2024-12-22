@@ -1,0 +1,15 @@
+---
+source: target-spec-miette/tests/snapshot/custom.rs
+expression: "format!(\"{:?}\", miette::Report::new_boxed(diagnostic))"
+snapshot_kind: text
+---
+  × error deserializing custom target JSON for `my-target`
+  ╰─▶ unknown variant `middle`, expected `little` or `big` at line 32 column
+      29
+    ╭─[32:29]
+ 31 │     },
+ 32 │     "target-endian": "middle",
+    ·                             ▲
+    ·                             ╰── unknown variant `middle`, expected `little` or `big`
+ 33 │     "target-family": ["unix"],
+    ╰────
