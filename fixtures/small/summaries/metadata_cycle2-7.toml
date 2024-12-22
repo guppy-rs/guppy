@@ -2,24 +2,24 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_cycle2
 
 [metadata]
-resolver = '1'
-include-dev = false
+resolver = 'install'
+include-dev = true
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-spec = 'any'
+spec = 'always'
 
 [metadata.target-platform]
 spec = 'any'
 [[metadata.omitted-packages.ids]]
-name = 'lower-a'
-version = '0.1.0'
-workspace-path = 'lower-a'
-
-[[metadata.omitted-packages.ids]]
 name = 'lower-b'
 version = '0.1.0'
 workspace-path = 'lower-b'
+
+[[metadata.omitted-packages.ids]]
+name = 'upper-b'
+version = '0.1.0'
+workspace-path = 'upper-b'
 
 [[metadata.features-only]]
 name = 'lower-a'
@@ -52,4 +52,11 @@ name = 'upper-b'
 version = '0.1.0'
 workspace-path = 'upper-b'
 status = 'initial'
+features = []
+
+[[target-package]]
+name = 'upper-a'
+version = '0.1.0'
+workspace-path = 'upper-a'
+status = 'workspace'
 features = []

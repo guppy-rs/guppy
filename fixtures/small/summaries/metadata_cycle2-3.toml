@@ -2,31 +2,26 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_cycle2
 
 [metadata]
-resolver = '2'
+resolver = '3'
 include-dev = false
-initials-platform = 'proc-macros-on-target'
+initials-platform = 'host'
 
 [metadata.host-platform]
-spec = 'always'
+triple = 'powerpc64-unknown-linux-musl'
+target-features = ['sse3']
+flags = ['abc', 'flag-test']
 
 [metadata.target-platform]
-triple = 'wasm32-wasi'
-target-features = 'unknown'
-flags = ['bar']
-[[metadata.omitted-packages.ids]]
-name = 'lower-a'
-version = '0.1.0'
-workspace-path = 'lower-a'
-
+spec = 'any'
 [[metadata.omitted-packages.ids]]
 name = 'lower-b'
 version = '0.1.0'
 workspace-path = 'lower-b'
 
 [[metadata.omitted-packages.ids]]
-name = 'upper-a'
+name = 'upper-b'
 version = '0.1.0'
-workspace-path = 'upper-a'
+workspace-path = 'upper-b'
 
 [[metadata.features-only]]
 name = 'lower-a'
@@ -40,23 +35,30 @@ version = '0.1.0'
 workspace-path = 'lower-b'
 features = []
 
-[[target-package]]
+[[host-package]]
 name = 'lower-b'
 version = '0.1.0'
 workspace-path = 'lower-b'
 status = 'initial'
 features = []
 
-[[target-package]]
+[[host-package]]
 name = 'upper-a'
 version = '0.1.0'
 workspace-path = 'upper-a'
 status = 'initial'
 features = []
 
-[[target-package]]
+[[host-package]]
 name = 'upper-b'
 version = '0.1.0'
 workspace-path = 'upper-b'
 status = 'initial'
+features = []
+
+[[host-package]]
+name = 'lower-a'
+version = '0.1.0'
+workspace-path = 'lower-a'
+status = 'workspace'
 features = []

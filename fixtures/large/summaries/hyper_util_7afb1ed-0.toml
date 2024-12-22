@@ -2,30 +2,23 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture hyper_util_7afb1ed
 
 [metadata]
-resolver = '2'
+resolver = '3'
 include-dev = true
-initials-platform = 'standard'
+initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-spec = 'any'
+spec = 'always'
 
 [metadata.target-platform]
-triple = 'thumbv7a-uwp-windows-msvc'
-target-features = ['sha', 'sse']
-flags = ['bar', 'foo']
+spec = 'always'
 [[metadata.omitted-packages.ids]]
-name = 'hyper'
-version = '1.4.1'
+name = 'h2'
+version = '0.4.5'
 crates-io = true
 
 [[metadata.omitted-packages.ids]]
-name = 'mio'
+name = 'http-body'
 version = '1.0.1'
-crates-io = true
-
-[[metadata.omitted-packages.ids]]
-name = 'tracing-core'
-version = '0.1.32'
 crates-io = true
 
 [[metadata.features-only]]
@@ -65,18 +58,19 @@ status = 'direct'
 features = ['default', 'std']
 
 [[target-package]]
-name = 'http-body'
-version = '1.0.1'
-crates-io = true
-status = 'direct'
-features = []
-
-[[target-package]]
 name = 'http-body-util'
 version = '0.1.2'
 crates-io = true
 status = 'direct'
 features = []
+
+[[target-package]]
+name = 'hyper'
+version = '1.4.1'
+crates-io = true
+status = 'direct'
+features = ['client', 'default', 'full', 'http1', 'http2', 'server']
+optional-deps = ['futures-channel', 'futures-util', 'h2', 'httparse', 'httpdate', 'itoa', 'pin-project-lite', 'smallvec', 'want']
 
 [[target-package]]
 name = 'pin-project-lite'
@@ -97,8 +91,8 @@ name = 'tokio'
 version = '1.39.2'
 crates-io = true
 status = 'direct'
-features = ['default', 'libc', 'macros', 'mio', 'net', 'rt', 'signal', 'signal-hook-registry', 'socket2', 'sync', 'test-util', 'time', 'tokio-macros', 'windows-sys']
-optional-deps = ['mio', 'tokio-macros', 'windows-sys']
+features = ['default', 'libc', 'macros', 'mio', 'net', 'rt', 'signal', 'signal-hook-registry', 'socket2', 'sync', 'test-util', 'time', 'tokio-macros']
+optional-deps = ['mio', 'tokio-macros']
 
 [[target-package]]
 name = 'tokio-test'
@@ -138,6 +132,13 @@ status = 'transitive'
 features = ['default', 'std']
 
 [[target-package]]
+name = 'futures-channel'
+version = '0.3.30'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'default', 'std']
+
+[[target-package]]
 name = 'futures-core'
 version = '0.3.30'
 crates-io = true
@@ -147,6 +148,20 @@ features = ['alloc', 'default', 'std']
 [[target-package]]
 name = 'futures-task'
 version = '0.3.30'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'httparse'
+version = '1.9.4'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
+name = 'httpdate'
+version = '1.0.3'
 crates-io = true
 status = 'transitive'
 features = []
@@ -187,6 +202,13 @@ status = 'transitive'
 features = ['alloc', 'std']
 
 [[target-package]]
+name = 'mio'
+version = '1.0.1'
+crates-io = true
+status = 'transitive'
+features = ['net', 'os-ext', 'os-poll']
+
+[[target-package]]
 name = 'pin-utils'
 version = '0.1.0'
 crates-io = true
@@ -217,6 +239,13 @@ status = 'transitive'
 features = ['std']
 
 [[target-package]]
+name = 'smallvec'
+version = '1.13.2'
+crates-io = true
+status = 'transitive'
+features = ['const_generics', 'const_new']
+
+[[target-package]]
 name = 'termcolor'
 version = '1.4.1'
 crates-io = true
@@ -231,22 +260,15 @@ status = 'transitive'
 features = ['default', 'time']
 
 [[target-package]]
-name = 'winapi-util'
-version = '0.1.8'
+name = 'try-lock'
+version = '0.2.5'
 crates-io = true
 status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'windows-sys'
-version = '0.52.0'
-crates-io = true
-status = 'transitive'
-features = ['Win32', 'Win32_Foundation', 'Win32_Security', 'Win32_Storage', 'Win32_Storage_FileSystem', 'Win32_System', 'Win32_System_Console', 'Win32_System_Pipes', 'Win32_System_SystemInformation', 'Win32_System_SystemServices', 'default']
-
-[[target-package]]
-name = 'windows-targets'
-version = '0.52.6'
+name = 'want'
+version = '0.3.1'
 crates-io = true
 status = 'transitive'
 features = []

@@ -2,9 +2,9 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_guppy_78cb7e8
 
 [metadata]
-resolver = '1'
+resolver = 'install'
 include-dev = false
-initials-platform = 'proc-macros-on-target'
+initials-platform = 'standard'
 
 [metadata.host-platform]
 spec = 'any'

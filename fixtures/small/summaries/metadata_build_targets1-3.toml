@@ -2,7 +2,7 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_build_targets1
 
 [metadata]
-resolver = '2'
+resolver = '3'
 include-dev = false
 initials-platform = 'standard'
 
@@ -10,8 +10,13 @@ initials-platform = 'standard'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'powerpc64le-unknown-linux-musl'
-target-features = ['ssse3']
+triple = 'thumbv7a-uwp-windows-msvc'
+target-features = ['aes', 'sha', 'sse', 'sse4.2', 'xsave', 'xsaves']
+flags = ['test-flag']
+[[metadata.omitted-packages.ids]]
+name = 'testcrate'
+version = '0.1.0'
+workspace-path = ''
 
 [[target-package]]
 name = 'testcrate'

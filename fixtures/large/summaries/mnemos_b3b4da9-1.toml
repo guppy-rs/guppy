@@ -2,87 +2,86 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture mnemos_b3b4da9
 
 [metadata]
-resolver = 'install'
-include-dev = false
-initials-platform = 'host'
+resolver = '2'
+include-dev = true
+initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'aarch64-pc-windows-gnullvm'
-target-features = ['bmi1', 'bmi2', 'sse2', 'sse4.2', 'xsaveopt', 'xsaves']
+spec = 'always'
 
 [metadata.target-platform]
-triple = 'aarch64-unknown-linux-gnu'
-target-features = ['bmi2', 'ssse3']
-flags = ['flag-test']
+triple = 'riscv32imac-esp-espidf'
+target-features = 'unknown'
+flags = ['foo']
 [[metadata.omitted-packages.ids]]
-name = 'gcd'
-version = '2.3.0'
+name = 'hkdf'
+version = '0.12.3'
 crates-io = true
 
-[[host-package]]
+[[target-package]]
 name = 'f3repl'
 version = '0.1.0'
 workspace-path = 'tools/f3repl'
 status = 'initial'
 features = []
 
-[[host-package]]
+[[target-package]]
 name = 'mnemos-beepy'
 version = '0.1.0'
 workspace-path = 'platforms/beepy'
 status = 'initial'
 features = []
 
-[[host-package]]
+[[target-package]]
 name = 'mnemos-config'
 version = '0.1.0'
 workspace-path = 'source/config'
 status = 'initial'
 features = ['default']
 
-[[host-package]]
+[[target-package]]
 name = 'forth3'
 version = '0.1.0'
 workspace-path = 'source/forth3'
 status = 'workspace'
 features = ['async', 'default', 'use-std']
 
-[[host-package]]
+[[target-package]]
 name = 'mnemos'
 version = '0.1.0'
 workspace-path = 'source/kernel'
 status = 'workspace'
 features = []
 
-[[host-package]]
+[[target-package]]
 name = 'mnemos-abi'
 version = '0.1.0'
 workspace-path = 'source/abi'
 status = 'workspace'
 features = ['default']
 
-[[host-package]]
+[[target-package]]
 name = 'mnemos-alloc'
 version = '0.1.0'
 workspace-path = 'source/alloc'
 status = 'workspace'
 features = ['default']
 
-[[host-package]]
+[[target-package]]
 name = 'sermux-proto'
 version = '0.1.0'
 workspace-path = 'source/sermux-proto'
 status = 'workspace'
 features = []
 
-[[host-package]]
+[[target-package]]
 name = 'spitebuf'
 version = '0.1.0'
 workspace-path = 'source/spitebuf'
 status = 'workspace'
 features = []
 
-[[host-package]]
+[[target-package]]
 name = 'bbq10kbd'
 version = '0.1.0'
 source = 'git+https://github.com/hawkw/bbq10kbd?branch=eliza/async#d2365be8726e9320b0e4ab626043c1a8a41246f8'
@@ -90,106 +89,106 @@ status = 'direct'
 features = ['embedded-hal-async']
 optional-deps = ['embedded-hal-async']
 
-[[host-package]]
+[[target-package]]
 name = 'cfg-if'
 version = '1.0.0'
 crates-io = true
 status = 'direct'
 features = []
 
-[[host-package]]
+[[target-package]]
 name = 'cobs'
 version = '0.2.3'
 crates-io = true
 status = 'direct'
 features = []
 
-[[host-package]]
+[[target-package]]
 name = 'cordyceps'
 version = '0.3.2'
 source = 'git+https://github.com/hawkw/mycelium.git?rev=101a4abaa19afdd131b334a16d92c9fb4909c064#101a4abaa19afdd131b334a16d92c9fb4909c064'
 status = 'direct'
 features = ['alloc', 'default']
 
-[[host-package]]
+[[target-package]]
 name = 'embedded-graphics'
 version = '0.7.1'
 crates-io = true
 status = 'direct'
 features = ['default']
 
-[[host-package]]
+[[target-package]]
 name = 'embedded-hal-async'
 version = '0.2.0-alpha.2'
 crates-io = true
 status = 'direct'
 features = []
 
-[[host-package]]
+[[target-package]]
 name = 'futures'
 version = '0.3.28'
 crates-io = true
 status = 'direct'
 features = ['async-await']
 
-[[host-package]]
+[[target-package]]
 name = 'hash32'
 version = '0.3.1'
 crates-io = true
 status = 'direct'
 features = []
 
-[[host-package]]
+[[target-package]]
 name = 'heapless'
 version = '0.7.16'
 crates-io = true
 status = 'direct'
 features = ['atomic-polyfill', 'cas', 'default', 'defmt', 'defmt-impl', 'serde']
-optional-deps = ['atomic-polyfill', 'defmt', 'serde']
+optional-deps = ['defmt', 'serde']
 
-[[host-package]]
+[[target-package]]
 name = 'input-mgr'
 version = '0.1.0'
 source = 'git+https://github.com/tosc-rs/teletype/?rev=de95e610cc79db6d59ad6b40eb2d82adebb4e033#de95e610cc79db6d59ad6b40eb2d82adebb4e033'
 status = 'direct'
 features = []
 
-[[host-package]]
+[[target-package]]
 name = 'linked_list_allocator'
 version = '0.10.5'
 crates-io = true
 status = 'direct'
 features = []
 
-[[host-package]]
+[[target-package]]
 name = 'maitake'
 version = '0.1.0'
 source = 'git+https://github.com/hawkw/mycelium.git?rev=101a4abaa19afdd131b334a16d92c9fb4909c064#101a4abaa19afdd131b334a16d92c9fb4909c064'
 status = 'direct'
 features = ['alloc']
 
-[[host-package]]
+[[target-package]]
 name = 'mycelium-bitfield'
 version = '0.1.3'
 source = 'git+https://github.com/hawkw/mycelium.git?rev=101a4abaa19afdd131b334a16d92c9fb4909c064#101a4abaa19afdd131b334a16d92c9fb4909c064'
 status = 'direct'
 features = []
 
-[[host-package]]
+[[target-package]]
 name = 'mycelium-util'
 version = '0.1.0'
 source = 'git+https://github.com/hawkw/mycelium.git?rev=101a4abaa19afdd131b334a16d92c9fb4909c064#101a4abaa19afdd131b334a16d92c9fb4909c064'
 status = 'direct'
 features = ['default']
 
-[[host-package]]
+[[target-package]]
 name = 'portable-atomic'
 version = '1.4.2'
 crates-io = true
 status = 'direct'
 features = ['default', 'fallback', 'require-cas']
 
-[[host-package]]
+[[target-package]]
 name = 'postcard'
 version = '1.0.6'
 crates-io = true
@@ -197,21 +196,21 @@ status = 'direct'
 features = ['const_format', 'default', 'experimental-derive', 'heapless', 'heapless-cas', 'postcard-derive']
 optional-deps = ['const_format', 'heapless', 'postcard-derive']
 
-[[host-package]]
+[[target-package]]
 name = 'profont'
 version = '0.6.1'
 crates-io = true
 status = 'direct'
 features = []
 
-[[host-package]]
+[[target-package]]
 name = 'ring-drawer'
 version = '0.1.0'
 source = 'git+https://github.com/tosc-rs/teletype/?rev=de95e610cc79db6d59ad6b40eb2d82adebb4e033#de95e610cc79db6d59ad6b40eb2d82adebb4e033'
 status = 'direct'
 features = ['default']
 
-[[host-package]]
+[[target-package]]
 name = 'serde'
 version = '1.0.188'
 crates-io = true
@@ -219,21 +218,221 @@ status = 'direct'
 features = ['derive', 'serde_derive']
 optional-deps = ['serde_derive']
 
-[[host-package]]
+[[target-package]]
 name = 'tracing'
 version = '0.1.37'
 crates-io = true
 status = 'direct'
-features = ['attributes', 'default', 'std', 'tracing-attributes']
+features = ['attributes', 'tracing-attributes']
 optional-deps = ['tracing-attributes']
 
-[[host-package]]
+[[target-package]]
 name = 'uuid'
 version = '1.4.1'
 crates-io = true
 status = 'direct'
 features = ['serde']
 optional-deps = ['serde']
+
+[[target-package]]
+name = 'az'
+version = '1.2.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'bitflags'
+version = '1.3.2'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[target-package]]
+name = 'byteorder'
+version = '1.4.3'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'const_format'
+version = '0.2.31'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[target-package]]
+name = 'defmt'
+version = '0.3.5'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'embedded-graphics-core'
+version = '0.3.3'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[target-package]]
+name = 'embedded-hal'
+version = '0.2.7'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'embedded-hal'
+version = '1.0.0-alpha.11'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'float-cmp'
+version = '0.8.0'
+crates-io = true
+status = 'transitive'
+features = ['default', 'num-traits', 'ratio']
+optional-deps = ['num-traits']
+
+[[target-package]]
+name = 'futures-channel'
+version = '0.3.28'
+crates-io = true
+status = 'transitive'
+features = ['futures-sink', 'sink']
+optional-deps = ['futures-sink']
+
+[[target-package]]
+name = 'futures-core'
+version = '0.3.28'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'futures-io'
+version = '0.3.28'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'futures-sink'
+version = '0.3.28'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'futures-task'
+version = '0.3.28'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'futures-util'
+version = '0.3.28'
+crates-io = true
+status = 'transitive'
+features = ['async-await', 'async-await-macro', 'futures-macro', 'futures-sink', 'sink']
+optional-deps = ['futures-macro', 'futures-sink']
+
+[[target-package]]
+name = 'hash32'
+version = '0.2.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'micromath'
+version = '1.1.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'nb'
+version = '0.1.3'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'nb'
+version = '1.1.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'num-traits'
+version = '0.2.15'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'pin-project'
+version = '1.1.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'pin-project-lite'
+version = '0.2.13'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'pin-utils'
+version = '0.1.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'stable_deref_trait'
+version = '1.2.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'tracing'
+version = '0.2.0'
+source = 'git+https://github.com/tokio-rs/tracing#941b1591faeea55d62c1c8cf524ffa3e95b66887'
+status = 'transitive'
+features = ['attributes', 'tracing-attributes']
+optional-deps = ['tracing-attributes']
+
+[[target-package]]
+name = 'tracing-core'
+version = '0.1.31'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'tracing-core'
+version = '0.2.0'
+source = 'git+https://github.com/tokio-rs/tracing#941b1591faeea55d62c1c8cf524ffa3e95b66887'
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'void'
+version = '1.0.2'
+crates-io = true
+status = 'transitive'
+features = []
 
 [[host-package]]
 name = 'vergen'
@@ -258,46 +457,11 @@ status = 'transitive'
 features = []
 
 [[host-package]]
-name = 'az'
-version = '1.2.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'bitflags'
-version = '1.3.2'
-crates-io = true
-status = 'transitive'
-features = ['default']
-
-[[host-package]]
-name = 'byteorder'
-version = '1.4.3'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'const_format'
-version = '0.2.31'
-crates-io = true
-status = 'transitive'
-features = ['default']
-
-[[host-package]]
 name = 'const_format_proc_macros'
 version = '0.2.31'
 crates-io = true
 status = 'transitive'
 features = ['default']
-
-[[host-package]]
-name = 'defmt'
-version = '0.3.5'
-crates-io = true
-status = 'transitive'
-features = []
 
 [[host-package]]
 name = 'defmt-macros'
@@ -314,88 +478,8 @@ status = 'transitive'
 features = ['unstable']
 
 [[host-package]]
-name = 'embedded-graphics-core'
-version = '0.3.3'
-crates-io = true
-status = 'transitive'
-features = ['default']
-
-[[host-package]]
-name = 'embedded-hal'
-version = '0.2.7'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'embedded-hal'
-version = '1.0.0-alpha.11'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'float-cmp'
-version = '0.8.0'
-crates-io = true
-status = 'transitive'
-features = ['default', 'num-traits', 'ratio']
-optional-deps = ['num-traits']
-
-[[host-package]]
-name = 'futures-channel'
-version = '0.3.28'
-crates-io = true
-status = 'transitive'
-features = ['futures-sink', 'sink']
-optional-deps = ['futures-sink']
-
-[[host-package]]
-name = 'futures-core'
-version = '0.3.28'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'futures-io'
-version = '0.3.28'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
 name = 'futures-macro'
 version = '0.3.28'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'futures-sink'
-version = '0.3.28'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'futures-task'
-version = '0.3.28'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'futures-util'
-version = '0.3.28'
-crates-io = true
-status = 'transitive'
-features = ['async-await', 'async-await-macro', 'futures-macro', 'futures-sink', 'sink']
-optional-deps = ['futures-macro', 'futures-sink']
-
-[[host-package]]
-name = 'hash32'
-version = '0.2.1'
 crates-io = true
 status = 'transitive'
 features = []
@@ -408,64 +492,8 @@ status = 'transitive'
 features = []
 
 [[host-package]]
-name = 'micromath'
-version = '1.1.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'nb'
-version = '0.1.3'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'nb'
-version = '1.1.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'num-traits'
-version = '0.2.15'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'once_cell'
-version = '1.18.0'
-crates-io = true
-status = 'transitive'
-features = ['alloc', 'default', 'race', 'std']
-
-[[host-package]]
-name = 'pin-project'
-version = '1.1.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
 name = 'pin-project-internal'
 version = '1.1.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'pin-project-lite'
-version = '0.2.13'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'pin-utils'
-version = '0.1.0'
 crates-io = true
 status = 'transitive'
 features = []
@@ -535,13 +563,6 @@ status = 'transitive'
 features = ['default']
 
 [[host-package]]
-name = 'stable_deref_trait'
-version = '1.2.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
 name = 'syn'
 version = '1.0.109'
 crates-io = true
@@ -587,14 +608,6 @@ status = 'transitive'
 features = []
 
 [[host-package]]
-name = 'tracing'
-version = '0.2.0'
-source = 'git+https://github.com/tokio-rs/tracing#941b1591faeea55d62c1c8cf524ffa3e95b66887'
-status = 'transitive'
-features = ['attributes', 'tracing-attributes']
-optional-deps = ['tracing-attributes']
-
-[[host-package]]
 name = 'tracing-attributes'
 version = '0.1.26'
 crates-io = true
@@ -603,21 +616,6 @@ features = []
 
 [[host-package]]
 name = 'tracing-attributes'
-version = '0.2.0'
-source = 'git+https://github.com/tokio-rs/tracing#941b1591faeea55d62c1c8cf524ffa3e95b66887'
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'tracing-core'
-version = '0.1.31'
-crates-io = true
-status = 'transitive'
-features = ['default', 'once_cell', 'std', 'valuable']
-optional-deps = ['once_cell', 'valuable']
-
-[[host-package]]
-name = 'tracing-core'
 version = '0.2.0'
 source = 'git+https://github.com/tokio-rs/tracing#941b1591faeea55d62c1c8cf524ffa3e95b66887'
 status = 'transitive'
@@ -640,13 +638,6 @@ features = ['default']
 [[host-package]]
 name = 'version_check'
 version = '0.9.4'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'void'
-version = '1.0.2'
 crates-io = true
 status = 'transitive'
 features = []

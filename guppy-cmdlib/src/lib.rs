@@ -90,6 +90,7 @@ pub enum CargoResolverVersionCmd {
     V1,
     V1Install,
     V2,
+    V3,
 }
 
 #[derive(ArgEnum, Clone, Copy, Debug)]
@@ -124,6 +125,7 @@ impl CargoResolverVersionCmd {
             CargoResolverVersionCmd::V1 => CargoResolverVersion::V1,
             CargoResolverVersionCmd::V1Install => CargoResolverVersion::V1Install,
             CargoResolverVersionCmd::V2 => CargoResolverVersion::V2,
+            CargoResolverVersionCmd::V3 => CargoResolverVersion::V3,
         }
     }
 }

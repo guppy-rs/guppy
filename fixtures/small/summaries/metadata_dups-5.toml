@@ -2,9 +2,9 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_dups
 
 [metadata]
-resolver = 'install'
+resolver = '2'
 include-dev = false
-initials-platform = 'proc-macros-on-target'
+initials-platform = 'standard'
 
 [metadata.host-platform]
 spec = 'always'

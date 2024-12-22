@@ -2,24 +2,32 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata1
 
 [metadata]
-resolver = 'install'
-include-dev = false
-initials-platform = 'standard'
+resolver = '2'
+include-dev = true
+initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-spec = 'any'
+triple = 'armv7-unknown-linux-uclibceabihf'
+target-features = 'unknown'
+flags = ['cargo_web', 'flag-test']
 
 [metadata.target-platform]
-spec = 'always'
+triple = 'i686-apple-darwin'
+target-features = ['sse3', 'sse4.1', 'sse4.2', 'ssse3', 'xsave']
 [[metadata.omitted-packages.ids]]
-name = 'memchr'
-version = '2.2.1'
+name = 'linked-hash-map'
+version = '0.5.2'
 crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'testcrate'
+version = '0.1.0'
+workspace-path = ''
 
 [[metadata.omitted-packages.ids]]
 name = 'walkdir'
 version = '2.2.9'
-source = 'git+https://github.com/BurntSushi/walkdir?tag=2.2.9#7c7013259eb9db400b3e5c7bc60330ca08068826'
+crates-io = true
 
 [[metadata.features-only]]
 name = 'testcrate'
@@ -41,7 +49,8 @@ name = 'datatest'
 version = '0.4.2'
 crates-io = true
 status = 'direct'
-features = ['default']
+features = ['default', 'region', 'unsafe_test_runner']
+optional-deps = ['region']
 
 [[target-package]]
 name = 'aho-corasick'
@@ -49,6 +58,13 @@ version = '0.7.6'
 crates-io = true
 status = 'transitive'
 features = ['default', 'std']
+
+[[target-package]]
+name = 'bitflags'
+version = '1.1.0'
+crates-io = true
+status = 'transitive'
+features = ['default']
 
 [[target-package]]
 name = 'dtoa'
@@ -65,11 +81,25 @@ status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'linked-hash-map'
-version = '0.5.2'
+name = 'libc'
+version = '0.2.62'
 crates-io = true
 status = 'transitive'
-features = []
+features = ['default', 'std', 'use_std']
+
+[[target-package]]
+name = 'mach'
+version = '0.2.3'
+crates-io = true
+status = 'transitive'
+features = ['default', 'deprecated', 'use_std']
+
+[[target-package]]
+name = 'memchr'
+version = '2.2.1'
+crates-io = true
+status = 'transitive'
+features = ['default', 'use_std']
 
 [[target-package]]
 name = 'regex'
@@ -85,6 +115,20 @@ version = '0.6.12'
 crates-io = true
 status = 'transitive'
 features = ['unicode-age', 'unicode-bool', 'unicode-case', 'unicode-gencat', 'unicode-perl', 'unicode-script', 'unicode-segment']
+
+[[target-package]]
+name = 'region'
+version = '2.1.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'same-file'
+version = '1.0.5'
+crates-io = true
+status = 'transitive'
+features = []
 
 [[target-package]]
 name = 'serde'
@@ -104,6 +148,13 @@ features = []
 name = 'thread_local'
 version = '0.3.6'
 crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'walkdir'
+version = '2.2.9'
+source = 'git+https://github.com/BurntSushi/walkdir?tag=2.2.9#7c7013259eb9db400b3e5c7bc60330ca08068826'
 status = 'transitive'
 features = []
 

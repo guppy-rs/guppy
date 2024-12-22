@@ -2,8 +2,8 @@
 #    cargo run -p fixture-manager -- generate-hakari --fixture metadata_dups
 
 ### BEGIN HAKARI SECTION
-# resolver = 'install'
-# unify-target-host = 'replicate-target-on-host'
+# resolver = '2'
+# unify-target-host = 'unify-if-both'
 # output-single-feature = true
 # dep-format-version = '1'
 # workspace-hack-line-style = 'version-only'
@@ -14,12 +14,6 @@
 # [final-excludes]
 
 [dependencies]
-bytes-468e82937335b1c9 = { package = "bytes", version = "0.3", default-features = false }
-bytes-d8f496e17d97b5cb = { package = "bytes", version = "0.5", features = ["std"] }
-lazy_static-6f8ce4dd05d13bba = { package = "lazy_static", version = "0.2", default-features = false }
-lazy_static-dff4ba8e3ae991db = { package = "lazy_static", version = "1", default-features = false }
-
-[build-dependencies]
 bytes-468e82937335b1c9 = { package = "bytes", version = "0.3", default-features = false }
 bytes-d8f496e17d97b5cb = { package = "bytes", version = "0.5", features = ["std"] }
 lazy_static-6f8ce4dd05d13bba = { package = "lazy_static", version = "0.2", default-features = false }

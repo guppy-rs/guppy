@@ -2,17 +2,31 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata2
 
 [metadata]
-resolver = '2'
+resolver = '3'
 include-dev = false
-initials-platform = 'standard'
+initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-spec = 'any'
+triple = 'x86_64-pc-windows-gnullvm'
+target-features = 'unknown'
 
 [metadata.target-platform]
-triple = 'arm-unknown-linux-gnueabi'
-target-features = 'all'
-flags = ['abc', 'cargo_web']
+triple = 'riscv32imc-unknown-nuttx-elf'
+target-features = ['avx']
+[[metadata.omitted-packages.ids]]
+name = 'thread_local'
+version = '0.3.6'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'version_check'
+version = '0.9.1'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'winapi-util'
+version = '0.1.2'
+crates-io = true
 
 [[metadata.features-only]]
 name = 'testworkspace-crate'
@@ -76,13 +90,6 @@ status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'lazy_static'
-version = '1.4.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
 name = 'linked-hash-map'
 version = '0.5.2'
 crates-io = true
@@ -128,13 +135,6 @@ features = ['default', 'std']
 [[target-package]]
 name = 'serde_yaml'
 version = '0.8.9'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'thread_local'
-version = '0.3.6'
 crates-io = true
 status = 'transitive'
 features = []
@@ -188,10 +188,3 @@ version = '0.2.0'
 crates-io = true
 status = 'transitive'
 features = ['default']
-
-[[host-package]]
-name = 'version_check'
-version = '0.9.1'
-crates-io = true
-status = 'transitive'
-features = []

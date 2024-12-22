@@ -2,25 +2,16 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_guppy_869476c
 
 [metadata]
-resolver = 'install'
-include-dev = false
+resolver = '2'
+include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-spec = 'any'
+spec = 'always'
 
 [metadata.target-platform]
-triple = 'aarch64-unknown-fuchsia'
-target-features = 'unknown'
-[[metadata.omitted-packages.ids]]
-name = 'guppy-cmdlib'
-version = '0.1.0'
-workspace-path = 'guppy-cmdlib'
-
-[[metadata.omitted-packages.ids]]
-name = 'rand_xorshift'
-version = '0.2.0'
-crates-io = true
+triple = 'sparc64-unknown-netbsd'
+target-features = ['sha', 'sse4.1']
 
 [[target-package]]
 name = 'fixture-manager'
@@ -51,6 +42,14 @@ workspace-path = 'guppy'
 status = 'workspace'
 features = ['guppy-summaries', 'proptest', 'proptest-derive', 'proptest010', 'summaries']
 optional-deps = ['guppy-summaries', 'proptest', 'proptest-derive']
+
+[[target-package]]
+name = 'guppy-cmdlib'
+version = '0.1.0'
+workspace-path = 'guppy-cmdlib'
+status = 'workspace'
+features = ['proptest', 'proptest010']
+optional-deps = ['proptest']
 
 [[target-package]]
 name = 'guppy-summaries'
@@ -365,6 +364,13 @@ crates-io = true
 status = 'transitive'
 features = ['alloc', 'getrandom', 'std']
 optional-deps = ['getrandom']
+
+[[target-package]]
+name = 'rand_xorshift'
+version = '0.2.0'
+crates-io = true
+status = 'transitive'
+features = []
 
 [[target-package]]
 name = 'regex-syntax'

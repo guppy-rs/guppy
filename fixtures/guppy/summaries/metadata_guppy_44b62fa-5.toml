@@ -2,7 +2,7 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_guppy_44b62fa
 
 [metadata]
-resolver = '1'
+resolver = 'install'
 include-dev = false
 initials-platform = 'standard'
 
@@ -10,11 +10,12 @@ initials-platform = 'standard'
 spec = 'any'
 
 [metadata.target-platform]
-spec = 'any'
+triple = 'x86_64-fortanix-unknown-sgx'
+target-features = 'all'
 [[metadata.omitted-packages.ids]]
-name = 'hakari'
-version = '0.8.1'
-workspace-path = 'tools/hakari'
+name = 'guppy-workspace-hack'
+version = '0.1.0'
+workspace-path = 'workspace-hack'
 
 [[target-package]]
 name = 'guppy-summaries'

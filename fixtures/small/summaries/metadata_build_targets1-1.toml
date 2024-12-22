@@ -2,9 +2,9 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_build_targets1
 
 [metadata]
-resolver = 'install'
+resolver = '2'
 include-dev = true
-initials-platform = 'proc-macros-on-target'
+initials-platform = 'standard'
 
 [metadata.host-platform]
 spec = 'always'

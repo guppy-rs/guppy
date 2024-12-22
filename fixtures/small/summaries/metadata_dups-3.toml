@@ -2,19 +2,29 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_dups
 
 [metadata]
-resolver = 'install'
+resolver = '2'
 include-dev = true
-initials-platform = 'standard'
+initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'x86_64-unknown-freebsd'
-target-features = 'all'
-flags = ['test-flag']
+spec = 'always'
 
 [metadata.target-platform]
-triple = 'thumbv8m.main-none-eabihf'
-target-features = ['avx', 'sha', 'sse', 'xsaveopt']
-flags = ['flag-test', 'foo']
+spec = 'any'
+[[metadata.omitted-packages.ids]]
+name = 'bytes'
+version = '0.5.4'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'lazy_static'
+version = '0.2.11'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'lazy_static'
+version = '1.4.0'
+crates-io = true
 
 [[metadata.features-only]]
 name = 'testcrate-dups'
@@ -32,27 +42,6 @@ features = []
 [[target-package]]
 name = 'bytes'
 version = '0.3.0'
-crates-io = true
-status = 'direct'
-features = []
-
-[[target-package]]
-name = 'bytes'
-version = '0.5.4'
-crates-io = true
-status = 'direct'
-features = ['default', 'std']
-
-[[target-package]]
-name = 'lazy_static'
-version = '0.2.11'
-crates-io = true
-status = 'direct'
-features = []
-
-[[target-package]]
-name = 'lazy_static'
-version = '1.4.0'
 crates-io = true
 status = 'direct'
 features = []

@@ -2,9 +2,9 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_guppy_c9b4f76
 
 [metadata]
-resolver = '2'
-include-dev = false
-initials-platform = 'proc-macros-on-target'
+resolver = '3'
+include-dev = true
+initials-platform = 'standard'
 
 [metadata.host-platform]
 spec = 'any'
@@ -216,7 +216,7 @@ name = 'itoa'
 version = '0.4.6'
 crates-io = true
 status = 'transitive'
-features = []
+features = ['default', 'std']
 
 [[target-package]]
 name = 'lazy_static'
@@ -230,7 +230,7 @@ name = 'num-traits'
 version = '0.2.12'
 crates-io = true
 status = 'transitive'
-features = ['std']
+features = ['default', 'std']
 
 [[target-package]]
 name = 'ppv-lite86'
