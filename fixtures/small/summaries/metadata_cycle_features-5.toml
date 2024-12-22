@@ -2,28 +2,22 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_cycle_features
 
 [metadata]
-resolver = 'install'
-include-dev = false
+resolver = '2'
+include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'loongarch64-unknown-none'
-target-features = 'all'
-flags = ['cargo_web', 'foo']
+triple = 'csky-unknown-linux-gnuabiv2'
+target-features = ['bmi1', 'rdrand', 'sha', 'sse2']
 
 [metadata.target-platform]
-triple = 'i686-unknown-hurd-gnu'
-target-features = 'unknown'
-flags = ['cargo_web', 'foo']
+triple = 'aarch64-unknown-netbsd'
+target-features = 'all'
+flags = ['cargo_web']
 [[metadata.omitted-packages.ids]]
 name = 'testcycles-base'
 version = '0.1.0'
 workspace-path = 'testcycles-base'
-
-[[metadata.omitted-packages.ids]]
-name = 'testcycles-helper'
-version = '0.1.0'
-workspace-path = 'testcycles-helper'
 
 [[metadata.features-only]]
 name = 'testcycles-helper'
@@ -36,4 +30,11 @@ name = 'testcycles-base'
 version = '0.1.0'
 workspace-path = 'testcycles-base'
 status = 'initial'
+features = []
+
+[[target-package]]
+name = 'testcycles-helper'
+version = '0.1.0'
+workspace-path = 'testcycles-helper'
+status = 'workspace'
 features = []

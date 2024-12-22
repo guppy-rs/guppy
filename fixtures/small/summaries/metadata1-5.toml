@@ -2,26 +2,28 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata1
 
 [metadata]
-resolver = 'install'
-include-dev = false
+resolver = '2'
+include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-spec = 'any'
+triple = 'loongarch64-unknown-linux-gnu'
+target-features = 'unknown'
+flags = ['foo']
 
 [metadata.target-platform]
-triple = 'i686-wrs-vxworks'
+triple = 'x86_64-unknown-l4re-uclibc'
 target-features = 'all'
-flags = ['bar']
+flags = ['cargo_web']
 [[metadata.omitted-packages.ids]]
-name = 'quote'
-version = '1.0.2'
+name = 'bitflags'
+version = '1.1.0'
 crates-io = true
 
 [[metadata.omitted-packages.ids]]
-name = 'testcrate'
-version = '0.1.0'
-workspace-path = ''
+name = 'winapi'
+version = '0.3.8'
+crates-io = true
 
 [[metadata.features-only]]
 name = 'testcrate'
@@ -177,34 +179,6 @@ features = []
 name = 'walkdir'
 version = '2.2.9'
 source = 'git+https://github.com/BurntSushi/walkdir?tag=2.2.9#7c7013259eb9db400b3e5c7bc60330ca08068826'
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'winapi'
-version = '0.3.8'
-crates-io = true
-status = 'transitive'
-features = ['consoleapi', 'errhandlingapi', 'fileapi', 'minwindef', 'processenv', 'std', 'winbase', 'wincon', 'winerror', 'winnt']
-
-[[host-package]]
-name = 'winapi-i686-pc-windows-gnu'
-version = '0.4.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'winapi-util'
-version = '0.1.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'winapi-x86_64-pc-windows-gnu'
-version = '0.4.0'
-crates-io = true
 status = 'transitive'
 features = []
 

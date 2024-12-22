@@ -2,50 +2,40 @@
 #    cargo run -p fixture-manager -- generate-hakari --fixture metadata_guppy_44b62fa
 
 ### BEGIN HAKARI SECTION
-# resolver = 'install'
-# unify-target-host = 'unify-if-both'
+# resolver = '2'
+# unify-target-host = 'none'
 # output-single-feature = false
-# dep-format-version = '1'
+# dep-format-version = '2'
 # workspace-hack-line-style = 'full'
 # platforms = []
 # [[traversal-excludes.ids]]
-# name = 'cargo-hakari'
-# version = '0.9.11'
-# workspace-path = 'tools/cargo-hakari'
+# name = 'determinator'
+# version = '0.7.0'
+# workspace-path = 'tools/determinator'
 #
 # [[traversal-excludes.ids]]
-# name = 'fixtures'
+# name = 'guppy-cmdlib'
 # version = '0.1.0'
-# workspace-path = 'fixtures'
+# workspace-path = 'guppy-cmdlib'
 #
 # [[traversal-excludes.ids]]
-# name = 'guppy-benchmarks'
-# version = '0.1.0'
-# workspace-path = 'internal-tools/benchmarks'
-#
-# [[traversal-excludes.ids]]
-# name = 'hakari'
-# version = '0.8.1'
-# workspace-path = 'tools/hakari'
+# name = 'target-spec'
+# version = '0.9.0'
+# workspace-path = 'target-spec'
 # [[final-excludes.ids]]
 # name = 'cargo-compare'
 # version = '0.1.0'
 # workspace-path = 'internal-tools/cargo-compare'
 #
 # [[final-excludes.ids]]
-# name = 'cargo-guppy'
-# version = '0.1.0'
-# workspace-path = 'cargo-guppy'
-#
-# [[final-excludes.ids]]
 # name = 'cargo-hakari'
 # version = '0.9.11'
 # workspace-path = 'tools/cargo-hakari'
 #
 # [[final-excludes.ids]]
-# name = 'determinator'
-# version = '0.7.0'
-# workspace-path = 'tools/determinator'
+# name = 'guppy-summaries'
+# version = '0.6.1'
+# workspace-path = 'guppy-summaries'
 #
 # [[final-excludes.ids]]
 # name = 'guppy-workspace-hack'
@@ -56,11 +46,6 @@
 # name = 'hakari'
 # version = '0.8.1'
 # workspace-path = 'tools/hakari'
-#
-# [[final-excludes.ids]]
-# name = 'proptest-ext'
-# version = '0.1.0'
-# workspace-path = 'internal-tools/proptest-ext'
 
 ### END HAKARI SECTION
 

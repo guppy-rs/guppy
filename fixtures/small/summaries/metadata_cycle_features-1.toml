@@ -2,9 +2,9 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_cycle_features
 
 [metadata]
-resolver = '2'
+resolver = '3'
 include-dev = false
-initials-platform = 'proc-macros-on-target'
+initials-platform = 'standard'
 
 [metadata.host-platform]
 spec = 'always'

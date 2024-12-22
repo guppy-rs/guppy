@@ -2,9 +2,9 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_guppy_c9b4f76
 
 [metadata]
-resolver = '2'
-include-dev = false
-initials-platform = 'proc-macros-on-target'
+resolver = '3'
+include-dev = true
+initials-platform = 'standard'
 
 [metadata.host-platform]
 spec = 'any'
@@ -62,6 +62,13 @@ crates-io = true
 status = 'direct'
 features = ['default', 'derive', 'serde_derive', 'std']
 optional-deps = ['serde_derive']
+
+[[target-package]]
+name = 'toml'
+version = '0.5.7'
+crates-io = true
+status = 'direct'
+features = ['default']
 
 [[target-package]]
 name = 'bit-set'

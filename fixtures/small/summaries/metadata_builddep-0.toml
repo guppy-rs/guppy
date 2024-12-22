@@ -2,19 +2,15 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_builddep
 
 [metadata]
-resolver = 'install'
-include-dev = true
-initials-platform = 'standard'
+resolver = '2'
+include-dev = false
+initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'mips-unknown-linux-gnu'
-target-features = 'all'
-flags = ['test-flag']
+spec = 'any'
 
 [metadata.target-platform]
-triple = 'thumbv8m.base-none-eabi'
-target-features = 'unknown'
-flags = ['test-flag']
+spec = 'always'
 [[metadata.omitted-packages.ids]]
 name = 'builddep'
 version = '0.1.0'

@@ -2,15 +2,21 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_cycle_features
 
 [metadata]
-resolver = 'install'
+resolver = '2'
 include-dev = true
-initials-platform = 'standard'
+initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-spec = 'any'
+triple = 'i686-pc-windows-msvc'
+target-features = 'all'
+flags = ['foo']
 
 [metadata.target-platform]
-spec = 'always'
+spec = 'any'
+[[metadata.omitted-packages.ids]]
+name = 'testcycles-base'
+version = '0.1.0'
+workspace-path = 'testcycles-base'
 
 [[target-package]]
 name = 'testcycles-base'

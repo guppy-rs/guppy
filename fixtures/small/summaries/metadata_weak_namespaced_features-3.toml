@@ -2,18 +2,20 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_weak_namespaced_features
 
 [metadata]
-resolver = 'install'
+resolver = '2'
 include-dev = true
-initials-platform = 'standard'
+initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-spec = 'always'
+triple = 'mipsisa64r6-unknown-linux-gnuabi64'
+target-features = []
+flags = ['test-flag']
 
 [metadata.target-platform]
-spec = 'any'
+spec = 'always'
 [[metadata.omitted-packages.ids]]
-name = 'tinyvec'
-version = '1.5.1'
+name = 'arrayvec'
+version = '0.7.2'
 crates-io = true
 
 [[target-package]]
@@ -23,13 +25,6 @@ workspace-path = ''
 status = 'initial'
 features = ['arrayvec', 'bar', 'baz', 'foo', 'pathdiff2', 'smallvec', 'smallvec-union', 'tinyvec', 'upgrade1', 'upgrade2', 'upgrade3', 'upgrade4', 'upgrade5', 'upgrade6', 'upgrade7', 'upgrade8', 'windows-dep', 'windows-named', 'windows-non-weak', 'windows-weak']
 optional-deps = ['arrayvec', 'pathdiff', 'smallvec', 'tinyvec']
-
-[[target-package]]
-name = 'arrayvec'
-version = '0.7.2'
-crates-io = true
-status = 'direct'
-features = ['std']
 
 [[target-package]]
 name = 'pathdiff'

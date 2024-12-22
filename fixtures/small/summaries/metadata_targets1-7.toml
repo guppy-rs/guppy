@@ -2,18 +2,17 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_targets1
 
 [metadata]
-resolver = '2'
+resolver = '3'
 include-dev = true
-initials-platform = 'standard'
+initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'powerpc-unknown-linux-gnuspe'
-target-features = ['avx2', 'sse3']
+triple = 's390x-unknown-linux-gnu'
+target-features = 'unknown'
 flags = ['foo']
 
 [metadata.target-platform]
-triple = 'mips64el-unknown-linux-muslabi64'
-target-features = 'unknown'
+spec = 'any'
 
 [[metadata.features-only]]
 name = 'testcrate-targets'
@@ -33,7 +32,7 @@ name = 'bytes'
 version = '0.5.3'
 crates-io = true
 status = 'direct'
-features = ['serde']
+features = ['default', 'serde', 'std']
 optional-deps = ['serde']
 
 [[target-package]]
@@ -41,7 +40,14 @@ name = 'dep-a'
 version = '0.1.0'
 path = '../dep-a'
 status = 'direct'
-features = ['baz', 'foo', 'quux']
+features = ['bar', 'baz', 'foo', 'quux']
+
+[[target-package]]
+name = 'lazy_static'
+version = '0.1.16'
+crates-io = true
+status = 'direct'
+features = []
 
 [[target-package]]
 name = 'lazy_static'

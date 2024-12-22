@@ -2,15 +2,24 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata2
 
 [metadata]
-resolver = 'install'
-include-dev = true
+resolver = '2'
+include-dev = false
 initials-platform = 'host'
 
 [metadata.host-platform]
-spec = 'any'
+spec = 'always'
 
 [metadata.target-platform]
 spec = 'always'
+[[metadata.omitted-packages.ids]]
+name = 'proc-macro2'
+version = '1.0.3'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'winapi-i686-pc-windows-gnu'
+version = '0.4.0'
+crates-io = true
 
 [[metadata.features-only]]
 name = 'testworkspace-crate'

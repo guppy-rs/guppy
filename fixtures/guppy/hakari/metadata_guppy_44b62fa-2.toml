@@ -2,18 +2,60 @@
 #    cargo run -p fixture-manager -- generate-hakari --fixture metadata_guppy_44b62fa
 
 ### BEGIN HAKARI SECTION
-# resolver = '2'
+# resolver = '3'
 # unify-target-host = 'replicate-target-on-host'
 # output-single-feature = true
-# dep-format-version = '2'
+# dep-format-version = '1'
 # workspace-hack-line-style = 'full'
 # platforms = ['aarch64-unknown-illumos', 'armv7-unknown-freebsd']
-#
-# [traversal-excludes]
-# [[final-excludes.ids]]
-# name = 'guppy-cmdlib'
+# [[traversal-excludes.ids]]
+# name = 'cargo-compare'
 # version = '0.1.0'
-# workspace-path = 'guppy-cmdlib'
+# workspace-path = 'internal-tools/cargo-compare'
+#
+# [[traversal-excludes.ids]]
+# name = 'determinator'
+# version = '0.7.0'
+# workspace-path = 'tools/determinator'
+#
+# [[traversal-excludes.ids]]
+# name = 'guppy-summaries'
+# version = '0.6.1'
+# workspace-path = 'guppy-summaries'
+#
+# [[traversal-excludes.ids]]
+# name = 'hakari'
+# version = '0.8.1'
+# workspace-path = 'tools/hakari'
+#
+# [[traversal-excludes.ids]]
+# name = 'proptest-ext'
+# version = '0.1.0'
+# workspace-path = 'internal-tools/proptest-ext'
+# [[final-excludes.ids]]
+# name = 'cargo-guppy'
+# version = '0.1.0'
+# workspace-path = 'cargo-guppy'
+#
+# [[final-excludes.ids]]
+# name = 'determinator'
+# version = '0.7.0'
+# workspace-path = 'tools/determinator'
+#
+# [[final-excludes.ids]]
+# name = 'guppy-summaries'
+# version = '0.6.1'
+# workspace-path = 'guppy-summaries'
+#
+# [[final-excludes.ids]]
+# name = 'proptest-ext'
+# version = '0.1.0'
+# workspace-path = 'internal-tools/proptest-ext'
+#
+# [[final-excludes.ids]]
+# name = 'target-spec'
+# version = '0.9.0'
+# workspace-path = 'target-spec'
 
 ### END HAKARI SECTION
 

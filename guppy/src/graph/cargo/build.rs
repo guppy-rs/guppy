@@ -46,7 +46,10 @@ impl<'a> CargoSetBuildState<'a> {
                 let avoid_dev_deps = !self.opts.include_dev;
                 self.new_v1(initials, features_only, avoid_dev_deps)
             }
-            CargoResolverVersion::V2 => self.new_v2(initials, features_only),
+            // V2 and V3 do the same feature resolution.
+            CargoResolverVersion::V2 | CargoResolverVersion::V3 => {
+                self.new_v2(initials, features_only)
+            }
         }
     }
 
@@ -57,7 +60,7 @@ impl<'a> CargoSetBuildState<'a> {
                 let avoid_dev_deps = !self.opts.include_dev;
                 self.new_v1_intermediate(query, avoid_dev_deps)
             }
-            CargoResolverVersion::V2 => self.new_v2_intermediate(query),
+            CargoResolverVersion::V2 | CargoResolverVersion::V3 => self.new_v2_intermediate(query),
         }
     }
 

@@ -2,9 +2,9 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_alternate_registries
 
 [metadata]
-resolver = '1'
-include-dev = false
-initials-platform = 'proc-macros-on-target'
+resolver = 'install'
+include-dev = true
+initials-platform = 'standard'
 
 [metadata.host-platform]
 spec = 'always'
@@ -40,8 +40,29 @@ features = ['derive', 'serde_derive']
 optional-deps = ['serde_derive']
 
 [[target-package]]
+name = 'serde_json'
+version = '1.0.68'
+crates-io = true
+status = 'direct'
+features = ['default', 'std']
+
+[[target-package]]
 name = 'unicode-xid'
 version = '0.2.2'
 crates-io = true
 status = 'direct'
 features = ['default']
+
+[[target-package]]
+name = 'ryu'
+version = '1.0.5'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'serde'
+version = '1.0.130'
+crates-io = true
+status = 'transitive'
+features = ['std']

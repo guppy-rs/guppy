@@ -2,9 +2,9 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_build_targets1
 
 [metadata]
-resolver = '2'
-include-dev = true
-initials-platform = 'standard'
+resolver = '3'
+include-dev = false
+initials-platform = 'host'
 
 [metadata.host-platform]
 spec = 'always'
@@ -23,7 +23,7 @@ version = '0.1.0'
 workspace-path = ''
 features = []
 
-[[target-package]]
+[[host-package]]
 name = 'testcrate'
 version = '0.1.0'
 workspace-path = ''

@@ -2,12 +2,12 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_guppy_869476c
 
 [metadata]
-resolver = '2'
+resolver = '3'
 include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-spec = 'always'
+spec = 'any'
 
 [metadata.target-platform]
 spec = 'always'

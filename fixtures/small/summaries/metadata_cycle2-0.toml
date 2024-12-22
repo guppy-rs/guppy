@@ -2,19 +2,22 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_cycle2
 
 [metadata]
-resolver = '2'
+resolver = '3'
 include-dev = true
-initials-platform = 'host'
+initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-spec = 'any'
+triple = 'arm-unknown-linux-gnueabihf'
+target-features = ['aes', 'sha', 'sse4.1', 'ssse3']
 
 [metadata.target-platform]
-spec = 'always'
+triple = 'armv7s-apple-ios'
+target-features = []
+flags = ['flag-test', 'test-flag']
 [[metadata.omitted-packages.ids]]
-name = 'upper-a'
+name = 'lower-a'
 version = '0.1.0'
-workspace-path = 'upper-a'
+workspace-path = 'lower-a'
 
 [[metadata.features-only]]
 name = 'lower-a'
@@ -34,28 +37,28 @@ version = '0.1.0'
 workspace-path = 'upper-b'
 features = []
 
-[[host-package]]
+[[target-package]]
 name = 'lower-a'
 version = '0.1.0'
 workspace-path = 'lower-a'
 status = 'initial'
 features = []
 
-[[host-package]]
+[[target-package]]
 name = 'lower-b'
 version = '0.1.0'
 workspace-path = 'lower-b'
 status = 'initial'
 features = []
 
-[[host-package]]
+[[target-package]]
 name = 'upper-a'
 version = '0.1.0'
 workspace-path = 'upper-a'
 status = 'initial'
 features = []
 
-[[host-package]]
+[[target-package]]
 name = 'upper-b'
 version = '0.1.0'
 workspace-path = 'upper-b'

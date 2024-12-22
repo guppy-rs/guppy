@@ -2,9 +2,9 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_libra
 
 [metadata]
-resolver = '2'
+resolver = '3'
 include-dev = false
-initials-platform = 'standard'
+initials-platform = 'host'
 
 [metadata.host-platform]
 triple = 'aarch64-unknown-openbsd'
@@ -14,28 +14,28 @@ flags = ['flag-test']
 [metadata.target-platform]
 spec = 'any'
 
-[[target-package]]
+[[host-package]]
 name = 'channel'
 version = '0.1.0'
 workspace-path = 'common/channel'
 status = 'initial'
 features = []
 
-[[target-package]]
+[[host-package]]
 name = 'debug-interface'
 version = '0.1.0'
 workspace-path = 'common/debug-interface'
 status = 'initial'
 features = []
 
-[[target-package]]
+[[host-package]]
 name = 'libra-fuzzer'
 version = '0.1.0'
 workspace-path = 'testsuite/libra-fuzzer'
 status = 'initial'
 features = []
 
-[[target-package]]
+[[host-package]]
 name = 'network'
 version = '0.1.0'
 workspace-path = 'network'
@@ -43,7 +43,7 @@ status = 'initial'
 features = ['default', 'fuzzing', 'libra-proptest-helpers', 'proptest']
 optional-deps = ['libra-proptest-helpers', 'proptest']
 
-[[target-package]]
+[[host-package]]
 name = 'storage-service'
 version = '0.1.0'
 workspace-path = 'storage/storage-service'
@@ -51,28 +51,28 @@ status = 'initial'
 features = ['default', 'fuzzing', 'proptest']
 optional-deps = ['proptest']
 
-[[target-package]]
+[[host-package]]
 name = 'vm-genesis'
 version = '0.1.0'
 workspace-path = 'language/vm/vm-genesis'
 status = 'initial'
 features = ['default', 'fuzzing']
 
-[[target-package]]
+[[host-package]]
 name = 'accumulator'
 version = '0.1.0'
 workspace-path = 'storage/accumulator'
 status = 'workspace'
 features = ['default']
 
-[[target-package]]
+[[host-package]]
 name = 'admission-control-proto'
 version = '0.1.0'
 workspace-path = 'admission_control/admission-control-proto'
 status = 'workspace'
 features = ['default']
 
-[[target-package]]
+[[host-package]]
 name = 'admission-control-service'
 version = '0.1.0'
 workspace-path = 'admission_control/admission-control-service'
@@ -80,35 +80,35 @@ status = 'workspace'
 features = ['default', 'fuzzing', 'libra-proptest-helpers', 'proptest']
 optional-deps = ['libra-proptest-helpers', 'proptest']
 
-[[target-package]]
+[[host-package]]
 name = 'bounded-executor'
 version = '0.1.0'
 workspace-path = 'common/bounded-executor'
 status = 'workspace'
 features = []
 
-[[target-package]]
+[[host-package]]
 name = 'bytecode-source-map'
 version = '0.1.0'
 workspace-path = 'language/compiler/bytecode-source-map'
 status = 'workspace'
 features = ['default']
 
-[[target-package]]
+[[host-package]]
 name = 'bytecode-verifier'
 version = '0.1.0'
 workspace-path = 'language/bytecode-verifier'
 status = 'workspace'
 features = ['default']
 
-[[target-package]]
+[[host-package]]
 name = 'config-builder'
 version = '0.1.0'
 workspace-path = 'config/config-builder'
 status = 'workspace'
 features = ['default']
 
-[[target-package]]
+[[host-package]]
 name = 'consensus'
 version = '0.1.0'
 workspace-path = 'consensus'
@@ -116,7 +116,7 @@ status = 'workspace'
 features = ['default', 'fuzzing', 'proptest']
 optional-deps = ['proptest']
 
-[[target-package]]
+[[host-package]]
 name = 'consensus-types'
 version = '0.1.0'
 workspace-path = 'consensus/consensus-types'
@@ -124,63 +124,63 @@ status = 'workspace'
 features = ['default', 'fuzzing', 'proptest']
 optional-deps = ['proptest']
 
-[[target-package]]
+[[host-package]]
 name = 'crash-handler'
 version = '0.1.0'
 workspace-path = 'common/crash-handler'
 status = 'workspace'
 features = []
 
-[[target-package]]
+[[host-package]]
 name = 'executable-helpers'
 version = '0.1.0'
 workspace-path = 'common/executable-helpers'
 status = 'workspace'
 features = ['default']
 
-[[target-package]]
+[[host-package]]
 name = 'executor'
 version = '0.1.0'
 workspace-path = 'executor'
 status = 'workspace'
 features = ['default']
 
-[[target-package]]
+[[host-package]]
 name = 'futures-semaphore'
 version = '0.1.0'
 workspace-path = 'common/futures-semaphore'
 status = 'workspace'
 features = []
 
-[[target-package]]
+[[host-package]]
 name = 'generate-keypair'
 version = '0.1.0'
 workspace-path = 'config/generate-keypair'
 status = 'workspace'
 features = []
 
-[[target-package]]
+[[host-package]]
 name = 'grpc-helpers'
 version = '0.1.0'
 workspace-path = 'common/grpc-helpers'
 status = 'workspace'
 features = []
 
-[[target-package]]
+[[host-package]]
 name = 'ir-to-bytecode'
 version = '0.1.0'
 workspace-path = 'language/compiler/ir-to-bytecode'
 status = 'workspace'
 features = ['default']
 
-[[target-package]]
+[[host-package]]
 name = 'ir-to-bytecode-syntax'
 version = '0.1.0'
 workspace-path = 'language/compiler/ir-to-bytecode/syntax'
 status = 'workspace'
 features = ['default']
 
-[[target-package]]
+[[host-package]]
 name = 'jellyfish-merkle'
 version = '0.1.0'
 workspace-path = 'storage/jellyfish-merkle'
@@ -188,21 +188,21 @@ status = 'workspace'
 features = ['default', 'fuzzing', 'proptest', 'proptest-derive']
 optional-deps = ['proptest', 'proptest-derive']
 
-[[target-package]]
+[[host-package]]
 name = 'libra-canonical-serialization'
 version = '0.1.0'
 workspace-path = 'common/lcs'
 status = 'workspace'
 features = []
 
-[[target-package]]
+[[host-package]]
 name = 'libra-config'
 version = '0.1.0'
 workspace-path = 'config'
 status = 'workspace'
 features = ['default']
 
-[[target-package]]
+[[host-package]]
 name = 'libra-crypto'
 version = '0.1.0'
 workspace-path = 'crypto/crypto'
@@ -210,49 +210,56 @@ status = 'workspace'
 features = ['cloneable-private-keys', 'default', 'fuzzing', 'proptest', 'proptest-derive', 'std', 'u64_backend']
 optional-deps = ['proptest', 'proptest-derive']
 
-[[target-package]]
+[[host-package]]
+name = 'libra-crypto-derive'
+version = '0.1.0'
+workspace-path = 'crypto/crypto-derive'
+status = 'workspace'
+features = []
+
+[[host-package]]
 name = 'libra-failure-ext'
 version = '0.1.0'
 workspace-path = 'common/failure-ext'
 status = 'workspace'
 features = []
 
-[[target-package]]
+[[host-package]]
 name = 'libra-failure-macros'
 version = '0.1.0'
 workspace-path = 'common/failure-ext/failure-macros'
 status = 'workspace'
 features = []
 
-[[target-package]]
+[[host-package]]
 name = 'libra-logger'
 version = '0.1.0'
 workspace-path = 'common/logger'
 status = 'workspace'
 features = []
 
-[[target-package]]
+[[host-package]]
 name = 'libra-mempool'
 version = '0.1.0'
 workspace-path = 'mempool'
 status = 'workspace'
 features = ['default']
 
-[[target-package]]
+[[host-package]]
 name = 'libra-mempool-shared-proto'
 version = '0.1.0'
 workspace-path = 'mempool/mempool-shared-proto'
 status = 'workspace'
 features = []
 
-[[target-package]]
+[[host-package]]
 name = 'libra-metrics'
 version = '0.1.0'
 workspace-path = 'common/metrics'
 status = 'workspace'
 features = []
 
-[[target-package]]
+[[host-package]]
 name = 'libra-nibble'
 version = '0.1.0'
 workspace-path = 'common/nibble'
@@ -260,35 +267,35 @@ status = 'workspace'
 features = ['default', 'fuzzing', 'proptest']
 optional-deps = ['proptest']
 
-[[target-package]]
+[[host-package]]
 name = 'libra-proptest-helpers'
 version = '0.1.0'
 workspace-path = 'common/proptest-helpers'
 status = 'workspace'
 features = []
 
-[[target-package]]
+[[host-package]]
 name = 'libra-prost-ext'
 version = '0.1.0'
 workspace-path = 'common/prost-ext'
 status = 'workspace'
 features = []
 
-[[target-package]]
+[[host-package]]
 name = 'libra-state-view'
 version = '0.1.0'
 workspace-path = 'storage/state-view'
 status = 'workspace'
 features = ['default']
 
-[[target-package]]
+[[host-package]]
 name = 'libra-tools'
 version = '0.1.0'
 workspace-path = 'common/tools'
 status = 'workspace'
 features = []
 
-[[target-package]]
+[[host-package]]
 name = 'libra-types'
 version = '0.1.0'
 workspace-path = 'types'
@@ -296,7 +303,7 @@ status = 'workspace'
 features = ['default', 'fuzzing', 'libra-proptest-helpers', 'proptest', 'proptest-derive']
 optional-deps = ['libra-proptest-helpers', 'proptest', 'proptest-derive']
 
-[[target-package]]
+[[host-package]]
 name = 'libradb'
 version = '0.1.0'
 workspace-path = 'storage/libradb'
@@ -304,84 +311,84 @@ status = 'workspace'
 features = ['default', 'fuzzing', 'libra-proptest-helpers', 'proptest', 'proptest-derive']
 optional-deps = ['libra-proptest-helpers', 'proptest', 'proptest-derive']
 
-[[target-package]]
+[[host-package]]
 name = 'memsocket'
 version = '0.1.0'
 workspace-path = 'network/memsocket'
 status = 'workspace'
 features = []
 
-[[target-package]]
+[[host-package]]
 name = 'netcore'
 version = '0.1.0'
 workspace-path = 'network/netcore'
 status = 'workspace'
 features = []
 
-[[target-package]]
+[[host-package]]
 name = 'noise'
 version = '0.1.0'
 workspace-path = 'network/noise'
 status = 'workspace'
 features = []
 
-[[target-package]]
+[[host-package]]
 name = 'safety-rules'
 version = '0.1.0'
 workspace-path = 'consensus/safety-rules'
 status = 'workspace'
 features = ['default']
 
-[[target-package]]
+[[host-package]]
 name = 'schemadb'
 version = '0.1.0'
 workspace-path = 'storage/schemadb'
 status = 'workspace'
 features = []
 
-[[target-package]]
+[[host-package]]
 name = 'scratchpad'
 version = '0.1.0'
 workspace-path = 'storage/scratchpad'
 status = 'workspace'
 features = ['default']
 
-[[target-package]]
+[[host-package]]
 name = 'state-synchronizer'
 version = '0.1.0'
 workspace-path = 'state-synchronizer'
 status = 'workspace'
 features = ['default']
 
-[[target-package]]
+[[host-package]]
 name = 'stdlib'
 version = '0.1.0'
 workspace-path = 'language/stdlib'
 status = 'workspace'
 features = ['default']
 
-[[target-package]]
+[[host-package]]
 name = 'storage-client'
 version = '0.1.0'
 workspace-path = 'storage/storage-client'
 status = 'workspace'
 features = ['default']
 
-[[target-package]]
+[[host-package]]
 name = 'storage-proto'
 version = '0.1.0'
 workspace-path = 'storage/storage-proto'
 status = 'workspace'
 features = ['default']
 
-[[target-package]]
+[[host-package]]
 name = 'transaction-builder'
 version = '0.1.0'
 workspace-path = 'language/transaction-builder'
 status = 'workspace'
 features = ['default']
 
-[[target-package]]
+[[host-package]]
 name = 'vm'
 version = '0.1.0'
 workspace-path = 'language/vm'
@@ -389,21 +396,21 @@ status = 'workspace'
 features = ['default', 'fuzzing', 'libra-proptest-helpers', 'proptest', 'proptest-derive']
 optional-deps = ['libra-proptest-helpers', 'proptest', 'proptest-derive']
 
-[[target-package]]
+[[host-package]]
 name = 'vm-cache-map'
 version = '0.1.0'
 workspace-path = 'language/vm/vm-runtime/vm-cache-map'
 status = 'workspace'
 features = []
 
-[[target-package]]
+[[host-package]]
 name = 'vm-runtime'
 version = '0.1.0'
 workspace-path = 'language/vm/vm-runtime'
 status = 'workspace'
 features = ['default']
 
-[[target-package]]
+[[host-package]]
 name = 'vm-runtime-types'
 version = '0.1.0'
 workspace-path = 'language/vm/vm-runtime/vm-runtime-types'
@@ -411,28 +418,28 @@ status = 'workspace'
 features = ['default', 'fuzzing', 'proptest']
 optional-deps = ['proptest']
 
-[[target-package]]
+[[host-package]]
 name = 'vm-validator'
 version = '0.1.0'
 workspace-path = 'vm-validator'
 status = 'workspace'
 features = ['default']
 
-[[target-package]]
+[[host-package]]
 name = 'arc-swap'
 version = '0.4.2'
 crates-io = true
 status = 'direct'
 features = []
 
-[[target-package]]
+[[host-package]]
 name = 'backoff'
 version = '0.1.5'
 crates-io = true
 status = 'direct'
 features = []
 
-[[target-package]]
+[[host-package]]
 name = 'backtrace'
 version = '0.3.37'
 crates-io = true
@@ -440,35 +447,35 @@ status = 'direct'
 features = ['backtrace-sys', 'dbghelp', 'default', 'dladdr', 'libbacktrace', 'libunwind', 'serde', 'serialize-serde', 'std']
 optional-deps = ['backtrace-sys', 'serde']
 
-[[target-package]]
+[[host-package]]
 name = 'bech32'
 version = '0.6.0'
 crates-io = true
 status = 'direct'
 features = []
 
-[[target-package]]
+[[host-package]]
 name = 'bincode'
 version = '1.1.4'
 crates-io = true
 status = 'direct'
 features = []
 
-[[target-package]]
+[[host-package]]
 name = 'bit-vec'
 version = '0.6.1'
 crates-io = true
 status = 'direct'
 features = ['default', 'std']
 
-[[target-package]]
+[[host-package]]
 name = 'byteorder'
 version = '1.3.2'
 crates-io = true
 status = 'direct'
 features = ['default', 'i128', 'std']
 
-[[target-package]]
+[[host-package]]
 name = 'bytes'
 version = '0.4.12'
 crates-io = true
@@ -476,14 +483,14 @@ status = 'direct'
 features = ['either']
 optional-deps = ['either']
 
-[[target-package]]
+[[host-package]]
 name = 'chashmap'
 version = '2.2.2'
 crates-io = true
 status = 'direct'
 features = []
 
-[[target-package]]
+[[host-package]]
 name = 'chrono'
 version = '0.4.9'
 crates-io = true
@@ -491,7 +498,7 @@ status = 'direct'
 features = ['clock', 'default', 'time']
 optional-deps = ['time']
 
-[[target-package]]
+[[host-package]]
 name = 'codespan'
 version = '0.2.1'
 crates-io = true
@@ -499,14 +506,14 @@ status = 'direct'
 features = ['serde', 'serde_derive', 'serialization']
 optional-deps = ['serde', 'serde_derive']
 
-[[target-package]]
+[[host-package]]
 name = 'codespan-reporting'
 version = '0.2.1'
 crates-io = true
 status = 'direct'
 features = []
 
-[[target-package]]
+[[host-package]]
 name = 'crossbeam'
 version = '0.7.2'
 crates-io = true
@@ -514,21 +521,21 @@ status = 'direct'
 features = ['crossbeam-channel', 'crossbeam-deque', 'crossbeam-queue', 'default', 'std']
 optional-deps = ['crossbeam-channel', 'crossbeam-deque', 'crossbeam-queue']
 
-[[target-package]]
+[[host-package]]
 name = 'curve25519-dalek'
 version = '1.2.3'
 source = 'git+https://github.com/calibra/curve25519-dalek.git?branch=fiat#caa6b9028e90351d939cbee102ce91b1a1ca032b'
 status = 'direct'
 features = ['alloc', 'std', 'u64_backend']
 
-[[target-package]]
+[[host-package]]
 name = 'digest'
 version = '0.8.1'
 crates-io = true
 status = 'direct'
 features = ['std']
 
-[[target-package]]
+[[host-package]]
 name = 'ed25519-dalek'
 version = '1.0.0-pre.1'
 source = 'git+https://github.com/calibra/ed25519-dalek.git?branch=fiat#ecb1d36ade13e719c71ac818942170a2410ae910'
@@ -536,7 +543,7 @@ status = 'direct'
 features = ['serde', 'std', 'u64_backend']
 optional-deps = ['serde']
 
-[[target-package]]
+[[host-package]]
 name = 'failure'
 version = '0.1.5'
 crates-io = true
@@ -544,1855 +551,34 @@ status = 'direct'
 features = ['backtrace', 'default', 'derive', 'failure_derive', 'std']
 optional-deps = ['backtrace', 'failure_derive']
 
-[[target-package]]
+[[host-package]]
 name = 'futures'
 version = '0.1.29'
 crates-io = true
 status = 'direct'
 features = ['default', 'use_std', 'with-deprecated']
 
-[[target-package]]
+[[host-package]]
 name = 'futures-preview'
 version = '0.3.0-alpha.19'
 crates-io = true
 status = 'direct'
 features = ['alloc', 'async-await', 'compat', 'default', 'io-compat', 'std']
 
-[[target-package]]
+[[host-package]]
 name = 'get_if_addrs'
 version = '0.5.3'
 crates-io = true
 status = 'direct'
 features = []
 
-[[target-package]]
+[[host-package]]
 name = 'grpcio'
 version = '0.5.0-alpha.4'
 crates-io = true
 status = 'direct'
 features = ['bytes', 'prost', 'prost-codec', 'protobuf', 'protobuf-codec']
 optional-deps = ['bytes', 'prost', 'protobuf']
-
-[[target-package]]
-name = 'hex'
-version = '0.3.2'
-crates-io = true
-status = 'direct'
-features = []
-
-[[target-package]]
-name = 'hmac'
-version = '0.7.1'
-crates-io = true
-status = 'direct'
-features = []
-
-[[target-package]]
-name = 'hyper'
-version = '0.12.34'
-crates-io = true
-status = 'direct'
-features = ['__internal_flaky_tests', 'default', 'futures-cpupool', 'net2', 'runtime', 'tokio', 'tokio-executor', 'tokio-reactor', 'tokio-tcp', 'tokio-threadpool', 'tokio-timer']
-optional-deps = ['futures-cpupool', 'net2', 'tokio', 'tokio-executor', 'tokio-reactor', 'tokio-tcp', 'tokio-threadpool', 'tokio-timer']
-
-[[target-package]]
-name = 'itertools'
-version = '0.8.0'
-crates-io = true
-status = 'direct'
-features = ['default', 'use_std']
-
-[[target-package]]
-name = 'lazy_static'
-version = '1.4.0'
-crates-io = true
-status = 'direct'
-features = ['spin', 'spin_no_std']
-optional-deps = ['spin']
-
-[[target-package]]
-name = 'log'
-version = '0.4.8'
-crates-io = true
-status = 'direct'
-features = ['std']
-
-[[target-package]]
-name = 'lru-cache'
-version = '0.1.2'
-crates-io = true
-status = 'direct'
-features = []
-
-[[target-package]]
-name = 'mirai-annotations'
-version = '1.4.0'
-crates-io = true
-status = 'direct'
-features = []
-
-[[target-package]]
-name = 'num-traits'
-version = '0.2.8'
-crates-io = true
-status = 'direct'
-features = ['default', 'std']
-
-[[target-package]]
-name = 'num_cpus'
-version = '1.10.1'
-crates-io = true
-status = 'direct'
-features = []
-
-[[target-package]]
-name = 'num_enum'
-version = '0.4.1'
-crates-io = true
-status = 'direct'
-features = ['default', 'std']
-
-[[target-package]]
-name = 'pairing'
-version = '0.14.2'
-crates-io = true
-status = 'direct'
-features = ['default', 'u128-support']
-
-[[target-package]]
-name = 'parity-multiaddr'
-version = '0.5.0'
-crates-io = true
-status = 'direct'
-features = []
-
-[[target-package]]
-name = 'petgraph'
-version = '0.4.13'
-crates-io = true
-status = 'direct'
-features = ['default', 'graphmap', 'ordermap', 'stable_graph']
-optional-deps = ['ordermap']
-
-[[target-package]]
-name = 'pin-project'
-version = '0.4.2'
-crates-io = true
-status = 'direct'
-features = []
-
-[[target-package]]
-name = 'prometheus'
-version = '0.7.0'
-crates-io = true
-status = 'direct'
-features = []
-
-[[target-package]]
-name = 'proptest'
-version = '0.9.4'
-crates-io = true
-status = 'direct'
-features = ['bit-set', 'break-dead-code', 'default', 'fork', 'lazy_static', 'quick-error', 'regex-syntax', 'rusty-fork', 'std', 'tempfile', 'timeout']
-optional-deps = ['bit-set', 'lazy_static', 'quick-error', 'regex-syntax', 'rusty-fork', 'tempfile']
-
-[[target-package]]
-name = 'prost'
-version = '0.5.0'
-crates-io = true
-status = 'direct'
-features = ['default', 'prost-derive']
-optional-deps = ['prost-derive']
-
-[[target-package]]
-name = 'radix_trie'
-version = '0.1.4'
-crates-io = true
-status = 'direct'
-features = []
-
-[[target-package]]
-name = 'rand'
-version = '0.6.5'
-crates-io = true
-status = 'direct'
-features = ['alloc', 'default', 'i128_support', 'rand_os', 'std']
-optional-deps = ['rand_os']
-
-[[target-package]]
-name = 'rayon'
-version = '1.2.0'
-crates-io = true
-status = 'direct'
-features = []
-
-[[target-package]]
-name = 'regex'
-version = '1.3.1'
-crates-io = true
-status = 'direct'
-features = ['aho-corasick', 'default', 'memchr', 'perf', 'perf-cache', 'perf-dfa', 'perf-inline', 'perf-literal', 'std', 'thread_local', 'unicode', 'unicode-age', 'unicode-bool', 'unicode-case', 'unicode-gencat', 'unicode-perl', 'unicode-script', 'unicode-segment']
-optional-deps = ['aho-corasick', 'memchr', 'thread_local']
-
-[[target-package]]
-name = 'rental'
-version = '0.5.4'
-crates-io = true
-status = 'direct'
-features = ['default', 'std']
-
-[[target-package]]
-name = 'rmp-serde'
-version = '0.13.7'
-crates-io = true
-status = 'direct'
-features = []
-
-[[target-package]]
-name = 'rocksdb'
-version = '0.3.0'
-source = 'git+https://github.com/pingcap/rust-rocksdb.git?rev=3cd18c44d160a3cdba586d6502d51b7cc67efc59#3cd18c44d160a3cdba586d6502d51b7cc67efc59'
-status = 'direct'
-features = ['default']
-
-[[target-package]]
-name = 'rusty-fork'
-version = '0.2.2'
-crates-io = true
-status = 'direct'
-features = ['default', 'timeout', 'wait-timeout']
-optional-deps = ['wait-timeout']
-
-[[target-package]]
-name = 'serde'
-version = '1.0.101'
-crates-io = true
-status = 'direct'
-features = ['default', 'derive', 'rc', 'serde_derive', 'std']
-optional-deps = ['serde_derive']
-
-[[target-package]]
-name = 'serde_json'
-version = '1.0.40'
-crates-io = true
-status = 'direct'
-features = ['default']
-
-[[target-package]]
-name = 'sha-1'
-version = '0.8.1'
-crates-io = true
-status = 'direct'
-features = []
-
-[[target-package]]
-name = 'sha2'
-version = '0.8.0'
-crates-io = true
-status = 'direct'
-features = ['default', 'std']
-
-[[target-package]]
-name = 'sha3'
-version = '0.8.2'
-crates-io = true
-status = 'direct'
-features = ['default', 'std']
-
-[[target-package]]
-name = 'siphasher'
-version = '0.3.0'
-crates-io = true
-status = 'direct'
-features = []
-
-[[target-package]]
-name = 'slog'
-version = '2.5.2'
-crates-io = true
-status = 'direct'
-features = ['default', 'max_level_trace', 'release_max_level_debug', 'std']
-
-[[target-package]]
-name = 'slog-async'
-version = '2.3.0'
-crates-io = true
-status = 'direct'
-features = ['default']
-
-[[target-package]]
-name = 'slog-envlogger'
-version = '2.2.0'
-crates-io = true
-status = 'direct'
-features = ['default', 'regex']
-optional-deps = ['regex']
-
-[[target-package]]
-name = 'slog-scope'
-version = '4.2.0'
-crates-io = true
-status = 'direct'
-features = []
-
-[[target-package]]
-name = 'slog-term'
-version = '2.4.1'
-crates-io = true
-status = 'direct'
-features = []
-
-[[target-package]]
-name = 'snow'
-version = '0.6.1'
-crates-io = true
-status = 'direct'
-features = ['blake2-rfc', 'chacha20-poly1305-aead', 'default', 'default-resolver', 'rand', 'ring', 'ring-accelerated', 'ring-resolver', 'sha2', 'x25519-dalek']
-optional-deps = ['blake2-rfc', 'chacha20-poly1305-aead', 'rand', 'ring', 'sha2', 'x25519-dalek']
-
-[[target-package]]
-name = 'structopt'
-version = '0.3.2'
-crates-io = true
-status = 'direct'
-features = ['default']
-
-[[target-package]]
-name = 'strum'
-version = '0.15.0'
-crates-io = true
-status = 'direct'
-features = []
-
-[[target-package]]
-name = 'termion'
-version = '1.5.3'
-crates-io = true
-status = 'direct'
-features = []
-
-[[target-package]]
-name = 'thread-id'
-version = '3.3.0'
-crates-io = true
-status = 'direct'
-features = []
-
-[[target-package]]
-name = 'threshold_crypto'
-version = '0.3.2'
-crates-io = true
-status = 'direct'
-features = []
-
-[[target-package]]
-name = 'tiny-keccak'
-version = '1.5.0'
-crates-io = true
-status = 'direct'
-features = ['default', 'keccak']
-
-[[target-package]]
-name = 'tokio'
-version = '0.2.0-alpha.6'
-crates-io = true
-status = 'direct'
-features = ['bytes', 'codec', 'default', 'fs', 'io', 'macros', 'net', 'num_cpus', 'rt-full', 'sync', 'tcp', 'timer', 'tokio-codec', 'tokio-executor', 'tokio-fs', 'tokio-io', 'tokio-macros', 'tokio-net', 'tokio-sync', 'tokio-timer', 'tracing-core', 'udp', 'uds']
-optional-deps = ['bytes', 'num_cpus', 'tokio-codec', 'tokio-executor', 'tokio-fs', 'tokio-io', 'tokio-macros', 'tokio-net', 'tokio-sync', 'tokio-timer', 'tracing-core']
-
-[[target-package]]
-name = 'tokio-retry'
-version = '0.2.0'
-crates-io = true
-status = 'direct'
-features = []
-
-[[target-package]]
-name = 'tokio-sync'
-version = '0.2.0-alpha.6'
-crates-io = true
-status = 'direct'
-features = ['async-traits', 'futures-sink-preview']
-optional-deps = ['futures-sink-preview']
-
-[[target-package]]
-name = 'toml'
-version = '0.5.3'
-crates-io = true
-status = 'direct'
-features = ['default']
-
-[[target-package]]
-name = 'ttl_cache'
-version = '0.4.2'
-crates-io = true
-status = 'direct'
-features = ['default']
-
-[[target-package]]
-name = 'typed-arena'
-version = '1.5.0'
-crates-io = true
-status = 'direct'
-features = ['default', 'std']
-
-[[target-package]]
-name = 'x25519-dalek'
-version = '0.5.2'
-source = 'git+https://github.com/calibra/x25519-dalek.git?branch=fiat#8d5b63010f8466d75a4fa2fb95f573092aed5611'
-status = 'direct'
-features = ['std', 'u64_backend']
-
-[[target-package]]
-name = 'yamux'
-version = '0.2.1'
-crates-io = true
-status = 'direct'
-features = []
-
-[[target-package]]
-name = 'aho-corasick'
-version = '0.7.6'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
-
-[[target-package]]
-name = 'ansi_term'
-version = '0.11.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'arrayref'
-version = '0.3.5'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'arrayvec'
-version = '0.4.11'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'atty'
-version = '0.2.13'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'backtrace-sys'
-version = '0.1.31'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'base64'
-version = '0.10.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'bit-set'
-version = '0.5.1'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
-
-[[target-package]]
-name = 'bit-vec'
-version = '0.5.1'
-crates-io = true
-status = 'transitive'
-features = ['std']
-
-[[target-package]]
-name = 'bitflags'
-version = '1.1.0'
-crates-io = true
-status = 'transitive'
-features = ['default']
-
-[[target-package]]
-name = 'blake2'
-version = '0.8.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'blake2-rfc'
-version = '0.2.18'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
-
-[[target-package]]
-name = 'blake2b_simd'
-version = '0.5.8'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
-
-[[target-package]]
-name = 'block-buffer'
-version = '0.7.3'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'block-padding'
-version = '0.1.4'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'bs58'
-version = '0.2.5'
-crates-io = true
-status = 'transitive'
-features = ['default']
-
-[[target-package]]
-name = 'byte-tools'
-version = '0.3.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'bzip2-sys'
-version = '0.1.7'
-source = 'git+https://github.com/alexcrichton/bzip2-rs.git#02096d6f16e6b78cde379ce2305e08d2933e23b7'
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'c2-chacha'
-version = '0.2.2'
-crates-io = true
-status = 'transitive'
-features = ['lazy_static', 'simd', 'std']
-optional-deps = ['lazy_static']
-
-[[target-package]]
-name = 'c_linked_list'
-version = '1.1.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'cfg-if'
-version = '0.1.9'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'chacha20-poly1305-aead'
-version = '0.1.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'clap'
-version = '2.33.0'
-crates-io = true
-status = 'transitive'
-features = ['ansi_term', 'atty', 'color', 'default', 'strsim', 'suggestions', 'vec_map']
-optional-deps = ['ansi_term', 'atty', 'strsim', 'vec_map']
-
-[[target-package]]
-name = 'clear_on_drop'
-version = '0.2.3'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'cloudabi'
-version = '0.0.3'
-crates-io = true
-status = 'transitive'
-features = ['bitflags', 'default']
-optional-deps = ['bitflags']
-
-[[target-package]]
-name = 'constant_time_eq'
-version = '0.1.4'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'crc'
-version = '1.8.1'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
-
-[[target-package]]
-name = 'crossbeam-channel'
-version = '0.3.9'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'crossbeam-deque'
-version = '0.7.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'crossbeam-epoch'
-version = '0.7.2'
-crates-io = true
-status = 'transitive'
-features = ['default', 'lazy_static', 'std']
-optional-deps = ['lazy_static']
-
-[[target-package]]
-name = 'crossbeam-queue'
-version = '0.1.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'crossbeam-utils'
-version = '0.6.6'
-crates-io = true
-status = 'transitive'
-features = ['default', 'lazy_static', 'std']
-optional-deps = ['lazy_static']
-
-[[target-package]]
-name = 'crunchy'
-version = '0.2.2'
-crates-io = true
-status = 'transitive'
-features = ['default', 'limit_128']
-
-[[target-package]]
-name = 'crypto-mac'
-version = '0.7.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'curve25519-dalek'
-version = '1.2.3'
-crates-io = true
-status = 'transitive'
-features = ['alloc', 'std', 'u64_backend']
-
-[[target-package]]
-name = 'data-encoding'
-version = '2.1.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'dirs'
-version = '1.0.5'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'either'
-version = '1.5.2'
-crates-io = true
-status = 'transitive'
-features = ['default', 'use_std']
-
-[[target-package]]
-name = 'endian-type'
-version = '0.1.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'errno'
-version = '0.2.4'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'errno-dragonfly'
-version = '0.1.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'fake-simd'
-version = '0.1.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'fixedbitset'
-version = '0.1.9'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'fnv'
-version = '1.0.6'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'fuchsia-cprng'
-version = '0.1.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'fuchsia-zircon'
-version = '0.3.3'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'fuchsia-zircon-sys'
-version = '0.3.3'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'futures-channel-preview'
-version = '0.3.0-alpha.19'
-crates-io = true
-status = 'transitive'
-features = ['alloc', 'futures-sink-preview', 'sink', 'std']
-optional-deps = ['futures-sink-preview']
-
-[[target-package]]
-name = 'futures-core-preview'
-version = '0.3.0-alpha.19'
-crates-io = true
-status = 'transitive'
-features = ['alloc', 'default', 'std']
-
-[[target-package]]
-name = 'futures-cpupool'
-version = '0.1.8'
-crates-io = true
-status = 'transitive'
-features = ['default', 'with-deprecated']
-
-[[target-package]]
-name = 'futures-executor-preview'
-version = '0.3.0-alpha.19'
-crates-io = true
-status = 'transitive'
-features = ['num_cpus', 'std']
-optional-deps = ['num_cpus']
-
-[[target-package]]
-name = 'futures-io-preview'
-version = '0.3.0-alpha.19'
-crates-io = true
-status = 'transitive'
-features = ['std']
-
-[[target-package]]
-name = 'futures-sink-preview'
-version = '0.3.0-alpha.19'
-crates-io = true
-status = 'transitive'
-features = ['alloc', 'default', 'std']
-
-[[target-package]]
-name = 'futures-util-preview'
-version = '0.3.0-alpha.19'
-crates-io = true
-status = 'transitive'
-features = ['alloc', 'async-await', 'channel', 'compat', 'default', 'futures-channel-preview', 'futures-io-preview', 'futures-join-macro-preview', 'futures-select-macro-preview', 'futures-sink-preview', 'futures_01', 'io', 'io-compat', 'join-macro', 'memchr', 'proc-macro-hack', 'proc-macro-nested', 'select-macro', 'sink', 'slab', 'std', 'tokio-io']
-optional-deps = ['futures-channel-preview', 'futures-io-preview', 'futures-join-macro-preview', 'futures-select-macro-preview', 'futures-sink-preview', 'futures_01', 'memchr', 'proc-macro-hack', 'proc-macro-nested', 'slab', 'tokio-io']
-
-[[target-package]]
-name = 'generic-array'
-version = '0.12.3'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'get_if_addrs-sys'
-version = '0.1.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'getrandom'
-version = '0.1.12'
-crates-io = true
-status = 'transitive'
-features = ['std']
-
-[[target-package]]
-name = 'grpcio-sys'
-version = '0.5.0-alpha.4'
-crates-io = true
-status = 'transitive'
-features = ['default']
-
-[[target-package]]
-name = 'h2'
-version = '0.1.26'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'hex_fmt'
-version = '0.3.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'http'
-version = '0.1.18'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'http-body'
-version = '0.1.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'httparse'
-version = '1.3.4'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
-
-[[target-package]]
-name = 'idna'
-version = '0.1.5'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'indexmap'
-version = '1.1.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'iovec'
-version = '0.1.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'itoa'
-version = '0.4.4'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
-
-[[target-package]]
-name = 'js-sys'
-version = '0.3.28'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'keccak'
-version = '0.1.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'kernel32-sys'
-version = '0.2.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'libc'
-version = '0.2.62'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
-
-[[target-package]]
-name = 'librocksdb_sys'
-version = '0.1.0'
-source = 'git+https://github.com/pingcap/rust-rocksdb.git?rev=3cd18c44d160a3cdba586d6502d51b7cc67efc59#3cd18c44d160a3cdba586d6502d51b7cc67efc59'
-status = 'transitive'
-features = ['default']
-
-[[target-package]]
-name = 'libtitan_sys'
-version = '0.0.1'
-source = 'git+https://github.com/pingcap/rust-rocksdb.git?rev=3cd18c44d160a3cdba586d6502d51b7cc67efc59#3cd18c44d160a3cdba586d6502d51b7cc67efc59'
-status = 'transitive'
-features = ['default']
-
-[[target-package]]
-name = 'libz-sys'
-version = '1.0.25'
-crates-io = true
-status = 'transitive'
-features = ['static']
-
-[[target-package]]
-name = 'linked-hash-map'
-version = '0.5.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'lock_api'
-version = '0.1.5'
-crates-io = true
-status = 'transitive'
-features = ['owning_ref']
-optional-deps = ['owning_ref']
-
-[[target-package]]
-name = 'lock_api'
-version = '0.3.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'lz4-sys'
-version = '1.8.0'
-source = 'git+https://github.com/busyjay/lz4-rs.git?branch=adjust-build#41509fea212e9ca55c1f6c53d4fd1ddf28cdf689'
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'mach_o_sys'
-version = '0.1.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'matches'
-version = '0.1.8'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'memchr'
-version = '2.2.1'
-crates-io = true
-status = 'transitive'
-features = ['default', 'use_std']
-
-[[target-package]]
-name = 'memoffset'
-version = '0.5.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'memsec'
-version = '0.5.6'
-crates-io = true
-status = 'transitive'
-features = ['alloc', 'default', 'getrandom', 'libc', 'mach_o_sys', 'use_os', 'winapi']
-optional-deps = ['getrandom', 'libc', 'mach_o_sys', 'winapi']
-
-[[target-package]]
-name = 'mio'
-version = '0.6.19'
-crates-io = true
-status = 'transitive'
-features = ['default', 'with-deprecated']
-
-[[target-package]]
-name = 'mio-uds'
-version = '0.6.7'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'miow'
-version = '0.2.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'net2'
-version = '0.2.33'
-crates-io = true
-status = 'transitive'
-features = ['default', 'duration']
-
-[[target-package]]
-name = 'nibble_vec'
-version = '0.0.4'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'nodrop'
-version = '0.1.13'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'nohash-hasher'
-version = '0.1.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'num-integer'
-version = '0.1.41'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'numtoa'
-version = '0.1.0'
-crates-io = true
-status = 'transitive'
-features = ['std']
-
-[[target-package]]
-name = 'opaque-debug'
-version = '0.2.3'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'ordermap'
-version = '0.3.5'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'owning_ref'
-version = '0.3.3'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'owning_ref'
-version = '0.4.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'parity-multihash'
-version = '0.1.3'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'parking_lot'
-version = '0.4.8'
-crates-io = true
-status = 'transitive'
-features = ['default', 'owning_ref']
-optional-deps = ['owning_ref']
-
-[[target-package]]
-name = 'parking_lot'
-version = '0.6.4'
-crates-io = true
-status = 'transitive'
-features = ['default', 'owning_ref']
-
-[[target-package]]
-name = 'parking_lot'
-version = '0.7.1'
-crates-io = true
-status = 'transitive'
-features = ['default', 'owning_ref']
-
-[[target-package]]
-name = 'parking_lot'
-version = '0.9.0'
-crates-io = true
-status = 'transitive'
-features = ['default']
-
-[[target-package]]
-name = 'parking_lot_core'
-version = '0.2.14'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'parking_lot_core'
-version = '0.3.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'parking_lot_core'
-version = '0.4.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'parking_lot_core'
-version = '0.6.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'percent-encoding'
-version = '1.0.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'pin-utils'
-version = '0.1.0-alpha.4'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'ppv-lite86'
-version = '0.2.5'
-crates-io = true
-status = 'transitive'
-features = ['default', 'simd', 'std']
-
-[[target-package]]
-name = 'proc-macro-nested'
-version = '0.1.3'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'protobuf'
-version = '2.7.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'quick-error'
-version = '0.1.4'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'quick-error'
-version = '1.2.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'rand'
-version = '0.4.6'
-crates-io = true
-status = 'transitive'
-features = ['default', 'libc', 'std']
-optional-deps = ['libc']
-
-[[target-package]]
-name = 'rand'
-version = '0.5.6'
-crates-io = true
-status = 'transitive'
-features = ['alloc', 'cloudabi', 'default', 'fuchsia-cprng', 'libc', 'std', 'winapi']
-optional-deps = ['cloudabi', 'fuchsia-cprng', 'libc', 'winapi']
-
-[[target-package]]
-name = 'rand'
-version = '0.7.0'
-crates-io = true
-status = 'transitive'
-features = ['alloc', 'default', 'getrandom', 'getrandom_package', 'std']
-optional-deps = ['getrandom_package']
-
-[[target-package]]
-name = 'rand04'
-version = '0.1.1'
-crates-io = true
-status = 'transitive'
-features = ['std']
-
-[[target-package]]
-name = 'rand04_compat'
-version = '0.1.1'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
-
-[[target-package]]
-name = 'rand_chacha'
-version = '0.1.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'rand_chacha'
-version = '0.2.1'
-crates-io = true
-status = 'transitive'
-features = ['default', 'simd', 'std']
-
-[[target-package]]
-name = 'rand_core'
-version = '0.3.1'
-crates-io = true
-status = 'transitive'
-features = ['alloc', 'std']
-
-[[target-package]]
-name = 'rand_core'
-version = '0.4.2'
-crates-io = true
-status = 'transitive'
-features = ['alloc', 'std']
-
-[[target-package]]
-name = 'rand_core'
-version = '0.5.1'
-crates-io = true
-status = 'transitive'
-features = ['alloc', 'getrandom', 'std']
-optional-deps = ['getrandom']
-
-[[target-package]]
-name = 'rand_hc'
-version = '0.1.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'rand_hc'
-version = '0.2.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'rand_isaac'
-version = '0.1.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'rand_jitter'
-version = '0.1.4'
-crates-io = true
-status = 'transitive'
-features = ['std']
-
-[[target-package]]
-name = 'rand_os'
-version = '0.1.3'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'rand_pcg'
-version = '0.1.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'rand_xorshift'
-version = '0.1.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'rayon-core'
-version = '1.6.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'rdrand'
-version = '0.4.0'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
-
-[[target-package]]
-name = 'redox_syscall'
-version = '0.1.56'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'redox_termios'
-version = '0.1.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'redox_users'
-version = '0.3.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'regex-syntax'
-version = '0.6.12'
-crates-io = true
-status = 'transitive'
-features = ['default', 'unicode', 'unicode-age', 'unicode-bool', 'unicode-case', 'unicode-gencat', 'unicode-perl', 'unicode-script', 'unicode-segment']
-
-[[target-package]]
-name = 'remove_dir_all'
-version = '0.5.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'ring'
-version = '0.16.9'
-crates-io = true
-status = 'transitive'
-features = ['alloc', 'default', 'dev_urandom_fallback', 'lazy_static', 'std']
-optional-deps = ['lazy_static']
-
-[[target-package]]
-name = 'rmp'
-version = '0.8.8'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'rust-argon2'
-version = '0.5.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'rustc-demangle'
-version = '0.1.16'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'ryu'
-version = '1.0.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'scopeguard'
-version = '0.3.3'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'scopeguard'
-version = '1.0.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'slab'
-version = '0.4.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'slog-stdlog'
-version = '4.0.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'smallvec'
-version = '0.6.10'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
-
-[[target-package]]
-name = 'snappy-sys'
-version = '0.1.0'
-source = 'git+https://github.com/busyjay/rust-snappy.git?branch=static-link#8c12738bad811397600455d6982aff754ea2ac44'
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'spin'
-version = '0.5.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'stable_deref_trait'
-version = '1.1.1'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
-
-[[target-package]]
-name = 'string'
-version = '0.2.1'
-crates-io = true
-status = 'transitive'
-features = ['bytes', 'default']
-optional-deps = ['bytes']
-
-[[target-package]]
-name = 'strsim'
-version = '0.8.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'subtle'
-version = '1.0.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'subtle'
-version = '2.1.1'
-crates-io = true
-status = 'transitive'
-features = ['default', 'i128', 'std']
-
-[[target-package]]
-name = 'take_mut'
-version = '0.2.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'tempfile'
-version = '3.1.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'term'
-version = '0.5.2'
-crates-io = true
-status = 'transitive'
-features = ['default']
-
-[[target-package]]
-name = 'termcolor'
-version = '1.0.5'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'textwrap'
-version = '0.11.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'thread_local'
-version = '0.3.6'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'time'
-version = '0.1.42'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'tokio'
-version = '0.1.22'
-crates-io = true
-status = 'transitive'
-features = ['bytes', 'io', 'mio', 'num_cpus', 'reactor', 'rt-full', 'timer', 'tokio-current-thread', 'tokio-executor', 'tokio-io', 'tokio-reactor', 'tokio-threadpool', 'tokio-timer']
-optional-deps = ['bytes', 'mio', 'num_cpus', 'tokio-current-thread', 'tokio-executor', 'tokio-io', 'tokio-reactor', 'tokio-threadpool', 'tokio-timer']
-
-[[target-package]]
-name = 'tokio-buf'
-version = '0.1.1'
-crates-io = true
-status = 'transitive'
-features = ['default', 'either', 'util']
-optional-deps = ['either']
-
-[[target-package]]
-name = 'tokio-codec'
-version = '0.1.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'tokio-codec'
-version = '0.2.0-alpha.6'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'tokio-current-thread'
-version = '0.1.6'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'tokio-executor'
-version = '0.1.8'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'tokio-executor'
-version = '0.2.0-alpha.6'
-crates-io = true
-status = 'transitive'
-features = ['blocking', 'crossbeam-channel', 'crossbeam-deque', 'crossbeam-queue', 'crossbeam-utils', 'current-thread', 'futures-core-preview', 'lazy_static', 'num_cpus', 'slab', 'threadpool', 'tokio-sync', 'tracing']
-optional-deps = ['crossbeam-channel', 'crossbeam-deque', 'crossbeam-queue', 'crossbeam-utils', 'futures-core-preview', 'lazy_static', 'num_cpus', 'slab', 'tokio-sync', 'tracing']
-
-[[target-package]]
-name = 'tokio-fs'
-version = '0.2.0-alpha.6'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'tokio-io'
-version = '0.1.12'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'tokio-io'
-version = '0.2.0-alpha.6'
-crates-io = true
-status = 'transitive'
-features = ['memchr', 'pin-project', 'util']
-optional-deps = ['memchr', 'pin-project']
-
-[[target-package]]
-name = 'tokio-net'
-version = '0.2.0-alpha.6'
-crates-io = true
-status = 'transitive'
-features = ['async-traits', 'bytes', 'futures-sink-preview', 'iovec', 'libc', 'mio-uds', 'tcp', 'tracing', 'udp', 'uds']
-optional-deps = ['bytes', 'futures-sink-preview', 'iovec', 'libc', 'mio-uds', 'tracing']
-
-[[target-package]]
-name = 'tokio-reactor'
-version = '0.1.9'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'tokio-sync'
-version = '0.1.6'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'tokio-tcp'
-version = '0.1.3'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'tokio-threadpool'
-version = '0.1.15'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'tokio-timer'
-version = '0.2.11'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'tokio-timer'
-version = '0.3.0-alpha.6'
-crates-io = true
-status = 'transitive'
-features = ['async-traits']
-
-[[target-package]]
-name = 'tracing'
-version = '0.1.9'
-crates-io = true
-status = 'transitive'
-features = ['default', 'log', 'std']
-optional-deps = ['log']
-
-[[target-package]]
-name = 'tracing-core'
-version = '0.1.6'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
-
-[[target-package]]
-name = 'try-lock'
-version = '0.2.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'typenum'
-version = '1.11.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'unicode-bidi'
-version = '0.3.4'
-crates-io = true
-status = 'transitive'
-features = ['default']
-
-[[target-package]]
-name = 'unicode-normalization'
-version = '0.1.8'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'unicode-width'
-version = '0.1.6'
-crates-io = true
-status = 'transitive'
-features = ['default']
-
-[[target-package]]
-name = 'unsigned-varint'
-version = '0.2.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'untrusted'
-version = '0.7.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'url'
-version = '1.7.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'vec_map'
-version = '0.8.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'wait-timeout'
-version = '0.2.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'want'
-version = '0.2.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'wasi'
-version = '0.7.0'
-crates-io = true
-status = 'transitive'
-features = ['alloc', 'default']
-
-[[target-package]]
-name = 'wasm-bindgen'
-version = '0.2.51'
-crates-io = true
-status = 'transitive'
-features = ['default', 'spans', 'std']
-
-[[target-package]]
-name = 'web-sys'
-version = '0.3.28'
-crates-io = true
-status = 'transitive'
-features = ['Crypto', 'Window']
-
-[[target-package]]
-name = 'winapi'
-version = '0.2.8'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'winapi'
-version = '0.3.8'
-crates-io = true
-status = 'transitive'
-features = ['consoleapi', 'errhandlingapi', 'fileapi', 'handleapi', 'knownfolders', 'memoryapi', 'minwinbase', 'minwindef', 'ntdef', 'ntsecapi', 'ntstatus', 'objbase', 'processenv', 'processthreadsapi', 'profileapi', 'shlobj', 'std', 'sysinfoapi', 'timezoneapi', 'winbase', 'wincon', 'winerror', 'winnt', 'winsock2', 'ws2def', 'ws2ipdef', 'ws2tcpip', 'wtypesbase']
-
-[[target-package]]
-name = 'winapi-i686-pc-windows-gnu'
-version = '0.4.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'winapi-util'
-version = '0.1.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'winapi-x86_64-pc-windows-gnu'
-version = '0.4.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'wincolor'
-version = '1.0.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'ws2_32-sys'
-version = '0.2.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'x25519-dalek'
-version = '0.5.2'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std', 'u64_backend']
-
-[[target-package]]
-name = 'zstd-sys'
-version = '1.4.13+zstd.1.4.3'
-source = 'git+https://github.com/gyscos/zstd-rs.git#7f77d0984a746a944588f41045a14dd60b5f496b'
-status = 'transitive'
-features = ['default', 'legacy']
-
-[[host-package]]
-name = 'libra-crypto-derive'
-version = '0.1.0'
-workspace-path = 'crypto/crypto-derive'
-status = 'workspace'
-features = []
 
 [[host-package]]
 name = 'grpcio-compiler'
@@ -2403,8 +589,116 @@ features = ['prost', 'prost-build', 'prost-codec', 'prost-types']
 optional-deps = ['prost', 'prost-build', 'prost-types']
 
 [[host-package]]
+name = 'hex'
+version = '0.3.2'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
+name = 'hmac'
+version = '0.7.1'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
+name = 'hyper'
+version = '0.12.34'
+crates-io = true
+status = 'direct'
+features = ['__internal_flaky_tests', 'default', 'futures-cpupool', 'net2', 'runtime', 'tokio', 'tokio-executor', 'tokio-reactor', 'tokio-tcp', 'tokio-threadpool', 'tokio-timer']
+optional-deps = ['futures-cpupool', 'net2', 'tokio', 'tokio-executor', 'tokio-reactor', 'tokio-tcp', 'tokio-threadpool', 'tokio-timer']
+
+[[host-package]]
+name = 'itertools'
+version = '0.8.0'
+crates-io = true
+status = 'direct'
+features = ['default', 'use_std']
+
+[[host-package]]
+name = 'lazy_static'
+version = '1.4.0'
+crates-io = true
+status = 'direct'
+features = ['spin', 'spin_no_std']
+optional-deps = ['spin']
+
+[[host-package]]
+name = 'log'
+version = '0.4.8'
+crates-io = true
+status = 'direct'
+features = ['std']
+
+[[host-package]]
+name = 'lru-cache'
+version = '0.1.2'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
+name = 'mirai-annotations'
+version = '1.4.0'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
 name = 'num-derive'
 version = '0.2.5'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
+name = 'num-traits'
+version = '0.2.8'
+crates-io = true
+status = 'direct'
+features = ['default', 'std']
+
+[[host-package]]
+name = 'num_cpus'
+version = '1.10.1'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
+name = 'num_enum'
+version = '0.4.1'
+crates-io = true
+status = 'direct'
+features = ['default', 'std']
+
+[[host-package]]
+name = 'pairing'
+version = '0.14.2'
+crates-io = true
+status = 'direct'
+features = ['default', 'u128-support']
+
+[[host-package]]
+name = 'parity-multiaddr'
+version = '0.5.0'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
+name = 'petgraph'
+version = '0.4.13'
+crates-io = true
+status = 'direct'
+features = ['default', 'graphmap', 'ordermap', 'stable_graph']
+optional-deps = ['ordermap']
+
+[[host-package]]
+name = 'pin-project'
+version = '0.4.2'
 crates-io = true
 status = 'direct'
 features = []
@@ -2417,11 +711,34 @@ status = 'direct'
 features = ['default', 'proc-macro']
 
 [[host-package]]
+name = 'prometheus'
+version = '0.7.0'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
+name = 'proptest'
+version = '0.9.4'
+crates-io = true
+status = 'direct'
+features = ['bit-set', 'break-dead-code', 'default', 'fork', 'lazy_static', 'quick-error', 'regex-syntax', 'rusty-fork', 'std', 'tempfile', 'timeout']
+optional-deps = ['bit-set', 'lazy_static', 'quick-error', 'regex-syntax', 'rusty-fork', 'tempfile']
+
+[[host-package]]
 name = 'proptest-derive'
 version = '0.1.2'
 crates-io = true
 status = 'direct'
 features = []
+
+[[host-package]]
+name = 'prost'
+version = '0.5.0'
+crates-io = true
+status = 'direct'
+features = ['default', 'prost-derive']
+optional-deps = ['prost-derive']
 
 [[host-package]]
 name = 'prost-build'
@@ -2438,6 +755,166 @@ status = 'direct'
 features = ['default', 'proc-macro']
 
 [[host-package]]
+name = 'radix_trie'
+version = '0.1.4'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
+name = 'rand'
+version = '0.6.5'
+crates-io = true
+status = 'direct'
+features = ['alloc', 'default', 'i128_support', 'rand_os', 'std']
+optional-deps = ['rand_os']
+
+[[host-package]]
+name = 'rayon'
+version = '1.2.0'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
+name = 'regex'
+version = '1.3.1'
+crates-io = true
+status = 'direct'
+features = ['aho-corasick', 'default', 'memchr', 'perf', 'perf-cache', 'perf-dfa', 'perf-inline', 'perf-literal', 'std', 'thread_local', 'unicode', 'unicode-age', 'unicode-bool', 'unicode-case', 'unicode-gencat', 'unicode-perl', 'unicode-script', 'unicode-segment']
+optional-deps = ['aho-corasick', 'memchr', 'thread_local']
+
+[[host-package]]
+name = 'rental'
+version = '0.5.4'
+crates-io = true
+status = 'direct'
+features = ['default', 'std']
+
+[[host-package]]
+name = 'rmp-serde'
+version = '0.13.7'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
+name = 'rocksdb'
+version = '0.3.0'
+source = 'git+https://github.com/pingcap/rust-rocksdb.git?rev=3cd18c44d160a3cdba586d6502d51b7cc67efc59#3cd18c44d160a3cdba586d6502d51b7cc67efc59'
+status = 'direct'
+features = ['default']
+
+[[host-package]]
+name = 'rusty-fork'
+version = '0.2.2'
+crates-io = true
+status = 'direct'
+features = ['default', 'timeout', 'wait-timeout']
+optional-deps = ['wait-timeout']
+
+[[host-package]]
+name = 'serde'
+version = '1.0.101'
+crates-io = true
+status = 'direct'
+features = ['default', 'derive', 'rc', 'serde_derive', 'std']
+optional-deps = ['serde_derive']
+
+[[host-package]]
+name = 'serde_json'
+version = '1.0.40'
+crates-io = true
+status = 'direct'
+features = ['default']
+
+[[host-package]]
+name = 'sha-1'
+version = '0.8.1'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
+name = 'sha2'
+version = '0.8.0'
+crates-io = true
+status = 'direct'
+features = ['default', 'std']
+
+[[host-package]]
+name = 'sha3'
+version = '0.8.2'
+crates-io = true
+status = 'direct'
+features = ['default', 'std']
+
+[[host-package]]
+name = 'siphasher'
+version = '0.3.0'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
+name = 'slog'
+version = '2.5.2'
+crates-io = true
+status = 'direct'
+features = ['default', 'max_level_trace', 'release_max_level_debug', 'std']
+
+[[host-package]]
+name = 'slog-async'
+version = '2.3.0'
+crates-io = true
+status = 'direct'
+features = ['default']
+
+[[host-package]]
+name = 'slog-envlogger'
+version = '2.2.0'
+crates-io = true
+status = 'direct'
+features = ['default', 'regex']
+optional-deps = ['regex']
+
+[[host-package]]
+name = 'slog-scope'
+version = '4.2.0'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
+name = 'slog-term'
+version = '2.4.1'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
+name = 'snow'
+version = '0.6.1'
+crates-io = true
+status = 'direct'
+features = ['blake2-rfc', 'chacha20-poly1305-aead', 'default', 'default-resolver', 'rand', 'ring', 'ring-accelerated', 'ring-resolver', 'sha2', 'x25519-dalek']
+optional-deps = ['blake2-rfc', 'chacha20-poly1305-aead', 'rand', 'ring', 'sha2', 'x25519-dalek']
+
+[[host-package]]
+name = 'structopt'
+version = '0.3.2'
+crates-io = true
+status = 'direct'
+features = ['default']
+
+[[host-package]]
+name = 'strum'
+version = '0.15.0'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
 name = 'strum_macros'
 version = '0.15.0'
 crates-io = true
@@ -2449,8 +926,94 @@ name = 'syn'
 version = '1.0.5'
 crates-io = true
 status = 'direct'
-features = ['clone-impls', 'default', 'derive', 'extra-traits', 'full', 'parsing', 'printing', 'proc-macro', 'quote', 'visit', 'visit-mut']
+features = ['clone-impls', 'default', 'derive', 'full', 'parsing', 'printing', 'proc-macro', 'quote', 'visit', 'visit-mut']
 optional-deps = ['quote']
+
+[[host-package]]
+name = 'termion'
+version = '1.5.3'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
+name = 'thread-id'
+version = '3.3.0'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
+name = 'threshold_crypto'
+version = '0.3.2'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
+name = 'tiny-keccak'
+version = '1.5.0'
+crates-io = true
+status = 'direct'
+features = ['default', 'keccak']
+
+[[host-package]]
+name = 'tokio'
+version = '0.2.0-alpha.6'
+crates-io = true
+status = 'direct'
+features = ['bytes', 'codec', 'default', 'fs', 'io', 'macros', 'net', 'num_cpus', 'rt-full', 'sync', 'tcp', 'timer', 'tokio-codec', 'tokio-executor', 'tokio-fs', 'tokio-io', 'tokio-macros', 'tokio-net', 'tokio-sync', 'tokio-timer', 'tracing-core', 'udp', 'uds']
+optional-deps = ['bytes', 'num_cpus', 'tokio-codec', 'tokio-executor', 'tokio-fs', 'tokio-io', 'tokio-macros', 'tokio-net', 'tokio-sync', 'tokio-timer', 'tracing-core']
+
+[[host-package]]
+name = 'tokio-retry'
+version = '0.2.0'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
+name = 'tokio-sync'
+version = '0.2.0-alpha.6'
+crates-io = true
+status = 'direct'
+features = ['async-traits', 'futures-sink-preview']
+optional-deps = ['futures-sink-preview']
+
+[[host-package]]
+name = 'toml'
+version = '0.5.3'
+crates-io = true
+status = 'direct'
+features = ['default']
+
+[[host-package]]
+name = 'ttl_cache'
+version = '0.4.2'
+crates-io = true
+status = 'direct'
+features = ['default']
+
+[[host-package]]
+name = 'typed-arena'
+version = '1.5.0'
+crates-io = true
+status = 'direct'
+features = ['default', 'std']
+
+[[host-package]]
+name = 'x25519-dalek'
+version = '0.5.2'
+source = 'git+https://github.com/calibra/x25519-dalek.git?branch=fiat#8d5b63010f8466d75a4fa2fb95f573092aed5611'
+status = 'direct'
+features = ['std', 'u64_backend']
+
+[[host-package]]
+name = 'yamux'
+version = '0.2.1'
+crates-io = true
+status = 'direct'
+features = []
 
 [[host-package]]
 name = 'aho-corasick'
@@ -2460,19 +1023,39 @@ status = 'transitive'
 features = ['default', 'std']
 
 [[host-package]]
-name = 'autocfg'
-version = '0.1.6'
+name = 'ansi_term'
+version = '0.11.0'
 crates-io = true
 status = 'transitive'
 features = []
 
 [[host-package]]
-name = 'backtrace'
-version = '0.3.37'
+name = 'arrayref'
+version = '0.3.5'
 crates-io = true
 status = 'transitive'
-features = ['backtrace-sys', 'dbghelp', 'default', 'dladdr', 'libbacktrace', 'libunwind', 'std']
-optional-deps = ['backtrace-sys']
+features = []
+
+[[host-package]]
+name = 'arrayvec'
+version = '0.4.11'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'atty'
+version = '0.2.13'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'autocfg'
+version = '0.1.6'
+crates-io = true
+status = 'transitive'
+features = []
 
 [[host-package]]
 name = 'backtrace-sys'
@@ -2489,8 +1072,57 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'bit-set'
+version = '0.5.1'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[host-package]]
+name = 'bit-vec'
+version = '0.5.1'
+crates-io = true
+status = 'transitive'
+features = ['std']
+
+[[host-package]]
 name = 'bitflags'
 version = '1.1.0'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[host-package]]
+name = 'blake2'
+version = '0.8.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'blake2-rfc'
+version = '0.2.18'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[host-package]]
+name = 'block-buffer'
+version = '0.7.3'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'block-padding'
+version = '0.1.4'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'bs58'
+version = '0.2.5'
 crates-io = true
 status = 'transitive'
 features = ['default']
@@ -2503,23 +1135,16 @@ status = 'transitive'
 features = ['default', 'std']
 
 [[host-package]]
-name = 'bumpalo'
-version = '2.6.0'
+name = 'byte-tools'
+version = '0.3.1'
 crates-io = true
 status = 'transitive'
-features = ['collections', 'default', 'std']
+features = []
 
 [[host-package]]
-name = 'byteorder'
-version = '1.3.2'
-crates-io = true
-status = 'transitive'
-features = ['default', 'i128', 'std']
-
-[[host-package]]
-name = 'bytes'
-version = '0.4.12'
-crates-io = true
+name = 'bzip2-sys'
+version = '0.1.7'
+source = 'git+https://github.com/alexcrichton/bzip2-rs.git#02096d6f16e6b78cde379ce2305e08d2933e23b7'
 status = 'transitive'
 features = []
 
@@ -2530,6 +1155,13 @@ crates-io = true
 status = 'transitive'
 features = ['lazy_static', 'simd', 'std']
 optional-deps = ['lazy_static']
+
+[[host-package]]
+name = 'c_linked_list'
+version = '1.1.1'
+crates-io = true
+status = 'transitive'
+features = []
 
 [[host-package]]
 name = 'cc'
@@ -2554,12 +1186,27 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'chacha20-poly1305-aead'
+version = '0.1.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'clang-sys'
 version = '0.28.1'
 crates-io = true
 status = 'transitive'
 features = ['clang_6_0', 'gte_clang_3_6', 'gte_clang_3_7', 'gte_clang_3_8', 'gte_clang_3_9', 'gte_clang_4_0', 'gte_clang_5_0', 'gte_clang_6_0', 'libloading', 'runtime']
 optional-deps = ['libloading']
+
+[[host-package]]
+name = 'clap'
+version = '2.33.0'
+crates-io = true
+status = 'transitive'
+features = ['ansi_term', 'atty', 'color', 'default', 'strsim', 'suggestions', 'vec_map']
+optional-deps = ['ansi_term', 'atty', 'strsim', 'vec_map']
 
 [[host-package]]
 name = 'clear_on_drop'
@@ -2571,6 +1218,85 @@ features = []
 [[host-package]]
 name = 'cmake'
 version = '0.1.42'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'constant_time_eq'
+version = '0.1.4'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'crc'
+version = '1.8.1'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[host-package]]
+name = 'crossbeam-channel'
+version = '0.3.9'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'crossbeam-deque'
+version = '0.7.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'crossbeam-epoch'
+version = '0.7.2'
+crates-io = true
+status = 'transitive'
+features = ['default', 'lazy_static', 'std']
+optional-deps = ['lazy_static']
+
+[[host-package]]
+name = 'crossbeam-queue'
+version = '0.1.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'crossbeam-utils'
+version = '0.6.6'
+crates-io = true
+status = 'transitive'
+features = ['default', 'lazy_static', 'std']
+optional-deps = ['lazy_static']
+
+[[host-package]]
+name = 'crunchy'
+version = '0.2.2'
+crates-io = true
+status = 'transitive'
+features = ['default', 'limit_128']
+
+[[host-package]]
+name = 'crypto-mac'
+version = '0.7.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'curve25519-dalek'
+version = '1.2.3'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'std', 'u64_backend']
+
+[[host-package]]
+name = 'data-encoding'
+version = '2.1.2'
 crates-io = true
 status = 'transitive'
 features = []
@@ -2590,8 +1316,8 @@ status = 'transitive'
 features = ['default', 'std']
 
 [[host-package]]
-name = 'digest'
-version = '0.8.1'
+name = 'dirs'
+version = '1.0.5'
 crates-io = true
 status = 'transitive'
 features = []
@@ -2601,19 +1327,32 @@ name = 'either'
 version = '1.5.2'
 crates-io = true
 status = 'transitive'
+features = ['default', 'use_std']
+
+[[host-package]]
+name = 'endian-type'
+version = '0.1.2'
+crates-io = true
+status = 'transitive'
 features = []
 
 [[host-package]]
-name = 'failure'
-version = '0.1.5'
+name = 'errno'
+version = '0.2.4'
 crates-io = true
 status = 'transitive'
-features = ['backtrace', 'default', 'derive', 'failure_derive', 'std']
-optional-deps = ['backtrace', 'failure_derive']
+features = []
 
 [[host-package]]
 name = 'failure_derive'
 version = '0.1.5'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'fake-simd'
+version = '0.1.2'
 crates-io = true
 status = 'transitive'
 features = []
@@ -2624,6 +1363,50 @@ version = '0.1.9'
 crates-io = true
 status = 'transitive'
 features = []
+
+[[host-package]]
+name = 'fnv'
+version = '1.0.6'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'futures-channel-preview'
+version = '0.3.0-alpha.19'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'futures-sink-preview', 'sink', 'std']
+optional-deps = ['futures-sink-preview']
+
+[[host-package]]
+name = 'futures-core-preview'
+version = '0.3.0-alpha.19'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'default', 'std']
+
+[[host-package]]
+name = 'futures-cpupool'
+version = '0.1.8'
+crates-io = true
+status = 'transitive'
+features = ['default', 'with-deprecated']
+
+[[host-package]]
+name = 'futures-executor-preview'
+version = '0.3.0-alpha.19'
+crates-io = true
+status = 'transitive'
+features = ['num_cpus', 'std']
+optional-deps = ['num_cpus']
+
+[[host-package]]
+name = 'futures-io-preview'
+version = '0.3.0-alpha.19'
+crates-io = true
+status = 'transitive'
+features = ['std']
 
 [[host-package]]
 name = 'futures-join-macro-preview'
@@ -2640,11 +1423,19 @@ status = 'transitive'
 features = []
 
 [[host-package]]
-name = 'gcc'
-version = '0.3.55'
+name = 'futures-sink-preview'
+version = '0.3.0-alpha.19'
 crates-io = true
 status = 'transitive'
-features = []
+features = ['alloc', 'default', 'std']
+
+[[host-package]]
+name = 'futures-util-preview'
+version = '0.3.0-alpha.19'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'async-await', 'channel', 'compat', 'default', 'futures-channel-preview', 'futures-io-preview', 'futures-join-macro-preview', 'futures-select-macro-preview', 'futures-sink-preview', 'futures_01', 'io', 'io-compat', 'join-macro', 'memchr', 'proc-macro-hack', 'proc-macro-nested', 'select-macro', 'sink', 'slab', 'std', 'tokio-io']
+optional-deps = ['futures-channel-preview', 'futures-io-preview', 'futures-join-macro-preview', 'futures-select-macro-preview', 'futures-sink-preview', 'futures_01', 'memchr', 'proc-macro-hack', 'proc-macro-nested', 'slab', 'tokio-io']
 
 [[host-package]]
 name = 'generic-array'
@@ -2668,8 +1459,64 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'grpcio-sys'
+version = '0.5.0-alpha.4'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[host-package]]
+name = 'h2'
+version = '0.1.26'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'heck'
 version = '0.3.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'hex_fmt'
+version = '0.3.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'http'
+version = '0.1.18'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'http-body'
+version = '0.1.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'httparse'
+version = '1.3.4'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[host-package]]
+name = 'idna'
+version = '0.1.5'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'indexmap'
+version = '1.1.0'
 crates-io = true
 status = 'transitive'
 features = []
@@ -2682,11 +1529,11 @@ status = 'transitive'
 features = []
 
 [[host-package]]
-name = 'itertools'
-version = '0.8.0'
+name = 'itoa'
+version = '0.4.4'
 crates-io = true
 status = 'transitive'
-features = ['default', 'use_std']
+features = ['default', 'std']
 
 [[host-package]]
 name = 'jobserver'
@@ -2696,8 +1543,8 @@ status = 'transitive'
 features = []
 
 [[host-package]]
-name = 'lazy_static'
-version = '1.4.0'
+name = 'keccak'
+version = '0.1.0'
 crates-io = true
 status = 'transitive'
 features = []
@@ -2717,8 +1564,58 @@ status = 'transitive'
 features = []
 
 [[host-package]]
-name = 'log'
-version = '0.4.8'
+name = 'librocksdb_sys'
+version = '0.1.0'
+source = 'git+https://github.com/pingcap/rust-rocksdb.git?rev=3cd18c44d160a3cdba586d6502d51b7cc67efc59#3cd18c44d160a3cdba586d6502d51b7cc67efc59'
+status = 'transitive'
+features = ['default']
+
+[[host-package]]
+name = 'libtitan_sys'
+version = '0.0.1'
+source = 'git+https://github.com/pingcap/rust-rocksdb.git?rev=3cd18c44d160a3cdba586d6502d51b7cc67efc59#3cd18c44d160a3cdba586d6502d51b7cc67efc59'
+status = 'transitive'
+features = ['default']
+
+[[host-package]]
+name = 'libz-sys'
+version = '1.0.25'
+crates-io = true
+status = 'transitive'
+features = ['static']
+
+[[host-package]]
+name = 'linked-hash-map'
+version = '0.5.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'lock_api'
+version = '0.1.5'
+crates-io = true
+status = 'transitive'
+features = ['owning_ref']
+optional-deps = ['owning_ref']
+
+[[host-package]]
+name = 'lock_api'
+version = '0.3.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'lz4-sys'
+version = '1.8.0'
+source = 'git+https://github.com/busyjay/lz4-rs.git?branch=adjust-build#41509fea212e9ca55c1f6c53d4fd1ddf28cdf689'
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'matches'
+version = '0.1.8'
 crates-io = true
 status = 'transitive'
 features = []
@@ -2731,8 +1628,65 @@ status = 'transitive'
 features = ['default', 'use_std']
 
 [[host-package]]
+name = 'memoffset'
+version = '0.5.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'memsec'
+version = '0.5.6'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'default', 'getrandom', 'libc', 'mach_o_sys', 'use_os', 'winapi']
+optional-deps = ['getrandom', 'libc']
+
+[[host-package]]
+name = 'mio'
+version = '0.6.19'
+crates-io = true
+status = 'transitive'
+features = ['default', 'with-deprecated']
+
+[[host-package]]
+name = 'mio-uds'
+version = '0.6.7'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'multimap'
 version = '0.4.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'net2'
+version = '0.2.33'
+crates-io = true
+status = 'transitive'
+features = ['default', 'duration']
+
+[[host-package]]
+name = 'nibble_vec'
+version = '0.0.4'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'nodrop'
+version = '0.1.13'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'nohash-hasher'
+version = '0.1.1'
 crates-io = true
 status = 'transitive'
 features = []
@@ -2745,8 +1699,8 @@ status = 'transitive'
 features = ['alloc', 'default', 'std', 'verbose-errors']
 
 [[host-package]]
-name = 'num_cpus'
-version = '1.10.1'
+name = 'num-integer'
+version = '0.1.41'
 crates-io = true
 status = 'transitive'
 features = []
@@ -2759,6 +1713,105 @@ status = 'transitive'
 features = ['std']
 
 [[host-package]]
+name = 'numtoa'
+version = '0.1.0'
+crates-io = true
+status = 'transitive'
+features = ['std']
+
+[[host-package]]
+name = 'opaque-debug'
+version = '0.2.3'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'ordermap'
+version = '0.3.5'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'owning_ref'
+version = '0.3.3'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'owning_ref'
+version = '0.4.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'parity-multihash'
+version = '0.1.3'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'parking_lot'
+version = '0.4.8'
+crates-io = true
+status = 'transitive'
+features = ['default', 'owning_ref']
+optional-deps = ['owning_ref']
+
+[[host-package]]
+name = 'parking_lot'
+version = '0.6.4'
+crates-io = true
+status = 'transitive'
+features = ['default', 'owning_ref']
+
+[[host-package]]
+name = 'parking_lot'
+version = '0.7.1'
+crates-io = true
+status = 'transitive'
+features = ['default', 'owning_ref']
+
+[[host-package]]
+name = 'parking_lot'
+version = '0.9.0'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[host-package]]
+name = 'parking_lot_core'
+version = '0.2.14'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'parking_lot_core'
+version = '0.3.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'parking_lot_core'
+version = '0.4.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'parking_lot_core'
+version = '0.6.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'peeking_take_while'
 version = '0.1.2'
 crates-io = true
@@ -2766,8 +1819,8 @@ status = 'transitive'
 features = []
 
 [[host-package]]
-name = 'petgraph'
-version = '0.4.13'
+name = 'percent-encoding'
+version = '1.0.1'
 crates-io = true
 status = 'transitive'
 features = []
@@ -2775,6 +1828,13 @@ features = []
 [[host-package]]
 name = 'pin-project-internal'
 version = '0.4.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'pin-utils'
+version = '0.1.0-alpha.4'
 crates-io = true
 status = 'transitive'
 features = []
@@ -2815,6 +1875,13 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'proc-macro-nested'
+version = '0.1.3'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'proc-macro2'
 version = '0.4.30'
 crates-io = true
@@ -2834,14 +1901,6 @@ version = '0.2.2'
 crates-io = true
 status = 'transitive'
 features = []
-
-[[host-package]]
-name = 'prost'
-version = '0.5.0'
-crates-io = true
-status = 'transitive'
-features = ['default', 'prost-derive']
-optional-deps = ['prost-derive']
 
 [[host-package]]
 name = 'prost-derive'
@@ -2865,6 +1924,20 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'quick-error'
+version = '0.1.4'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'quick-error'
+version = '1.2.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'quote'
 version = '0.6.13'
 crates-io = true
@@ -2873,11 +1946,48 @@ features = ['default', 'proc-macro']
 
 [[host-package]]
 name = 'rand'
+version = '0.4.6'
+crates-io = true
+status = 'transitive'
+features = ['default', 'libc', 'std']
+optional-deps = ['libc']
+
+[[host-package]]
+name = 'rand'
+version = '0.5.6'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'cloudabi', 'default', 'fuchsia-cprng', 'libc', 'std', 'winapi']
+optional-deps = ['libc']
+
+[[host-package]]
+name = 'rand'
 version = '0.7.0'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'getrandom', 'getrandom_package', 'std']
 optional-deps = ['getrandom_package']
+
+[[host-package]]
+name = 'rand04'
+version = '0.1.1'
+crates-io = true
+status = 'transitive'
+features = ['std']
+
+[[host-package]]
+name = 'rand04_compat'
+version = '0.1.1'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[host-package]]
+name = 'rand_chacha'
+version = '0.1.1'
+crates-io = true
+status = 'transitive'
+features = []
 
 [[host-package]]
 name = 'rand_chacha'
@@ -2891,7 +2001,7 @@ name = 'rand_core'
 version = '0.3.1'
 crates-io = true
 status = 'transitive'
-features = ['std']
+features = ['alloc', 'std']
 
 [[host-package]]
 name = 'rand_core'
@@ -2909,19 +2019,60 @@ features = ['alloc', 'getrandom', 'std']
 optional-deps = ['getrandom']
 
 [[host-package]]
-name = 'regex'
-version = '1.3.1'
+name = 'rand_hc'
+version = '0.1.0'
 crates-io = true
 status = 'transitive'
-features = ['aho-corasick', 'default', 'memchr', 'perf', 'perf-cache', 'perf-dfa', 'perf-inline', 'perf-literal', 'std', 'thread_local', 'unicode', 'unicode-age', 'unicode-bool', 'unicode-case', 'unicode-gencat', 'unicode-perl', 'unicode-script', 'unicode-segment']
-optional-deps = ['aho-corasick', 'memchr', 'thread_local']
+features = []
+
+[[host-package]]
+name = 'rand_isaac'
+version = '0.1.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'rand_jitter'
+version = '0.1.4'
+crates-io = true
+status = 'transitive'
+features = ['std']
+
+[[host-package]]
+name = 'rand_os'
+version = '0.1.3'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'rand_pcg'
+version = '0.1.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'rand_xorshift'
+version = '0.1.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'rayon-core'
+version = '1.6.0'
+crates-io = true
+status = 'transitive'
+features = []
 
 [[host-package]]
 name = 'regex-syntax'
 version = '0.6.12'
 crates-io = true
 status = 'transitive'
-features = ['unicode-age', 'unicode-bool', 'unicode-case', 'unicode-gencat', 'unicode-perl', 'unicode-script', 'unicode-segment']
+features = ['default', 'unicode', 'unicode-age', 'unicode-bool', 'unicode-case', 'unicode-gencat', 'unicode-perl', 'unicode-script', 'unicode-segment']
 
 [[host-package]]
 name = 'remove_dir_all'
@@ -2933,6 +2084,21 @@ features = []
 [[host-package]]
 name = 'rental-impl'
 version = '0.5.4'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'ring'
+version = '0.16.9'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'default', 'dev_urandom_fallback', 'lazy_static', 'std']
+optional-deps = ['lazy_static']
+
+[[host-package]]
+name = 'rmp'
+version = '0.8.8'
 crates-io = true
 status = 'transitive'
 features = []
@@ -2959,8 +2125,29 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'ryu'
+version = '1.0.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'same-file'
 version = '1.0.5'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'scopeguard'
+version = '0.3.3'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'scopeguard'
+version = '1.0.0'
 crates-io = true
 status = 'transitive'
 features = []
@@ -2980,13 +2167,6 @@ status = 'transitive'
 features = []
 
 [[host-package]]
-name = 'serde'
-version = '1.0.101'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
-
-[[host-package]]
 name = 'serde_derive'
 version = '1.0.99'
 crates-io = true
@@ -3001,8 +2181,58 @@ status = 'transitive'
 features = []
 
 [[host-package]]
-name = 'sourcefile'
-version = '0.1.4'
+name = 'slab'
+version = '0.4.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'slog-stdlog'
+version = '4.0.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'smallvec'
+version = '0.6.10'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[host-package]]
+name = 'snappy-sys'
+version = '0.1.0'
+source = 'git+https://github.com/busyjay/rust-snappy.git?branch=static-link#8c12738bad811397600455d6982aff754ea2ac44'
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'spin'
+version = '0.5.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'stable_deref_trait'
+version = '1.1.1'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[host-package]]
+name = 'string'
+version = '0.2.1'
+crates-io = true
+status = 'transitive'
+features = ['bytes', 'default']
+optional-deps = ['bytes']
+
+[[host-package]]
+name = 'strsim'
+version = '0.8.0'
 crates-io = true
 status = 'transitive'
 features = []
@@ -3016,10 +2246,17 @@ features = []
 
 [[host-package]]
 name = 'subtle'
+version = '1.0.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'subtle'
 version = '2.1.1'
 crates-io = true
 status = 'transitive'
-features = ['std']
+features = ['default', 'i128', 'std']
 
 [[host-package]]
 name = 'syn'
@@ -3037,8 +2274,36 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'take_mut'
+version = '0.2.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'tempfile'
 version = '3.1.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'term'
+version = '0.5.2'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[host-package]]
+name = 'termcolor'
+version = '1.0.5'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'textwrap'
+version = '0.11.0'
 crates-io = true
 status = 'transitive'
 features = []
@@ -3051,6 +2316,87 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'time'
+version = '0.1.42'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'tokio'
+version = '0.1.22'
+crates-io = true
+status = 'transitive'
+features = ['bytes', 'io', 'mio', 'num_cpus', 'reactor', 'rt-full', 'timer', 'tokio-current-thread', 'tokio-executor', 'tokio-io', 'tokio-reactor', 'tokio-threadpool', 'tokio-timer']
+optional-deps = ['bytes', 'mio', 'num_cpus', 'tokio-current-thread', 'tokio-executor', 'tokio-io', 'tokio-reactor', 'tokio-threadpool', 'tokio-timer']
+
+[[host-package]]
+name = 'tokio-buf'
+version = '0.1.1'
+crates-io = true
+status = 'transitive'
+features = ['default', 'either', 'util']
+optional-deps = ['either']
+
+[[host-package]]
+name = 'tokio-codec'
+version = '0.1.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'tokio-codec'
+version = '0.2.0-alpha.6'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'tokio-current-thread'
+version = '0.1.6'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'tokio-executor'
+version = '0.1.8'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'tokio-executor'
+version = '0.2.0-alpha.6'
+crates-io = true
+status = 'transitive'
+features = ['blocking', 'crossbeam-channel', 'crossbeam-deque', 'crossbeam-queue', 'crossbeam-utils', 'current-thread', 'futures-core-preview', 'lazy_static', 'num_cpus', 'slab', 'threadpool', 'tokio-sync']
+optional-deps = ['crossbeam-channel', 'crossbeam-deque', 'crossbeam-queue', 'crossbeam-utils', 'futures-core-preview', 'lazy_static', 'num_cpus', 'slab', 'tokio-sync']
+
+[[host-package]]
+name = 'tokio-fs'
+version = '0.2.0-alpha.6'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'tokio-io'
+version = '0.1.12'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'tokio-io'
+version = '0.2.0-alpha.6'
+crates-io = true
+status = 'transitive'
+features = ['memchr', 'pin-project', 'util']
+optional-deps = ['memchr', 'pin-project']
+
+[[host-package]]
 name = 'tokio-macros'
 version = '0.2.0-alpha.6'
 crates-io = true
@@ -3058,15 +2404,65 @@ status = 'transitive'
 features = []
 
 [[host-package]]
-name = 'toml'
-version = '0.5.3'
+name = 'tokio-net'
+version = '0.2.0-alpha.6'
 crates-io = true
 status = 'transitive'
-features = ['default']
+features = ['async-traits', 'bytes', 'futures-sink-preview', 'iovec', 'libc', 'mio-uds', 'tcp', 'udp', 'uds']
+optional-deps = ['bytes', 'futures-sink-preview', 'iovec', 'libc', 'mio-uds']
 
 [[host-package]]
-name = 'tracing-attributes'
-version = '0.1.4'
+name = 'tokio-reactor'
+version = '0.1.9'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'tokio-sync'
+version = '0.1.6'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'tokio-tcp'
+version = '0.1.3'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'tokio-threadpool'
+version = '0.1.15'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'tokio-timer'
+version = '0.2.11'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'tokio-timer'
+version = '0.3.0-alpha.6'
+crates-io = true
+status = 'transitive'
+features = ['async-traits']
+
+[[host-package]]
+name = 'tracing-core'
+version = '0.1.6'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[host-package]]
+name = 'try-lock'
+version = '0.2.2'
 crates-io = true
 status = 'transitive'
 features = []
@@ -3079,11 +2475,32 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'unicode-bidi'
+version = '0.3.4'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[host-package]]
+name = 'unicode-normalization'
+version = '0.1.8'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'unicode-segmentation'
 version = '1.3.0'
 crates-io = true
 status = 'transitive'
 features = []
+
+[[host-package]]
+name = 'unicode-width'
+version = '0.1.6'
+crates-io = true
+status = 'transitive'
+features = ['default']
 
 [[host-package]]
 name = 'unicode-xid'
@@ -3100,8 +2517,43 @@ status = 'transitive'
 features = ['default']
 
 [[host-package]]
+name = 'unsigned-varint'
+version = '0.2.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'untrusted'
+version = '0.7.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'url'
+version = '1.7.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'vec_map'
+version = '0.8.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'version_check'
 version = '0.1.5'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'wait-timeout'
+version = '0.2.0'
 crates-io = true
 status = 'transitive'
 features = []
@@ -3114,43 +2566,8 @@ status = 'transitive'
 features = []
 
 [[host-package]]
-name = 'wasm-bindgen-backend'
-version = '0.2.51'
-crates-io = true
-status = 'transitive'
-features = ['spans']
-
-[[host-package]]
-name = 'wasm-bindgen-macro'
-version = '0.2.51'
-crates-io = true
-status = 'transitive'
-features = ['spans']
-
-[[host-package]]
-name = 'wasm-bindgen-macro-support'
-version = '0.2.51'
-crates-io = true
-status = 'transitive'
-features = ['spans']
-
-[[host-package]]
-name = 'wasm-bindgen-shared'
-version = '0.2.51'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'wasm-bindgen-webidl'
-version = '0.2.51'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'weedle'
-version = '0.10.0'
+name = 'want'
+version = '0.2.0'
 crates-io = true
 status = 'transitive'
 features = []
@@ -3163,8 +2580,15 @@ status = 'transitive'
 features = []
 
 [[host-package]]
-name = 'winapi-build'
-version = '0.1.1'
+name = 'x25519-dalek'
+version = '0.5.2'
 crates-io = true
 status = 'transitive'
-features = []
+features = ['default', 'std', 'u64_backend']
+
+[[host-package]]
+name = 'zstd-sys'
+version = '1.4.13+zstd.1.4.3'
+source = 'git+https://github.com/gyscos/zstd-rs.git#7f77d0984a746a944588f41045a14dd60b5f496b'
+status = 'transitive'
+features = ['default', 'legacy']
