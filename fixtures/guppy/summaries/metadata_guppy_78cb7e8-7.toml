@@ -10,7 +10,7 @@ initials-platform = 'host'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'mips64el-unknown-linux-muslabi64'
+triple = 'mipsel-unknown-none'
 target-features = 'unknown'
 flags = ['bar']
 [[metadata.omitted-packages.ids]]

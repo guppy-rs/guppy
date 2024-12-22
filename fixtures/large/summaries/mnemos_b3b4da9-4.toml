@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'i586-pc-windows-msvc'
+triple = 'i686-linux-android'
 target-features = ['xsave']
 flags = ['foo']
 [[metadata.omitted-packages.ids]]

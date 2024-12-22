@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '2'
 # workspace-hack-line-style = 'full'
-# platforms = ['aarch64-unknown-freebsd', 'armv7-linux-androideabi']
+# platforms = ['aarch64-unknown-illumos', 'armv7-unknown-freebsd']
 #
 # [traversal-excludes]
 # [[final-excludes.ids]]

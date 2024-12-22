@@ -7,12 +7,12 @@ include-dev = true
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'riscv64gc-unknown-linux-musl'
+triple = 'riscv64gc-unknown-nuttx-elf'
 target-features = 'all'
 flags = ['foo']
 
 [metadata.target-platform]
-triple = 'i586-pc-windows-msvc'
+triple = 'i686-linux-android'
 target-features = ['bmi2', 'sse', 'sse4.1']
 flags = ['bar', 'flag-test']
 [[metadata.omitted-packages.ids]]

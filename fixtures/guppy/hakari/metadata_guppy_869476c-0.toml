@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '4'
 # workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['xtensa-esp32s3-none-elf', 'aarch64-wrs-vxworks']
+# platforms = ['xtensa-esp32s3-none-elf', 'aarch64_be-unknown-linux-gnu_ilp32']
 # [[traversal-excludes.ids]]
 # name = 'bit-set'
 # version = '0.5.2'
@@ -63,7 +63,7 @@ serde_json = { version = "1", features = ["raw_value"] }
 proc-macro2 = { version = "1" }
 syn = { version = "1", features = ["full", "visit"] }
 
-[target.aarch64-wrs-vxworks.dependencies]
+[target.aarch64_be-unknown-linux-gnu_ilp32.dependencies]
 libc = { version = "0.2" }
 
 ### END HAKARI SECTION

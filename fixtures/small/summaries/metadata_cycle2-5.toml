@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'armv7r-none-eabi'
+triple = 'avr-unknown-gnu-atmega328'
 target-features = 'unknown'
 flags = ['bar']
 

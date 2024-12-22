@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'armv8r-none-eabihf'
+triple = 'csky-unknown-linux-gnuabiv2'
 target-features = ['bmi2', 'sse', 'xsave']
 
 [metadata.target-platform]

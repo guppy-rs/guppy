@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '4'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['powerpc-unknown-linux-gnu', 'x86_64h-apple-darwin', 'aarch64-unknown-uefi']
+# platforms = ['powerpc64-unknown-freebsd', 'x86_64h-apple-darwin', 'aarch64-wrs-vxworks']
 # [[traversal-excludes.ids]]
 # name = 'fixtures'
 # version = '0.1.0'
@@ -75,16 +75,22 @@ proc-macro2 = { version = "1" }
 quote = { version = "1" }
 syn = { version = "1", features = ["full", "visit"] }
 
-[target.powerpc-unknown-linux-gnu.dependencies]
+[target.powerpc64-unknown-freebsd.dependencies]
 libc = { version = "0.2" }
 
-[target.powerpc-unknown-linux-gnu.build-dependencies]
+[target.powerpc64-unknown-freebsd.build-dependencies]
 libc = { version = "0.2" }
 
 [target.x86_64h-apple-darwin.dependencies]
 libc = { version = "0.2" }
 
 [target.x86_64h-apple-darwin.build-dependencies]
+libc = { version = "0.2" }
+
+[target.aarch64-wrs-vxworks.dependencies]
+libc = { version = "0.2" }
+
+[target.aarch64-wrs-vxworks.build-dependencies]
 libc = { version = "0.2" }
 
 ### END HAKARI SECTION

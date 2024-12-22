@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '3'
 # workspace-hack-line-style = 'full'
-# platforms = ['i686-unknown-freebsd', 'armeb-unknown-linux-gnueabi', 'powerpc64-unknown-linux-musl']
+# platforms = ['i686-unknown-openbsd', 'armebv7r-none-eabihf', 'riscv32em-unknown-none-elf']
 # [[traversal-excludes.ids]]
 # name = 'dep-a'
 # version = '0.1.0'

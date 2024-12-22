@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '4'
 # workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['wasm64-unknown-unknown', 'armebv7r-none-eabihf', 'riscv64gc-unknown-none-elf']
+# platforms = ['wasm32-wasip1', 'armv5te-none-eabi', 'riscv64imac-unknown-none-elf']
 # [[traversal-excludes.ids]]
 # name = 'builddep'
 # version = '0.1.0'

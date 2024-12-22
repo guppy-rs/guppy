@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'aarch64-pc-windows-gnullvm'
+triple = 'aarch64-unknown-fuchsia'
 target-features = 'unknown'
 [[metadata.omitted-packages.ids]]
 name = 'guppy-cmdlib'
@@ -316,18 +316,18 @@ status = 'transitive'
 features = []
 
 [[target-package]]
+name = 'libc'
+version = '0.2.79'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
 name = 'num-traits'
 version = '0.2.12'
 crates-io = true
 status = 'transitive'
 features = ['std']
-
-[[target-package]]
-name = 'output_vt100'
-version = '0.1.2'
-crates-io = true
-status = 'transitive'
-features = []
 
 [[target-package]]
 name = 'ppv-lite86'
@@ -451,13 +451,6 @@ crates-io = true
 status = 'transitive'
 features = []
 
-[[target-package]]
-name = 'winapi'
-version = '0.3.9'
-crates-io = true
-status = 'transitive'
-features = ['consoleapi', 'errhandlingapi', 'fileapi', 'handleapi', 'minwinbase', 'minwindef', 'processenv', 'std', 'winbase', 'winerror', 'winuser']
-
 [[host-package]]
 name = 'proptest-derive'
 version = '0.2.0'
@@ -468,13 +461,6 @@ features = []
 [[host-package]]
 name = 'autocfg'
 version = '1.0.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'ctor'
-version = '0.1.16'
 crates-io = true
 status = 'transitive'
 features = []

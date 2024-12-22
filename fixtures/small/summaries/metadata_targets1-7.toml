@@ -7,12 +7,12 @@ include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'mipsisa32r6el-unknown-linux-gnu'
+triple = 'powerpc-unknown-linux-gnuspe'
 target-features = ['avx2', 'sse3']
 flags = ['foo']
 
 [metadata.target-platform]
-triple = 'mips-unknown-linux-musl'
+triple = 'mips64el-unknown-linux-muslabi64'
 target-features = 'unknown'
 
 [[metadata.features-only]]

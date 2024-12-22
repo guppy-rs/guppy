@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '2'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['x86_64-unknown-fuchsia', 'arm-unknown-linux-musleabi', 'armv7-sony-vita-newlibeabihf']
+# platforms = ['x86_64-unknown-fuchsia', 'arm64e-apple-darwin', 'armv7-unknown-linux-gnueabihf']
 # [[traversal-excludes.ids]]
 # name = 'netcore'
 # version = '0.1.0'
@@ -762,7 +762,35 @@ tokio-uds = { version = "0.2", default-features = false }
 utf8parse = { version = "0.1", default-features = false }
 void = { version = "1", features = ["std"] }
 
-[target.arm-unknown-linux-musleabi.dependencies]
+[target.arm64e-apple-darwin.dependencies]
+ansi_term = { version = "0.11", default-features = false }
+c2-chacha = { version = "0.2", default-features = false, features = ["lazy_static", "simd", "std"] }
+lazy_static = { version = "1", default-features = false, features = ["spin", "spin_no_std"] }
+mach_o_sys = { version = "0.1", default-features = false }
+mio-uds = { version = "0.6", default-features = false }
+nix = { version = "0.14", default-features = false }
+ppv-lite86 = { version = "0.2", features = ["simd", "std"] }
+rand_chacha-6f8ce4dd05d13bba = { package = "rand_chacha", version = "0.2", features = ["simd", "std"] }
+tokio-signal = { version = "0.2", default-features = false }
+tokio-uds = { version = "0.2", default-features = false }
+utf8parse = { version = "0.1", default-features = false }
+void = { version = "1", features = ["std"] }
+
+[target.arm64e-apple-darwin.build-dependencies]
+ansi_term = { version = "0.11", default-features = false }
+c2-chacha = { version = "0.2", default-features = false, features = ["lazy_static", "simd", "std"] }
+lazy_static = { version = "1", default-features = false, features = ["spin", "spin_no_std"] }
+mach_o_sys = { version = "0.1", default-features = false }
+mio-uds = { version = "0.6", default-features = false }
+nix = { version = "0.14", default-features = false }
+ppv-lite86 = { version = "0.2", features = ["simd", "std"] }
+rand_chacha-6f8ce4dd05d13bba = { package = "rand_chacha", version = "0.2", features = ["simd", "std"] }
+tokio-signal = { version = "0.2", default-features = false }
+tokio-uds = { version = "0.2", default-features = false }
+utf8parse = { version = "0.1", default-features = false }
+void = { version = "1", features = ["std"] }
+
+[target.armv7-unknown-linux-gnueabihf.dependencies]
 ansi_term = { version = "0.11", default-features = false }
 c2-chacha = { version = "0.2", default-features = false, features = ["lazy_static", "simd", "std"] }
 lazy_static = { version = "1", default-features = false, features = ["spin", "spin_no_std"] }
@@ -775,33 +803,7 @@ tokio-uds = { version = "0.2", default-features = false }
 utf8parse = { version = "0.1", default-features = false }
 void = { version = "1", features = ["std"] }
 
-[target.arm-unknown-linux-musleabi.build-dependencies]
-ansi_term = { version = "0.11", default-features = false }
-c2-chacha = { version = "0.2", default-features = false, features = ["lazy_static", "simd", "std"] }
-lazy_static = { version = "1", default-features = false, features = ["spin", "spin_no_std"] }
-mio-uds = { version = "0.6", default-features = false }
-nix = { version = "0.14", default-features = false }
-ppv-lite86 = { version = "0.2", features = ["simd", "std"] }
-rand_chacha-6f8ce4dd05d13bba = { package = "rand_chacha", version = "0.2", features = ["simd", "std"] }
-tokio-signal = { version = "0.2", default-features = false }
-tokio-uds = { version = "0.2", default-features = false }
-utf8parse = { version = "0.1", default-features = false }
-void = { version = "1", features = ["std"] }
-
-[target.armv7-sony-vita-newlibeabihf.dependencies]
-ansi_term = { version = "0.11", default-features = false }
-c2-chacha = { version = "0.2", default-features = false, features = ["lazy_static", "simd", "std"] }
-lazy_static = { version = "1", default-features = false, features = ["spin", "spin_no_std"] }
-mio-uds = { version = "0.6", default-features = false }
-nix = { version = "0.14", default-features = false }
-ppv-lite86 = { version = "0.2", features = ["simd", "std"] }
-rand_chacha-6f8ce4dd05d13bba = { package = "rand_chacha", version = "0.2", features = ["simd", "std"] }
-tokio-signal = { version = "0.2", default-features = false }
-tokio-uds = { version = "0.2", default-features = false }
-utf8parse = { version = "0.1", default-features = false }
-void = { version = "1", features = ["std"] }
-
-[target.armv7-sony-vita-newlibeabihf.build-dependencies]
+[target.armv7-unknown-linux-gnueabihf.build-dependencies]
 ansi_term = { version = "0.11", default-features = false }
 c2-chacha = { version = "0.2", default-features = false, features = ["lazy_static", "simd", "std"] }
 lazy_static = { version = "1", default-features = false, features = ["spin", "spin_no_std"] }

@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'i586-unknown-linux-musl'
+triple = 'i686-pc-windows-gnullvm'
 target-features = 'all'
 flags = ['cargo_web', 'foo']
 
@@ -2685,7 +2685,7 @@ version = '1.0.11'
 crates-io = true
 status = 'transitive'
 features = ['close', 'default', 'hermit-abi', 'libc', 'windows-sys']
-optional-deps = ['libc']
+optional-deps = ['windows-sys']
 
 [[host-package]]
 name = 'is-terminal'
@@ -2720,14 +2720,7 @@ name = 'libc'
 version = '0.2.147'
 crates-io = true
 status = 'transitive'
-features = ['default', 'extra_traits', 'std']
-
-[[host-package]]
-name = 'linux-raw-sys'
-version = '0.3.8'
-crates-io = true
-status = 'transitive'
-features = ['errno', 'general', 'ioctl', 'no_std']
+features = []
 
 [[host-package]]
 name = 'log'
@@ -2904,14 +2897,6 @@ version = '0.4.0'
 crates-io = true
 status = 'transitive'
 features = []
-
-[[host-package]]
-name = 'rustix'
-version = '0.37.20'
-crates-io = true
-status = 'transitive'
-features = ['default', 'io-lifetimes', 'libc', 'std', 'termios', 'use-libc-auxv']
-optional-deps = ['io-lifetimes', 'libc']
 
 [[host-package]]
 name = 'rustversion'
@@ -3155,6 +3140,34 @@ features = ['spans']
 [[host-package]]
 name = 'wasm-bindgen-shared'
 version = '0.2.87'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'winapi'
+version = '0.3.9'
+crates-io = true
+status = 'transitive'
+features = ['handleapi', 'processenv', 'winbase', 'wincon', 'winnt']
+
+[[host-package]]
+name = 'windows-sys'
+version = '0.48.0'
+crates-io = true
+status = 'transitive'
+features = ['Win32', 'Win32_Foundation', 'Win32_Networking', 'Win32_Networking_WinSock', 'Win32_Security', 'Win32_Storage', 'Win32_Storage_FileSystem', 'Win32_System', 'Win32_System_Console', 'Win32_System_IO', 'Win32_System_Threading', 'default']
+
+[[host-package]]
+name = 'windows-targets'
+version = '0.48.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'windows_i686_gnu'
+version = '0.48.0'
 crates-io = true
 status = 'transitive'
 features = []

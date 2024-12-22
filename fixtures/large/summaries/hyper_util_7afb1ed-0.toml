@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'thumbv7a-pc-windows-msvc'
+triple = 'thumbv7a-uwp-windows-msvc'
 target-features = ['sha', 'sse']
 flags = ['bar', 'foo']
 [[metadata.omitted-packages.ids]]
