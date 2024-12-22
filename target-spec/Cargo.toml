@@ -29,7 +29,6 @@ unicode-ident = "1.0.14"
 guppy-workspace-hack.workspace = true
 
 [dev-dependencies]
-rustc_version = "0.4.1"
 test-case = "3.3.1"
 toml = "0.5.11"
 

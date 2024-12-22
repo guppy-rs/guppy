@@ -1,0 +1,14 @@
+---
+source: target-spec-miette/tests/snapshot/custom.rs
+expression: "format!(\"{:?}\", miette::Report::new_boxed(diagnostic))"
+snapshot_kind: text
+---
+  × error deserializing custom target JSON for `my-target`
+  ╰─▶ invalid type: string "none", expected a sequence at line 33 column 27
+    ╭─[33:27]
+ 32 │     "target-endian": "big",
+ 33 │     "target-family": "none",
+    ·                           ▲
+    ·                           ╰── invalid type: string "none", expected a sequence
+ 34 │     "target-mcount": "_mcount",
+    ╰────

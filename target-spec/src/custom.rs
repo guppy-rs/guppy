@@ -13,6 +13,13 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, Deserialize, Serialize, Eq, Hash, Ord, PartialEq, PartialOrd)]
 #[serde(rename_all = "kebab-case")]
 pub(crate) struct TargetDefinition {
+    // TODO: it would be nice to use target-spec-json for this, but that has a
+    // few limitations as of v0.1:
+    //
+    // * target-pointer-width is a string, not an integer.
+    // * Os and Env deserialized to enums, but we would really like them to be strings.
+    //
+    // ---
     arch: String,
     #[serde(rename = "target-pointer-width", with = "target_pointer_width")]
     pointer_width: u8,
@@ -34,9 +41,9 @@ pub(crate) struct TargetDefinition {
     #[serde(default)]
     vendor: Option<String>,
     #[serde(default)]
-    families: Vec<String>,
+    target_family: Vec<String>,
     #[serde(default)]
-    endian: Endian,
+    target_endian: Endian,
     #[serde(default)]
     min_atomic_width: Option<u16>,
     #[serde(default)]
@@ -76,9 +83,9 @@ impl TargetDefinition {
             arch: Arch::new(self.arch),
             env: self.env.map(Env::new),
             vendor: self.vendor.map(Vendor::new),
-            families: Families::new(self.families.into_iter().map(Family::new)),
+            families: Families::new(self.target_family.into_iter().map(Family::new)),
             pointer_width: self.pointer_width,
-            endian: self.endian.to_cfg_expr(),
+            endian: self.target_endian.to_cfg_expr(),
             has_atomics: HasAtomics::new(has_atomics),
             panic: self.panic_strategy.to_cfg_expr(),
         }
@@ -156,13 +163,6 @@ mod tests {
 
     #[test]
     fn test_all_builtin_specs_recognized() {
-        let version = rustc_version::version().expect("rustc_version succeeded");
-        if version.minor < 70 {
-            // all-target-specs-json is only present on Rust 1.70 and above.
-            println!("** skipping, minor version {} < 70", version.minor);
-            return;
-        }
-
         let rustc_bin: String = std::env::var("RUSTC").unwrap_or_else(|_| "rustc".to_owned());
         let output = Command::new(rustc_bin)
             // Used for -Zunstable-options. This is test-only code so it doesn't matter.
@@ -178,12 +178,28 @@ mod tests {
             eprintln!("*** testing {triple}");
             // Just make sure this doesn't panic. (If this becomes fallible in the future, then this
             // shouldn't return an error either.)
-            target_def.clone().into_target_info(triple.into());
+            target_def.clone().into_target_info(triple.clone().into());
             let json =
                 serde_json::to_string(&target_def).expect("target def serialized successfully");
             eprintln!("* minified json: {json}");
             let target_def_2 = serde_json::from_str(&json).expect("target def 2 deserialized");
             assert_eq!(target_def, target_def_2, "matches");
+
+            // Do some spot checks for things like big-endian targets.
+            if triple.starts_with("powerpc-") || triple.starts_with("powerpc64-") {
+                assert_eq!(
+                    target_def.target_endian,
+                    Endian::Big,
+                    "powerpc is big-endian"
+                );
+            }
+            if triple.contains("-linux") {
+                assert!(
+                    target_def.target_family.contains(&"unix".to_owned()),
+                    "linux target_family should contain unix (was {:#?})",
+                    target_def.target_family,
+                );
+            }
         }
     }
 }

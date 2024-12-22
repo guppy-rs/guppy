@@ -2352,7 +2352,6 @@ dependencies = [
  "regex-automata 0.4.5",
  "regex-syntax 0.8.2",
  "rustix",
- "semver",
  "serde",
  "serde_json",
  "syn 2.0.90",
@@ -3549,15 +3548,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d626bb9dae77e28219937af045c257c28bfd3f69333c512553507f5f9798cb76"
 
 [[package]]
-name = "rustc_version"
-version = "0.4.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cfcb3a22ef46e85b45de6ee7e79d063319ebb6594faafcf1c225ea92ab6e9b92"
-dependencies = [
- "semver",
-]
-
-[[package]]
 name = "rustfix"
 version = "0.8.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4013,7 +4003,6 @@ dependencies = [
  "cfg-expr",
  "guppy-workspace-hack",
  "proptest",
- "rustc_version",
  "serde",
  "serde_json",
  "target-lexicon",
