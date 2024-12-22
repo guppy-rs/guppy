@@ -11,7 +11,7 @@ cargo = { version = "0.84.0", features = ["vendored-libgit2"] }
 clap = { version = "3.2.25", features = ["derive"] }
 color-eyre = { version = "0.6.3", default-features = false }
 diffus = "0.10.0"
-either = "1.11.0"
+either = "1.13.0"
 fs_extra = "1.3.0"
 itertools = "0.13.0"
 guppy = { path = "../../guppy" }
