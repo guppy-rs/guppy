@@ -1,5 +1,5 @@
 ---
-source: target-spec-miette/tests/snapshot/expr.rs
+source: target-spec-miette/tests/datatest-snapshot/expr.rs
 expression: "format!(\"{:?}\", miette::Report::new_boxed(diagnostic))"
 snapshot_kind: text
 ---

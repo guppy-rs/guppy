@@ -1,0 +1,6 @@
+---
+source: target-spec-miette/tests/integration/main.rs
+expression: "format!(\"{report:?}\")"
+snapshot_kind: text
+---
+  × custom platform currently unavailable

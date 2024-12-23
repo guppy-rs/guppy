@@ -26,5 +26,5 @@ target-spec = { version = "3.3.0", path = "../target-spec", features = ["custom"
 workspace = true
 
 [[test]]
-name = "snapshot"
+name = "datatest-snapshot"
 harness = false

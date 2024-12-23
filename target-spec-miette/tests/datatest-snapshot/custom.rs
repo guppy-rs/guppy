@@ -1,16 +1,24 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
+//! Tests for custom platforms with miette.
+//!
+//! These tests live here because they depend on target-spec with the custom
+//! feature enabled, as well as target-spec-miette.
+
 use crate::helpers::bind_insta_settings;
 use datatest_stable::Utf8Path;
+use target_spec::TargetFeatures;
 use target_spec_miette::IntoMietteDiagnostic;
 
-pub(crate) const EXPR_INVALID_PATH: &str = "tests/snapshot/expr-invalid/input";
+pub(crate) const CUSTOM_INVALID_PATH: &str =
+    "tests/datatest-snapshot/snapshots/custom-invalid/input";
 
-pub(crate) fn expr_invalid(path: &Utf8Path, contents: String) -> datatest_stable::Result<()> {
-    let (_guard, insta_prefix) = bind_insta_settings(path, "expr-invalid/output");
+pub(crate) fn custom_invalid(path: &Utf8Path, contents: String) -> datatest_stable::Result<()> {
+    let (_guard, insta_prefix) =
+        bind_insta_settings(path, "../datatest-snapshot/snapshots/custom-invalid/output");
 
-    let error = target_spec::TargetSpec::new(contents.trim_end().to_owned())
+    let error = target_spec::Platform::new_custom("my-target", &contents, TargetFeatures::none())
         .expect_err("expected input to fail");
 
     let diagnostic = error.into_diagnostic();
