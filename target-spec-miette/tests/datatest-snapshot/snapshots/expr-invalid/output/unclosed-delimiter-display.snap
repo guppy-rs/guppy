@@ -1,11 +1,11 @@
 ---
-source: target-spec-miette/tests/snapshot/expr.rs
+source: target-spec-miette/tests/datatest-snapshot/expr.rs
 expression: "format!(\"{:?}\", miette::Report::new_boxed(diagnostic))"
 snapshot_kind: text
 ---
   × error parsing cfg() expression
    ╭────
- 1 │ cfg(target_os = none)
-   ·                 ──┬─
-   ·                   ╰── expected a `"` here
+ 1 │ cfg(unix
+   ·    ┬
+   ·    ╰── expected one of `=`, `,`, `)` here
    ╰────
