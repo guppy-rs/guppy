@@ -32,8 +32,8 @@ jobs:
         uses: taiki-e/install-action@8484225d9734e230a8bf38421a4ffec1cc249372 # v2
         with:
           tool: cargo-readme
-      - name: Run cargo readme
-        run: ./scripts/regenerate-readmes.sh
+      - name: Generate readmes
+        run: just generate-readmes
       - name: Check for differences
         run: git diff --exit-code
       # cargo hack might cause changes to Cargo.lock which can cause the git diff above to fail. Put
