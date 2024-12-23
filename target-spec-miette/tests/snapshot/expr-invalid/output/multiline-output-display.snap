@@ -1,0 +1,11 @@
+---
+source: target-spec-miette/tests/snapshot/expr.rs
+expression: "format!(\"{:?}\", miette::Report::new_boxed(diagnostic))"
+snapshot_kind: text
+---
+  × error parsing cfg() expression
+   ╭────
+ 1 │ cfg(target_does_not_exist = "unix")
+   ·     ──────────┬──────────
+   ·               ╰── expected one of `target_arch`, `target_feature`, `target_os`, `target_family`, `target_env`, `target_endian`, `target_has_atomic`, `target_pointer_width`, `target_vendor` here
+   ╰────

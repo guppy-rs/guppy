@@ -250,7 +250,12 @@ impl fmt::Display for CustomTripleCreateDiagnostic {
 
 impl StdError for CustomTripleCreateDiagnostic {
     fn source(&self) -> Option<&(dyn StdError + 'static)> {
-        self.0.source()
+        // Don't show the source in case we return labels below.
+        if self.0.input().is_some() && self.0.line_and_column().is_some() {
+            None
+        } else {
+            self.0.source()
+        }
     }
 }
 
