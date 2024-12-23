@@ -6,7 +6,7 @@ edition = "2018"
 publish = false
 
 [dependencies]
-anyhow = "1.0.94"
+anyhow = "1.0.95"
 cargo = { version = "0.84.0", features = ["vendored-libgit2"] }
 clap = { version = "3.2.25", features = ["derive"] }
 color-eyre = { version = "0.6.3", default-features = false }
