@@ -4,8 +4,6 @@ expression: "format!(\"{:?}\", miette::Report::new_boxed(diagnostic))"
 snapshot_kind: text
 ---
   × error deserializing custom target JSON for `my-target`
-  ╰─▶ error parsing as integer: invalid digit found in string at line 52
-      column 30
     ╭─[52:30]
  51 │   ],
  52 │   "target-pointer-width": "xx",
