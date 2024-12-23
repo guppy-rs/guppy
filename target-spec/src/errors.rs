@@ -428,7 +428,11 @@ impl fmt::Display for CustomTripleCreateError {
                 write!(f, "error deserializing custom target JSON for `{triple}`")
             }
             Self::Unavailable => {
-                write!(f, "custom platform currently unavailable")
+                write!(
+                    f,
+                    "custom platforms are currently unavailable: \
+                     to enable them, add the `custom` feature to target-spec"
+                )
             }
         }
     }
