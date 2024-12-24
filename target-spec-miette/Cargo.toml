@@ -1,6 +1,6 @@
 [package]
 name = "target-spec-miette"
-version = "0.4.1"
+version = "0.4.2"
 description = "Integrate target-spec errors with the miette library"
 documentation = "https://docs.rs/target-spec-miette"
 repository = "https://github.com/guppy-rs/guppy"
