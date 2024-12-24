@@ -11,6 +11,10 @@ categories = ["development-tools"]
 edition = "2021"
 rust-version.workspace = true
 
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg=doc_cfg"]
+
 [dependencies]
 target-spec = { version = "3.3.1", path = "../target-spec" }
 miette.workspace = true
