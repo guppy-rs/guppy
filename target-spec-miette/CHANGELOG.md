@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.4.2] - 2024-12-23
+
+### Changed
+
+- Minor tweaks to `Diagnostic` error messages.
+
 ## [0.4.1] - 2024-12-22
 
 ### Added
