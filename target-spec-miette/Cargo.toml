@@ -12,7 +12,7 @@ edition = "2021"
 rust-version.workspace = true
 
 [dependencies]
-target-spec = { version = "3.3.0", path = "../target-spec" }
+target-spec = { version = "3.3.1", path = "../target-spec" }
 miette.workspace = true
 guppy-workspace-hack.workspace = true
 
@@ -20,7 +20,7 @@ guppy-workspace-hack.workspace = true
 datatest-stable.workspace = true
 insta.workspace = true
 miette = { workspace = true, features = ["fancy"] }
-target-spec = { version = "3.3.0", path = "../target-spec", features = ["custom"] }
+target-spec = { version = "3.3.1", path = "../target-spec", features = ["custom"] }
 
 [lints]
 workspace = true

@@ -43,7 +43,7 @@ proptest-derive = { version = "0.5.1", optional = true }
 rayon = "1.10.0"
 serde = { version = "1.0.216", features = ["derive"], optional = true }
 tabular = { version = "0.2.0", features = ["ansi-cell"], optional = true }
-target-spec = { version = "3.3.0", path = "../../target-spec" }
+target-spec = { version = "3.3.1", path = "../../target-spec" }
 toml = { version = "0.5.11", optional = true }
 toml_edit = "0.17.1"
 twox-hash = { version = "1.6.3", default-features = false }
