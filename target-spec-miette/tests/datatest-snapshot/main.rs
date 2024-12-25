@@ -5,13 +5,7 @@ mod custom;
 mod expr;
 mod helpers;
 
-datatest_stable::harness!(
-    // Custom JSON
-    custom::custom_invalid,
-    custom::CUSTOM_INVALID_PATH,
-    r"^.*/*",
-    // Invalid expressions
-    expr::expr_invalid,
-    expr::EXPR_INVALID_PATH,
-    r"^.*/*",
-);
+datatest_stable::harness! {
+    { test = custom::custom_invalid, root = custom::CUSTOM_INVALID_PATH, pattern = r"^.*/*" },
+    { test = expr::expr_invalid, root = expr::EXPR_INVALID_PATH, pattern = r"^.*/*" },
+}
