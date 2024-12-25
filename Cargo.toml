@@ -21,7 +21,7 @@ members = [
 [workspace.dependencies]
 ahash = "0.8.11"
 cfg-expr = "0.17.2"
-datatest-stable = "0.2.10"
+datatest-stable = "0.3.0"
 guppy-workspace-hack = "0.1.0"
 insta = "1.41.1"
 miette = "7.4.0"
