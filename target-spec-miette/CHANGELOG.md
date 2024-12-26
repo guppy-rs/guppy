@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.3] - 2024-12-25
+
+### Added
+
+A new optional `fixtures` feature includes a set of test fixture files, which
+can be useful to test graceful error handling for downstream users.
+
+The exact set of fixtures included and their contents are not part of the semver
+guarantees. If you use the fixtures as inputs to snapshot tests, you may need to
+update the snapshots as part of updating target-spec-miette. (So you'll likely
+want to check in `Cargo.lock`.)
+
 ## [0.4.2] - 2024-12-23
 
 ### Changed
@@ -40,7 +52,9 @@
 
 Initial release with support for miette 5.
 
-[0.5.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-miette-0.5.0
+[0.4.3]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-miette-0.4.3
+[0.4.2]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-miette-0.4.2
+[0.4.1]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-miette-0.4.1
 [0.4.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-miette-0.4.0
 [0.3.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-miette-0.3.0
 [0.2.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-miette-0.2.0
