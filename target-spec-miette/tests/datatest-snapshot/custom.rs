@@ -11,12 +11,9 @@ use datatest_stable::Utf8Path;
 use target_spec::TargetFeatures;
 use target_spec_miette::IntoMietteDiagnostic;
 
-pub(crate) const CUSTOM_INVALID_PATH: &str =
-    "tests/datatest-snapshot/snapshots/custom-invalid/input";
-
 pub(crate) fn custom_invalid(path: &Utf8Path, contents: String) -> datatest_stable::Result<()> {
     let (_guard, insta_prefix) =
-        bind_insta_settings(path, "../datatest-snapshot/snapshots/custom-invalid/output");
+        bind_insta_settings(path, "../datatest-snapshot/snapshots/custom-invalid");
 
     let error = target_spec::Platform::new_custom("my-target", &contents, TargetFeatures::none())
         .expect_err("expected input to fail");

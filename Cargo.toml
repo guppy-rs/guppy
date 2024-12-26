@@ -21,8 +21,9 @@ members = [
 [workspace.dependencies]
 ahash = "0.8.11"
 cfg-expr = "0.17.2"
-datatest-stable = "0.3.0"
+datatest-stable = { version = "0.3.0", features = ["include-dir"] }
 guppy-workspace-hack = "0.1.0"
+include_dir = "0.7.4"
 insta = "1.41.1"
 miette = "7.4.0"
 
@@ -32,7 +33,10 @@ miette = "7.4.0"
 rust-version = "1.78"
 
 [workspace.lints.rust]
-unexpected_cfgs = { level = "warn", check-cfg = ['cfg(doc_cfg)', 'cfg(guppy_nightly)'] }
+unexpected_cfgs = { level = "warn", check-cfg = [
+    'cfg(doc_cfg)',
+    'cfg(guppy_nightly)',
+] }
 
 [patch.crates-io.guppy-workspace-hack]
 path = "workspace-hack"

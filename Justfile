@@ -12,6 +12,10 @@ nightly arg1 *args:
 bootstrap arg1 *args:
     RUSTC_BOOTSTRAP=1 cargo {{arg1}} {{args}} --all-features --all-targets --config .cargo/nightly-config.toml
 
+# Run `cargo hack --feature-powerset` on target-spec crates
+target-spec-powerset *args:
+    cargo hack --feature-powerset -p target-spec -p target-spec-miette {{args}}
+
 # Build docs for crates and direct dependencies
 rustdoc:
     @# Ignore clap since we currently depend on both clap 2, 3, and 4 -- we
