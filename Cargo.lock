@@ -1013,6 +1013,7 @@ checksum = "c5bb15663f97601af4c8d17237f2f884593bf59b4c013003babcb3cae66711b7"
 dependencies = [
  "camino",
  "fancy-regex",
+ "include_dir",
  "libtest-mimic",
  "walkdir",
 ]
@@ -2338,6 +2339,7 @@ dependencies = [
  "clap_builder",
  "console",
  "getrandom",
+ "include_dir",
  "indexmap 1.9.3",
  "libc",
  "log",
@@ -4017,6 +4019,7 @@ version = "0.4.2"
 dependencies = [
  "datatest-stable",
  "guppy-workspace-hack",
+ "include_dir",
  "insta",
  "miette",
  "target-spec",

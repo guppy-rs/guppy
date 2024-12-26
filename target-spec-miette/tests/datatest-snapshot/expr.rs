@@ -5,11 +5,9 @@ use crate::helpers::bind_insta_settings;
 use datatest_stable::Utf8Path;
 use target_spec_miette::IntoMietteDiagnostic;
 
-pub(crate) const EXPR_INVALID_PATH: &str = "tests/datatest-snapshot/snapshots/expr-invalid/input";
-
 pub(crate) fn expr_invalid(path: &Utf8Path, contents: String) -> datatest_stable::Result<()> {
     let (_guard, insta_prefix) =
-        bind_insta_settings(path, "../datatest-snapshot/snapshots/expr-invalid/output");
+        bind_insta_settings(path, "../datatest-snapshot/snapshots/expr-invalid");
 
     let error = target_spec::TargetSpec::new(contents.trim_end().to_owned())
         .expect_err("expected input to fail");

@@ -16,15 +16,18 @@ all-features = true
 rustdoc-args = ["--cfg=doc_cfg"]
 
 [dependencies]
-target-spec = { version = "3.3.1", path = "../target-spec" }
-miette.workspace = true
 guppy-workspace-hack.workspace = true
+include_dir = { workspace = true, optional = true }
+miette.workspace = true
+target-spec = { version = "3.3.1", path = "../target-spec" }
 
 [dev-dependencies]
 datatest-stable.workspace = true
 insta.workspace = true
 miette = { workspace = true, features = ["fancy"] }
-target-spec = { version = "3.3.1", path = "../target-spec", features = ["custom"] }
+target-spec = { version = "3.3.1", path = "../target-spec", features = [
+    "custom",
+] }
 
 [lints]
 workspace = true
@@ -32,3 +35,7 @@ workspace = true
 [[test]]
 name = "datatest-snapshot"
 harness = false
+required-features = ["fixtures"]
+
+[features]
+fixtures = ["dep:include_dir"]
