@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.4.4] - 2024-12-25
+
+Fixed path to fixtures.
+
 ## [0.4.3] - 2024-12-25
 
 ### Added
@@ -52,6 +56,7 @@ want to check in `Cargo.lock`.)
 
 Initial release with support for miette 5.
 
+[0.4.4]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-miette-0.4.4
 [0.4.3]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-miette-0.4.3
 [0.4.2]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-miette-0.4.2
 [0.4.1]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-miette-0.4.1

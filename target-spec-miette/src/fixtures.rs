@@ -20,8 +20,8 @@
 
 /// A set of invalid custom target JSON specifications.
 pub static CUSTOM_INVALID: include_dir::Dir<'static> =
-    include_dir::include_dir!("target-spec-miette/tests/fixtures/custom-invalid");
+    include_dir::include_dir!("$CARGO_MANIFEST_DIR/tests/fixtures/custom-invalid");
 
 /// A set of invalid `cfg` expressions.
 pub static EXPR_INVALID: include_dir::Dir<'static> =
-    include_dir::include_dir!("target-spec-miette/tests/fixtures/expr-invalid");
+    include_dir::include_dir!("$CARGO_MANIFEST_DIR/tests/fixtures/expr-invalid");
