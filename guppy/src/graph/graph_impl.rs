@@ -1362,6 +1362,18 @@ pub enum ExternalSource<'g> {
     ///     ExternalSource::Registry("https://github.com/rust-lang/crates.io-index"),
     /// );
     /// ```
+    ///
+    /// ```
+    /// use guppy::graph::ExternalSource;
+    ///
+    /// let source = "sparse+https://index.crates.io";
+    /// let parsed = ExternalSource::new(source).expect("this source is understood by guppy");
+    ///
+    /// assert_eq!(
+    ///     parsed,
+    ///     ExternalSource::Registry("https://index.crates.io"),
+    /// );
+    /// ```
     Registry(&'g str),
 
     /// This is a Git source.
@@ -1470,6 +1482,11 @@ impl<'g> ExternalSource<'g> {
     /// Used for matching with the `Registry` variant.
     pub const REGISTRY_PLUS: &'static str = "registry+";
 
+    /// The string `"sparse+"`.
+    ///
+    /// Also used for matching with the `Registry` variant.
+    pub const SPARSE_PLUS: &'static str = "sparse+";
+
     /// The string `"git+"`.
     ///
     /// Used for matching with the `Git` variant.
@@ -1501,7 +1518,10 @@ impl<'g> ExternalSource<'g> {
     pub fn new(source: &'g str) -> Option<Self> {
         // We *could* pull in a URL parsing library, but Cargo's sources are so limited that it
         // seems like a waste to.
-        if let Some(registry) = source.strip_prefix(Self::REGISTRY_PLUS) {
+        if let Some(registry) = source
+            .strip_prefix(Self::REGISTRY_PLUS)
+            .or_else(|| source.strip_prefix(Self::SPARSE_PLUS))
+        {
             // A registry source.
             Some(ExternalSource::Registry(registry))
         } else if let Some(rest) = source.strip_prefix(Self::GIT_PLUS) {
