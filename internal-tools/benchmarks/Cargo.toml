@@ -7,7 +7,7 @@ publish = false  # this is a private crate
 
 [dependencies]
 guppy = { path = "../../guppy", features = ["proptest1"] }
-proptest = "1.5.0"
+proptest = "1.6.0"
 proptest-ext = { path = "../proptest-ext" }
 guppy-workspace-hack.workspace = true
 
