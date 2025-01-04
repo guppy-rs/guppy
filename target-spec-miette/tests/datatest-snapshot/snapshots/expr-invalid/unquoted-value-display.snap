@@ -3,9 +3,9 @@ source: target-spec-miette/tests/datatest-snapshot/expr.rs
 expression: "format!(\"{:?}\", miette::Report::new_boxed(diagnostic))"
 snapshot_kind: text
 ---
-  × error parsing cfg() expression
+  [31m×[0m error parsing cfg() expression
    ╭────
- 1 │ cfg(target_os = none)
-   ·                 ──┬─
-   ·                   ╰── expected a `"` here
+ [2m1[0m │ cfg(target_os = none)
+   · [35;1m                ──┬─[0m
+   ·                   [35;1m╰── [35;1mexpected a `"` here[0m[0m
    ╰────

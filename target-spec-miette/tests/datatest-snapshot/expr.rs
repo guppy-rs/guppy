@@ -6,6 +6,8 @@ use datatest_stable::Utf8Path;
 use target_spec_miette::IntoMietteDiagnostic;
 
 pub(crate) fn expr_invalid(path: &Utf8Path, contents: String) -> datatest_stable::Result<()> {
+    std::env::set_var("CLICOLOR_FORCE", "1");
+
     let (_guard, insta_prefix) =
         bind_insta_settings(path, "../datatest-snapshot/snapshots/expr-invalid");
 

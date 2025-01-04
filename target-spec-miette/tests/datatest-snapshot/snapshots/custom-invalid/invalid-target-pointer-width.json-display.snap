@@ -1,13 +1,13 @@
 ---
-source: target-spec-miette/tests/snapshot/custom.rs
+source: target-spec-miette/tests/datatest-snapshot/custom.rs
 expression: "format!(\"{:?}\", miette::Report::new_boxed(diagnostic))"
 snapshot_kind: text
 ---
-  × error deserializing custom target JSON for `my-target`
+  [31m×[0m error deserializing custom target JSON for `my-target`
     ╭─[52:30]
- 51 │   ],
- 52 │   "target-pointer-width": "xx",
-    ·                              ▲
-    ·                              ╰── error parsing as integer: invalid digit found in string
- 53 │   "supports-xray": true,
+ [2m51[0m │   ],
+ [2m52[0m │   "target-pointer-width": "xx",
+    · [35;1m                             ▲[0m
+    ·                              [35;1m╰── [35;1merror parsing as integer: invalid digit found in string[0m[0m
+ [2m53[0m │   "supports-xray": true,
     ╰────

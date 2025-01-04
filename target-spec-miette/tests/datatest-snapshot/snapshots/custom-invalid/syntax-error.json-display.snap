@@ -1,12 +1,12 @@
 ---
-source: target-spec-miette/tests/snapshot/custom.rs
+source: target-spec-miette/tests/datatest-snapshot/custom.rs
 expression: "format!(\"{:?}\", miette::Report::new_boxed(diagnostic))"
 snapshot_kind: text
 ---
-  × error deserializing custom target JSON for `my-target`
+  [31m×[0m error deserializing custom target JSON for `my-target`
     ╭─[40:13]
- 39 │     "leak",
- 40 │     "memory",
-    ·             ▲
-    ·             ╰── EOF while parsing a value
+ [2m39[0m │     "leak",
+ [2m40[0m │     "memory",
+    · [35;1m            ▲[0m
+    ·             [35;1m╰── [35;1mEOF while parsing a value[0m[0m
     ╰────

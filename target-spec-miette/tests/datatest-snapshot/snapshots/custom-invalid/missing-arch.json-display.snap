@@ -1,12 +1,12 @@
 ---
-source: target-spec-miette/tests/snapshot/custom.rs
+source: target-spec-miette/tests/datatest-snapshot/custom.rs
 expression: "format!(\"{:?}\", miette::Report::new_boxed(diagnostic))"
 snapshot_kind: text
 ---
-  × error deserializing custom target JSON for `my-target`
+  [31m×[0m error deserializing custom target JSON for `my-target`
     ╭─[35:1]
- 34 │     "target-pointer-width": "64"
- 35 │ }
-    · ▲
-    · ╰── missing field `arch`
+ [2m34[0m │     "target-pointer-width": "64"
+ [2m35[0m │ }
+    · [35;1m▲[0m
+    · [35;1m╰── [35;1mmissing field `arch`[0m[0m
     ╰────
