@@ -1,8 +1,4 @@
----
-source: target-spec-miette/tests/datatest-snapshot/custom.rs
-expression: "format!(\"{:?}\", miette::Report::new_boxed(diagnostic))"
-snapshot_kind: text
----
+
   [31m×[0m error deserializing custom target JSON for `my-target`
     ╭─[35:1]
  [2m34[0m │     "target-pointer-width": "64"
