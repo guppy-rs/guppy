@@ -36,7 +36,7 @@ regex-syntax = { version = "0.8.2" }
 serde = { version = "1.0.216", features = ["alloc", "derive"] }
 serde_json = { version = "1.0.134", features = ["unbounded_depth"] }
 textwrap = { version = "0.16.0", default-features = false, features = ["unicode-linebreak", "unicode-width"] }
-toml = { version = "0.5.11", features = ["preserve_order"] }
+toml = { version = "0.8.19", features = ["preserve_order"] }
 
 [build-dependencies]
 proc-macro2 = { version = "1.0.92" }
