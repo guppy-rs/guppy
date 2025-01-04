@@ -1,7 +1,0 @@
----
-source: target-spec-miette/tests/integration/main.rs
-expression: "format!(\"{report:?}\")"
-snapshot_kind: text
----
-  × custom platforms are currently unavailable: to enable them, add the
-  │ `custom` feature to target-spec

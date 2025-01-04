@@ -2,21 +2,33 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use datatest_stable::Utf8Path;
-use insta::internals::SettingsBindDropGuard;
+use snapbox::{data::DataFormat, Data};
+use std::path::PathBuf;
 
-/// Binds insta settings for a test, and returns the prefix to use for snapshots.
-pub(crate) fn bind_insta_settings<'a>(
-    path: &'a Utf8Path,
-    snapshot_path: &str,
-) -> (SettingsBindDropGuard, &'a str) {
-    let mut settings = insta::Settings::clone_current();
-    // Make insta suitable for datatest-stable use.
-    settings.set_input_file(path);
-    settings.set_snapshot_path(snapshot_path);
-    settings.set_prepend_module_to_snapshot(false);
+pub(crate) fn snapbox_assert_ansi(test_name: &str, path: &Utf8Path, actual_ansi: String) {
+    // Currently assuming all files are in a single directory.
+    let b = snapbox::Assert::new().action_env("SNAPSHOTS");
+    let file_name = path.file_name().unwrap();
 
-    let guard = settings.bind_to_scope();
-    let insta_prefix = path.file_name().unwrap();
+    // Store SVG and ANSI snapshots. Use the binary representation to ensure
+    // that no post-processing of text happens.
+    b.eq(
+        Data::binary(actual_ansi.clone()).coerce_to(DataFormat::TermSvg),
+        Data::read_from(
+            &snapshot_path(test_name, file_name, "svg"),
+            Some(DataFormat::TermSvg),
+        ),
+    );
+    b.eq(
+        Data::binary(actual_ansi),
+        Data::read_from(&snapshot_path(test_name, file_name, "ansi"), None),
+    );
+}
 
-    (guard, insta_prefix)
+fn snapshot_path(test_name: &str, file_name: &str, ext: &str) -> PathBuf {
+    snapbox::utils::current_dir!()
+        .join("snapshots")
+        .join(test_name)
+        .join(file_name)
+        .with_extension(ext)
 }
