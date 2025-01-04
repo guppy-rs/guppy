@@ -1362,6 +1362,13 @@ pub enum ExternalSource<'g> {
     ///     ExternalSource::Registry("https://github.com/rust-lang/crates.io-index"),
     /// );
     /// ```
+    Registry(&'g str),
+
+    /// This is a registry source that uses the [sparse registry protocol][sparse], e.g. `"sparse+https://index.crates.io"`.
+    ///
+    /// The associated data is the part of the string after the initial `"sparse+"`.
+    ///
+    /// # Examples
     ///
     /// ```
     /// use guppy::graph::ExternalSource;
@@ -1371,10 +1378,12 @@ pub enum ExternalSource<'g> {
     ///
     /// assert_eq!(
     ///     parsed,
-    ///     ExternalSource::Registry("https://index.crates.io"),
+    ///     ExternalSource::Sparse("https://index.crates.io"),
     /// );
     /// ```
-    Registry(&'g str),
+    ///
+    /// [sparse]: https://doc.rust-lang.org/cargo/reference/registry-index.html#sparse-protocol
+    Sparse(&'g str),
 
     /// This is a Git source.
     ///
@@ -1518,12 +1527,12 @@ impl<'g> ExternalSource<'g> {
     pub fn new(source: &'g str) -> Option<Self> {
         // We *could* pull in a URL parsing library, but Cargo's sources are so limited that it
         // seems like a waste to.
-        if let Some(registry) = source
-            .strip_prefix(Self::REGISTRY_PLUS)
-            .or_else(|| source.strip_prefix(Self::SPARSE_PLUS))
-        {
+        if let Some(registry) = source.strip_prefix(Self::REGISTRY_PLUS) {
             // A registry source.
             Some(ExternalSource::Registry(registry))
+        } else if let Some(sparse) = source.strip_prefix(Self::SPARSE_PLUS) {
+            // A sparse registry source.
+            Some(ExternalSource::Sparse(sparse))
         } else if let Some(rest) = source.strip_prefix(Self::GIT_PLUS) {
             // A Git source.
             // Look for a trailing #, which indicates the resolved revision.
@@ -1575,6 +1584,7 @@ impl fmt::Display for ExternalSource<'_> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             ExternalSource::Registry(url) => write!(f, "{}{}", Self::REGISTRY_PLUS, url),
+            ExternalSource::Sparse(url) => write!(f, "{}{}", Self::SPARSE_PLUS, url),
             ExternalSource::Git {
                 repository,
                 req,
