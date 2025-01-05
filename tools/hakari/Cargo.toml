@@ -1,6 +1,6 @@
 [package]
 name = "hakari"
-version = "0.17.6"
+version = "0.17.7"
 description = "Manage workspace-hack packages that do feature unification inside workspaces."
 documentation = "https://docs.rs/hakari"
 edition = "2021"
