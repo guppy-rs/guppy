@@ -27,7 +27,7 @@ dialoguer = "0.11.0"
 duct = "0.13.7"
 enable-ansi-support = "0.2.1"
 env_logger = "0.11.6"
-guppy = { version = "0.17.11", path = "../../guppy" }
+guppy = { version = "0.17.12", path = "../../guppy" }
 hakari = { version = "0.17.6", path = "../hakari", features = ["cli-support"] }
 log = "0.4.22"
 owo-colors = { version = "3.5.0", features = ["supports-colors"] }
