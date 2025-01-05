@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.17.12] - 2025-01-05
+
+### Added
+
+Added support for custom sparse registries (`sparse+https://...`). Thanks to [jonhoo](https://github.com/jonhoo) for your first contribution!
+
 ## [0.17.11] - 2024-12-22
 
 ### Added
@@ -720,6 +726,7 @@ lazy_static = "0.2"
 
 - Initial release.
 
+[0.17.12]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.12
 [0.17.11]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.11
 [0.17.10]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.10
 [0.17.9]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.9

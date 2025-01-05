@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.17.7] - 2025-01-05
+
+### Added
+
+Added support for custom sparse registries (`sparse+https://...`). Thanks to [jonhoo](https://github.com/jonhoo) for your first contribution!
+
 ## [0.17.6] - 2024-12-22
 
 ### Added
@@ -369,6 +375,7 @@ Internal updates for `cargo-hakari 0.9.8`.
 
 Initial release.
 
+[0.17.7]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.17.7
 [0.17.6]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.17.6
 [0.17.5]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.17.5
 [0.17.4]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.17.4
