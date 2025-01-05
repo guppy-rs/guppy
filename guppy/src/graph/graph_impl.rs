@@ -1364,6 +1364,27 @@ pub enum ExternalSource<'g> {
     /// ```
     Registry(&'g str),
 
+    /// This is a registry source that uses the [sparse registry protocol][sparse], e.g. `"sparse+https://index.crates.io"`.
+    ///
+    /// The associated data is the part of the string after the initial `"sparse+"`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use guppy::graph::ExternalSource;
+    ///
+    /// let source = "sparse+https://index.crates.io";
+    /// let parsed = ExternalSource::new(source).expect("this source is understood by guppy");
+    ///
+    /// assert_eq!(
+    ///     parsed,
+    ///     ExternalSource::Sparse("https://index.crates.io"),
+    /// );
+    /// ```
+    ///
+    /// [sparse]: https://doc.rust-lang.org/cargo/reference/registry-index.html#sparse-protocol
+    Sparse(&'g str),
+
     /// This is a Git source.
     ///
     /// An example of a Git source string is `"git+https://github.com/rust-lang/cargo.git?branch=main#0227f048fcb7c798026ede6cc20c92befc84c3a4"`.
@@ -1470,6 +1491,11 @@ impl<'g> ExternalSource<'g> {
     /// Used for matching with the `Registry` variant.
     pub const REGISTRY_PLUS: &'static str = "registry+";
 
+    /// The string `"sparse+"`.
+    ///
+    /// Also used for matching with the `Sparse` variant.
+    pub const SPARSE_PLUS: &'static str = "sparse+";
+
     /// The string `"git+"`.
     ///
     /// Used for matching with the `Git` variant.
@@ -1504,6 +1530,9 @@ impl<'g> ExternalSource<'g> {
         if let Some(registry) = source.strip_prefix(Self::REGISTRY_PLUS) {
             // A registry source.
             Some(ExternalSource::Registry(registry))
+        } else if let Some(sparse) = source.strip_prefix(Self::SPARSE_PLUS) {
+            // A sparse registry source.
+            Some(ExternalSource::Sparse(sparse))
         } else if let Some(rest) = source.strip_prefix(Self::GIT_PLUS) {
             // A Git source.
             // Look for a trailing #, which indicates the resolved revision.
@@ -1555,6 +1584,7 @@ impl fmt::Display for ExternalSource<'_> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             ExternalSource::Registry(url) => write!(f, "{}{}", Self::REGISTRY_PLUS, url),
+            ExternalSource::Sparse(url) => write!(f, "{}{}", Self::SPARSE_PLUS, url),
             ExternalSource::Git {
                 repository,
                 req,

@@ -430,6 +430,32 @@ pub(crate) fn write_toml(
                             );
                             itable.insert("registry", registry_name.into());
                         }
+                        Some(ExternalSource::Sparse(registry_url)) => {
+                            let registry_name = builder
+                                .registries
+                                .get_by_right(&format!(
+                                    "{}{}",
+                                    ExternalSource::SPARSE_PLUS,
+                                    registry_url
+                                ))
+                                .ok_or_else(|| TomlOutError::UnrecognizedRegistry {
+                                    package_id: dep.id().clone(),
+                                    registry_url: registry_url.to_owned(),
+                                })?;
+                            itable.insert(
+                                "version",
+                                format!(
+                                    "{}",
+                                    VersionDisplay::new(
+                                        dep.version(),
+                                        options.exact_versions,
+                                        dep_format < DepFormatVersion::V3
+                                    )
+                                )
+                                .into(),
+                            );
+                            itable.insert("registry", registry_name.into());
+                        }
                         _ => {
                             return Err(TomlOutError::UnrecognizedExternal {
                                 package_id: dep.id().clone(),
