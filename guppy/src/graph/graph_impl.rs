@@ -1493,7 +1493,7 @@ impl<'g> ExternalSource<'g> {
 
     /// The string `"sparse+"`.
     ///
-    /// Also used for matching with the `Registry` variant.
+    /// Also used for matching with the `Sparse` variant.
     pub const SPARSE_PLUS: &'static str = "sparse+";
 
     /// The string `"git+"`.
