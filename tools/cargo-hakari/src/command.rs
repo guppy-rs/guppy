@@ -504,15 +504,15 @@ fn write_to_cargo_toml(
 ) -> Result<i32> {
     if diff {
         let patch = existing_toml.diff_toml(new_contents);
-        let mut formatter = PatchFormatter::new();
-        if output.color.is_enabled() {
-            formatter = formatter.with_color();
-        }
-        info!("\n{}", formatter.fmt_patch(&patch));
         if patch.hunks().is_empty() {
             // No differences.
             Ok(0)
         } else {
+            let mut formatter = PatchFormatter::new();
+            if output.color.is_enabled() {
+                formatter = formatter.with_color();
+            }
+            info!("\n{}", formatter.fmt_patch(&patch));
             Ok(1)
         }
     } else {
