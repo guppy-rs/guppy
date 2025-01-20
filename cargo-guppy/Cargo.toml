@@ -14,7 +14,7 @@ clap = { version = "3.2.25", features = ["derive"] }
 dialoguer = "0.11.0"
 guppy = { version = "0.17.12", path = "../guppy", features = ["summaries"] }
 guppy-cmdlib = { path = "../guppy-cmdlib" }
-itertools = "0.13.0"
+itertools = "0.14.0"
 pathdiff = { version = "0.2.3", features = ["camino"] }
 serde = { version = "1.0.216", features = ["derive"] }
 serde_json = "1.0.134"
