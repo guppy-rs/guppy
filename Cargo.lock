@@ -1020,9 +1020,9 @@ dependencies = [
 
 [[package]]
 name = "datatest-stable"
-version = "0.3.0"
+version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c5bb15663f97601af4c8d17237f2f884593bf59b4c013003babcb3cae66711b7"
+checksum = "19ebbb3c403031a3739980c2864e3b5ee4efca009dd83d2c0f80a31555243981"
 dependencies = [
  "camino",
  "fancy-regex",
@@ -2777,7 +2777,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4979f22fdb869068da03c9f7528f8297c6fd2606bc3a4affe42e6a823fdb8da4"
 dependencies = [
  "cfg-if",
- "windows-targets 0.48.5",
+ "windows-targets 0.52.6",
 ]
 
 [[package]]
