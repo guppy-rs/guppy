@@ -14,7 +14,7 @@ use guppy::{
 use owo_colors::{OwoColorize, Style};
 use std::{borrow::Cow, cmp::Ordering, collections::BTreeMap, error, fmt, fs, io, io::Write};
 use toml_edit::{
-    Array, Document, Formatted, InlineTable, Item, Table, TableLike, TomlError, Value,
+    Array, DocumentMut, Formatted, InlineTable, Item, Table, TableLike, TomlError, Value,
 };
 
 /// Represents a set of write operations to the workspace.
@@ -231,7 +231,7 @@ impl<'g> WorkspaceOp<'g, '_> {
 
     fn get_workspace_members_array<'doc>(
         root_toml_path: &Utf8Path,
-        doc: &'doc mut Document,
+        doc: &'doc mut DocumentMut,
     ) -> Result<&'doc mut Array, ApplyError> {
         let doc_table = doc.as_table_mut();
         let workspace_table = match doc_table.get_mut("workspace") {
@@ -373,7 +373,7 @@ impl<'g> WorkspaceOp<'g, '_> {
 
     fn get_or_insert_dependencies_table<'doc>(
         manifest_path: &Utf8Path,
-        doc: &'doc mut Document,
+        doc: &'doc mut DocumentMut,
     ) -> Result<&'doc mut dyn TableLike, ApplyError> {
         let doc_table = doc.as_table_mut();
 
@@ -406,8 +406,10 @@ impl<'g> WorkspaceOp<'g, '_> {
 
 fn decorate(existing: &Value, new: impl Into<Value>) -> Value {
     let decor = existing.decor();
-    new.into()
-        .decorated(decor.prefix().unwrap_or(""), decor.suffix().unwrap_or(""))
+    new.into().decorated(
+        decor.prefix().cloned().unwrap_or_default(),
+        decor.suffix().cloned().unwrap_or_default(),
+    )
 }
 
 // Always write out paths with forward slashes, including on Windows.
@@ -445,10 +447,10 @@ fn canonical_rel_path(
 // Read/write functions
 // ---
 
-fn read_toml(manifest_path: &Utf8Path) -> Result<Document, ApplyError> {
+fn read_toml(manifest_path: &Utf8Path) -> Result<DocumentMut, ApplyError> {
     let toml = fs::read_to_string(manifest_path)
         .map_err(|err| ApplyError::io("error reading TOML file", manifest_path, err))?;
-    toml.parse::<Document>()
+    toml.parse::<DocumentMut>()
         .map_err(|err| ApplyError::toml("error deserializing TOML file", manifest_path, err))
 }
 
@@ -456,7 +458,7 @@ fn write_contents(contents: &[u8], path: &Utf8Path) -> Result<(), ApplyError> {
     write_atomic(path, |file| file.write_all(contents))
 }
 
-fn write_document(document: &Document, path: &Utf8Path) -> Result<(), ApplyError> {
+fn write_document(document: &DocumentMut, path: &Utf8Path) -> Result<(), ApplyError> {
     write_atomic(path, |file| write!(file, "{}", document))
 }
 
@@ -777,7 +779,7 @@ mod tests {
                 WorkspaceHackLineStyle::WorkspaceDotted,
                 "../../path".into(),
             );
-            let mut document = Document::new();
+            let mut document = DocumentMut::new();
             document
                 .as_table_mut()
                 .insert("workspace-hack", Item::Value(Value::InlineTable(itable)));

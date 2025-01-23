@@ -24,7 +24,7 @@ use std::{
     error, fmt,
     hash::{Hash, Hasher},
 };
-use toml_edit::{Array, Document, InlineTable, Item, Table, Value};
+use toml_edit::{Array, DocumentMut, InlineTable, Item, Table, Value};
 use twox_hash::XxHash64;
 
 /// Options for Hakari TOML output.
@@ -304,7 +304,7 @@ pub(crate) fn write_toml(
             .expect("hakari package is in workspace")
     });
 
-    let mut document = Document::new();
+    let mut document = DocumentMut::new();
 
     // Remove the leading newline from the first visual table to match what older versions of
     // hakari did.
