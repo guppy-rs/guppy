@@ -15,7 +15,7 @@ use std::{
     mem,
     path::{Path, MAIN_SEPARATOR},
 };
-use toml_edit::{Document, Item, Table, Value};
+use toml_edit::{DocumentMut, Item, Table, Value};
 
 #[derive(Debug, Parser)]
 pub struct MvOptions {
@@ -512,10 +512,10 @@ fn update_root_toml(
     Ok(())
 }
 
-fn read_toml(manifest_path: &Utf8Path) -> Result<Document> {
+fn read_toml(manifest_path: &Utf8Path) -> Result<DocumentMut> {
     let toml = fs::read_to_string(manifest_path)
         .wrap_err_with(|| eyre!("error while reading manifest {}", manifest_path))?;
-    toml.parse::<Document>()
+    toml.parse::<DocumentMut>()
         .wrap_err_with(|| eyre!("error while parsing manifest {}", manifest_path))
 }
 
@@ -526,10 +526,10 @@ fn replace_decorated(dest: &mut Value, new_value: impl Into<Value>) -> Value {
     // Copy over the decor from dest into new_value.
     let new_decor = new_value.decor_mut();
     if let Some(prefix) = decor.prefix() {
-        new_decor.set_prefix(prefix);
+        new_decor.set_prefix(prefix.clone());
     }
     if let Some(suffix) = decor.suffix() {
-        new_decor.set_suffix(suffix);
+        new_decor.set_suffix(suffix.clone());
     }
 
     mem::replace(dest, new_value)
