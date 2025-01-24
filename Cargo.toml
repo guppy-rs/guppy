@@ -24,7 +24,7 @@ cfg-expr = "0.17.2"
 datatest-stable = { version = "0.3.2", features = ["include-dir"] }
 guppy-workspace-hack = "0.1.0"
 include_dir = "0.7.4"
-insta = "1.41.1"
+insta = "1.42.0"
 miette = "7.4.0"
 snapbox = { version = "0.6.21", features = ["term-svg"] }
 
