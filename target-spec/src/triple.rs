@@ -1,7 +1,10 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-use crate::{errors::TripleParseError, Platform};
+use crate::{
+    errors::{RustcVersionVerboseParseError, TripleParseError},
+    Error, Platform,
+};
 use cfg_expr::{
     expr::TargetMatcher,
     target_lexicon,
@@ -65,6 +68,50 @@ impl Triple {
     pub fn new_strict(triple_str: impl Into<Cow<'static, str>>) -> Result<Self, TripleParseError> {
         let inner = TripleInner::new_strict(triple_str.into())?;
         Ok(Self { inner })
+    }
+
+    /// Creates a new standard `Triple` from `rustc -vV` output.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// // This is the typical output of `rustc -vV`.
+    /// let output = b"rustc 1.84.1 (e71f9a9a9 2025-01-27)
+    /// binary: rustc
+    /// commit-hash: e71f9a9a98b0faf423844bf0ba7438f29dc27d58
+    /// commit-date: 2025-01-27
+    /// host: x86_64-unknown-linux-gnu
+    /// release: 1.84.1
+    /// LLVM version: 19.1.5";
+    ///
+    /// let triple = target_spec::Triple::from_rustc_version_verbose(output).unwrap();
+    /// assert_eq!(triple.as_str(), "x86_64-unknown-linux-gnu");
+    /// ```
+    pub fn from_rustc_version_verbose(output: impl AsRef<[u8]>) -> Result<Self, Error> {
+        let output_slice = output.as_ref();
+        let output = std::str::from_utf8(output_slice).map_err(|_| {
+            // Get a better error message in this case via
+            // std::string::FromUtf8Error.
+            let output_vec = output_slice.to_vec();
+            Error::RustcVersionVerboseParse(RustcVersionVerboseParseError::InvalidUtf8(
+                String::from_utf8(output_vec)
+                    .expect_err("we just failed to convert to UTF-8 above"),
+            ))
+        })?;
+
+        // Look for the line beginning with `host: ` and extract the triple.
+        // (This is a bit fragile, but it's what Cargo does.)
+        let triple_str = output
+            .lines()
+            .find_map(|line| line.strip_prefix("host: "))
+            .ok_or_else(|| {
+                Error::RustcVersionVerboseParse(RustcVersionVerboseParseError::MissingHostLine {
+                    output: output.to_owned(),
+                })
+            })?;
+
+        // Now look up the triple.
+        Self::new(triple_str.to_owned()).map_err(Error::UnknownPlatformTriple)
     }
 
     /// Creates a new custom `Triple` from the given triple string and JSON specification.
@@ -402,5 +449,20 @@ mod tests {
             actual_triple, expected_triple,
             "lexicon triple matched correctly"
         );
+    }
+
+    #[test]
+    fn test_parse_rustc_version_verbose() {
+        let rustc = std::env::var("RUSTC").unwrap_or_else(|_| "rustc".to_string());
+        let output = std::process::Command::new(rustc)
+            .arg("-vV")
+            .output()
+            .expect("rustc -vV is successful");
+        if !output.status.success() {
+            panic!("rustc -vV failed: {:?}", output);
+        }
+
+        let triple = super::Triple::from_rustc_version_verbose(output.stdout).unwrap();
+        assert!(triple.is_standard());
     }
 }

@@ -53,7 +53,7 @@
 //! * For target-spec 3.0.x: **Rust 1.66**.
 //! * For target-spec 3.1.x: **Rust 1.73**.
 //! * For target-spec 3.2.x: **Rust 1.75**.
-//! * For target-spec 3.3.x: **Rust 1.78**.
+//! * For target-spec 3.3.x and 3.4.x: **Rust 1.78**.
 //!
 //! Within the 3.x series, MSRV bumps will be accompanied by a minor version
 //! update. The last 6 months of stable Rust releases will be supported.

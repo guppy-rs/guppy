@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.17.13] - 2025-02-08
+
+### Changed
+
+- Renamed `PlatformSpec::current` to `PlatformSpec::build_target` to indicate that it is determined at build time, not at runtime. The old method is still available but has been marked deprecated.
+
 ## [0.17.12] - 2025-01-05
 
 ### Added
@@ -726,6 +732,7 @@ lazy_static = "0.2"
 
 - Initial release.
 
+[0.17.13]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.13
 [0.17.12]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.12
 [0.17.11]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.11
 [0.17.10]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.10

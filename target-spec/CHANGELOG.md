@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.4.0] - 2025-02-08
+
+### Added
+
+- Added `Triple::from_rustc_version_verbose` and `Platform::from_rustc_version_verbose` to parse `rustc -vV` output and obtain a triple.
+
+### Changed
+
+- Renamed `Platform::current` to `Platform::build_target` to indicate that it is determined at build time, not at runtime. The old method is still available but has been marked deprecated.
+
 ## [3.3.1] - 2024-12-23
 
 ### Changed
@@ -337,6 +347,7 @@ This was mistakenly published and was yanked.
 
 - Initial release.
 
+[3.4.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.4.0
 [3.3.1]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.3.1
 [3.3.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.3.0
 [3.2.2]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.2.2

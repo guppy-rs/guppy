@@ -3,7 +3,7 @@
 
 //! Errors returned by `target-spec`.
 
-use std::{borrow::Cow, error, fmt};
+use std::{borrow::Cow, error, fmt, string::FromUtf8Error};
 
 /// An error that happened during `target-spec` parsing or evaluation.
 #[derive(Clone, Debug)]
@@ -24,6 +24,8 @@ pub enum Error {
     CustomTripleCreate(CustomTripleCreateError),
     /// An error occurred while creating a custom platform.
     CustomPlatformCreate(CustomTripleCreateError),
+    /// An error occurred while parsing `rustc -vV` output.
+    RustcVersionVerboseParse(RustcVersionVerboseParseError),
 }
 
 impl fmt::Display for Error {
@@ -41,6 +43,9 @@ impl fmt::Display for Error {
             Error::CustomPlatformCreate(_) => {
                 write!(f, "error creating custom platform")
             }
+            Error::RustcVersionVerboseParse(_) => {
+                write!(f, "error parsing `rustc -vV` output")
+            }
         }
     }
 }
@@ -54,6 +59,7 @@ impl error::Error for Error {
             #[allow(deprecated)]
             Error::CustomTripleCreate(err) => Some(err),
             Error::CustomPlatformCreate(err) => Some(err),
+            Error::RustcVersionVerboseParse(err) => Some(err),
         }
     }
 }
@@ -445,6 +451,48 @@ impl error::Error for CustomTripleCreateError {
             #[allow(deprecated)]
             Self::DeserializeJson { error, .. } | Self::Deserialize { error, .. } => Some(error),
             Self::Unavailable => None,
+        }
+    }
+}
+
+/// An error occurred while parsing `rustc -vV` output.
+///
+/// Returned by [`Platform::from_rustc_version_verbose`](crate::Platform::from_rustc_version_verbose).
+#[derive(Clone, Debug)]
+#[non_exhaustive]
+pub enum RustcVersionVerboseParseError {
+    /// The output was invalid UTF-8.
+    InvalidUtf8(FromUtf8Error),
+
+    /// The output did not contain a `host: ` line.
+    MissingHostLine {
+        /// The output that was parsed.
+        output: String,
+    },
+}
+
+impl fmt::Display for RustcVersionVerboseParseError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            RustcVersionVerboseParseError::InvalidUtf8(_) => {
+                write!(f, "output from `rustc -vV` was not valid UTF-8")
+            }
+            RustcVersionVerboseParseError::MissingHostLine { output } => {
+                write!(
+                    f,
+                    "output from `rustc -vV` did not contain a `host: ` line; output:\n---\n{}---",
+                    output
+                )
+            }
+        }
+    }
+}
+
+impl error::Error for RustcVersionVerboseParseError {
+    fn source(&self) -> Option<&(dyn error::Error + 'static)> {
+        match self {
+            RustcVersionVerboseParseError::InvalidUtf8(err) => Some(err),
+            RustcVersionVerboseParseError::MissingHostLine { .. } => None,
         }
     }
 }

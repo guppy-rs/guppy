@@ -428,7 +428,7 @@ mod tests {
             }],
         );
 
-        let platform = Platform::current().unwrap();
+        let platform = Platform::build_target().unwrap();
         // This should always evaluate to false.
         assert_eq!(expr.eval(&platform), Some(false));
 
