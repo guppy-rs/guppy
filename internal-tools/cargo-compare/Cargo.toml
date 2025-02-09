@@ -18,6 +18,6 @@ itertools = "0.14.0"
 guppy = { path = "../../guppy" }
 guppy-cmdlib = { path = "../../guppy-cmdlib", features = ["proptest1"] }
 tempfile = "3.16.0"
-once_cell = "1.20.2"
+once_cell = "1.20.3"
 pathdiff = "0.2.3"
 proptest = "1.6.0"
