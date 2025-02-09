@@ -147,12 +147,12 @@ impl<'g, 'a> Determinator<'g, 'a> {
     /// These are the same as the defaults returned by [`CargoOptions::new`](CargoOptions::new),
     /// except:
     /// * dev-dependencies are enabled
-    /// * the host and target platforms are set to the current platform
+    /// * the host and target platforms are set to the build target
     pub fn default_cargo_options() -> CargoOptions<'static> {
         let mut options = CargoOptions::new();
         options
             .set_include_dev(true)
-            .set_platform(PlatformSpec::current().expect("current platform is unknown"));
+            .set_platform(PlatformSpec::build_target().expect("current platform is unknown"));
         options
     }
 

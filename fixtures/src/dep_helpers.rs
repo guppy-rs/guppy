@@ -349,7 +349,7 @@ pub(crate) fn assert_all_links(graph: &PackageGraph, direction: DependencyDirect
 }
 
 fn assert_enabled_status_is_known(req: DependencyReq<'_>, msg: &str) {
-    let current_platform = PlatformSpec::current().expect("current platform is known");
+    let current_platform = PlatformSpec::build_target().expect("current platform is known");
     assert!(
         req.status().enabled_on(&current_platform).is_known(),
         "{}: enabled status known for current platform",

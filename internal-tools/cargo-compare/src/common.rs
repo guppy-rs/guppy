@@ -257,7 +257,7 @@ impl GuppyCargoCommon {
     }
 
     fn guppy_current_platform(&self) -> Result<Platform> {
-        Ok(Platform::current()?)
+        Ok(Platform::build_target()?)
     }
 }
 

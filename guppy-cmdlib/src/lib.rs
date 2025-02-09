@@ -182,7 +182,7 @@ impl CargoMetadataOptions {
 /// TODO: This should eventually support JSON specs as well, probably.
 pub fn string_to_platform_spec(s: Option<&str>) -> Result<PlatformSpec> {
     match s {
-        Some("current") => Ok(PlatformSpec::current()?),
+        Some("current") => Ok(PlatformSpec::build_target()?),
         Some("always") => Ok(PlatformSpec::Always),
         Some("any") => Ok(PlatformSpec::Any),
         Some(triple) => Ok(Platform::new(triple.to_owned(), TargetFeatures::Unknown)?.into()),
