@@ -45,7 +45,7 @@ serde = { version = "1.0.217", features = ["derive"], optional = true }
 tabular = { version = "0.2.0", features = ["ansi-cell"], optional = true }
 target-spec = { version = "3.4.0", path = "../../target-spec" }
 toml = { version = "0.5.11", optional = true }
-toml_edit = "0.22.22"
+toml_edit = "0.22.23"
 twox-hash = { version = "1.6.3", default-features = false }
 guppy-workspace-hack.workspace = true
 
