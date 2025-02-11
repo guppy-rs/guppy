@@ -97,6 +97,17 @@ impl MetadataCommand {
         self
     }
 
+    /// Arbitrary environment variables to set when running cargo. These will be merged into the
+    /// calling environment, overriding any which clash.
+    pub fn env(
+        &mut self,
+        key: impl Into<std::ffi::OsString>,
+        val: impl Into<std::ffi::OsString>,
+    ) -> &mut Self {
+        self.inner.env(key, val);
+        self
+    }
+
     /// Builds a [`Command`] instance. This is the first part of calling
     /// [`exec`](Self::exec).
     pub fn cargo_command(&self) -> Command {
