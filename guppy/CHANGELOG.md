@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.17.14] - 2025-02-11
+
+### Added
+
+- `MetadataCommand::env` adds environment variables to the `cargo metadata` command.
+
+  Thanks to [anforowicz](https://github.com/anforowicz) for your first contribution!
+
 ## [0.17.13] - 2025-02-08
 
 ### Changed
@@ -732,6 +740,7 @@ lazy_static = "0.2"
 
 - Initial release.
 
+[0.17.14]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.14
 [0.17.13]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.13
 [0.17.12]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.12
 [0.17.11]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.11
