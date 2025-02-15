@@ -1,14 +1,19 @@
 # Changelog
 
-## [0.17.15] - 2025-02-15
+## [0.17.16] - 2025-02-15
 
 ### Added
 
-- `BuildTarget::tests_enabled` and `BuildTarget::docs_enabled` return true if tests and documentation is enabled for a build target, respectively.
+- `BuildTarget::test_by_default` returns true if tests are run for a build target by default.
+- `BuildTarget::doc_by_default` returns true if documentation is enabled for a build target, respectively.
 
 ### Changed
 
-- `BuildTarget::doc_tests` is now `BuildTarget::doc_tests_enabled`. The old name has been deprecated, but is kept around for compatibility.
+- `BuildTarget::doc_tests` is now `BuildTarget::doctest_by_default`. The old name has been deprecated, but is kept around for compatibility.
+
+## [0.17.15] - 2025-02-15
+
+(This version was yanked due to incorrect documentation.)
 
 ## [0.17.14] - 2025-02-11
 
@@ -750,6 +755,7 @@ lazy_static = "0.2"
 
 - Initial release.
 
+[0.17.16]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.16
 [0.17.15]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.15
 [0.17.14]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.14
 [0.17.13]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.13
