@@ -4127,7 +4127,6 @@ dependencies = [
  "target-lexicon",
  "test-case",
  "toml 0.5.11",
- "unicode-ident",
 ]
 
 [[package]]
