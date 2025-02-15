@@ -1,5 +1,11 @@
 # Changelog
 
+## [3.4.1] - 2025-02-15
+
+### Fixed
+
+- Removed unused direct dependency on unicode-ident. Thanks [hanna-kruppe](https://github.com/hanna-kruppe) for your contribution!
+
 ## [3.4.0] - 2025-02-08
 
 ### Added
@@ -347,6 +353,7 @@ This was mistakenly published and was yanked.
 
 - Initial release.
 
+[3.4.1]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.4.1
 [3.4.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.4.0
 [3.3.1]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.3.1
 [3.3.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.3.0
