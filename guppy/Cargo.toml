@@ -1,6 +1,6 @@
 [package]
 name = "guppy"
-version = "0.17.15"
+version = "0.17.16"
 description = "Track and query Cargo dependency graphs."
 documentation = "https://docs.rs/guppy"
 repository = "https://github.com/guppy-rs/guppy"
