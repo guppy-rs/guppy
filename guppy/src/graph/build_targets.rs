@@ -69,9 +69,29 @@ impl<'g> BuildTarget<'g> {
         &self.inner.edition
     }
 
+    /// Returns true if documentation is enabled for this build target.
+    #[inline]
+    pub fn docs_enabled(&self) -> bool {
+        self.inner.docs
+    }
+
     /// Returns true if documentation tests are enabled for this build target.
+    #[inline]
+    pub fn doc_tests_enabled(&self) -> bool {
+        self.inner.doc_tests
+    }
+
+    /// Previous name for [`Self::doc_tests_enabled`].
+    #[deprecated(since = "0.17.15", note = "use `doc_tests_enabled` instead")]
+    #[inline]
     pub fn doc_tests(&self) -> bool {
         self.inner.doc_tests
+    }
+
+    /// Returns true if tests are enabled for this build target.
+    #[inline]
+    pub fn tests_enabled(&self) -> bool {
+        self.inner.tests
     }
 }
 
@@ -194,7 +214,9 @@ pub(super) struct BuildTargetImpl {
     pub(super) required_features: Vec<String>,
     pub(super) path: Box<Utf8Path>,
     pub(super) edition: Box<str>,
+    pub(super) docs: bool,
     pub(super) doc_tests: bool,
+    pub(super) tests: bool,
 }
 
 /// Owned version of `BuildTargetId`.
