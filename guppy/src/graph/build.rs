@@ -687,7 +687,9 @@ impl<'a> BuildTargets<'a> {
                     required_features: target.required_features,
                     path: target.src_path.into_boxed_path(),
                     edition: target.edition.to_string().into_boxed_str(),
+                    docs: target.doc,
                     doc_tests: target.doctest,
+                    tests: target.test,
                 });
             }
         }
