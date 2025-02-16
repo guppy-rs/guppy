@@ -627,7 +627,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8d4ba6e40bd1184518716a6e1a781bf9160e286d219ccdb8ab2612e74cfe4789"
 dependencies = [
  "smallvec",
- "target-lexicon",
+ "target-lexicon 0.12.16",
 ]
 
 [[package]]
@@ -4116,6 +4116,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "61c41af27dd6d1e27b1b16b489db798443478cef1f06a660c96db617ba5de3b1"
 
 [[package]]
+name = "target-lexicon"
+version = "0.13.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e502f78cdbb8ba4718f566c418c52bc729126ffd16baee5baa718cf25dd5a69a"
+
+[[package]]
 name = "target-spec"
 version = "3.4.1"
 dependencies = [
@@ -4124,7 +4130,7 @@ dependencies = [
  "proptest",
  "serde",
  "serde_json",
- "target-lexicon",
+ "target-lexicon 0.13.2",
  "test-case",
  "toml 0.5.11",
 ]
