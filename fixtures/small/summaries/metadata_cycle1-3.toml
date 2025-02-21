@@ -12,7 +12,7 @@ target-features = 'unknown'
 flags = ['test-flag']
 
 [metadata.target-platform]
-triple = 'wasm32-wasip1-threads'
+triple = 'wasm32-wasip2'
 target-features = 'all'
 flags = ['cargo_web']
 [[metadata.omitted-packages.ids]]
