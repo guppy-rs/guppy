@@ -9,7 +9,7 @@ use std::{
     collections::{BTreeMap, BTreeSet},
     fmt,
 };
-use toml::{value::Table, Serializer};
+use toml::{Serializer, value::Table};
 
 /// A type representing a package map as used in `Summary` instances.
 pub type PackageMap = BTreeMap<SummaryId, PackageInfo>;
@@ -332,7 +332,7 @@ fn path_replace_slashes(path: &Utf8Path) -> impl fmt::Display + Serialize + '_ {
 /// Serialization and deserialization for the `CratesIo` variant.
 mod crates_io_impl {
     use super::*;
-    use serde::{de::Error, ser::SerializeMap, Deserializer, Serializer};
+    use serde::{Deserializer, Serializer, de::Error, ser::SerializeMap};
 
     pub fn serialize<S>(serializer: S) -> Result<S::Ok, S::Error>
     where

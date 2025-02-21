@@ -3,7 +3,7 @@
 
 use crate::{
     graph::{DependencyDirection, GraphSpec},
-    petgraph_support::dfs::{dfs_next_buffered_filter, BufferedEdgeFilter},
+    petgraph_support::dfs::{BufferedEdgeFilter, dfs_next_buffered_filter},
     sorted_set::SortedSet,
 };
 use fixedbitset::FixedBitSet;

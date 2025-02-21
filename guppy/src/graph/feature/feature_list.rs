@@ -4,12 +4,12 @@
 //! A sorted, deduplicated list of features from a single package.
 
 use crate::{
+    PackageId,
     graph::{
-        feature::{FeatureId, FeatureLabel},
         PackageMetadata,
+        feature::{FeatureId, FeatureLabel},
     },
     sorted_set::SortedSet,
-    PackageId,
 };
 use std::{fmt, slice, vec};
 

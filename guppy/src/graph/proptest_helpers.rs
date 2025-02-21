@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use crate::{
+    PackageId,
     graph::{
-        cargo::{CargoOptions, CargoResolverVersion, InitialsPlatform},
         PackageGraph, PackageLink, PackageQuery, PackageResolver, Workspace,
+        cargo::{CargoOptions, CargoResolverVersion, InitialsPlatform},
     },
     platform::PlatformSpec,
-    PackageId,
 };
 use fixedbitset::FixedBitSet;
 use petgraph::{prelude::*, visit::VisitMap};

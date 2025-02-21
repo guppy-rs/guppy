@@ -8,16 +8,16 @@ use crate::{
 };
 use camino::{Utf8Path, Utf8PathBuf};
 use clap::Parser;
-use color_eyre::eyre::{bail, eyre, Result, WrapErr};
+use color_eyre::eyre::{Result, WrapErr, bail, eyre};
 use guppy::{
-    graph::{PackageGraph, PackageSet},
     MetadataCommand,
+    graph::{PackageGraph, PackageSet},
 };
 use hakari::{
+    DepFormatVersion, HakariBuilder, HakariCargoToml, HakariOutputOptions, TomlOutError,
     cli_ops::{HakariInit, WorkspaceOps},
     diffy::PatchFormatter,
-    summaries::{HakariConfig, DEFAULT_CONFIG_PATH, FALLBACK_CONFIG_PATH},
-    DepFormatVersion, HakariBuilder, HakariCargoToml, HakariOutputOptions, TomlOutError,
+    summaries::{DEFAULT_CONFIG_PATH, FALLBACK_CONFIG_PATH, HakariConfig},
 };
 use log::{error, info};
 use owo_colors::OwoColorize;

@@ -1,6 +1,6 @@
 use cargo_metadata::{CrateType, Metadata, Target, TargetKind};
 use fixtures::json::JsonFixture;
-use guppy::{errors::FeatureGraphWarning, graph::PackageGraph, Error, PackageId};
+use guppy::{Error, PackageId, errors::FeatureGraphWarning, graph::PackageGraph};
 
 #[test]
 fn optional_dev_dep() {

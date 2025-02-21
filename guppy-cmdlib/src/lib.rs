@@ -11,13 +11,13 @@ pub mod proptest;
 use clap::{ArgEnum, Parser};
 use color_eyre::eyre::Result;
 use guppy::{
+    MetadataCommand,
     graph::{
-        cargo::{CargoResolverVersion, InitialsPlatform},
-        feature::{named_feature_filter, FeatureSet, StandardFeatures},
         PackageGraph,
+        cargo::{CargoResolverVersion, InitialsPlatform},
+        feature::{FeatureSet, StandardFeatures, named_feature_filter},
     },
     platform::{Platform, PlatformSpec, TargetFeatures},
-    MetadataCommand,
 };
 use std::{env, path::PathBuf};
 

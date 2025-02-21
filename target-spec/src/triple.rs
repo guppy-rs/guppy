@@ -2,14 +2,14 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use crate::{
-    errors::{RustcVersionVerboseParseError, TripleParseError},
     Error, Platform,
+    errors::{RustcVersionVerboseParseError, TripleParseError},
 };
 use cfg_expr::{
+    TargetPredicate,
     expr::TargetMatcher,
     target_lexicon,
-    targets::{get_builtin_target_by_triple, TargetInfo},
-    TargetPredicate,
+    targets::{TargetInfo, get_builtin_target_by_triple},
 };
 use std::{borrow::Cow, cmp::Ordering, hash, str::FromStr};
 

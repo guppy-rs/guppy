@@ -4,8 +4,8 @@
 use crate::{
     debug_ignore::DebugIgnore,
     graph::{
-        query_core::{all_visit_map, reachable_map, reachable_map_buffered_filter, QueryParams},
         DependencyDirection, GraphSpec,
+        query_core::{QueryParams, all_visit_map, reachable_map, reachable_map_buffered_filter},
     },
     petgraph_support::{
         dfs::{BufferedEdgeFilter, ReversedBufferedFilter, SimpleEdgeFilterFn},

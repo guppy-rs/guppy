@@ -4,8 +4,8 @@
 //! Support for weak features.
 
 use crate::graph::{
-    feature::{ConditionalLink, FeatureEdgeReference},
     PackageIx,
+    feature::{ConditionalLink, FeatureEdgeReference},
 };
 use indexmap::IndexSet;
 use itertools::Either;

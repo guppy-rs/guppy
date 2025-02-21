@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use crate::{
-    platform::{Platform, TargetFeatures},
     Error, TargetSpec,
+    platform::{Platform, TargetFeatures},
 };
 
 /// Evaluates the given spec against the provided target and returns `Some(true)` on a successful

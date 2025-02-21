@@ -4,12 +4,12 @@
 use crate::{
     errors::{FeatureBuildStage, FeatureGraphWarning},
     graph::{
+        DepRequiredOrOptional, DependencyReq, FeatureIndexInPackage, FeatureIx, NamedFeatureDep,
+        PackageGraph, PackageIx, PackageLink, PackageMetadata,
         feature::{
             ConditionalLinkImpl, FeatureEdge, FeatureGraphImpl, FeatureLabel, FeatureMetadataImpl,
             FeatureNode, WeakDependencies, WeakIndex,
         },
-        DepRequiredOrOptional, DependencyReq, FeatureIndexInPackage, FeatureIx, NamedFeatureDep,
-        PackageGraph, PackageIx, PackageLink, PackageMetadata,
     },
     platform::PlatformStatusImpl,
 };

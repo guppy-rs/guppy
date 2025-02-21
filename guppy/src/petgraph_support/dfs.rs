@@ -84,11 +84,7 @@ where
 
     #[inline]
     fn filter(&mut self, edge: G::EdgeRef) -> Self::Iter {
-        if (self.0)(edge) {
-            Some(edge)
-        } else {
-            None
-        }
+        if (self.0)(edge) { Some(edge) } else { None }
     }
 }
 

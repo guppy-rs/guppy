@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use crate::{
-    diff::{changed_sort_key, PackageDiff, SummaryDiff, SummaryDiffStatus},
     SummaryId,
+    diff::{PackageDiff, SummaryDiff, SummaryDiffStatus, changed_sort_key},
 };
 use std::fmt;
 

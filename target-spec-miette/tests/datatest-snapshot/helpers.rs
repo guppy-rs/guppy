@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use datatest_stable::Utf8Path;
-use snapbox::{data::DataFormat, Data};
+use snapbox::{Data, data::DataFormat};
 use std::path::PathBuf;
 
 pub(crate) fn snapbox_assert_ansi(test_name: &str, path: &Utf8Path, actual_ansi: String) {

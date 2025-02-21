@@ -2,16 +2,16 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use crate::{
+    DependencyKind, Error,
     graph::{
+        DependencyDirection, PackageGraph, PackageIx, PackageLink, PackageSet,
         cargo::{
             CargoIntermediateSet, CargoOptions, CargoResolverVersion, CargoSet, InitialsPlatform,
         },
         feature::{ConditionalLink, FeatureLabel, FeatureQuery, FeatureSet, StandardFeatures},
-        DependencyDirection, PackageGraph, PackageIx, PackageLink, PackageSet,
     },
     platform::{EnabledTernary, PlatformSpec},
     sorted_set::SortedSet,
-    DependencyKind, Error,
 };
 use fixedbitset::FixedBitSet;
 use petgraph::{prelude::*, visit::VisitMap};

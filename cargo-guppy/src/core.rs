@@ -4,11 +4,11 @@
 //! Implementations for options shared by commands.
 
 use clap::{ArgEnum, Parser};
-use color_eyre::eyre::{ensure, eyre, Result, WrapErr};
+use color_eyre::eyre::{Result, WrapErr, ensure, eyre};
 use guppy::{
+    PackageId,
     graph::{DependencyDirection, DependencyReq, PackageGraph, PackageLink, PackageQuery},
     platform::EnabledTernary,
-    PackageId,
 };
 use guppy_cmdlib::string_to_platform_spec;
 use std::collections::HashSet;

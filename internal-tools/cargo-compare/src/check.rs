@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use crate::{
+    GlobalContext,
     common::GuppyCargoCommon,
     diff::{FeatureDiff, TargetHostDiff},
-    GlobalContext,
 };
 use clap::Parser;
-use color_eyre::eyre::{eyre, Result};
+use color_eyre::eyre::{Result, eyre};
 use guppy::graph::cargo::CargoResolverVersion;
 use guppy_cmdlib::CargoMetadataOptions;
 use proptest::{

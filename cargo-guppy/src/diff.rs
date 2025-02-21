@@ -1,8 +1,8 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-use guppy::{graph::PackageMetadata, PackageId};
-use serde::{ser::SerializeStruct, Serialize, Serializer};
+use guppy::{PackageId, graph::PackageMetadata};
+use serde::{Serialize, Serializer, ser::SerializeStruct};
 use std::{collections::HashMap, ops::Deref};
 
 #[derive(Debug, Default)]

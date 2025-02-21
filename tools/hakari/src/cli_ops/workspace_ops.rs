@@ -8,8 +8,8 @@ use crate::{
 use atomicwrites::{AtomicFile, OverwriteBehavior};
 use camino::{Utf8Path, Utf8PathBuf};
 use guppy::{
-    graph::{DependencyDirection, PackageGraph, PackageMetadata, PackageSet},
     Version,
+    graph::{DependencyDirection, PackageGraph, PackageMetadata, PackageSet},
 };
 use owo_colors::{OwoColorize, Style};
 use std::{borrow::Cow, cmp::Ordering, collections::BTreeMap, error, fmt, fs, io, io::Write};
@@ -217,7 +217,7 @@ impl<'g> WorkspaceOp<'g, '_> {
                     return Err(ApplyError::misc(
                         "workspace.members contains non-strings",
                         root_toml_path,
-                    ))
+                    ));
                 }
             }
         }
@@ -243,13 +243,13 @@ impl<'g> WorkspaceOp<'g, '_> {
                         other.type_name()
                     ),
                     root_toml_path,
-                ))
+                ));
             }
             None => {
                 return Err(ApplyError::misc(
                     "[workspace] section not found",
                     root_toml_path,
-                ))
+                ));
             }
         };
 
@@ -260,7 +260,7 @@ impl<'g> WorkspaceOp<'g, '_> {
                     return Err(ApplyError::misc(
                         "workspace.members is not an array",
                         root_toml_path,
-                    ))
+                    ));
                 }
             },
             Some(other) => {
@@ -270,13 +270,13 @@ impl<'g> WorkspaceOp<'g, '_> {
                         other.type_name()
                     ),
                     root_toml_path,
-                ))
+                ));
             }
             None => {
                 return Err(ApplyError::misc(
                     "workspace.members not found",
                     root_toml_path,
-                ))
+                ));
             }
         };
         Ok(members)

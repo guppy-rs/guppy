@@ -4,12 +4,12 @@
 //! Code for handling cycles in feature graphs.
 
 use crate::{
+    Error,
     graph::{
-        feature::{FeatureGraph, FeatureId},
         FeatureIx,
+        feature::{FeatureGraph, FeatureId},
     },
     petgraph_support::scc::Sccs,
-    Error,
 };
 
 /// Contains information about dependency cycles in feature graphs.

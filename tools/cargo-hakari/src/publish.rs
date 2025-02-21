@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use crate::{cargo_cli::CargoCli, helpers::regenerate_lockfile, output::OutputContext};
-use color_eyre::{eyre::WrapErr, Result};
+use color_eyre::{Result, eyre::WrapErr};
 use guppy::graph::PackageMetadata;
 use hakari::HakariBuilder;
 use log::{error, info};

@@ -2,14 +2,14 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use crate::{
+    Error, PackageId,
     graph::{
+        DependencyDirection, PackageGraph, PackageIx, PackageLink, PackageSet,
         cargo::build::CargoSetBuildState,
         feature::{FeatureGraph, FeatureSet},
-        DependencyDirection, PackageGraph, PackageIx, PackageLink, PackageSet,
     },
     platform::PlatformSpec,
     sorted_set::SortedSet,
-    Error, PackageId,
 };
 use petgraph::prelude::*;
 use serde::{Deserialize, Serialize};

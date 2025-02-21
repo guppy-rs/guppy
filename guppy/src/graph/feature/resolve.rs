@@ -4,19 +4,19 @@
 use std::fmt;
 
 use crate::{
+    Error, PackageId,
     debug_ignore::DebugIgnore,
     graph::{
+        DependencyDirection, FeatureGraphSpec, FeatureIx, PackageIx, PackageMetadata, PackageSet,
         cargo::{CargoOptions, CargoSet},
         feature::{
-            build::FeatureEdgeReference, ConditionalLink, FeatureEdge, FeatureGraph, FeatureId,
-            FeatureList, FeatureMetadata, FeatureQuery, FeatureResolver,
+            ConditionalLink, FeatureEdge, FeatureGraph, FeatureId, FeatureList, FeatureMetadata,
+            FeatureQuery, FeatureResolver, build::FeatureEdgeReference,
         },
         resolve_core::ResolveCore,
-        DependencyDirection, FeatureGraphSpec, FeatureIx, PackageIx, PackageMetadata, PackageSet,
     },
-    petgraph_support::{dfs::BufferedEdgeFilterFn, IxBitSet},
+    petgraph_support::{IxBitSet, dfs::BufferedEdgeFilterFn},
     sorted_set::SortedSet,
-    Error, PackageId,
 };
 use fixedbitset::FixedBitSet;
 use itertools::Either;

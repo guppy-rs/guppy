@@ -3,17 +3,17 @@
 
 use camino::{Utf8Path, Utf8PathBuf};
 use clap::Parser;
-use color_eyre::eyre::{bail, eyre, Result, WrapErr};
+use color_eyre::eyre::{Result, WrapErr, bail, eyre};
 use dialoguer::Confirm;
 use guppy::graph::{PackageGraph, PackageLink, PackageMetadata};
 use guppy_cmdlib::CargoMetadataOptions;
 use pathdiff::diff_utf8_paths;
 use std::{
-    collections::{btree_map::Entry, BTreeMap, HashSet},
+    collections::{BTreeMap, HashSet, btree_map::Entry},
     fmt, fs,
     io::{self, Write},
     mem,
-    path::{Path, MAIN_SEPARATOR},
+    path::{MAIN_SEPARATOR, Path},
 };
 use toml_edit::{DocumentMut, Item, Table, Value};
 

@@ -225,7 +225,7 @@ mod platform_impl {
 
 mod target_features_impl {
     use super::*;
-    use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
+    use serde::{Deserialize, Deserializer, Serialize, Serializer, de::Error};
 
     impl Serialize for TargetFeaturesSummary {
         fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>

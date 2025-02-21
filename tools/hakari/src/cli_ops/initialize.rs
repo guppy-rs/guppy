@@ -4,7 +4,7 @@
 use crate::cli_ops::workspace_ops::{WorkspaceOp, WorkspaceOps};
 use camino::{Utf8Path, Utf8PathBuf};
 use guppy::graph::PackageGraph;
-use include_dir::{include_dir, Dir, DirEntry};
+use include_dir::{Dir, DirEntry, include_dir};
 use std::{borrow::Cow, convert::TryInto, error, fmt, io};
 
 const CRATE_TEMPLATE_DIR: Dir = include_dir!("$CARGO_MANIFEST_DIR/templates/crate");

@@ -2,15 +2,14 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use crate::{
-    graph::{
-        cargo_version_matches,
-        feature::{FeatureGraphImpl, FeatureId, FeatureLabel, FeatureNode},
-        BuildTarget, BuildTargetId, BuildTargetImpl, BuildTargetKind, Cycles, DependencyDirection,
-        OwnedBuildTargetId, PackageIx, PackageQuery, PackageSet,
-    },
-    petgraph_support::{scc::Sccs, topo::TopoWithCycles, IxBitSet},
-    platform::{EnabledTernary, PlatformSpec, PlatformStatus, PlatformStatusImpl},
     CargoMetadata, DependencyKind, Error, JsonValue, MetadataCommand, PackageId,
+    graph::{
+        BuildTarget, BuildTargetId, BuildTargetImpl, BuildTargetKind, Cycles, DependencyDirection,
+        OwnedBuildTargetId, PackageIx, PackageQuery, PackageSet, cargo_version_matches,
+        feature::{FeatureGraphImpl, FeatureId, FeatureLabel, FeatureNode},
+    },
+    petgraph_support::{IxBitSet, scc::Sccs, topo::TopoWithCycles},
+    platform::{EnabledTernary, PlatformSpec, PlatformStatus, PlatformStatusImpl},
 };
 use ahash::AHashMap;
 use camino::{Utf8Path, Utf8PathBuf};
@@ -18,7 +17,7 @@ use fixedbitset::FixedBitSet;
 use indexmap::{IndexMap, IndexSet};
 use once_cell::sync::OnceCell;
 use petgraph::{
-    algo::{has_path_connecting, DfsSpace},
+    algo::{DfsSpace, has_path_connecting},
     graph::EdgeReference,
     prelude::*,
     visit::EdgeFiltered,

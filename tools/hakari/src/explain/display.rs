@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use crate::explain::HakariExplain;
-use guppy::graph::{feature::StandardFeatures, DependencyDirection};
+use guppy::graph::{DependencyDirection, feature::StandardFeatures};
 use itertools::{Itertools, Position};
 use owo_colors::{OwoColorize, Style};
 use std::{collections::BTreeSet, fmt};

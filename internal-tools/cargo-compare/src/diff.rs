@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use crate::{
-    common::{anyhow_to_eyre, GuppyCargoCommon},
     GlobalContext,
+    common::{GuppyCargoCommon, anyhow_to_eyre},
 };
 use clap::Parser;
-use color_eyre::eyre::{bail, Result};
-use diffus::{edit, Diffable};
-use guppy::{graph::PackageGraph, PackageId};
+use color_eyre::eyre::{Result, bail};
+use diffus::{Diffable, edit};
+use guppy::{PackageId, graph::PackageGraph};
 use itertools::Itertools;
 use once_cell::sync::OnceCell;
 use std::{
