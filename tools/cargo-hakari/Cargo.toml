@@ -20,7 +20,7 @@ rust-version.workspace = true
 [dependencies]
 camino = "1.1.9"
 cfg-if = "1.0.0"
-clap = { version = "4.3.19", features = ["derive"] }
+clap = { version = "4.5.30", features = ["derive"] }
 # disable tracing integration since we don't use it
 color-eyre = { version = "0.6.3", default-features = false }
 dialoguer = "0.11.0"
@@ -35,7 +35,7 @@ supports-color = "1.3.1"
 guppy-workspace-hack.workspace = true
 
 [dev-dependencies]
-tempfile = "3.16.0"
+tempfile = "3.17.1"
 
 # Metadata for cargo-binstall to get the right artifacts.
 [package.metadata.binstall]

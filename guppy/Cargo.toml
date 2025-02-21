@@ -46,9 +46,9 @@ proptest = { version = "1.6.0", optional = true }
 proptest-derive = { version = "0.5.1", optional = true }
 rayon = { version = "1.10.0", optional = true }
 semver = "1.0.25"
-serde = { version = "1.0.217", features = ["derive"] }
-serde_json = "1.0.138"
-smallvec = "1.13.2"
+serde = { version = "1.0.218", features = ["derive"] }
+serde_json = "1.0.139"
+smallvec = "1.14.0"
 static_assertions = "1.1.0"
 target-spec = { version = "3.4.1", path = "../target-spec" }
 toml = { version = "0.5.11", optional = true, features = ["preserve_order"] }
