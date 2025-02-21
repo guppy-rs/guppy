@@ -159,7 +159,7 @@ pub struct PlatformEval<'g> {
 
 assert_covariant!(PlatformEval);
 
-impl PlatformEval<'_> {
+impl<'g> PlatformEval<'g> {
     /// Runs this evaluator against the given platform.
     pub fn eval(&self, platform: &Platform) -> EnabledTernary {
         let mut res = EnabledTernary::Disabled;
@@ -172,6 +172,11 @@ impl PlatformEval<'_> {
             res = res | EnabledTernary::new(matches);
         }
         res
+    }
+
+    /// Returns the target specs.
+    pub fn specs<'a>(&'a self) -> impl Iterator<Item = &'g TargetSpec> + 'a {
+        self.specs.iter()
     }
 }
 
