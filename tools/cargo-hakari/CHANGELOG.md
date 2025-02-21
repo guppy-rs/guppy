@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.9.36] - 2025-02-20
+
+### Changed
+
+- Builtin targets updated to Rust 1.85.
+
 ## [0.9.35] - 2025-01-05
 
 ### Added
@@ -346,6 +352,7 @@ This was tagged, but never released due to
 
 Initial release.
 
+[0.9.36]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.36
 [0.9.35]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.35
 [0.9.34]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.34
 [0.9.33]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.33
