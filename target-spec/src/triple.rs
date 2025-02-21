@@ -430,7 +430,7 @@ mod tests {
         let expected_triple = target_lexicon::Triple {
             architecture: Architecture::X86_64,
             vendor: Vendor::Pc,
-            operating_system: OperatingSystem::Darwin,
+            operating_system: OperatingSystem::Darwin(None),
             environment: Environment::Unknown,
             binary_format: BinaryFormat::Macho,
         };
