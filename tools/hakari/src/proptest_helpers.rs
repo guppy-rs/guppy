@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use crate::{
-    hakari::{DepFormatVersion, WorkspaceHackLineStyle},
     HakariBuilder, UnifyTargetHost,
+    hakari::{DepFormatVersion, WorkspaceHackLineStyle},
 };
 use guppy::{
-    graph::{cargo::CargoResolverVersion, PackageGraph},
-    platform::{Platform, TargetFeatures},
     PackageId,
+    graph::{PackageGraph, cargo::CargoResolverVersion},
+    platform::{Platform, TargetFeatures},
 };
 use proptest::{
     collection::{hash_set, vec},

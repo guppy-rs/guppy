@@ -6,17 +6,17 @@
 #[cfg(feature = "cli-support")]
 use crate::summaries::HakariBuilderSummary;
 use crate::{
+    DepFormatVersion,
     hakari::{HakariBuilder, OutputMap},
     helpers::VersionDisplay,
-    DepFormatVersion,
 };
 use ahash::AHashMap;
 use camino::Utf8PathBuf;
 use cfg_if::cfg_if;
 use guppy::{
-    errors::TargetSpecError,
-    graph::{cargo::BuildPlatform, ExternalSource, GitReq, PackageMetadata, PackageSource},
     PackageId,
+    errors::TargetSpecError,
+    graph::{ExternalSource, GitReq, PackageMetadata, PackageSource, cargo::BuildPlatform},
 };
 use std::{
     borrow::Cow,
@@ -537,7 +537,7 @@ mod tests {
     use super::*;
     use fixtures::json::*;
     use guppy::graph::DependencyDirection;
-    use std::collections::{btree_map::Entry, BTreeMap};
+    use std::collections::{BTreeMap, btree_map::Entry};
 
     #[test]
     fn make_package_name_unique() {

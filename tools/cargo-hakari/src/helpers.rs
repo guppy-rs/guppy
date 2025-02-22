@@ -4,8 +4,8 @@
 use crate::{cargo_cli::CargoCli, output::OutputContext};
 use camino::{Utf8Path, Utf8PathBuf};
 use color_eyre::{
-    eyre::{bail, WrapErr},
     Result,
+    eyre::{WrapErr, bail},
 };
 
 /// Read the contents of the first file that matches and is present. Errors out.

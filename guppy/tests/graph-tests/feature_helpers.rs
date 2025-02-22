@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use guppy::{
-    graph::feature::{FeatureLabel, FeatureSet},
     PackageId,
+    graph::feature::{FeatureLabel, FeatureSet},
 };
 
 pub(super) fn assert_features_for_package(

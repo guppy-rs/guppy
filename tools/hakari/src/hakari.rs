@@ -2,23 +2,23 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use crate::{
+    CargoTomlError, HakariCargoToml, TomlOutError,
     explain::HakariExplain,
     toml_name_map,
-    toml_out::{write_toml, HakariOutputOptions},
-    CargoTomlError, HakariCargoToml, TomlOutError,
+    toml_out::{HakariOutputOptions, write_toml},
 };
 use ahash::AHashMap;
 use bimap::BiHashMap;
 use debug_ignore::DebugIgnore;
 use guppy::{
+    PackageId,
     errors::TargetSpecError,
     graph::{
-        cargo::{BuildPlatform, CargoOptions, CargoResolverVersion, CargoSet, InitialsPlatform},
-        feature::{named_feature_filter, FeatureId, FeatureLabel, FeatureSet, StandardFeatures},
         DependencyDirection, PackageGraph, PackageMetadata,
+        cargo::{BuildPlatform, CargoOptions, CargoResolverVersion, CargoSet, InitialsPlatform},
+        feature::{FeatureId, FeatureLabel, FeatureSet, StandardFeatures, named_feature_filter},
     },
     platform::{Platform, PlatformSpec, TargetFeatures},
-    PackageId,
 };
 use rayon::prelude::*;
 use std::{

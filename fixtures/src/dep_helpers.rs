@@ -3,13 +3,13 @@
 
 use crate::details::PackageDetails;
 use guppy::{
+    DependencyKind, Error, PackageId,
     graph::{
-        feature::{FeatureGraph, FeatureId, FeatureMetadata, FeatureQuery, FeatureSet},
         DependencyDirection, DependencyReq, PackageGraph, PackageLink, PackageLinkPtrs,
         PackageMetadata, PackageQuery, PackageSet,
+        feature::{FeatureGraph, FeatureId, FeatureMetadata, FeatureQuery, FeatureSet},
     },
     platform::PlatformSpec,
-    DependencyKind, Error, PackageId,
 };
 use pretty_assertions::assert_eq;
 use std::{

@@ -7,8 +7,8 @@
 //! to filter out those links.
 
 use guppy::{
-    graph::{DependencyDirection, PackageLink},
     CargoMetadata, Error,
+    graph::{DependencyDirection, PackageLink},
 };
 use std::iter;
 

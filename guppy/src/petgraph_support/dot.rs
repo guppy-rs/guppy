@@ -185,9 +185,5 @@ fn graph_type<G: GraphProp>(graph: G) -> &'static str {
 }
 
 fn edge_str<G: GraphProp>(graph: G) -> &'static str {
-    if graph.is_directed() {
-        "->"
-    } else {
-        "--"
-    }
+    if graph.is_directed() { "->" } else { "--" }
 }

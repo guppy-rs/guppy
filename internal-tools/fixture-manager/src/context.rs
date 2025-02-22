@@ -1,7 +1,7 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-use anyhow::{bail, Result};
+use anyhow::{Result, bail};
 use camino::{Utf8Path, Utf8PathBuf};
 use fixtures::json::JsonFixture;
 

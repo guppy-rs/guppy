@@ -2,20 +2,20 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use crate::{
+    Error, PackageId,
     debug_ignore::DebugIgnore,
     graph::{
-        feature::{FeatureFilter, FeatureSet},
-        resolve_core::{ResolveCore, Topo},
         DependencyDirection, PackageGraph, PackageIx, PackageLink, PackageLinkImpl,
         PackageMetadata, PackageQuery,
+        feature::{FeatureFilter, FeatureSet},
+        resolve_core::{ResolveCore, Topo},
     },
     petgraph_support::{
+        IxBitSet,
         dot::{DotFmt, DotVisitor, DotWrite},
         edge_ref::GraphEdgeRef,
-        IxBitSet,
     },
     sorted_set::SortedSet,
-    Error, PackageId,
 };
 use camino::Utf8Path;
 use fixedbitset::FixedBitSet;

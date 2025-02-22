@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use crate::{
-    errors::{ExpressionParseError, PlainStringParseError},
     Error, Platform, Triple,
+    errors::{ExpressionParseError, PlainStringParseError},
 };
 use cfg_expr::{Expression, Predicate};
 use std::{borrow::Cow, fmt, str::FromStr, sync::Arc};
@@ -286,8 +286,8 @@ impl fmt::Display for TargetSpecPlainString {
 mod tests {
     use super::*;
     use cfg_expr::{
-        targets::{Abi, Arch, Family, Os},
         Predicate, TargetPredicate,
+        targets::{Abi, Arch, Family, Os},
     };
 
     #[test]

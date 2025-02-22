@@ -8,13 +8,13 @@
 mod package_set;
 
 use crate::{
+    Error,
     graph::{
+        DependencyDirection, PackageGraph, PackageMetadata, PackageSet, PackageSource,
         cargo::{CargoOptions, CargoResolverVersion, CargoSet, InitialsPlatform},
         feature::FeatureSet,
-        DependencyDirection, PackageGraph, PackageMetadata, PackageSet, PackageSource,
     },
     platform::PlatformSpecSummary,
-    Error,
 };
 pub use guppy_summaries::*;
 pub use package_set::*;

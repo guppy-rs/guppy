@@ -21,7 +21,7 @@ mod display;
 #[cfg(feature = "cli-support")]
 pub use display::VerifyErrorsDisplay;
 
-use crate::{explain::HakariExplain, Hakari, HakariBuilder};
+use crate::{Hakari, HakariBuilder, explain::HakariExplain};
 use guppy::PackageId;
 use std::collections::BTreeSet;
 
@@ -93,7 +93,7 @@ impl<'g> VerifyErrors<'g> {
 #[cfg(test)]
 #[cfg(feature = "cli-support")]
 mod cli_support_tests {
-    use crate::summaries::{HakariConfig, DEFAULT_CONFIG_PATH};
+    use crate::summaries::{DEFAULT_CONFIG_PATH, HakariConfig};
     use guppy::MetadataCommand;
 
     /// Verify that this repo's `workspace-hack` works correctly.

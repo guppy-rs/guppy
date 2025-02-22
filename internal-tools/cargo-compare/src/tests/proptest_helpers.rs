@@ -1,7 +1,7 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-use crate::{common::GuppyCargoCommon, diff::DiffOpts, GlobalContext};
+use crate::{GlobalContext, common::GuppyCargoCommon, diff::DiffOpts};
 use guppy::graph::PackageGraph;
 use proptest::test_runner::{TestCaseError, TestCaseResult};
 use std::env;

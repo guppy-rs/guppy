@@ -6,12 +6,12 @@
 //! Requires the `cli-support` feature to be enabled.
 
 use crate::{
-    hakari::{DepFormatVersion, WorkspaceHackLineStyle},
     HakariBuilder, HakariOutputOptions, TomlOutError, UnifyTargetHost,
+    hakari::{DepFormatVersion, WorkspaceHackLineStyle},
 };
 use guppy::{
     errors::TargetSpecError,
-    graph::{cargo::CargoResolverVersion, summaries::PackageSetSummary, PackageGraph},
+    graph::{PackageGraph, cargo::CargoResolverVersion, summaries::PackageSetSummary},
 };
 use serde::{Deserialize, Serialize};
 use std::{collections::BTreeMap, fmt, str::FromStr};

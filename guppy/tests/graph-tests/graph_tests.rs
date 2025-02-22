@@ -6,9 +6,9 @@ use fixtures::{
     package_id,
 };
 use guppy::graph::{
-    feature::{named_feature_filter, FeatureId, FeatureLabel, StandardFeatures},
     BuildTargetId, BuildTargetKind, DependencyDirection, DotWrite, PackageDotVisitor, PackageLink,
     PackageMetadata,
+    feature::{FeatureId, FeatureLabel, StandardFeatures, named_feature_filter},
 };
 use std::{fmt, iter};
 
@@ -274,18 +274,26 @@ mod small {
             ["foo", "bar"].iter().copied(),
         ));
         let dep_a_id = package_id(json::METADATA_TARGETS1_DEP_A);
-        assert!(feature_set
-            .contains((&dep_a_id, FeatureLabel::Named("foo")))
-            .expect("valid feature ID"));
-        assert!(feature_set
-            .contains((&dep_a_id, FeatureLabel::Named("bar")))
-            .expect("valid feature ID"));
-        assert!(!feature_set
-            .contains((&dep_a_id, FeatureLabel::Named("baz")))
-            .expect("valid feature ID"));
-        assert!(!feature_set
-            .contains((&dep_a_id, FeatureLabel::Named("quux")))
-            .expect("valid feature ID"));
+        assert!(
+            feature_set
+                .contains((&dep_a_id, FeatureLabel::Named("foo")))
+                .expect("valid feature ID")
+        );
+        assert!(
+            feature_set
+                .contains((&dep_a_id, FeatureLabel::Named("bar")))
+                .expect("valid feature ID")
+        );
+        assert!(
+            !feature_set
+                .contains((&dep_a_id, FeatureLabel::Named("baz")))
+                .expect("valid feature ID")
+        );
+        assert!(
+            !feature_set
+                .contains((&dep_a_id, FeatureLabel::Named("quux")))
+                .expect("valid feature ID")
+        );
 
         assert_features_for_package(
             &feature_set,

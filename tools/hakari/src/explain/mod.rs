@@ -13,10 +13,10 @@ mod simplify;
 #[cfg(feature = "cli-support")]
 pub use display::HakariExplainDisplay;
 
-use crate::{explain::simplify::*, Hakari};
+use crate::{Hakari, explain::simplify::*};
 use guppy::{
-    graph::{cargo::BuildPlatform, feature::StandardFeatures, PackageGraph, PackageMetadata},
     PackageId,
+    graph::{PackageGraph, PackageMetadata, cargo::BuildPlatform, feature::StandardFeatures},
 };
 use std::{
     collections::{BTreeMap, BTreeSet},

@@ -2,19 +2,19 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use crate::{
+    DependencyKind, Error, PackageId,
     debug_ignore::DebugIgnore,
     errors::FeatureGraphWarning,
     graph::{
-        feature::{
-            build::{FeatureGraphBuildState, FeaturePetgraph},
-            Cycles, FeatureFilter, FeatureList, WeakDependencies, WeakIndex,
-        },
         DependencyDirection, FeatureIndexInPackage, FeatureIx, PackageGraph, PackageIx,
         PackageLink, PackageMetadata,
+        feature::{
+            Cycles, FeatureFilter, FeatureList, WeakDependencies, WeakIndex,
+            build::{FeatureGraphBuildState, FeaturePetgraph},
+        },
     },
     petgraph_support::{scc::Sccs, topo::TopoWithCycles},
     platform::{PlatformStatus, PlatformStatusImpl},
-    DependencyKind, Error, PackageId,
 };
 use ahash::AHashMap;
 use once_cell::sync::OnceCell;

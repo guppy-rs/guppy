@@ -1,7 +1,7 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-use crate::{graph::PackageGraph, Error};
+use crate::{Error, graph::PackageGraph};
 use cargo_metadata::CargoOpt;
 use serde::{Deserialize, Serialize};
 use std::{convert::TryFrom, io, path::PathBuf, process::Command};

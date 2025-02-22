@@ -1,10 +1,10 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-use criterion::{black_box, criterion_group, criterion_main, BatchSize, Criterion};
+use criterion::{BatchSize, Criterion, black_box, criterion_group, criterion_main};
 use guppy::{
-    graph::{DependencyDirection, PackageGraph, PackageMetadata},
     PackageId,
+    graph::{DependencyDirection, PackageGraph, PackageMetadata},
 };
 use proptest::{collection::vec, prelude::*};
 use proptest_ext::ValueGenerator;

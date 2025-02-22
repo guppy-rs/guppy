@@ -2,14 +2,14 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use crate::{
+    Error, PackageId,
     graph::{
-        cargo_version_matches, BuildTargetImpl, BuildTargetKindImpl, DepRequiredOrOptional,
-        DependencyReqImpl, NamedFeatureDep, OwnedBuildTargetId, PackageGraph, PackageGraphData,
-        PackageIx, PackageLinkImpl, PackageMetadataImpl, PackagePublishImpl, PackageSourceImpl,
-        WorkspaceImpl,
+        BuildTargetImpl, BuildTargetKindImpl, DepRequiredOrOptional, DependencyReqImpl,
+        NamedFeatureDep, OwnedBuildTargetId, PackageGraph, PackageGraphData, PackageIx,
+        PackageLinkImpl, PackageMetadataImpl, PackagePublishImpl, PackageSourceImpl, WorkspaceImpl,
+        cargo_version_matches,
     },
     sorted_set::SortedSet,
-    Error, PackageId,
 };
 use ahash::AHashMap;
 use camino::{Utf8Path, Utf8PathBuf};

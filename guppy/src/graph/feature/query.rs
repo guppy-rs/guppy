@@ -2,16 +2,16 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use crate::{
+    Error, PackageId,
     debug_ignore::DebugIgnore,
     graph::{
+        DependencyDirection, FeatureGraphSpec, FeatureIx, PackageIx, PackageMetadata,
         feature::{
             ConditionalLink, FeatureGraph, FeatureId, FeatureLabel, FeatureMetadata, FeatureSet,
         },
         query_core::QueryParams,
-        DependencyDirection, FeatureGraphSpec, FeatureIx, PackageIx, PackageMetadata,
     },
     sorted_set::SortedSet,
-    Error, PackageId,
 };
 use itertools::Itertools;
 use petgraph::graph::NodeIndex;

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use crate::common::GuppyCargoCommon;
-use guppy::graph::{cargo::CargoResolverVersion, PackageGraph};
+use guppy::graph::{PackageGraph, cargo::CargoResolverVersion};
 use guppy_cmdlib::CargoMetadataOptions;
 use once_cell::sync::Lazy;
 use proptest::prelude::*;

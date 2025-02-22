@@ -12,17 +12,17 @@ use ahash::AHashMap;
 use camino::Utf8Path;
 use globset::Candidate;
 use guppy::{
+    PackageId,
     graph::{
+        DependencyDirection, PackageGraph, PackageMetadata, PackageSet, Workspace,
         cargo::{CargoOptions, CargoSet},
         feature::{FeatureFilter, FeatureSet, StandardFeatures},
-        DependencyDirection, PackageGraph, PackageMetadata, PackageSet, Workspace,
     },
     platform::PlatformSpec,
-    PackageId,
 };
-use petgraph::{graphmap::GraphMap, Directed};
+use petgraph::{Directed, graphmap::GraphMap};
 use rayon::prelude::*;
-use std::collections::{hash_map::Entry, HashSet};
+use std::collections::{HashSet, hash_map::Entry};
 
 /// Determine target dependencies from changed files and packages in a workspace.
 ///

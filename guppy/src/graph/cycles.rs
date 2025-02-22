@@ -6,9 +6,9 @@
 //! See [`Cycles`][] for detailed docs.
 
 use crate::{
+    Error, PackageId,
     graph::{PackageGraph, PackageIx},
     petgraph_support::scc::Sccs,
-    Error, PackageId,
 };
 
 /// Contains information about dependency cycles.

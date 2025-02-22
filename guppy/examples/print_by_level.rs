@@ -9,7 +9,7 @@
 use guppy::{CargoMetadata, Error};
 use std::{
     collections::BTreeMap,
-    io::{stdout, Write},
+    io::{Write, stdout},
 };
 
 fn main() -> Result<(), Error> {

@@ -7,7 +7,7 @@ use camino::{Utf8Path, Utf8PathBuf};
 use fixtures::json::JsonFixture;
 use guppy::graph::{
     cargo::CargoSet,
-    summaries::{diff::SummaryDiff, Summary},
+    summaries::{Summary, diff::SummaryDiff},
 };
 use guppy_cmdlib::PackagesAndFeatures;
 use once_cell::sync::Lazy;

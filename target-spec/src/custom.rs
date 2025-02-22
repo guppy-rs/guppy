@@ -93,7 +93,7 @@ impl TargetDefinition {
 }
 
 mod target_pointer_width {
-    use serde::{de::Error, Deserialize, Deserializer, Serializer};
+    use serde::{Deserialize, Deserializer, Serializer, de::Error};
 
     pub(super) fn deserialize<'de, D>(deserializer: D) -> Result<u8, D::Error>
     where

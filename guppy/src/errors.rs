@@ -3,11 +3,11 @@
 
 //! Contains types that describe errors and warnings that `guppy` methods can return.
 
-use crate::{graph::feature::FeatureId, PackageId};
+use crate::{PackageId, graph::feature::FeatureId};
+use Error::*;
 use camino::Utf8PathBuf;
 use std::{error, fmt};
 pub use target_spec::Error as TargetSpecError;
-use Error::*;
 
 /// Error type describing the sorts of errors `guppy` can return.
 #[derive(Debug)]

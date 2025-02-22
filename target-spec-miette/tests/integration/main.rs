@@ -1,7 +1,7 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-use snapbox::{data::DataFormat, Data};
+use snapbox::{Data, data::DataFormat};
 use target_spec::errors::CustomTripleCreateError;
 use target_spec_miette::IntoMietteDiagnostic;
 
