@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.17.17] - 2025-02-21
+
+### Added
+
+- Add `PlatformEval::target_specs` to obtain the list of `TargetSpec` instances backing a platform evaluator. Thanks to [anforowicz](https://github.com/anforowicz) for the contribution!
+
 ## [0.17.16] - 2025-02-15
 
 ### Added
@@ -755,6 +761,7 @@ lazy_static = "0.2"
 
 - Initial release.
 
+[0.17.17]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.17
 [0.17.16]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.16
 [0.17.15]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.15
 [0.17.14]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.14

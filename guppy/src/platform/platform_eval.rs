@@ -93,9 +93,10 @@ pub enum EnabledTernary {
     Disabled,
     /// The status of this dependency is unknown on this platform.
     ///
-    /// This may happen if evaluation involves unknown target features. Notably, this will not be
-    /// returned for `Platform::current()`, since the target features for the current platform are
-    /// known.
+    /// This may happen if evaluation involves unknown target features. Notably,
+    /// this will not be returned for [`Platform::build_target()`], since the
+    /// target features for the build target platform are determined at compile
+    /// time.
     Unknown,
     /// The dependency is enabled on this platform.
     Enabled,
@@ -174,9 +175,12 @@ impl<'g> PlatformEval<'g> {
         res
     }
 
-    /// Returns the target specs.
-    pub fn specs<'a>(&'a self) -> impl Iterator<Item = &'g TargetSpec> + 'a {
-        self.specs.iter()
+    /// Returns the [`TargetSpec`] instances backing this evaluator.
+    ///
+    /// The result of [`PlatformEval::eval`] against a platform is a logical OR
+    /// of the results of evaluating the platform against each target spec.
+    pub fn target_specs(&self) -> &'g [TargetSpec] {
+        self.specs
     }
 }
 
