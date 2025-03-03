@@ -4,7 +4,7 @@
 use crate::{
     Error, PackageId,
     graph::{
-        DependencyDirection, PackageGraph, PackageIx, PackageLink, PackageSet,
+        DependencyDirection, PackageGraph, PackageIx, PackageLink, PackageResolver, PackageSet,
         cargo::build::CargoSetBuildState,
         feature::{FeatureGraph, FeatureSet},
     },
@@ -255,8 +255,29 @@ impl<'g> CargoSet<'g> {
         features_only: FeatureSet<'g>,
         opts: &CargoOptions<'_>,
     ) -> Result<Self, Error> {
+        Self::new_internal(initials, features_only, None, opts)
+    }
+
+    /// Like `Cargo.new`, but takes an additional `resolver` which can be used
+    /// to filter out some dependency edges.
+    pub fn with_resolver(
+        initials: FeatureSet<'g>,
+        features_only: FeatureSet<'g>,
+        mut resolver: impl PackageResolver<'g>,
+        opts: &CargoOptions<'_>,
+    ) -> Result<Self, Error> {
+        Self::new_internal(initials, features_only, Some(&mut resolver), opts)
+    }
+
+    /// Internal helper to deduplicate code across `CargoSet::new` and `CargoSet::with_resolver`.
+    fn new_internal(
+        initials: FeatureSet<'g>,
+        features_only: FeatureSet<'g>,
+        resolver: Option<&mut dyn PackageResolver<'g>>,
+        opts: &CargoOptions<'_>,
+    ) -> Result<Self, Error> {
         let build_state = CargoSetBuildState::new(initials.graph().package_graph, opts)?;
-        Ok(build_state.build(initials, features_only))
+        Ok(build_state.build(initials, features_only, resolver))
     }
 
     /// Creates a new `CargoIntermediateSet` based on the given query and options.
