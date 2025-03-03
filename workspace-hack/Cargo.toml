@@ -37,7 +37,7 @@ regex = { version = "1.11.1", default-features = false, features = ["perf", "std
 regex-automata = { version = "0.4.9", default-features = false, features = ["dfa", "hybrid", "meta", "nfa", "perf", "unicode"] }
 regex-syntax = { version = "0.8.5" }
 serde = { version = "1.0.218", features = ["alloc", "derive"] }
-serde_json = { version = "1.0.139", features = ["unbounded_depth"] }
+serde_json = { version = "1.0.140", features = ["unbounded_depth"] }
 textwrap = { version = "0.16.1", default-features = false, features = ["unicode-linebreak", "unicode-width"] }
 toml = { version = "0.5.11", features = ["preserve_order"] }
 zerocopy = { version = "0.7.35", features = ["derive", "simd"] }
