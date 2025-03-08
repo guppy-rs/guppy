@@ -4,7 +4,7 @@
 use crate::{
     DependencyKind, Error,
     graph::{
-        DependencyDirection, PackageGraph, PackageIx, PackageLink, PackageSet,
+        DependencyDirection, PackageGraph, PackageIx, PackageLink, PackageResolver, PackageSet,
         cargo::{
             CargoIntermediateSet, CargoOptions, CargoResolverVersion, CargoSet, InitialsPlatform,
         },
@@ -39,16 +39,17 @@ impl<'a> CargoSetBuildState<'a> {
         self,
         initials: FeatureSet<'g>,
         features_only: FeatureSet<'g>,
+        resolver: Option<&mut dyn PackageResolver<'g>>,
     ) -> CargoSet<'g> {
         match self.opts.resolver {
-            CargoResolverVersion::V1 => self.new_v1(initials, features_only, false),
+            CargoResolverVersion::V1 => self.new_v1(initials, features_only, resolver, false),
             CargoResolverVersion::V1Install => {
                 let avoid_dev_deps = !self.opts.include_dev;
-                self.new_v1(initials, features_only, avoid_dev_deps)
+                self.new_v1(initials, features_only, resolver, avoid_dev_deps)
             }
             // V2 and V3 do the same feature resolution.
             CargoResolverVersion::V2 | CargoResolverVersion::V3 => {
-                self.new_v2(initials, features_only)
+                self.new_v2(initials, features_only, resolver)
             }
         }
     }
@@ -68,15 +69,21 @@ impl<'a> CargoSetBuildState<'a> {
         self,
         initials: FeatureSet<'g>,
         features_only: FeatureSet<'g>,
+        resolver: Option<&mut dyn PackageResolver<'g>>,
         avoid_dev_deps: bool,
     ) -> CargoSet<'g> {
-        self.build_set(initials, features_only, |query| {
+        self.build_set(initials, features_only, resolver, |query| {
             self.new_v1_intermediate(query, avoid_dev_deps)
         })
     }
 
-    fn new_v2<'g>(self, initials: FeatureSet<'g>, features_only: FeatureSet<'g>) -> CargoSet<'g> {
-        self.build_set(initials, features_only, |query| {
+    fn new_v2<'g>(
+        self,
+        initials: FeatureSet<'g>,
+        features_only: FeatureSet<'g>,
+        resolver: Option<&mut dyn PackageResolver<'g>>,
+    ) -> CargoSet<'g> {
+        self.build_set(initials, features_only, resolver, |query| {
             self.new_v2_intermediate(query)
         })
     }
@@ -93,6 +100,7 @@ impl<'a> CargoSetBuildState<'a> {
         &self,
         initials: FeatureSet<'g>,
         features_only: FeatureSet<'g>,
+        mut resolver: Option<&mut dyn PackageResolver<'g>>,
         intermediate_fn: impl FnOnce(FeatureQuery<'g>) -> CargoIntermediateSet<'g>,
     ) -> CargoSet<'g> {
         // Prepare a package query for step 2.
@@ -219,6 +227,11 @@ impl<'a> CargoSetBuildState<'a> {
                             DependencyKind::Development,
                             target_platform,
                         ));
+            follow_target = follow_target
+                && resolver
+                    .as_mut()
+                    .map(|r| r.accept(query, link))
+                    .unwrap_or(true);
 
             // Proc macros build on the host, so for normal/dev dependencies redirect it to the host
             // instead.
@@ -226,7 +239,11 @@ impl<'a> CargoSetBuildState<'a> {
 
             // Build dependencies are evaluated against the host platform.
             let build_dep_redirect = consider_build
-                && is_enabled(target_set, &link, DependencyKind::Build, host_platform);
+                && is_enabled(target_set, &link, DependencyKind::Build, host_platform)
+                && resolver
+                    .as_mut()
+                    .map(|r| r.accept(query, link))
+                    .unwrap_or(true);
 
             // Finally, process what needs to be done.
             if build_dep_redirect || proc_macro_redirect {
@@ -284,7 +301,10 @@ impl<'a> CargoSetBuildState<'a> {
                         // The 'to' node is either in the workspace or a direct dependency.
                         host_direct_deps.visit(to.package_ix());
                     }
-                    true
+                    resolver
+                        .as_mut()
+                        .map(|r| r.accept(query, link))
+                        .unwrap_or(true)
                 } else {
                     false
                 }
