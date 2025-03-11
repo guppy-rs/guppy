@@ -158,6 +158,10 @@ impl<'a> CargoSetBuildState<'a> {
         let mut proc_macro_edge_ixs = Vec::new();
         // This list will contain build dep edges out of target packages.
         let mut build_dep_edge_ixs = Vec::new();
+        // This list will contain edges between target packages.
+        let mut target_edge_ixs = Vec::new();
+        // This list will contain edges between host packages.
+        let mut host_edge_ixs = Vec::new();
 
         let is_enabled = |feature_set: &FeatureSet<'_>,
                           link: &PackageLink<'_>,
@@ -265,6 +269,9 @@ impl<'a> CargoSetBuildState<'a> {
                 target_direct_deps.visit(to.package_ix());
             }
 
+            if follow_target {
+                target_edge_ixs.push(link.edge_ix());
+            }
             follow_target
         });
 
@@ -308,6 +315,7 @@ impl<'a> CargoSetBuildState<'a> {
                         // The 'to' node is either in the workspace or a direct dependency.
                         host_direct_deps.visit(to.package_ix());
                     }
+                    host_edge_ixs.push(link.edge_ix());
                     true
                 } else {
                     false
@@ -337,6 +345,8 @@ impl<'a> CargoSetBuildState<'a> {
             host_direct_deps,
             proc_macro_edge_ixs: SortedSet::new(proc_macro_edge_ixs),
             build_dep_edge_ixs: SortedSet::new(build_dep_edge_ixs),
+            target_edge_ixs: SortedSet::new(target_edge_ixs),
+            host_edge_ixs: SortedSet::new(host_edge_ixs),
         }
     }
 
