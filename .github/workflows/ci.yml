@@ -58,7 +58,7 @@ jobs:
           toolchain: ${{ matrix.rust-version }}
       - uses: Swatinem/rust-cache@82a92a6e8fbeee089604da2575dc567ae9ddeaab # v2
       - name: Install tools
-        uses: taiki-e/install-action@f87f9990b09867202953bff9aa0c80e23ee16bb7 # v2.49.18
+        uses: taiki-e/install-action@87b5304d4e82236718783683826c899da7e5470f # v2.49.19
         with:
           tool: cargo-hack,just,nextest
 
