@@ -68,15 +68,6 @@ fn cargo_set_with_resolver<'g>(
 ) -> CargoSet<'g> {
     let package_graph = test_fixture.graph();
 
-    /* DO NOT SUBMIT
-        let roots = package_graph
-            .packages()
-            .filter(|p| p.reverse_direct_links().next().is_none())
-            .map(|p| p.name().to_string())
-            .collect::<Vec<_>>();
-        dbg!(roots);
-    */
-
     let initials = package_graph
         .resolve_package_name(root_package_name)
         .to_feature_set(StandardFeatures::Default);
