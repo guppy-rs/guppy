@@ -6,7 +6,7 @@ edition = "2018"
 publish = false
 
 [dependencies]
-anyhow = "1.0.97"
+anyhow = "1.0.98"
 # need a cfg-expr update to use newer versions of Cargo
 cargo = { version = "0.86.0", features = ["vendored-libgit2"] }
 clap = { version = "3.2.25", features = ["derive"] }
