@@ -27,7 +27,7 @@ clap_builder = { version = "4.5.30", default-features = false, features = ["colo
 getrandom = { version = "0.2.15", default-features = false, features = ["std"] }
 include_dir = { version = "0.7.4", features = ["glob"] }
 indexmap = { version = "1.9.3", default-features = false, features = ["std"] }
-log = { version = "0.4.26", default-features = false, features = ["std"] }
+log = { version = "0.4.27", default-features = false, features = ["std"] }
 miette = { version = "7.5.0", features = ["fancy"] }
 num-traits = { version = "0.2.19" }
 once_cell = { version = "1.21.3" }
