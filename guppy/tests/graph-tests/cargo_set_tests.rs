@@ -178,6 +178,14 @@ fn test_package_resolver_visits() {
         ],
     );
 
+    // In this test input none of the links are trimmed by cargo algorithm.
+    let count_of_links_visited_by_resolver = resolver.trace.len();
+    let count_of_cargo_set_links = cargo_set.proc_macro_links().count()
+        + cargo_set.build_dep_links().count()
+        + cargo_set.target_links().count()
+        + cargo_set.host_links().count();
+    assert_eq!(count_of_links_visited_by_resolver, count_of_cargo_set_links);
+
     assert_eq!(
         links_to_strings(cargo_set.proc_macro_links()),
         vec![
@@ -188,6 +196,56 @@ fn test_package_resolver_visits() {
     assert_eq!(
         links_to_strings(cargo_set.build_dep_links()),
         vec!["datatest@0.4.2 => version_check@0.9.1",],
+    );
+    assert_eq!(
+        links_to_strings(cargo_set.target_links()),
+        vec![
+            "aho-corasick@0.7.6 => memchr@2.2.1",
+            "datatest@0.4.2 => regex@1.3.1",
+            "datatest@0.4.2 => region@2.1.2",
+            "datatest@0.4.2 => serde@1.0.100",
+            "datatest@0.4.2 => serde_yaml@0.8.9",
+            "datatest@0.4.2 => walkdir@2.2.9",
+            "datatest@0.4.2 => yaml-rust@0.4.3",
+            "mach@0.2.3 => libc@0.2.62",
+            "regex@1.3.1 => aho-corasick@0.7.6",
+            "regex@1.3.1 => memchr@2.2.1",
+            "regex@1.3.1 => regex-syntax@0.6.12",
+            "regex@1.3.1 => thread_local@0.3.6",
+            "region@2.1.2 => bitflags@1.1.0",
+            "region@2.1.2 => libc@0.2.62",
+            "region@2.1.2 => mach@0.2.3",
+            "region@2.1.2 => winapi@0.3.8",
+            "same-file@1.0.5 => winapi-util@0.1.2",
+            "serde_yaml@0.8.9 => dtoa@0.4.4",
+            "serde_yaml@0.8.9 => linked-hash-map@0.5.2",
+            "serde_yaml@0.8.9 => serde@1.0.100",
+            "serde_yaml@0.8.9 => yaml-rust@0.4.3",
+            "testcrate@0.1.0 => datatest@0.4.2",
+            "thread_local@0.3.6 => lazy_static@1.4.0",
+            "walkdir@2.2.9 => same-file@1.0.5",
+            "walkdir@2.2.9 => winapi-util@0.1.2",
+            "walkdir@2.2.9 => winapi@0.3.8",
+            "winapi-util@0.1.2 => winapi@0.3.8",
+            "winapi@0.3.8 => winapi-i686-pc-windows-gnu@0.4.0",
+            "winapi@0.3.8 => winapi-x86_64-pc-windows-gnu@0.4.0",
+            "yaml-rust@0.4.3 => linked-hash-map@0.5.2",
+        ],
+    );
+    assert_eq!(
+        links_to_strings(cargo_set.host_links()),
+        vec![
+            "ctor@0.1.10 => quote@1.0.2",
+            "ctor@0.1.10 => syn@1.0.5",
+            "datatest-derive@0.4.0 => proc-macro2@1.0.3",
+            "datatest-derive@0.4.0 => quote@1.0.2",
+            "datatest-derive@0.4.0 => syn@1.0.5",
+            "proc-macro2@1.0.3 => unicode-xid@0.2.0",
+            "quote@1.0.2 => proc-macro2@1.0.3",
+            "syn@1.0.5 => proc-macro2@1.0.3",
+            "syn@1.0.5 => quote@1.0.2",
+            "syn@1.0.5 => unicode-xid@0.2.0",
+        ],
     );
 }
 
@@ -216,6 +274,19 @@ fn test_package_resolver_filtering_normal_links_on_target() {
     assert!(!trace.contains("winapi@0.3.8 => winapi-x86_64-pc-windows-gnu@0.4.0"));
     assert!(!trace.contains("winapi@0.3.8 => winapi-i686-pc-windows-gnu@0.4.0"));
     assert!(!trace.contains("winapi-util@0.1.2 => winapi@0.3.8"));
+
+    // The resolver was asked about these links, but didn't `accept` them.
+    // Therefore these links should be present in the `trace`, but missing from
+    // the final `cargo_set`.
+    let cargo_set_links = links_to_strings(cargo_set.target_links())
+        .into_iter()
+        .collect::<HashSet<_>>();
+    assert!(!cargo_set_links.contains("walkdir@2.2.9 => winapi@0.3.8"));
+    assert!(!cargo_set_links.contains("region@2.1.2 => winapi@0.3.8"));
+    assert!(!cargo_set_links.contains("same-file@1.0.5 => winapi-util@0.1.2"));
+    assert!(trace.contains("walkdir@2.2.9 => winapi@0.3.8"));
+    assert!(trace.contains("region@2.1.2 => winapi@0.3.8"));
+    assert!(trace.contains("same-file@1.0.5 => winapi-util@0.1.2"));
 }
 
 #[test]
@@ -238,6 +309,17 @@ fn test_package_resolver_filtering_build_links_on_target() {
 
     // If `version_check` has transitive dependencies, then we would test here that
     // they were not visited/consulted by the `resolver`.
+
+    // The resolver was asked about these links, but didn't `accept` them.
+    // Therefore these links should be present in the `trace`, but missing from
+    // the final `cargo_set`.
+    let trace = resolver.trace.into_iter().collect::<HashSet<_>>();
+    let cargo_set_links = links_to_strings(cargo_set.build_dep_links())
+        .into_iter()
+        .collect::<HashSet<_>>();
+    assert!(!cargo_set_links.contains("datatest@0.4.2 => version_check@0.9.1"));
+    dbg!(&trace);
+    assert!(trace.contains("datatest@0.4.2 => version_check@0.9.1"));
 }
 
 #[test]
@@ -271,4 +353,21 @@ fn test_package_resolver_filtering_links_on_host() {
     assert!(!trace.contains("syn@1.0.5 => proc-macro2@1.0.3"));
     assert!(!trace.contains("quote@1.0.2 => proc-macro2@1.0.3"));
     assert!(!trace.contains("proc-macro2@1.0.3 => unicode-xid@0.2.0"));
+
+    // The resolver was asked about these links, but didn't `accept` them.
+    // Therefore these links should be present in the `trace`, but missing from
+    // the final `cargo_set`.
+    let cargo_set_links = links_to_strings(cargo_set.host_links())
+        .into_iter()
+        .collect::<HashSet<_>>();
+    assert!(!cargo_set_links.contains("ctor@0.1.10 => syn@1.0.5"));
+    assert!(!cargo_set_links.contains("ctor@0.1.10 => quote@1.0.2"));
+    assert!(!cargo_set_links.contains("datatest-derive@0.4.0 => syn@1.0.5"));
+    assert!(!cargo_set_links.contains("datatest-derive@0.4.0 => quote@1.0.2"));
+    assert!(!cargo_set_links.contains("datatest-derive@0.4.0 => proc-macro2@1.0.3"));
+    assert!(trace.contains("ctor@0.1.10 => syn@1.0.5"));
+    assert!(trace.contains("ctor@0.1.10 => quote@1.0.2"));
+    assert!(trace.contains("datatest-derive@0.4.0 => syn@1.0.5"));
+    assert!(trace.contains("datatest-derive@0.4.0 => quote@1.0.2"));
+    assert!(trace.contains("datatest-derive@0.4.0 => proc-macro2@1.0.3"));
 }

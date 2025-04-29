@@ -225,6 +225,8 @@ pub struct CargoSet<'g> {
     pub(super) host_direct_deps: PackageSet<'g>,
     pub(super) proc_macro_edge_ixs: SortedSet<EdgeIndex<PackageIx>>,
     pub(super) build_dep_edge_ixs: SortedSet<EdgeIndex<PackageIx>>,
+    pub(super) target_edge_ixs: SortedSet<EdgeIndex<PackageIx>>,
+    pub(super) host_edge_ixs: SortedSet<EdgeIndex<PackageIx>>,
 }
 
 assert_covariant!(CargoSet);
@@ -392,6 +394,7 @@ impl<'g> CargoSet<'g> {
     /// ## Notes
     ///
     /// Procedural macro packages will be included in the *host* feature set.
+    /// See also [`Self::host_features`].
     ///
     /// The returned iterator will include proc macros that are depended on normally or in dev
     /// builds from initials (if `include_dev` is set), but not the ones in the
@@ -416,6 +419,39 @@ impl<'g> CargoSet<'g> {
     pub fn build_dep_links<'a>(&'a self) -> impl ExactSizeIterator<Item = PackageLink<'g>> + 'a {
         let package_graph = self.target_features.graph().package_graph;
         self.build_dep_edge_ixs
+            .iter()
+            .map(move |edge_ix| package_graph.edge_ix_to_link(*edge_ix))
+    }
+
+    /// Returns `PackageLink` instances for normal dependencies between target packages.
+    ///
+    /// ## Notes
+    ///
+    /// For each link, both the `from` and the `to` package are built on the target.
+    ///
+    /// Target packages will be included in the *target* feature set.
+    /// See also [`Self::target_features`].
+    pub fn target_links<'a>(&'a self) -> impl ExactSizeIterator<Item = PackageLink<'g>> + 'a {
+        let package_graph = self.target_features.graph().package_graph;
+        self.target_edge_ixs
+            .iter()
+            .map(move |edge_ix| package_graph.edge_ix_to_link(*edge_ix))
+    }
+
+    /// Returns `PackageLink` instances for dependencies between host packages.
+    ///
+    /// ## Notes
+    ///
+    /// For each link, both the `from` and the `to` package are built on the host.
+    /// Typically most links are normal dependencies, but it is possible to have
+    /// build dependencies as well (e.g. dependencies of a build script used
+    /// in a proc-macro package).
+    ///
+    /// Host packages will be included in the *host* feature set.
+    /// See also [`Self::host_features`].
+    pub fn host_links<'a>(&'a self) -> impl ExactSizeIterator<Item = PackageLink<'g>> + 'a {
+        let package_graph = self.target_features.graph().package_graph;
+        self.host_edge_ixs
             .iter()
             .map(move |edge_ix| package_graph.edge_ix_to_link(*edge_ix))
     }
