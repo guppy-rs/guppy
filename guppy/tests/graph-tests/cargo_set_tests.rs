@@ -76,7 +76,7 @@ fn cargo_set_with_resolver<'g>(
         .to_feature_set(StandardFeatures::Default);
 
     let cargo_options = CargoOptions::new();
-    CargoSet::with_resolver(initials, no_extra_features, resolver, &cargo_options).unwrap()
+    CargoSet::with_package_resolver(initials, no_extra_features, resolver, &cargo_options).unwrap()
 }
 
 fn cargo_set_package_names(cargo_set: &CargoSet) -> Vec<String> {

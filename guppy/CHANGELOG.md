@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.17.18] - 2025-04-29
+
+### Added
+
+- `CargoSet::with_package_resolver` supports passing in a `PackageResolver` for additional dynamic filtering of dependency edges.
+- `CargoSet::target_links` and `host_links` return the set of `PackageLink` instances followed on the target and host platforms, respectively.
+
+Thanks to [anforowicz](https://github.com/anforowicz) for these contributions!
+
 ## [0.17.17] - 2025-02-21
 
 ### Added
@@ -761,6 +770,7 @@ lazy_static = "0.2"
 
 - Initial release.
 
+[0.17.18]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.18
 [0.17.17]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.17
 [0.17.16]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.16
 [0.17.15]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.15
