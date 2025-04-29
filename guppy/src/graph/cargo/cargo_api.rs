@@ -260,9 +260,17 @@ impl<'g> CargoSet<'g> {
         Self::new_internal(initials, features_only, None, opts)
     }
 
-    /// Like `Cargo.new`, but takes an additional `resolver` which can be used
-    /// to filter out some dependency edges.
-    pub fn with_resolver(
+    /// Like `Cargo.new`, but takes an additional [`PackageResolver`] which can
+    /// be used to filter out some dependency edges, or to collect additional
+    /// information.
+    ///
+    /// [`resolver.accept`] is called for both target and host dependencies. It
+    /// is called after static filtering through
+    /// [`CargoOptions::add_omitted_packages`], but before any other decisions
+    /// are made.
+    ///
+    /// [`resolver.accept`]: PackageResolver::accept
+    pub fn with_package_resolver(
         initials: FeatureSet<'g>,
         features_only: FeatureSet<'g>,
         mut resolver: impl PackageResolver<'g>,

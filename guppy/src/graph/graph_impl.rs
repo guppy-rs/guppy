@@ -26,8 +26,8 @@ use semver::{Version, VersionReq};
 use smallvec::SmallVec;
 use std::{
     collections::{BTreeMap, HashSet},
-    fmt, iter,
-    iter::FromIterator,
+    fmt,
+    iter::{self, FromIterator},
 };
 
 use super::feature::{FeatureFilter, FeatureSet};

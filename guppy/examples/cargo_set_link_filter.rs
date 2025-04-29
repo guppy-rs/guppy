@@ -174,7 +174,7 @@ fn main() -> Result<(), Error> {
         let resolver =
             PackageResolverForPlatformSet::new(vec![win32_platform_spec(), win64_platform_spec()]);
         let cargo_set =
-            CargoSet::with_resolver(initials, no_extra_features, resolver, &cargo_options)?;
+            CargoSet::with_package_resolver(initials, no_extra_features, resolver, &cargo_options)?;
         cargo_set_to_package_names(cargo_set)
     };
     assert_eq!(
