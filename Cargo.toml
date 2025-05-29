@@ -30,7 +30,7 @@ snapbox = { version = "0.6.21", features = ["term-svg"] }
 [workspace.package]
 # Note: we commit to supporting the last 6 months of Rust releases. This
 # typically means N-4 to 5.
-rust-version = "1.78"
+rust-version = "1.82"
 
 [workspace.lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = [

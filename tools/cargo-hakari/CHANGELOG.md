@@ -30,7 +30,7 @@ version 3 is the same as version 2. You are welcome to keep using `resolver = "2
 
 ### Changed
 
-- MSRV for compiling hakari updated to Rust 1.78.
+- MSRV for compiling hakari updated to Rust 1.82.
 - Builtin targets updated to Rust 1.83.
 
 ## [0.9.33] - 2024-10-06
