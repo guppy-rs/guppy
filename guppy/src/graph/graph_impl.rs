@@ -1182,7 +1182,7 @@ pub(crate) struct PackageMetadataImpl {
     // Implementation note: we use Box<str> and Box<Path> to save on memory use when possible.
 
     // Fields extracted from the package.
-    pub(super) name: String,
+    pub(super) name: Box<str>,
     pub(super) version: Version,
     pub(super) authors: Vec<String>,
     pub(super) description: Option<Box<str>>,

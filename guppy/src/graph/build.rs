@@ -113,7 +113,7 @@ impl WorkspaceImpl {
             };
             members_by_path.insert(workspace_path.to_path_buf(), id.clone());
 
-            match members_by_name.entry(package_metadata.name.clone().into_boxed_str()) {
+            match members_by_name.entry(package_metadata.name.clone()) {
                 Entry::Vacant(vacant) => {
                     vacant.insert(id.clone());
                 }
@@ -146,7 +146,7 @@ struct GraphBuildState<'a> {
     dep_graph: Graph<PackageId, PackageLinkImpl, Directed, PackageIx>,
     package_data: AHashMap<PackageId, Rc<PackageDataValue>>,
     // The above, except by package name.
-    by_package_name: AHashMap<String, Vec<Rc<PackageDataValue>>>,
+    by_package_name: AHashMap<Box<str>, Vec<Rc<PackageDataValue>>>,
 
     // The values of resolve_data are the resolved dependencies. This is mutated so it is stored
     // separately from package_data.
@@ -177,7 +177,7 @@ impl<'a> GraphBuildState<'a> {
 
         // While it is possible to have duplicate names so the hash map is smaller, just make this
         // as big as package_data.
-        let mut by_package_name: AHashMap<String, Vec<Rc<PackageDataValue>>> =
+        let mut by_package_name: AHashMap<Box<str>, Vec<Rc<PackageDataValue>>> =
             AHashMap::with_capacity(all_package_data.len());
         for package_data in all_package_data.values() {
             by_package_name
@@ -349,7 +349,7 @@ impl<'a> GraphBuildState<'a> {
         Ok((
             package_id,
             PackageMetadataImpl {
-                name: package.name,
+                name: package.name.to_string().into(),
                 version: package.version,
                 authors: package.authors,
                 description: package.description.map(|s| s.into()),
@@ -424,7 +424,7 @@ impl<'a> GraphBuildState<'a> {
 #[derive(Debug)]
 struct PackageDataValue {
     package_ix: NodeIndex<PackageIx>,
-    name: String,
+    name: Box<str>,
     resolved_name: ResolvedName,
     // build_targets is used in two spots: in the constructor here, and removed from this field in
     // package_data_and_remove_build_targets.
@@ -453,7 +453,7 @@ impl PackageDataValue {
                     .lib_name
                     .as_deref()
                     .expect("lib_name is always specified for library targets");
-                if lib_name != package.name {
+                if lib_name != package.name.as_str() {
                     ResolvedName::LibNameSpecified(lib_name.to_string())
                 } else {
                     // The resolved name is the same as the package name.
@@ -470,7 +470,7 @@ impl PackageDataValue {
 
         let value = PackageDataValue {
             package_ix,
-            name: package.name.clone(),
+            name: package.name.to_string().into(),
             resolved_name,
             build_targets: RefCell::new(build_targets),
             version: package.version.clone(),
@@ -723,14 +723,14 @@ impl<'g> DependencyResolver<'g> {
     fn new(
         from_id: &'g PackageId,
         package_data: &'g AHashMap<PackageId, Rc<PackageDataValue>>,
-        by_package_name: &'g AHashMap<String, Vec<Rc<PackageDataValue>>>,
+        by_package_name: &'g AHashMap<Box<str>, Vec<Rc<PackageDataValue>>>,
         package_deps: impl IntoIterator<Item = &'g Dependency>,
     ) -> Self {
         let mut dep_reqs = DependencyReqs::default();
         for dep in package_deps {
             // Determine what the resolved name of each package could be by matching on package name
             // and version (NOT source, because the source can be patched).
-            let Some(packages) = by_package_name.get(&dep.name) else {
+            let Some(packages) = by_package_name.get(dep.name.as_str()) else {
                 // This dependency did not lead to a resolved package.
                 continue;
             };

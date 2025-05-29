@@ -75,7 +75,7 @@ fn proc_macro_mixed_kinds() {
         let package = metadata
             .packages
             .iter_mut()
-            .find(|p| p.name == "macro")
+            .find(|p| p.name.as_str() == "macro")
             .expect("valid package");
         package
             .targets
