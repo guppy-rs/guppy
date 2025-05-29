@@ -137,7 +137,7 @@ impl HakariBuilderSummary {
             registries: builder
                 .registries
                 .iter()
-                .map(|(name, url)| (name.clone(), url.clone()))
+                .map(|registry| (registry.name.clone(), registry.url.clone()))
                 .collect(),
             unify_target_host: builder.unify_target_host(),
             output_single_feature: builder.output_single_feature(),
