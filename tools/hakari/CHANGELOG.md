@@ -28,7 +28,7 @@ version 3 is the same as version 2.
 ### Changed
 
 - Builtin targets updated to Rust 1.83.
-- MSRV updated to Rust 1.78.
+- MSRV updated to Rust 1.82.
 
 ## [0.17.5] - 2024-10-06
 

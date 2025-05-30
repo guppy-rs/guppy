@@ -70,7 +70,7 @@ alias for `CargoResolverVersion::V2`.
 ### Changed
 
 - Internal dependency update: `cargo_metadata` updated to 0.19.1.
-- MSRV updated to Rust 1.78.
+- MSRV updated to Rust 1.82.
 
 ## [0.17.9] - 2024-12-02
 

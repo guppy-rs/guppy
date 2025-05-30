@@ -53,7 +53,7 @@ Internal dependency `cfg-expr` updated to 0.18.0, updating builtin targets to Ru
 
 ### Changed
 
-- MSRV updated to Rust 1.78.
+- MSRV updated to Rust 1.82.
 - Internal dependency `cfg-expr` updated to 0.17.2, updating builtin targets to Rust 1.83.
 
 ## [3.2.2] - 2024-09-11

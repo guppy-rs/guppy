@@ -49,7 +49,7 @@ impl<'g> HakariBuilder<'g> {
                 }
             }
             Err(VerifyErrors {
-                hakari,
+                hakari: Box::new(hakari),
                 dependency_ids,
             })
         }
@@ -67,7 +67,7 @@ pub struct VerifyErrors<'g> {
     ///
     /// This is a special "verify mode" instance; for more about it, see the documentation for the
     /// [`verify`](crate::verify) module.
-    pub hakari: Hakari<'g>,
+    pub hakari: Box<Hakari<'g>>,
 
     /// The dependency package IDs that were built with more than one feature set.
     pub dependency_ids: BTreeSet<&'g PackageId>,

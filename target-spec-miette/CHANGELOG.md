@@ -30,7 +30,7 @@ want to check in `Cargo.lock`.)
 
 ### Changed
 
-- MSRV updated to Rust 1.78.
+- MSRV updated to Rust 1.82.
 
 ## [0.4.0] - 2024-02-05
 
