@@ -24,8 +24,8 @@ bit-vec = { version = "0.8.0" }
 camino = { version = "1.1.9", default-features = false, features = ["serde1"] }
 clap = { version = "4.5.30", features = ["derive"] }
 clap_builder = { version = "4.5.30", default-features = false, features = ["color", "help", "std", "suggestions", "usage"] }
+foldhash = { version = "0.1.5" }
 getrandom = { version = "0.2.15", default-features = false, features = ["std"] }
-hashbrown = { version = "0.15.3", default-features = false, features = ["allocator-api2", "inline-more"] }
 include_dir = { version = "0.7.4", features = ["glob"] }
 indexmap = { version = "1.9.3", default-features = false, features = ["std"] }
 log = { version = "0.4.27", default-features = false, features = ["std"] }
@@ -33,7 +33,7 @@ miette = { version = "7.6.0", features = ["fancy"] }
 num-traits = { version = "0.2.19" }
 once_cell = { version = "1.21.3" }
 owo-colors = { version = "3.5.0", default-features = false, features = ["supports-colors"] }
-petgraph = { version = "0.7.1", default-features = false, features = ["graphmap"] }
+petgraph = { version = "0.8.1", default-features = false, features = ["graphmap", "std"] }
 regex = { version = "1.11.1", default-features = false, features = ["perf", "std"] }
 regex-automata = { version = "0.4.9", default-features = false, features = ["dfa", "hybrid", "meta", "nfa", "perf", "unicode"] }
 regex-syntax = { version = "0.8.5" }

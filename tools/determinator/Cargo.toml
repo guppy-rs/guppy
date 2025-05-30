@@ -33,8 +33,8 @@ guppy = { version = "0.17.19", path = "../../guppy", features = [
     "summaries",
 ] }
 once_cell = "1.21.3"
-petgraph = { version = "0.7.1", default-features = false, features = [
-    "graphmap",
+petgraph = { version = "0.8.1", default-features = false, features = [
+    "graphmap", "std",
 ] }
 rayon = "1.10.0"
 serde = { version = "1.0.219", features = ["derive"] }
