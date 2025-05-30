@@ -28,7 +28,7 @@ impl<'a> VersionDisplay<'a> {
     }
 }
 
-impl<'a> fmt::Display for VersionDisplay<'a> {
+impl fmt::Display for VersionDisplay<'_> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         if !self.exact_versions && self.version.pre.is_empty() {
             // Minimal versions permitted, so attempt to minimize the version.
@@ -58,7 +58,7 @@ impl<'a> fmt::Display for VersionDisplay<'a> {
 mod tests {
     use super::*;
     use fixtures::json::*;
-    use guppy::{graph::DependencyDirection, VersionReq};
+    use guppy::{VersionReq, graph::DependencyDirection};
 
     #[test]
     fn min_version() {

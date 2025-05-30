@@ -4,12 +4,12 @@
 //! A sorted, deduplicated list of features from a single package.
 
 use crate::{
+    PackageId,
     graph::{
-        feature::{FeatureId, FeatureLabel},
         PackageMetadata,
+        feature::{FeatureId, FeatureLabel},
     },
     sorted_set::SortedSet,
-    PackageId,
 };
 use std::{fmt, slice, vec};
 
@@ -113,7 +113,7 @@ impl<'g> FeatureList<'g> {
     }
 }
 
-impl<'g> fmt::Debug for FeatureList<'g> {
+impl fmt::Debug for FeatureList<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("FeatureList")
             .field("package", self.package.id())
@@ -182,7 +182,7 @@ impl<'g, 'a> Iter<'g, 'a> {
     }
 }
 
-impl<'g, 'a> Iterator for Iter<'g, 'a> {
+impl<'g> Iterator for Iter<'g, '_> {
     type Item = FeatureId<'g>;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -198,7 +198,7 @@ impl<'g, 'a> Iterator for Iter<'g, 'a> {
 #[derive(Clone, Copy)]
 pub struct DisplayFeatures<'g, 'a>(&'a [FeatureLabel<'g>]);
 
-impl<'g, 'a> fmt::Display for DisplayFeatures<'g, 'a> {
+impl fmt::Display for DisplayFeatures<'_, '_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let len = self.0.len();
         for (idx, label) in self.0.iter().enumerate() {
@@ -211,7 +211,7 @@ impl<'g, 'a> fmt::Display for DisplayFeatures<'g, 'a> {
     }
 }
 
-impl<'g, 'a> fmt::Debug for DisplayFeatures<'g, 'a> {
+impl fmt::Debug for DisplayFeatures<'_, '_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // Use the Display impl as the debug one because it's easier to read.
         write!(f, "{}", self)

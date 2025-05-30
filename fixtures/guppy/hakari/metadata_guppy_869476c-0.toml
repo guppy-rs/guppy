@@ -2,53 +2,37 @@
 #    cargo run -p fixture-manager -- generate-hakari --fixture metadata_guppy_869476c
 
 ### BEGIN HAKARI SECTION
-# resolver = 'install'
+# resolver = '2'
 # unify-target-host = 'none'
 # output-single-feature = false
-# dep-format-version = '4'
+# dep-format-version = '3'
 # workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['xtensa-esp32s3-none-elf', 'aarch64-wrs-vxworks']
+# platforms = ['xtensa-esp32s3-none-elf', 'aarch64_be-unknown-linux-gnu_ilp32']
 # [[traversal-excludes.ids]]
-# name = 'bit-set'
-# version = '0.5.2'
+# name = 'libz-sys'
+# version = '1.1.2'
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
-# name = 'fixtures'
-# version = '0.1.0'
-# workspace-path = 'fixtures'
-#
-# [[traversal-excludes.ids]]
-# name = 'hex'
-# version = '0.3.2'
+# name = 'rand_xorshift'
+# version = '0.2.0'
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
-# name = 'libgit2-sys'
-# version = '0.12.13+1.0.1'
-# crates-io = true
-#
-# [[traversal-excludes.ids]]
-# name = 'serde'
-# version = '1.0.116'
+# name = 'rustc-workspace-hack'
+# version = '1.0.0'
 # crates-io = true
 # [[final-excludes.ids]]
-# name = 'fixtures'
-# version = '0.1.0'
-# workspace-path = 'fixtures'
-#
-# [[final-excludes.ids]]
-# name = 'quote'
-# version = '1.0.7'
+# name = 'bstr'
+# version = '0.2.13'
 # crates-io = true
 #
 # [[final-excludes.ids]]
-# name = 'rand_xoshiro'
+# name = 'winapi-i686-pc-windows-gnu'
 # version = '0.4.0'
 # crates-io = true
 
 [dependencies]
-bstr = { version = "0.2", features = ["serde1"] }
 byteorder = { version = "1", default-features = false, features = ["std"] }
 clap = { version = "2" }
 either = { version = "1" }
@@ -57,13 +41,18 @@ memchr = { version = "2", features = ["use_std"] }
 num-traits = { version = "0.2" }
 regex = { version = "1" }
 regex-syntax = { version = "0.6" }
+serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1", features = ["raw_value"] }
 
 [build-dependencies]
 proc-macro2 = { version = "1" }
+quote = { version = "1" }
 syn = { version = "1", features = ["full", "visit"] }
 
-[target.aarch64-wrs-vxworks.dependencies]
+[target.aarch64_be-unknown-linux-gnu_ilp32.dependencies]
+libc = { version = "0.2" }
+
+[target.aarch64_be-unknown-linux-gnu_ilp32.build-dependencies]
 libc = { version = "0.2" }
 
 ### END HAKARI SECTION

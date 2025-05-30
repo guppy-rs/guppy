@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'riscv64gc-unknown-openbsd'
+triple = 'riscv64imac-unknown-nuttx-elf'
 target-features = ['fma', 'sse4.1']
 flags = ['flag-test']
 

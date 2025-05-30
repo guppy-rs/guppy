@@ -2,19 +2,19 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use crate::{
+    DependencyKind, Error, PackageId,
     debug_ignore::DebugIgnore,
     errors::FeatureGraphWarning,
     graph::{
-        feature::{
-            build::{FeatureGraphBuildState, FeaturePetgraph},
-            Cycles, FeatureFilter, FeatureList, WeakDependencies, WeakIndex,
-        },
         DependencyDirection, FeatureIndexInPackage, FeatureIx, PackageGraph, PackageIx,
         PackageLink, PackageMetadata,
+        feature::{
+            Cycles, FeatureFilter, FeatureList, WeakDependencies, WeakIndex,
+            build::{FeatureGraphBuildState, FeaturePetgraph},
+        },
     },
     petgraph_support::{scc::Sccs, topo::TopoWithCycles},
     platform::{PlatformStatus, PlatformStatusImpl},
-    DependencyKind, Error, PackageId,
 };
 use ahash::AHashMap;
 use once_cell::sync::OnceCell;
@@ -528,7 +528,7 @@ impl<'g> From<(&'g PackageId, FeatureLabel<'g>)> for FeatureId<'g> {
 ///     "region 2.1.2 (registry+https://github.com/rust-lang/crates.io-index)/dep:bar"
 /// );
 /// ```
-impl<'g> fmt::Display for FeatureId<'g> {
+impl fmt::Display for FeatureId<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}/{}", self.package_id, self.label)
     }
@@ -552,7 +552,7 @@ pub enum FeatureLabel<'g> {
     OptionalDependency(&'g str),
 }
 
-impl<'g> FeatureLabel<'g> {
+impl FeatureLabel<'_> {
     /// Returns the kind of feature this is.
     ///
     /// The kind of a feature is simply the enum variant without any associated data.
@@ -581,8 +581,7 @@ impl<'g> FeatureLabel<'g> {
 /// assert_eq!(format!("{}", FeatureLabel::Named("foo")), "foo");
 /// assert_eq!(format!("{}", FeatureLabel::OptionalDependency("bar")), "dep:bar");
 /// ```
-
-impl<'g> fmt::Display for FeatureLabel<'g> {
+impl fmt::Display for FeatureLabel<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Base => write!(f, "[base]"),

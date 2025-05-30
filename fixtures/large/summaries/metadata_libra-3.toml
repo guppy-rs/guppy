@@ -7,12 +7,12 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'mipsel-unknown-none'
+triple = 'powerpc-unknown-freebsd'
 target-features = []
 flags = ['foo']
 
 [metadata.target-platform]
-triple = 'powerpc-unknown-netbsd'
+triple = 'powerpc64-unknown-linux-musl'
 target-features = 'unknown'
 flags = ['abc']
 

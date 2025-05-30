@@ -2,26 +2,26 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_cycle_features
 
 [metadata]
-resolver = 'install'
-include-dev = false
-initials-platform = 'standard'
+resolver = '2'
+include-dev = true
+initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'xtensa-esp32s2-none-elf'
+triple = 'xtensa-esp32s2-espidf'
 target-features = 'all'
 
 [metadata.target-platform]
-triple = 'armv5te-unknown-linux-gnueabi'
+triple = 'armv6-unknown-freebsd'
 target-features = 'all'
 
-[[target-package]]
+[[host-package]]
 name = 'testcycles-base'
 version = '0.1.0'
 workspace-path = 'testcycles-base'
 status = 'initial'
 features = ['default', 'default-enable', 'default-transitive', 'helper-enable', 'helper-transitive']
 
-[[target-package]]
+[[host-package]]
 name = 'testcycles-helper'
 version = '0.1.0'
 workspace-path = 'testcycles-helper'

@@ -2,18 +2,33 @@
 #    cargo run -p fixture-manager -- generate-hakari --fixture metadata_cycle2
 
 ### BEGIN HAKARI SECTION
-# resolver = '2'
-# unify-target-host = 'replicate-target-on-host'
+# resolver = '3'
+# unify-target-host = 'none'
 # output-single-feature = false
 # dep-format-version = '2'
 # workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['mipsisa64r6el-unknown-linux-gnuabi64', 'aarch64-apple-visionos', 'wasm32-wasip1']
-# [[traversal-excludes.ids]]
+# platforms = ['powerpc-unknown-linux-muslspe', 'aarch64-apple-visionos', 'wasm32-unknown-emscripten']
+#
+# [traversal-excludes]
+# [[final-excludes.ids]]
+# name = 'lower-a'
+# version = '0.1.0'
+# workspace-path = 'lower-a'
+#
+# [[final-excludes.ids]]
 # name = 'lower-b'
 # version = '0.1.0'
 # workspace-path = 'lower-b'
 #
-# [final-excludes]
+# [[final-excludes.ids]]
+# name = 'upper-a'
+# version = '0.1.0'
+# workspace-path = 'upper-a'
+#
+# [[final-excludes.ids]]
+# name = 'upper-b'
+# version = '0.1.0'
+# workspace-path = 'upper-b'
 
 ### END HAKARI SECTION
 

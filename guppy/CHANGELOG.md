@@ -1,5 +1,96 @@
 # Changelog
 
+## [0.17.19] - 2025-05-29
+
+### Changed
+
+- Internal dependency update: `cargo_metadata` updated to 0.20.0.
+- Some older versions of Cargo, when the unstable [bindeps feature](https://github.com/rust-lang/cargo/issues/9096) is enabled, generate JSON output that is no longer supported by `cargo_metadata`. If you run into an error, please update your nightly toolchain. Nightly versions from at least 2024-07 do not appear to produce invalid metadata.
+- MSRV updated to Rust 1.82.
+
+## [0.17.18] - 2025-04-29
+
+### Added
+
+- `CargoSet::with_package_resolver` supports passing in a `PackageResolver` for additional dynamic filtering of dependency edges.
+- `CargoSet::target_links` and `host_links` return the set of `PackageLink` instances followed on the target and host platforms, respectively.
+
+Thanks to [anforowicz](https://github.com/anforowicz) for these contributions!
+
+## [0.17.17] - 2025-02-21
+
+### Added
+
+- Add `PlatformEval::target_specs` to obtain the list of `TargetSpec` instances backing a platform evaluator. Thanks to [anforowicz](https://github.com/anforowicz) for the contribution!
+
+## [0.17.16] - 2025-02-15
+
+### Added
+
+- `BuildTarget::test_by_default` returns true if tests are run for a build target by default.
+- `BuildTarget::doc_by_default` returns true if documentation is enabled for a build target, respectively.
+
+### Changed
+
+- `BuildTarget::doc_tests` is now `BuildTarget::doctest_by_default`. The old name has been deprecated, but is kept around for compatibility.
+
+## [0.17.15] - 2025-02-15
+
+(This version was yanked due to incorrect documentation.)
+
+## [0.17.14] - 2025-02-11
+
+### Added
+
+- `MetadataCommand::env` adds environment variables to the `cargo metadata` command.
+
+  Thanks to [anforowicz](https://github.com/anforowicz) for your first contribution!
+
+## [0.17.13] - 2025-02-08
+
+### Changed
+
+- Renamed `PlatformSpec::current` to `PlatformSpec::build_target` to indicate that it is determined at build time, not at runtime. The old method is still available but has been marked deprecated.
+
+## [0.17.12] - 2025-01-05
+
+### Added
+
+Added support for custom sparse registries (`sparse+https://...`). Thanks to [jonhoo](https://github.com/jonhoo) for your first contribution!
+
+## [0.17.11] - 2024-12-22
+
+### Added
+
+Added support for the upcoming [Cargo resolver version
+3](https://doc.rust-lang.org/beta/cargo/reference/resolver.html#resolver-versions):
+within guppy, `CargoResolverVersion::V3`. Resolver version 3 enables MSRV-aware
+version resolution in Cargo.
+
+The portion of dependency resolution that guppy works with (package and feature
+resolution) happens after dependency versions have been resolved and
+`Cargo.lock` is refreshed. This means that from guppy's perspective, resolver
+version 3 is the same as version 2, and `CargoResolverVersion::V3` acts as an
+alias for `CargoResolverVersion::V2`.
+
+## [0.17.10] - 2024-12-03
+
+### Changed
+
+- Internal dependency update: `cargo_metadata` updated to 0.19.1.
+- MSRV updated to Rust 1.82.
+
+## [0.17.9] - 2024-12-02
+
+### Fixed
+
+- Graphs can now be generated even if the workspace `Cargo.toml` is within a subdirectory of one
+  of its members. (This is an uncommon situation, but one that is supported by Cargo.)
+
+### Changed
+
+- Internal dependency update: `cargo_metadata` updated to 0.19.0.
+
 ## [0.17.8] - 2024-10-02
 
 ### Fixed
@@ -687,6 +778,17 @@ lazy_static = "0.2"
 
 - Initial release.
 
+[0.17.19]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.19
+[0.17.18]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.18
+[0.17.17]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.17
+[0.17.16]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.16
+[0.17.15]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.15
+[0.17.14]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.14
+[0.17.13]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.13
+[0.17.12]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.12
+[0.17.11]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.11
+[0.17.10]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.10
+[0.17.9]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.9
 [0.17.8]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.8
 [0.17.7]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.7
 [0.17.6]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.6

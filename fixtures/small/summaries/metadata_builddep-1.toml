@@ -2,12 +2,14 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_builddep
 
 [metadata]
-resolver = 'install'
+resolver = '2'
 include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-spec = 'any'
+triple = 'armv7r-none-eabi'
+target-features = 'all'
+flags = ['test-flag']
 
 [metadata.target-platform]
 spec = 'any'

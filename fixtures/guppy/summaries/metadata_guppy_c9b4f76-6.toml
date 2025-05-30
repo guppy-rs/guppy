@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'i586-unknown-netbsd'
+triple = 'i686-pc-windows-msvc'
 target-features = 'all'
 
 [metadata.target-platform]

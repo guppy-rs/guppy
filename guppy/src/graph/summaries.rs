@@ -8,20 +8,20 @@
 mod package_set;
 
 use crate::{
+    Error,
     graph::{
+        DependencyDirection, PackageGraph, PackageMetadata, PackageSet, PackageSource,
         cargo::{CargoOptions, CargoResolverVersion, CargoSet, InitialsPlatform},
         feature::FeatureSet,
-        DependencyDirection, PackageGraph, PackageMetadata, PackageSet, PackageSource,
     },
     platform::PlatformSpecSummary,
-    Error,
 };
 pub use guppy_summaries::*;
 pub use package_set::*;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
 
-impl<'g> CargoSet<'g> {
+impl CargoSet<'_> {
     /// Creates a build summary with the given options.
     ///
     /// Requires the `summaries` feature to be enabled.
@@ -112,7 +112,7 @@ impl PackageGraph {
     }
 }
 
-impl<'g> PackageMetadata<'g> {
+impl PackageMetadata<'_> {
     /// Converts this metadata to a `SummaryId`.
     ///
     /// Requires the `summaries` feature to be enabled.
@@ -287,7 +287,7 @@ pub struct FeaturesOnlySummary {
     pub optional_deps: BTreeSet<String>,
 }
 
-impl<'g> PackageSource<'g> {
+impl PackageSource<'_> {
     /// Converts a `PackageSource` into a `SummarySource`.
     ///
     /// Requires the `summaries` feature to be enabled.
@@ -306,7 +306,7 @@ impl<'g> PackageSource<'g> {
     }
 }
 
-impl<'g> PartialEq<SummarySource> for PackageSource<'g> {
+impl PartialEq<SummarySource> for PackageSource<'_> {
     fn eq(&self, summary_source: &SummarySource) -> bool {
         match summary_source {
             SummarySource::Workspace { workspace_path } => {

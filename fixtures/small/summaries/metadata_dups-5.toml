@@ -2,15 +2,15 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_dups
 
 [metadata]
-resolver = 'install'
+resolver = '2'
 include-dev = false
-initials-platform = 'proc-macros-on-target'
+initials-platform = 'standard'
 
 [metadata.host-platform]
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'powerpc-unknown-linux-gnu'
+triple = 'powerpc64-ibm-aix'
 target-features = 'all'
 flags = ['test-flag']
 [[metadata.omitted-packages.ids]]

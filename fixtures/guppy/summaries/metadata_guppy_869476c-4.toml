@@ -2,25 +2,16 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_guppy_869476c
 
 [metadata]
-resolver = 'install'
-include-dev = false
+resolver = '2'
+include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-spec = 'any'
+spec = 'always'
 
 [metadata.target-platform]
-triple = 'aarch64-pc-windows-gnullvm'
-target-features = 'unknown'
-[[metadata.omitted-packages.ids]]
-name = 'guppy-cmdlib'
-version = '0.1.0'
-workspace-path = 'guppy-cmdlib'
-
-[[metadata.omitted-packages.ids]]
-name = 'rand_xorshift'
-version = '0.2.0'
-crates-io = true
+triple = 'sparc64-unknown-netbsd'
+target-features = ['sha', 'sse4.1']
 
 [[target-package]]
 name = 'fixture-manager'
@@ -51,6 +42,14 @@ workspace-path = 'guppy'
 status = 'workspace'
 features = ['guppy-summaries', 'proptest', 'proptest-derive', 'proptest010', 'summaries']
 optional-deps = ['guppy-summaries', 'proptest', 'proptest-derive']
+
+[[target-package]]
+name = 'guppy-cmdlib'
+version = '0.1.0'
+workspace-path = 'guppy-cmdlib'
+status = 'workspace'
+features = ['proptest', 'proptest010']
+optional-deps = ['proptest']
 
 [[target-package]]
 name = 'guppy-summaries'
@@ -316,18 +315,18 @@ status = 'transitive'
 features = []
 
 [[target-package]]
+name = 'libc'
+version = '0.2.79'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
 name = 'num-traits'
 version = '0.2.12'
 crates-io = true
 status = 'transitive'
 features = ['std']
-
-[[target-package]]
-name = 'output_vt100'
-version = '0.1.2'
-crates-io = true
-status = 'transitive'
-features = []
 
 [[target-package]]
 name = 'ppv-lite86'
@@ -365,6 +364,13 @@ crates-io = true
 status = 'transitive'
 features = ['alloc', 'getrandom', 'std']
 optional-deps = ['getrandom']
+
+[[target-package]]
+name = 'rand_xorshift'
+version = '0.2.0'
+crates-io = true
+status = 'transitive'
+features = []
 
 [[target-package]]
 name = 'regex-syntax'
@@ -451,13 +457,6 @@ crates-io = true
 status = 'transitive'
 features = []
 
-[[target-package]]
-name = 'winapi'
-version = '0.3.9'
-crates-io = true
-status = 'transitive'
-features = ['consoleapi', 'errhandlingapi', 'fileapi', 'handleapi', 'minwinbase', 'minwindef', 'processenv', 'std', 'winbase', 'winerror', 'winuser']
-
 [[host-package]]
 name = 'proptest-derive'
 version = '0.2.0'
@@ -468,13 +467,6 @@ features = []
 [[host-package]]
 name = 'autocfg'
 version = '1.0.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'ctor'
-version = '0.1.16'
 crates-io = true
 status = 'transitive'
 features = []

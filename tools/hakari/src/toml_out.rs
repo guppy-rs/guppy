@@ -6,17 +6,17 @@
 #[cfg(feature = "cli-support")]
 use crate::summaries::HakariBuilderSummary;
 use crate::{
+    DepFormatVersion,
     hakari::{HakariBuilder, OutputMap},
     helpers::VersionDisplay,
-    DepFormatVersion,
 };
 use ahash::AHashMap;
 use camino::Utf8PathBuf;
 use cfg_if::cfg_if;
 use guppy::{
-    errors::TargetSpecError,
-    graph::{cargo::BuildPlatform, ExternalSource, GitReq, PackageMetadata, PackageSource},
     PackageId,
+    errors::TargetSpecError,
+    graph::{ExternalSource, GitReq, PackageMetadata, PackageSource, cargo::BuildPlatform},
 };
 use std::{
     borrow::Cow,
@@ -24,7 +24,7 @@ use std::{
     error, fmt,
     hash::{Hash, Hasher},
 };
-use toml_edit::{Array, Document, InlineTable, Item, Table, Value};
+use toml_edit::{Array, DocumentMut, InlineTable, Item, Table, Value};
 use twox_hash::XxHash64;
 
 /// Options for Hakari TOML output.
@@ -304,7 +304,7 @@ pub(crate) fn write_toml(
             .expect("hakari package is in workspace")
     });
 
-    let mut document = Document::new();
+    let mut document = DocumentMut::new();
 
     // Remove the leading newline from the first visual table to match what older versions of
     // hakari did.
@@ -409,9 +409,34 @@ pub(crate) fn write_toml(
                             };
                         }
                         Some(ExternalSource::Registry(registry_url)) => {
-                            let registry_name = builder
+                            let registry =
+                                builder.registries.get2(registry_url).ok_or_else(|| {
+                                    TomlOutError::UnrecognizedRegistry {
+                                        package_id: dep.id().clone(),
+                                        registry_url: registry_url.to_owned(),
+                                    }
+                                })?;
+                            itable.insert(
+                                "version",
+                                format!(
+                                    "{}",
+                                    VersionDisplay::new(
+                                        dep.version(),
+                                        options.exact_versions,
+                                        dep_format < DepFormatVersion::V3
+                                    )
+                                )
+                                .into(),
+                            );
+                            itable.insert("registry", registry.name.clone().into());
+                        }
+                        Some(ExternalSource::Sparse(registry_url)) => {
+                            let registry = builder
                                 .registries
-                                .get_by_right(registry_url)
+                                .get2(
+                                    format!("{}{}", ExternalSource::SPARSE_PLUS, registry_url)
+                                        .as_str(),
+                                )
                                 .ok_or_else(|| TomlOutError::UnrecognizedRegistry {
                                     package_id: dep.id().clone(),
                                     registry_url: registry_url.to_owned(),
@@ -428,7 +453,7 @@ pub(crate) fn write_toml(
                                 )
                                 .into(),
                             );
-                            itable.insert("registry", registry_name.into());
+                            itable.insert("registry", registry.name.clone().into());
                         }
                         _ => {
                             return Err(TomlOutError::UnrecognizedExternal {
@@ -511,7 +536,7 @@ mod tests {
     use super::*;
     use fixtures::json::*;
     use guppy::graph::DependencyDirection;
-    use std::collections::{btree_map::Entry, BTreeMap};
+    use std::collections::{BTreeMap, btree_map::Entry};
 
     #[test]
     fn make_package_name_unique() {

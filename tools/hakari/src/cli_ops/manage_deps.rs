@@ -4,13 +4,13 @@
 //! Add and remove dependencies.
 
 use crate::{
+    HakariBuilder, WorkspaceHackLineStyle,
     cli_ops::{WorkspaceOp, WorkspaceOps},
     hakari::DepFormatVersion,
-    HakariBuilder, WorkspaceHackLineStyle,
 };
 use guppy::{
-    graph::{DependencyDirection, PackageLink, PackageMetadata, PackageSet},
     VersionReq,
+    graph::{DependencyDirection, PackageLink, PackageMetadata, PackageSet},
 };
 
 impl<'g> HakariBuilder<'g> {

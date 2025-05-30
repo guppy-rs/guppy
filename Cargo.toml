@@ -20,14 +20,26 @@ members = [
 
 [workspace.dependencies]
 ahash = "0.8.11"
+cargo-util-schemas = "0.2.0"
+cfg-expr = "0.18.0"
+datatest-stable = { version = "0.3.2", features = ["include-dir"] }
 guppy-workspace-hack = "0.1.0"
-miette = "7.2.0"
+iddqd = "0.3.3"
+include_dir = "0.7.4"
+miette = "7.6.0"
+snapbox = { version = "0.6.21", features = ["term-svg"] }
+twox-hash = { version = "2.0.0", default-features = false, features = ["xxhash64"] }
 
 [workspace.package]
-rust-version = "1.75"
+# Note: we commit to supporting the last 6 months of Rust releases. This
+# typically means N-4 to 5.
+rust-version = "1.82"
 
 [workspace.lints.rust]
-unexpected_cfgs = { level = "warn", check-cfg = ['cfg(doc_cfg)'] }
+unexpected_cfgs = { level = "warn", check-cfg = [
+    'cfg(doc_cfg)',
+    'cfg(guppy_nightly)',
+] }
 
 [patch.crates-io.guppy-workspace-hack]
 path = "workspace-hack"

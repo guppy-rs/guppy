@@ -4,8 +4,8 @@
 use crate::{
     debug_ignore::DebugIgnore,
     graph::{
-        query_core::{all_visit_map, reachable_map, reachable_map_buffered_filter, QueryParams},
         DependencyDirection, GraphSpec,
+        query_core::{QueryParams, all_visit_map, reachable_map, reachable_map_buffered_filter},
     },
     petgraph_support::{
         dfs::{BufferedEdgeFilter, ReversedBufferedFilter, SimpleEdgeFilterFn},
@@ -271,7 +271,7 @@ pub(super) struct Topo<'g, G: GraphSpec> {
     remaining: usize,
 }
 
-impl<'g, G: GraphSpec> Iterator for Topo<'g, G> {
+impl<G: GraphSpec> Iterator for Topo<'_, G> {
     type Item = NodeIndex<G::Ix>;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -290,7 +290,7 @@ impl<'g, G: GraphSpec> Iterator for Topo<'g, G> {
     }
 }
 
-impl<'g, G: GraphSpec> ExactSizeIterator for Topo<'g, G> {
+impl<G: GraphSpec> ExactSizeIterator for Topo<'_, G> {
     fn len(&self) -> usize {
         self.remaining
     }
@@ -306,7 +306,7 @@ pub(super) struct Links<'g, G: GraphSpec> {
     direction: DependencyDirection,
 }
 
-impl<'g, G: GraphSpec> Iterator for Links<'g, G> {
+impl<G: GraphSpec> Iterator for Links<'_, G> {
     #[allow(clippy::type_complexity)]
     type Item = (NodeIndex<G::Ix>, NodeIndex<G::Ix>, EdgeIndex<G::Ix>);
 

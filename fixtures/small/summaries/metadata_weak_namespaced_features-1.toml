@@ -2,31 +2,21 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_weak_namespaced_features
 
 [metadata]
-resolver = '2'
+resolver = '3'
 include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'm68k-unknown-linux-gnu'
+triple = 'i686-pc-windows-gnullvm'
 target-features = 'unknown'
 
 [metadata.target-platform]
-triple = 'arm-unknown-linux-gnueabihf'
-target-features = ['xsave', 'xsavec', 'xsaves']
-flags = ['bar', 'cargo_web']
+triple = 'aarch64-unknown-freebsd'
+target-features = 'unknown'
+flags = ['bar', 'foo']
 [[metadata.omitted-packages.ids]]
-name = 'arrayvec'
-version = '0.7.2'
-crates-io = true
-
-[[metadata.omitted-packages.ids]]
-name = 'namespaced-weak'
-version = '0.1.0'
-workspace-path = ''
-
-[[metadata.omitted-packages.ids]]
-name = 'pathdiff'
-version = '0.2.1'
+name = 'smallvec'
+version = '1.8.0'
 crates-io = true
 
 [[metadata.features-only]]

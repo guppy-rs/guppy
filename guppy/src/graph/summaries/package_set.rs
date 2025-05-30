@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use crate::{
+    Error, PackageId,
     errors::Error::UnknownPackageSetSummary,
     graph::{
         DependencyDirection, ExternalSource, GitReq, PackageGraph, PackageMetadata, PackageSet,
         PackageSource,
     },
-    Error, PackageId,
 };
 use ahash::AHashMap;
 use camino::Utf8PathBuf;
@@ -125,7 +125,7 @@ pub struct PackageSetSummary {
     pub third_party: Vec<ThirdPartySummary>,
 }
 
-impl<'g> PackageSet<'g> {
+impl PackageSet<'_> {
     /// Converts this `PackageSet` to a serializable [`PackageSetSummary`].
     pub fn to_summary(&self) -> PackageSetSummary {
         PackageSetSummary::new(self)
@@ -323,7 +323,7 @@ pub enum GitReqSummary {
     Default,
 }
 
-impl<'g> GitReq<'g> {
+impl GitReq<'_> {
     /// Converts `self` into a [`GitReqSummary`].
     ///
     /// Requires the `summaries` feature to be enabled.
@@ -666,11 +666,7 @@ impl<'a> PackageMatcher<'a> {
             .into_iter()
             .filter_map(
                 |(summary_id, matched)| {
-                    if matched {
-                        None
-                    } else {
-                        Some(summary_id)
-                    }
+                    if matched { None } else { Some(summary_id) }
                 },
             )
             .cloned()
@@ -695,11 +691,7 @@ impl<'a> PackageMatcher<'a> {
                 .into_iter()
                 .flat_map(|(_, summaries)| {
                     summaries.into_iter().filter_map(|(summary, matched)| {
-                        if matched {
-                            None
-                        } else {
-                            Some(summary.clone())
-                        }
+                        if matched { None } else { Some(summary.clone()) }
                     })
                 })
                 .collect();

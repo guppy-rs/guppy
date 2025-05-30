@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.17.8] - 2025-02-20
+
+### Changed
+
+Updated target-spec to version 3.4.2.
+
+## [0.17.7] - 2025-01-05
+
+### Added
+
+Added support for custom sparse registries (`sparse+https://...`). Thanks to [jonhoo](https://github.com/jonhoo) for your first contribution!
+
+## [0.17.6] - 2024-12-22
+
+### Added
+
+Added support for the upcoming [Cargo resolver version
+3](https://doc.rust-lang.org/beta/cargo/reference/resolver.html#resolver-versions).
+Resolver version 3 enables MSRV-aware version resolution in Cargo.
+
+The portion of dependency resolution that hakari works with (package and feature
+resolution) happens after dependency versions have been resolved and
+`Cargo.lock` is refreshed. This means that from hakari's perspective, resolver
+version 3 is the same as version 2.
+
+### Changed
+
+- Builtin targets updated to Rust 1.83.
+- MSRV updated to Rust 1.82.
+
 ## [0.17.5] - 2024-10-06
 
 ### Fixed
@@ -351,6 +381,9 @@ Internal updates for `cargo-hakari 0.9.8`.
 
 Initial release.
 
+[0.17.8]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.17.8
+[0.17.7]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.17.7
+[0.17.6]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.17.6
 [0.17.5]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.17.5
 [0.17.4]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.17.4
 [0.17.3]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.17.3

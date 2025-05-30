@@ -2,15 +2,21 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_builddep
 
 [metadata]
-resolver = '2'
-include-dev = false
+resolver = '3'
+include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-spec = 'always'
+triple = 'armv7r-none-eabi'
+target-features = []
+flags = ['flag-test']
 
 [metadata.target-platform]
-spec = 'always'
+spec = 'any'
+[[metadata.omitted-packages.ids]]
+name = 'builddep'
+version = '0.1.0'
+workspace-path = 'builddep'
 
 [[metadata.features-only]]
 name = 'main'

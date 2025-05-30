@@ -12,17 +12,17 @@ use ahash::AHashMap;
 use camino::Utf8Path;
 use globset::Candidate;
 use guppy::{
+    PackageId,
     graph::{
+        DependencyDirection, PackageGraph, PackageMetadata, PackageSet, Workspace,
         cargo::{CargoOptions, CargoSet},
         feature::{FeatureFilter, FeatureSet, StandardFeatures},
-        DependencyDirection, PackageGraph, PackageMetadata, PackageSet, Workspace,
     },
     platform::PlatformSpec,
-    PackageId,
 };
-use petgraph::{graphmap::GraphMap, Directed};
+use petgraph::{Directed, graphmap::GraphMap};
 use rayon::prelude::*;
-use std::collections::{hash_map::Entry, HashSet};
+use std::collections::{HashSet, hash_map::Entry};
 
 /// Determine target dependencies from changed files and packages in a workspace.
 ///
@@ -147,12 +147,12 @@ impl<'g, 'a> Determinator<'g, 'a> {
     /// These are the same as the defaults returned by [`CargoOptions::new`](CargoOptions::new),
     /// except:
     /// * dev-dependencies are enabled
-    /// * the host and target platforms are set to the current platform
+    /// * the host and target platforms are set to the build target
     pub fn default_cargo_options() -> CargoOptions<'static> {
         let mut options = CargoOptions::new();
         options
             .set_include_dev(true)
-            .set_platform(PlatformSpec::current().expect("current platform is unknown"));
+            .set_platform(PlatformSpec::build_target().expect("current platform is unknown"));
         options
     }
 

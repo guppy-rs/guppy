@@ -2,19 +2,21 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_cycle1
 
 [metadata]
-resolver = '1'
-include-dev = false
-initials-platform = 'host'
+resolver = 'install'
+include-dev = true
+initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'aarch64-unknown-netbsd'
-target-features = []
-flags = ['flag-test']
+spec = 'any'
 
 [metadata.target-platform]
-spec = 'always'
+spec = 'any'
+[[metadata.omitted-packages.ids]]
+name = 'testcycles-helper'
+version = '0.1.0'
+path = '../testcycles-helper'
 
-[[host-package]]
+[[target-package]]
 name = 'testcycles-base'
 version = '0.1.0'
 workspace-path = ''

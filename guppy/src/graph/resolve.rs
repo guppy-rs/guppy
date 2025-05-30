@@ -2,20 +2,20 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use crate::{
+    Error, PackageId,
     debug_ignore::DebugIgnore,
     graph::{
-        feature::{FeatureFilter, FeatureSet},
-        resolve_core::{ResolveCore, Topo},
         DependencyDirection, PackageGraph, PackageIx, PackageLink, PackageLinkImpl,
         PackageMetadata, PackageQuery,
+        feature::{FeatureFilter, FeatureSet},
+        resolve_core::{ResolveCore, Topo},
     },
     petgraph_support::{
+        IxBitSet,
         dot::{DotFmt, DotVisitor, DotWrite},
         edge_ref::GraphEdgeRef,
-        IxBitSet,
     },
     sorted_set::SortedSet,
-    Error, PackageId,
 };
 use camino::Utf8Path;
 use fixedbitset::FixedBitSet;
@@ -543,13 +543,13 @@ impl<'g> PackageSet<'g> {
     }
 }
 
-impl<'g> PartialEq for PackageSet<'g> {
+impl PartialEq for PackageSet<'_> {
     fn eq(&self, other: &Self) -> bool {
         ::std::ptr::eq(self.graph.0, other.graph.0) && self.core == other.core
     }
 }
 
-impl<'g> Eq for PackageSet<'g> {}
+impl Eq for PackageSet<'_> {}
 
 /// Represents whether a particular link within a package graph should be followed during a
 /// resolve operation.
@@ -561,7 +561,7 @@ pub trait PackageResolver<'g> {
     fn accept(&mut self, query: &PackageQuery<'g>, link: PackageLink<'g>) -> bool;
 }
 
-impl<'g, 'a, T> PackageResolver<'g> for &'a mut T
+impl<'g, T> PackageResolver<'g> for &mut T
 where
     T: PackageResolver<'g>,
 {
@@ -570,13 +570,13 @@ where
     }
 }
 
-impl<'g, 'a> PackageResolver<'g> for Box<dyn PackageResolver<'g> + 'a> {
+impl<'g> PackageResolver<'g> for Box<dyn PackageResolver<'g> + '_> {
     fn accept(&mut self, query: &PackageQuery<'g>, link: PackageLink<'g>) -> bool {
         (**self).accept(query, link)
     }
 }
 
-impl<'g, 'a> PackageResolver<'g> for &'a mut dyn PackageResolver<'g> {
+impl<'g> PackageResolver<'g> for &mut dyn PackageResolver<'g> {
     fn accept(&mut self, query: &PackageQuery<'g>, link: PackageLink<'g>) -> bool {
         (**self).accept(query, link)
     }

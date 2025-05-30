@@ -1,0 +1,18 @@
+# Extra configuration for nightly Rust.
+#
+# Use manually by passing this path into `--config`, or via the Justfile: `just
+# nightly check` or `just bootstrap check`.
+
+[build]
+# Detect if non-exhaustive patterns are missing:
+# https://github.com/rust-lang/rust/issues/89554
+#
+# To allow this lint for some statements, use
+# `#[cfg_attr(guppy_nightly, expect(non_exhaustive_omitted_patterns))]`.
+rustflags = [
+    "--warn",
+    "non_exhaustive_omitted_patterns",
+    "-Zcrate-attr=feature(non_exhaustive_omitted_patterns_lint)",
+    "--cfg",
+    "guppy_nightly",
+]

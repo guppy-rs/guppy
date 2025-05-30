@@ -20,7 +20,7 @@ impl<T> Simple<T> {
         &'simple self,
         star_style: &'simple Style,
         display_fn: F,
-    ) -> SimpleDisplay<'_, T, F>
+    ) -> SimpleDisplay<'simple, T, F>
     where
         F: Fn(&T, &mut fmt::Formatter) -> fmt::Result,
     {
@@ -40,7 +40,7 @@ pub(super) struct SimpleDisplay<'simple, T, F> {
 }
 
 #[cfg(feature = "cli-support")]
-impl<'simple, T, F> fmt::Display for SimpleDisplay<'simple, T, F>
+impl<T, F> fmt::Display for SimpleDisplay<'_, T, F>
 where
     F: Fn(&T, &mut fmt::Formatter) -> fmt::Result,
 {

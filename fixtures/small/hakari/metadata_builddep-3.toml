@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '1'
 # workspace-hack-line-style = 'full'
-# platforms = ['i686-unknown-hurd-gnu', 'riscv64gc-unknown-none-elf']
+# platforms = ['i686-unknown-uefi', 'riscv64gc-unknown-openbsd']
 # [[traversal-excludes.ids]]
 # name = 'builddep'
 # version = '0.1.0'

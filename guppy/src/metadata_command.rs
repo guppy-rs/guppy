@@ -1,7 +1,7 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-use crate::{graph::PackageGraph, Error};
+use crate::{Error, graph::PackageGraph};
 use cargo_metadata::CargoOpt;
 use serde::{Deserialize, Serialize};
 use std::{convert::TryFrom, io, path::PathBuf, process::Command};
@@ -94,6 +94,17 @@ impl MetadataCommand {
     ) -> &mut Self {
         self.inner
             .other_options(options.into_iter().map(|s| s.into()).collect::<Vec<_>>());
+        self
+    }
+
+    /// Arbitrary environment variables to set when running cargo. These will be merged into the
+    /// calling environment, overriding any which clash.
+    pub fn env(
+        &mut self,
+        key: impl Into<std::ffi::OsString>,
+        val: impl Into<std::ffi::OsString>,
+    ) -> &mut Self {
+        self.inner.env(key, val);
         self
     }
 

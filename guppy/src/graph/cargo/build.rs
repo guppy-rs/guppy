@@ -2,16 +2,16 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use crate::{
+    DependencyKind, Error,
     graph::{
+        DependencyDirection, PackageGraph, PackageIx, PackageLink, PackageResolver, PackageSet,
         cargo::{
             CargoIntermediateSet, CargoOptions, CargoResolverVersion, CargoSet, InitialsPlatform,
         },
         feature::{ConditionalLink, FeatureLabel, FeatureQuery, FeatureSet, StandardFeatures},
-        DependencyDirection, PackageGraph, PackageIx, PackageLink, PackageSet,
     },
     platform::{EnabledTernary, PlatformSpec},
     sorted_set::SortedSet,
-    DependencyKind, Error,
 };
 use fixedbitset::FixedBitSet;
 use petgraph::{prelude::*, visit::VisitMap};
@@ -39,14 +39,18 @@ impl<'a> CargoSetBuildState<'a> {
         self,
         initials: FeatureSet<'g>,
         features_only: FeatureSet<'g>,
+        resolver: Option<&mut dyn PackageResolver<'g>>,
     ) -> CargoSet<'g> {
         match self.opts.resolver {
-            CargoResolverVersion::V1 => self.new_v1(initials, features_only, false),
+            CargoResolverVersion::V1 => self.new_v1(initials, features_only, resolver, false),
             CargoResolverVersion::V1Install => {
                 let avoid_dev_deps = !self.opts.include_dev;
-                self.new_v1(initials, features_only, avoid_dev_deps)
+                self.new_v1(initials, features_only, resolver, avoid_dev_deps)
             }
-            CargoResolverVersion::V2 => self.new_v2(initials, features_only),
+            // V2 and V3 do the same feature resolution.
+            CargoResolverVersion::V2 | CargoResolverVersion::V3 => {
+                self.new_v2(initials, features_only, resolver)
+            }
         }
     }
 
@@ -57,7 +61,7 @@ impl<'a> CargoSetBuildState<'a> {
                 let avoid_dev_deps = !self.opts.include_dev;
                 self.new_v1_intermediate(query, avoid_dev_deps)
             }
-            CargoResolverVersion::V2 => self.new_v2_intermediate(query),
+            CargoResolverVersion::V2 | CargoResolverVersion::V3 => self.new_v2_intermediate(query),
         }
     }
 
@@ -65,15 +69,21 @@ impl<'a> CargoSetBuildState<'a> {
         self,
         initials: FeatureSet<'g>,
         features_only: FeatureSet<'g>,
+        resolver: Option<&mut dyn PackageResolver<'g>>,
         avoid_dev_deps: bool,
     ) -> CargoSet<'g> {
-        self.build_set(initials, features_only, |query| {
+        self.build_set(initials, features_only, resolver, |query| {
             self.new_v1_intermediate(query, avoid_dev_deps)
         })
     }
 
-    fn new_v2<'g>(self, initials: FeatureSet<'g>, features_only: FeatureSet<'g>) -> CargoSet<'g> {
-        self.build_set(initials, features_only, |query| {
+    fn new_v2<'g>(
+        self,
+        initials: FeatureSet<'g>,
+        features_only: FeatureSet<'g>,
+        resolver: Option<&mut dyn PackageResolver<'g>>,
+    ) -> CargoSet<'g> {
+        self.build_set(initials, features_only, resolver, |query| {
             self.new_v2_intermediate(query)
         })
     }
@@ -90,6 +100,7 @@ impl<'a> CargoSetBuildState<'a> {
         &self,
         initials: FeatureSet<'g>,
         features_only: FeatureSet<'g>,
+        mut resolver: Option<&mut dyn PackageResolver<'g>>,
         intermediate_fn: impl FnOnce(FeatureQuery<'g>) -> CargoIntermediateSet<'g>,
     ) -> CargoSet<'g> {
         // Prepare a package query for step 2.
@@ -147,6 +158,10 @@ impl<'a> CargoSetBuildState<'a> {
         let mut proc_macro_edge_ixs = Vec::new();
         // This list will contain build dep edges out of target packages.
         let mut build_dep_edge_ixs = Vec::new();
+        // This list will contain edges between target packages.
+        let mut target_edge_ixs = Vec::new();
+        // This list will contain edges between host packages.
+        let mut host_edge_ixs = Vec::new();
 
         let is_enabled = |feature_set: &FeatureSet<'_>,
                           link: &PackageLink<'_>,
@@ -201,6 +216,14 @@ impl<'a> CargoSetBuildState<'a> {
                 return false;
             }
 
+            let accepted = resolver
+                .as_mut()
+                .map(|r| r.accept(query, link))
+                .unwrap_or(true);
+            if !accepted {
+                return false;
+            }
+
             // Dev-dependencies are only considered if `from` is an initial.
             let consider_dev =
                 self.opts.include_dev && query.starts_from(from.id()).expect("valid ID");
@@ -246,6 +269,9 @@ impl<'a> CargoSetBuildState<'a> {
                 target_direct_deps.visit(to.package_ix());
             }
 
+            if follow_target {
+                target_edge_ixs.push(link.edge_ix());
+            }
             follow_target
         });
 
@@ -258,6 +284,14 @@ impl<'a> CargoSetBuildState<'a> {
                 let (from, to) = link.endpoints();
                 if self.is_omitted(to.package_ix()) {
                     // Pretend that the omitted set doesn't exist.
+                    return false;
+                }
+
+                let accepted = resolver
+                    .as_mut()
+                    .map(|r| r.accept(query, link))
+                    .unwrap_or(true);
+                if !accepted {
                     return false;
                 }
 
@@ -281,6 +315,7 @@ impl<'a> CargoSetBuildState<'a> {
                         // The 'to' node is either in the workspace or a direct dependency.
                         host_direct_deps.visit(to.package_ix());
                     }
+                    host_edge_ixs.push(link.edge_ix());
                     true
                 } else {
                     false
@@ -310,6 +345,8 @@ impl<'a> CargoSetBuildState<'a> {
             host_direct_deps,
             proc_macro_edge_ixs: SortedSet::new(proc_macro_edge_ixs),
             build_dep_edge_ixs: SortedSet::new(build_dep_edge_ixs),
+            target_edge_ixs: SortedSet::new(target_edge_ixs),
+            host_edge_ixs: SortedSet::new(host_edge_ixs),
         }
     }
 

@@ -27,6 +27,7 @@ impl<'g> BuildTarget<'g> {
     }
 
     /// Returns the unique identifier for this build target.
+    #[inline]
     pub fn id(&self) -> BuildTargetId<'g> {
         self.id
     }
@@ -44,6 +45,7 @@ impl<'g> BuildTarget<'g> {
     }
 
     /// Returns the kind of this build target.
+    #[inline]
     pub fn kind(&self) -> BuildTargetKind<'g> {
         BuildTargetKind::new(&self.inner.kind)
     }
@@ -55,23 +57,66 @@ impl<'g> BuildTarget<'g> {
     /// For more, see [The `required-features`
     /// field](https://doc.rust-lang.org/nightly/cargo/reference/cargo-targets.html#the-required-features-field)
     /// in the Cargo reference.
+    #[inline]
     pub fn required_features(&self) -> &'g [String] {
         &self.inner.required_features
     }
 
     /// Returns the absolute path of the location where the source for this build target is located.
+    #[inline]
     pub fn path(&self) -> &'g Utf8Path {
         &self.inner.path
     }
 
     /// Returns the Rust edition for this build target.
+    #[inline]
     pub fn edition(&self) -> &'g str {
         &self.inner.edition
     }
 
-    /// Returns true if documentation tests are enabled for this build target.
+    /// Returns true if documentation is generated for this build target by
+    /// default.
+    ///
+    /// This is true by default for library targets, as well as binaries that
+    /// don't share a name with the library they are in.
+    ///
+    /// For more information, see [the Cargo documentation].
+    ///
+    /// [the Cargo documentation]: https://doc.rust-lang.org/cargo/commands/cargo-doc.html#target-selection
+    #[inline]
+    pub fn doc_by_default(&self) -> bool {
+        self.inner.doc_by_default
+    }
+
+    /// Returns true if documentation tests are run by default for this build
+    /// target.
+    ///
+    /// For more information, see [the Cargo documentation].
+    ///
+    /// [the Cargo documentation]: https://doc.rust-lang.org/cargo/reference/cargo-targets.html#the-doctest-field
+    #[inline]
+    pub fn doctest_by_default(&self) -> bool {
+        self.inner.doctest_by_default
+    }
+
+    /// Previous name for [`Self::doctest_by_default`].
+    #[deprecated(since = "0.17.16", note = "use `doctest_by_default` instead")]
+    #[inline]
     pub fn doc_tests(&self) -> bool {
-        self.inner.doc_tests
+        self.inner.doctest_by_default
+    }
+
+    /// Returns true if tests are run by default for this build target (i.e. if
+    /// tests are run even if `--all-targets` isn't specified).
+    ///
+    /// This is true by default for libraries, binaries, and test targets.
+    ///
+    /// For more information, see [the Cargo documentation].
+    ///
+    /// [the Cargo documentation]: https://doc.rust-lang.org/cargo/commands/cargo-test.html#target-selection
+    #[inline]
+    pub fn test_by_default(&self) -> bool {
+        self.inner.test_by_default
     }
 }
 
@@ -194,7 +239,9 @@ pub(super) struct BuildTargetImpl {
     pub(super) required_features: Vec<String>,
     pub(super) path: Box<Utf8Path>,
     pub(super) edition: Box<str>,
-    pub(super) doc_tests: bool,
+    pub(super) doc_by_default: bool,
+    pub(super) doctest_by_default: bool,
+    pub(super) test_by_default: bool,
 }
 
 /// Owned version of `BuildTargetId`.
@@ -235,7 +282,7 @@ pub(super) trait BuildTargetKey {
     fn key(&self) -> BuildTargetId;
 }
 
-impl<'g> BuildTargetKey for BuildTargetId<'g> {
+impl BuildTargetKey for BuildTargetId<'_> {
     fn key(&self) -> BuildTargetId {
         *self
     }
@@ -253,23 +300,23 @@ impl<'g> Borrow<dyn BuildTargetKey + 'g> for OwnedBuildTargetId {
     }
 }
 
-impl<'g> PartialEq for (dyn BuildTargetKey + 'g) {
+impl PartialEq for (dyn BuildTargetKey + '_) {
     fn eq(&self, other: &Self) -> bool {
         self.key() == other.key()
     }
 }
 
-impl<'g> Eq for (dyn BuildTargetKey + 'g) {}
+impl Eq for (dyn BuildTargetKey + '_) {}
 
 // For Borrow to be upheld, PartialOrd and Ord should be consistent. This is checked by the proptest
 // below.
-impl<'g> PartialOrd for (dyn BuildTargetKey + 'g) {
+impl PartialOrd for (dyn BuildTargetKey + '_) {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
     }
 }
 
-impl<'g> Ord for (dyn BuildTargetKey + 'g) {
+impl Ord for (dyn BuildTargetKey + '_) {
     fn cmp(&self, other: &Self) -> Ordering {
         self.key().cmp(&other.key())
     }

@@ -2,13 +2,13 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata2
 
 [metadata]
-resolver = '1'
-include-dev = true
+resolver = 'install'
+include-dev = false
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'riscv64gc-unknown-linux-musl'
-target-features = 'all'
+triple = 'aarch64-uwp-windows-msvc'
+target-features = 'unknown'
 
 [metadata.target-platform]
 spec = 'any'
@@ -184,6 +184,20 @@ features = ['default']
 [[host-package]]
 name = 'version_check'
 version = '0.9.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'winapi'
+version = '0.3.8'
+crates-io = true
+status = 'transitive'
+features = ['consoleapi', 'errhandlingapi', 'fileapi', 'minwindef', 'processenv', 'std', 'winbase', 'wincon', 'winerror', 'winnt']
+
+[[host-package]]
+name = 'winapi-util'
+version = '0.1.2'
 crates-io = true
 status = 'transitive'
 features = []

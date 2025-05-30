@@ -15,29 +15,31 @@ jobs:
     env:
       RUSTFLAGS: -D warnings
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
-      - uses: Swatinem/rust-cache@23bce251a8cd2ffc3c1075eaa2367cf899916d84 # v2
+      - uses: Swatinem/rust-cache@9d47c6ad4b02e050fd481d890b2ea34778fd09d6 # v2
+      - name: Install just
+        uses: taiki-e/install-action@just
       - name: Lint (clippy)
-        run: cargo clippy --all-features --all-targets
+        run: just bootstrap clippy
       - name: Install cargo-hack
         uses: taiki-e/install-action@cargo-hack
       - name: Lint (rustfmt)
         run: cargo xfmt --check
       - name: Install cargo readme
-        uses: taiki-e/install-action@3451569d988f3b0b3eaccd1d1b539a75ec96f192 # v2
+        uses: taiki-e/install-action@ab3728c7ba6948b9b429627f4d55a68842b27f18 # v2
         with:
           tool: cargo-readme
-      - name: Run cargo readme
-        run: ./scripts/regenerate-readmes.sh
+      - name: Generate readmes
+        run: just generate-readmes
       - name: Check for differences
         run: git diff --exit-code
       # cargo hack might cause changes to Cargo.lock which can cause the git diff above to fail. Put
       # this at the end.
-      - name: Clippy feature powerset for target-spec
-        run: cargo hack --feature-powerset --package target-spec clippy
+      - name: target-spec-powerset clippy
+        run: just target-spec-powerset clippy
 
   build:
     name: Build and test core crates
@@ -45,16 +47,20 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-14, windows-latest]
-        rust-version: ["1.75", stable]
+        rust-version: ["1.82", stable]
       fail-fast: false
     env:
       RUSTFLAGS: -D warnings
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.rust-version }}
-      - uses: Swatinem/rust-cache@23bce251a8cd2ffc3c1075eaa2367cf899916d84 # v2
+      - uses: Swatinem/rust-cache@9d47c6ad4b02e050fd481d890b2ea34778fd09d6 # v2
+      - name: Install tools
+        uses: taiki-e/install-action@ab3728c7ba6948b9b429627f4d55a68842b27f18 # v2.50.3
+        with:
+          tool: cargo-hack,just,nextest
 
       # Build all packages we care about one by one to ensure feature unification
       # doesn't happen.
@@ -69,14 +75,10 @@ jobs:
         run: cargo build --all-targets --package determinator
       - name: Build hakari
         run: cargo build --all-targets --package hakari
-      - name: Install latest nextest release
-        uses: taiki-e/install-action@nextest
       - name: Run tests for core crates
         run: cargo nextest run --package target-spec --package guppy-summaries --package guppy --package determinator --package hakari
-      - name: Install cargo-hack
-        uses: taiki-e/install-action@cargo-hack
-      - name: Check feature powerset for target-spec
-        run: cargo hack --feature-powerset --package target-spec nextest run
+      - name: target-spec-powerset nextest run
+        run: just target-spec-powerset nextest run
 
   build-all-features:
     name: Build and test (all features)
@@ -84,19 +86,19 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-14, windows-latest]
-        rust-version: ["1.75", stable]
+        rust-version: ["1.82", stable]
       fail-fast: false
     env:
       RUSTFLAGS: -D warnings
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.rust-version }}
-      - uses: Swatinem/rust-cache@23bce251a8cd2ffc3c1075eaa2367cf899916d84 # v2
+      - uses: Swatinem/rust-cache@9d47c6ad4b02e050fd481d890b2ea34778fd09d6 # v2
       - name: Build
         # Build all targets to ensure examples are built as well.
-        # Exclude cargo-compare so that it only runs on the cfg-expr version below.
+        # Exclude cargo-compare: it runs as part of test-extended below.
         run: cargo test --no-run --all-targets --all-features --workspace --exclude cargo-compare
       - name: Run doctests
         run: cargo test --doc --all-features --workspace --exclude cargo-compare
@@ -115,7 +117,7 @@ jobs:
     env:
       RUSTDOCFLAGS: -D warnings
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - uses: dtolnay/rust-toolchain@stable
       # Note: caching doesn't appear to work for rustdoc as of 2022-12-04, and we're exceeding cache
       # sizes anyway
@@ -136,10 +138,10 @@ jobs:
       RUSTFLAGS: -D warnings
       PROPTEST_MULTIPLIER: 64
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       # This matches the cfg-expr version.
-      - uses: dtolnay/rust-toolchain@1.81.0
-      - uses: Swatinem/rust-cache@23bce251a8cd2ffc3c1075eaa2367cf899916d84 # v2
+      - uses: dtolnay/rust-toolchain@1.85.0
+      - uses: Swatinem/rust-cache@9d47c6ad4b02e050fd481d890b2ea34778fd09d6 # v2
       - name: Build and test
         run: cargo test --package cargo-compare --release
 
@@ -149,11 +151,11 @@ jobs:
     env:
       RUSTFLAGS: -D warnings
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: aarch64-unknown-linux-gnu
-      - uses: Swatinem/rust-cache@23bce251a8cd2ffc3c1075eaa2367cf899916d84 # v2
+      - uses: Swatinem/rust-cache@9d47c6ad4b02e050fd481d890b2ea34778fd09d6 # v2
       - name: Build
         uses: actions-rs/cargo@844f36862e911db73fe0815f00a4a2602c279505 # v1
         with:

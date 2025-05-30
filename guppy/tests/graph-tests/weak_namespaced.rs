@@ -8,7 +8,7 @@ use fixtures::{
 };
 use guppy::graph::{
     cargo::{CargoOptions, CargoResolverVersion, CargoSet},
-    feature::{named_feature_filter, FeatureLabel, FeatureSet, StandardFeatures},
+    feature::{FeatureLabel, FeatureSet, StandardFeatures, named_feature_filter},
 };
 use target_spec::Platform;
 

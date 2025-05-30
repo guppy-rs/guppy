@@ -2,15 +2,15 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_guppy_78cb7e8
 
 [metadata]
-resolver = '1'
+resolver = 'install'
 include-dev = false
-initials-platform = 'proc-macros-on-target'
+initials-platform = 'standard'
 
 [metadata.host-platform]
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'riscv32gc-unknown-linux-gnu'
+triple = 'riscv32ima-unknown-none-elf'
 target-features = 'all'
 [[metadata.omitted-packages.ids]]
 name = 'textwrap'
@@ -684,13 +684,6 @@ status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'openssl-probe'
-version = '0.1.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
 name = 'openssl-sys'
 version = '0.9.58'
 crates-io = true
@@ -886,13 +879,6 @@ features = []
 [[target-package]]
 name = 'terminal_size'
 version = '0.1.13'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'termios'
-version = '0.3.2'
 crates-io = true
 status = 'transitive'
 features = []

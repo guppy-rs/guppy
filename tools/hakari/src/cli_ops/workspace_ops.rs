@@ -8,13 +8,13 @@ use crate::{
 use atomicwrites::{AtomicFile, OverwriteBehavior};
 use camino::{Utf8Path, Utf8PathBuf};
 use guppy::{
-    graph::{DependencyDirection, PackageGraph, PackageMetadata, PackageSet},
     Version,
+    graph::{DependencyDirection, PackageGraph, PackageMetadata, PackageSet},
 };
 use owo_colors::{OwoColorize, Style};
 use std::{borrow::Cow, cmp::Ordering, collections::BTreeMap, error, fmt, fs, io, io::Write};
 use toml_edit::{
-    Array, Document, Formatted, InlineTable, Item, Table, TableLike, TomlError, Value,
+    Array, DocumentMut, Formatted, InlineTable, Item, Table, TableLike, TomlError, Value,
 };
 
 /// Represents a set of write operations to the workspace.
@@ -87,7 +87,7 @@ pub(crate) enum WorkspaceOp<'g, 'a> {
     },
 }
 
-impl<'g, 'a> WorkspaceOp<'g, 'a> {
+impl<'g> WorkspaceOp<'g, '_> {
     fn apply(&self, canonical_workspace_root: &Utf8Path) -> Result<(), ApplyError> {
         match self {
             WorkspaceOp::NewCrate {
@@ -217,7 +217,7 @@ impl<'g, 'a> WorkspaceOp<'g, 'a> {
                     return Err(ApplyError::misc(
                         "workspace.members contains non-strings",
                         root_toml_path,
-                    ))
+                    ));
                 }
             }
         }
@@ -231,7 +231,7 @@ impl<'g, 'a> WorkspaceOp<'g, 'a> {
 
     fn get_workspace_members_array<'doc>(
         root_toml_path: &Utf8Path,
-        doc: &'doc mut Document,
+        doc: &'doc mut DocumentMut,
     ) -> Result<&'doc mut Array, ApplyError> {
         let doc_table = doc.as_table_mut();
         let workspace_table = match doc_table.get_mut("workspace") {
@@ -243,13 +243,13 @@ impl<'g, 'a> WorkspaceOp<'g, 'a> {
                         other.type_name()
                     ),
                     root_toml_path,
-                ))
+                ));
             }
             None => {
                 return Err(ApplyError::misc(
                     "[workspace] section not found",
                     root_toml_path,
-                ))
+                ));
             }
         };
 
@@ -260,7 +260,7 @@ impl<'g, 'a> WorkspaceOp<'g, 'a> {
                     return Err(ApplyError::misc(
                         "workspace.members is not an array",
                         root_toml_path,
-                    ))
+                    ));
                 }
             },
             Some(other) => {
@@ -270,13 +270,13 @@ impl<'g, 'a> WorkspaceOp<'g, 'a> {
                         other.type_name()
                     ),
                     root_toml_path,
-                ))
+                ));
             }
             None => {
                 return Err(ApplyError::misc(
                     "workspace.members not found",
                     root_toml_path,
-                ))
+                ));
             }
         };
         Ok(members)
@@ -373,7 +373,7 @@ impl<'g, 'a> WorkspaceOp<'g, 'a> {
 
     fn get_or_insert_dependencies_table<'doc>(
         manifest_path: &Utf8Path,
-        doc: &'doc mut Document,
+        doc: &'doc mut DocumentMut,
     ) -> Result<&'doc mut dyn TableLike, ApplyError> {
         let doc_table = doc.as_table_mut();
 
@@ -406,8 +406,10 @@ impl<'g, 'a> WorkspaceOp<'g, 'a> {
 
 fn decorate(existing: &Value, new: impl Into<Value>) -> Value {
     let decor = existing.decor();
-    new.into()
-        .decorated(decor.prefix().unwrap_or(""), decor.suffix().unwrap_or(""))
+    new.into().decorated(
+        decor.prefix().cloned().unwrap_or_default(),
+        decor.suffix().cloned().unwrap_or_default(),
+    )
 }
 
 // Always write out paths with forward slashes, including on Windows.
@@ -445,10 +447,10 @@ fn canonical_rel_path(
 // Read/write functions
 // ---
 
-fn read_toml(manifest_path: &Utf8Path) -> Result<Document, ApplyError> {
+fn read_toml(manifest_path: &Utf8Path) -> Result<DocumentMut, ApplyError> {
     let toml = fs::read_to_string(manifest_path)
         .map_err(|err| ApplyError::io("error reading TOML file", manifest_path, err))?;
-    toml.parse::<Document>()
+    toml.parse::<DocumentMut>()
         .map_err(|err| ApplyError::toml("error deserializing TOML file", manifest_path, err))
 }
 
@@ -456,7 +458,7 @@ fn write_contents(contents: &[u8], path: &Utf8Path) -> Result<(), ApplyError> {
     write_atomic(path, |file| file.write_all(contents))
 }
 
-fn write_document(document: &Document, path: &Utf8Path) -> Result<(), ApplyError> {
+fn write_document(document: &DocumentMut, path: &Utf8Path) -> Result<(), ApplyError> {
     write_atomic(path, |file| write!(file, "{}", document))
 }
 
@@ -571,7 +573,7 @@ impl<'g, 'a, 'ops> WorkspaceOpsDisplay<'g, 'a, 'ops> {
     }
 }
 
-impl<'g, 'a, 'ops> fmt::Display for WorkspaceOpsDisplay<'g, 'a, 'ops> {
+impl fmt::Display for WorkspaceOpsDisplay<'_, '_, '_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let workspace_root = self.ops.graph.workspace().root();
         let workspace_root_manifest = workspace_root.join("Cargo.toml");
@@ -777,7 +779,7 @@ mod tests {
                 WorkspaceHackLineStyle::WorkspaceDotted,
                 "../../path".into(),
             );
-            let mut document = Document::new();
+            let mut document = DocumentMut::new();
             document
                 .as_table_mut()
                 .insert("workspace-hack", Item::Value(Value::InlineTable(itable)));

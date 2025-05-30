@@ -2,19 +2,17 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_cycle_features
 
 [metadata]
-resolver = 'install'
-include-dev = true
-initials-platform = 'proc-macros-on-target'
+resolver = '2'
+include-dev = false
+initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'riscv64gc-unknown-linux-musl'
+triple = 'thumbv8m.base-none-eabi'
 target-features = 'all'
-flags = ['foo']
+flags = ['bar']
 
 [metadata.target-platform]
-triple = 'i586-pc-windows-msvc'
-target-features = ['bmi2', 'sse', 'sse4.1']
-flags = ['bar', 'flag-test']
+spec = 'any'
 [[metadata.omitted-packages.ids]]
 name = 'testcycles-helper'
 version = '0.1.0'
@@ -26,14 +24,14 @@ version = '0.1.0'
 workspace-path = 'testcycles-base'
 features = ['default', 'default-enable', 'default-transitive', 'helper-enable', 'helper-transitive']
 
-[[target-package]]
+[[host-package]]
 name = 'testcycles-base'
 version = '0.1.0'
 workspace-path = 'testcycles-base'
 status = 'initial'
 features = ['default', 'default-enable', 'default-transitive', 'helper-enable', 'helper-transitive']
 
-[[target-package]]
+[[host-package]]
 name = 'testcycles-helper'
 version = '0.1.0'
 workspace-path = 'testcycles-helper'

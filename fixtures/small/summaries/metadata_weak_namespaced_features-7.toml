@@ -2,20 +2,18 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_weak_namespaced_features
 
 [metadata]
-resolver = 'install'
-include-dev = false
-initials-platform = 'host'
+resolver = '2'
+include-dev = true
+initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'i686-apple-darwin'
-target-features = 'all'
-flags = ['abc']
+spec = 'always'
 
 [metadata.target-platform]
-spec = 'any'
+spec = 'always'
 [[metadata.omitted-packages.ids]]
-name = 'tinyvec'
-version = '1.5.1'
+name = 'smallvec'
+version = '1.8.0'
 crates-io = true
 
 [[metadata.features-only]]
@@ -25,7 +23,7 @@ workspace-path = ''
 features = ['arrayvec', 'bar', 'baz', 'foo', 'pathdiff2', 'smallvec', 'smallvec-union', 'tinyvec', 'upgrade1', 'upgrade2', 'upgrade3', 'upgrade4', 'upgrade5', 'upgrade6', 'upgrade7', 'upgrade8', 'windows-dep', 'windows-named', 'windows-non-weak', 'windows-weak']
 optional-deps = ['arrayvec', 'pathdiff', 'smallvec', 'tinyvec']
 
-[[host-package]]
+[[target-package]]
 name = 'namespaced-weak'
 version = '0.1.0'
 workspace-path = ''
@@ -33,23 +31,16 @@ status = 'initial'
 features = ['arrayvec', 'bar', 'baz', 'foo', 'pathdiff2', 'smallvec', 'smallvec-union', 'tinyvec', 'upgrade1', 'upgrade2', 'upgrade3', 'upgrade4', 'upgrade5', 'upgrade6', 'upgrade7', 'upgrade8', 'windows-dep', 'windows-named', 'windows-non-weak', 'windows-weak']
 optional-deps = ['arrayvec', 'pathdiff', 'smallvec', 'tinyvec']
 
-[[host-package]]
+[[target-package]]
 name = 'arrayvec'
 version = '0.7.2'
 crates-io = true
 status = 'direct'
 features = ['std']
 
-[[host-package]]
+[[target-package]]
 name = 'pathdiff'
 version = '0.2.1'
 crates-io = true
 status = 'direct'
 features = []
-
-[[host-package]]
-name = 'smallvec'
-version = '1.8.0'
-crates-io = true
-status = 'direct'
-features = ['union']

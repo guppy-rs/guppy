@@ -1,5 +1,61 @@
 # Changelog
 
+## [3.4.2] - 2025-02-20
+
+### Changed
+
+Internal dependency `cfg-expr` updated to 0.18.0, updating builtin targets to Rust 1.85.
+
+## [3.4.1] - 2025-02-15
+
+### Fixed
+
+- Removed unused direct dependency on unicode-ident. Thanks [hanna-kruppe](https://github.com/hanna-kruppe) for your contribution!
+
+## [3.4.0] - 2025-02-08
+
+### Added
+
+- Added `Triple::from_rustc_version_verbose` and `Platform::from_rustc_version_verbose` to parse `rustc -vV` output and obtain a triple.
+
+### Changed
+
+- Renamed `Platform::current` to `Platform::build_target` to indicate that it is determined at build time, not at runtime. The old method is still available but has been marked deprecated.
+
+## [3.3.1] - 2024-12-23
+
+### Changed
+
+- Improved error message for `CustomTripleCreateError::Unavailable`.
+
+## [3.3.0] - 2024-12-22
+
+### Added
+
+- `CustomTripleCreateError` now has `input`, `input_string`, `line_and_column`,
+  and `label` methods. These methods aid in implementing
+  [`target-spec-miette`](https://docs.rs/target-spec-miette), and also allow
+  dependencies to be oblivious to whether the `custom` feature is enabled.
+
+### Fixed
+
+- Custom platforms now deserialize the `target-family` and `target-endian`
+  fields correctly. Previously, these fields were ignored and always treated
+  as empty.
+
+### Deprecated
+
+- `Error::CustomTripleCreate` is now deprecated. This error was never actually
+  created, and will be removed in the future.
+- `CustomTripleCreateError::Deserialize` is now deprecated. target-spec now creates
+  a different `DeserializeJson` variant when deserialization fails. This variant
+  also contains the original input being deserialized.
+
+### Changed
+
+- MSRV updated to Rust 1.82.
+- Internal dependency `cfg-expr` updated to 0.17.2, updating builtin targets to Rust 1.83.
+
 ## [3.2.2] - 2024-09-11
 
 ### Changed
@@ -303,6 +359,11 @@ This was mistakenly published and was yanked.
 
 - Initial release.
 
+[3.4.2]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.4.2
+[3.4.1]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.4.1
+[3.4.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.4.0
+[3.3.1]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.3.1
+[3.3.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.3.0
 [3.2.2]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.2.2
 [3.2.1]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.2.1
 [3.2.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.2.0

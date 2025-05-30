@@ -2,58 +2,74 @@
 #    cargo run -p fixture-manager -- generate-hakari --fixture hyper_util_7afb1ed
 
 ### BEGIN HAKARI SECTION
-# resolver = 'install'
+# resolver = '2'
 # unify-target-host = 'auto'
-# output-single-feature = false
-# dep-format-version = '2'
-# workspace-hack-line-style = 'workspace-dotted'
+# output-single-feature = true
+# dep-format-version = '3'
+# workspace-hack-line-style = 'full'
 # platforms = []
 # [[traversal-excludes.ids]]
-# name = 'regex-automata'
-# version = '0.4.7'
+# name = 'futures-util'
+# version = '0.3.30'
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
-# name = 'serde'
-# version = '1.0.204'
+# name = 'hyper'
+# version = '1.4.1'
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
-# name = 'slab'
-# version = '0.4.9'
+# name = 'pin-utils'
+# version = '0.1.0'
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
-# name = 'tracing'
-# version = '0.1.40'
+# name = 'rustc-demangle'
+# version = '0.1.24'
+# crates-io = true
+# [[final-excludes.ids]]
+# name = 'ipnetwork'
+# version = '0.20.0'
 # crates-io = true
 #
-# [[traversal-excludes.ids]]
+# [[final-excludes.ids]]
 # name = 'windows_aarch64_gnullvm'
 # version = '0.52.6'
 # crates-io = true
-#
-# [[traversal-excludes.ids]]
-# name = 'windows_aarch64_msvc'
-# version = '0.52.6'
-# crates-io = true
-#
-# [[traversal-excludes.ids]]
-# name = 'windows_i686_msvc'
-# version = '0.52.6'
-# crates-io = true
-#
-# [final-excludes]
 
 [dependencies]
-futures-core = { version = "0.3", features = ["alloc", "std"] }
-hyper = { version = "1", features = ["client", "full", "http1", "http2", "server"] }
-tokio = { version = "1", features = ["bytes", "io-util", "libc", "macros", "mio", "net", "rt", "signal", "signal-hook-registry", "socket2", "sync", "test-util", "time", "tokio-macros", "windows-sys"] }
+aho-corasick = { version = "1", default-features = false, features = ["perf-literal", "std"] }
+async-stream = { version = "0.3", default-features = false }
+bytes = { version = "1" }
+env_logger = { version = "0.10" }
+fnv = { version = "1" }
+futures-core = { version = "0.3" }
+http-body-util = { version = "0.1", default-features = false }
+http-body = { version = "1", default-features = false }
+http = { version = "1" }
+humantime = { version = "2", default-features = false }
+is-terminal = { version = "0.4", default-features = false }
+itoa = { version = "1", default-features = false }
+log = { version = "0.4", default-features = false, features = ["std"] }
+memchr = { version = "2", default-features = false, features = ["std"] }
+mio = { version = "1", default-features = false, features = ["net", "os-ext"] }
+pin-project-lite = { version = "0.2", default-features = false }
+pretty_env_logger = { version = "0.5", default-features = false }
+regex-automata = { version = "0.4", default-features = false, features = ["dfa-onepass", "hybrid", "meta", "nfa-backtrack", "perf-inline", "perf-literal"] }
+regex-syntax = { version = "0.8", default-features = false, features = ["std"] }
+regex = { version = "1", default-features = false, features = ["perf", "std"] }
+termcolor = { version = "1", default-features = false }
+tokio-stream = { version = "0.1" }
+tokio-test = { version = "0.4", default-features = false }
+tokio = { version = "1", features = ["macros", "net", "signal", "test-util"] }
 
 [build-dependencies]
-proc-macro2 = { version = "1", features = ["proc-macro"] }
-quote = { version = "1", features = ["proc-macro"] }
-syn = { version = "2", features = ["clone-impls", "derive", "full", "parsing", "printing", "proc-macro", "visit-mut"] }
+async-stream-impl = { version = "0.3", default-features = false }
+proc-macro2 = { version = "1" }
+quote = { version = "1" }
+syn = { version = "2", features = ["full", "visit-mut"] }
+tokio-macros = { version = "2", default-features = false }
+unicode-ident = { version = "1", default-features = false }
 
 ### END HAKARI SECTION
 

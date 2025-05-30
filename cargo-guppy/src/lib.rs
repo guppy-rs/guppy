@@ -45,19 +45,19 @@ pub use crate::{core::*, mv::*};
 use ahash::AHashMap;
 use camino::Utf8PathBuf;
 use clap::{ArgEnum, Parser};
-use color_eyre::eyre::{bail, Result, WrapErr};
+use color_eyre::eyre::{Result, WrapErr, bail};
 use guppy::{
+    PackageId,
     graph::{
+        DependencyDirection, DotWrite, PackageDotVisitor, PackageGraph, PackageLink,
+        PackageMetadata,
         cargo::{CargoOptions, CargoSet},
         feature::{FeatureSet, StandardFeatures},
         summaries::Summary,
-        DependencyDirection, DotWrite, PackageDotVisitor, PackageGraph, PackageLink,
-        PackageMetadata,
     },
-    PackageId,
 };
 use guppy_cmdlib::{
-    string_to_platform_spec, CargoMetadataOptions, CargoResolverOpts, PackagesAndFeatures,
+    CargoMetadataOptions, CargoResolverOpts, PackagesAndFeatures, string_to_platform_spec,
 };
 use std::{borrow::Cow, cmp, collections::HashSet, fmt, fs, io::Write, iter, path::PathBuf};
 

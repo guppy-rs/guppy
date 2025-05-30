@@ -6,12 +6,12 @@
 //! Requires the `cli-support` feature to be enabled.
 
 use crate::{
-    hakari::{DepFormatVersion, WorkspaceHackLineStyle},
     HakariBuilder, HakariOutputOptions, TomlOutError, UnifyTargetHost,
+    hakari::{DepFormatVersion, WorkspaceHackLineStyle},
 };
 use guppy::{
     errors::TargetSpecError,
-    graph::{cargo::CargoResolverVersion, summaries::PackageSetSummary, PackageGraph},
+    graph::{PackageGraph, cargo::CargoResolverVersion, summaries::PackageSetSummary},
 };
 use serde::{Deserialize, Serialize};
 use std::{collections::BTreeMap, fmt, str::FromStr};
@@ -137,7 +137,7 @@ impl HakariBuilderSummary {
             registries: builder
                 .registries
                 .iter()
-                .map(|(name, url)| (name.clone(), url.clone()))
+                .map(|registry| (registry.name.clone(), registry.url.clone()))
                 .collect(),
             unify_target_host: builder.unify_target_host(),
             output_single_feature: builder.output_single_feature(),
@@ -196,7 +196,7 @@ impl HakariBuilderSummary {
     }
 }
 
-impl<'g> HakariBuilder<'g> {
+impl HakariBuilder<'_> {
     /// Converts this `HakariBuilder` to a serializable summary.
     ///
     /// Requires the `cli-support` feature to be enabled.

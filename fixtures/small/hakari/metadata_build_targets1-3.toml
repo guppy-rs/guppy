@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '2'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['thumbv7neon-unknown-linux-gnueabihf']
+# platforms = ['thumbv7neon-linux-androideabi']
 # [[traversal-excludes.ids]]
 # name = 'testcrate'
 # version = '0.1.0'

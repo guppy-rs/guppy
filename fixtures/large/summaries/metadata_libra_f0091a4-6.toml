@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'armv6-unknown-freebsd'
+triple = 'armv7-rtems-eabihf'
 target-features = 'unknown'
 flags = ['cargo_web']
 

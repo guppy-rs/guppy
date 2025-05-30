@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use crate::{
-    diff::{changed_sort_key, PackageDiff, SummaryDiff, SummaryDiffStatus},
     SummaryId,
+    diff::{PackageDiff, SummaryDiff, SummaryDiffStatus, changed_sort_key},
 };
 use std::fmt;
 
@@ -44,7 +44,7 @@ impl<'a, 'b> SummaryReport<'a, 'b> {
     }
 }
 
-impl<'a, 'b> fmt::Display for SummaryReport<'a, 'b> {
+impl fmt::Display for SummaryReport<'_, '_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         if !self.diff.target_packages.is_unchanged() {
             writeln!(
@@ -84,7 +84,7 @@ impl<'x> PackageReport<'x> {
     }
 }
 
-impl<'x> fmt::Display for PackageReport<'x> {
+impl fmt::Display for PackageReport<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         for (summary_id, status) in self.sorted {
             write!(

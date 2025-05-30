@@ -1,6 +1,6 @@
 [package]
 name = "cargo-hakari"
-version = "0.9.33"
+version = "0.9.36"
 description = "Manage workspace-hack packages to speed up builds in large workspaces."
 documentation = "https://docs.rs/cargo-hakari"
 edition = "2021"
@@ -18,24 +18,24 @@ categories = ["development-tools::cargo-plugins"]
 rust-version.workspace = true
 
 [dependencies]
-camino = "1.1.7"
+camino = "1.1.9"
 cfg-if = "1.0.0"
-clap = { version = "4.3.19", features = ["derive"] }
+clap = { version = "4.5.30", features = ["derive"] }
 # disable tracing integration since we don't use it
 color-eyre = { version = "0.6.3", default-features = false }
 dialoguer = "0.11.0"
 duct = "0.13.7"
 enable-ansi-support = "0.2.1"
-env_logger = "0.11.5"
-guppy = { version = "0.17.8", path = "../../guppy" }
-hakari = { version = "0.17.5", path = "../hakari", features = ["cli-support"] }
-log = "0.4.22"
+env_logger = "0.11.8"
+guppy = { version = "0.17.19", path = "../../guppy" }
+hakari = { version = "0.17.8", path = "../hakari", features = ["cli-support"] }
+log = "0.4.27"
 owo-colors = { version = "3.5.0", features = ["supports-colors"] }
 supports-color = "1.3.1"
 guppy-workspace-hack.workspace = true
 
 [dev-dependencies]
-tempfile = "3.10.1"
+tempfile = "3.20.0"
 
 # Metadata for cargo-binstall to get the right artifacts.
 [package.metadata.binstall]

@@ -91,12 +91,13 @@ metadata`](https://doc.rust-lang.org/cargo/commands/cargo-metadata.html) format.
 
 ## Minimum supported Rust version
 
-The minimum supported Rust version (MSRV) is **Rust 1.75**.
+The minimum supported Rust version (MSRV) is **Rust 1.82**.
 
 While a crate is pre-release status (0.x.x) it may have its MSRV bumped in a patch release. Once a crate has reached
 1.x, any MSRV bump will be accompanied with a new minor version.
 
-At any given time, at least the last 3 versions of Rust will be supported.
+At any given time, at least the last 3 versions of Rust will be supported. For `target-spec`, at least
+the last 6 months of stable Rust releases will be supported.
 
 ## Contributing
 

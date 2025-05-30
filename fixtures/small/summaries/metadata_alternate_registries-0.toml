@@ -2,13 +2,13 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_alternate_registries
 
 [metadata]
-resolver = 'install'
+resolver = '2'
 include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'riscv64-linux-android'
-target-features = 'all'
+triple = 'x86_64-unknown-hermit'
+target-features = 'unknown'
 
 [metadata.target-platform]
 spec = 'always'
@@ -31,36 +31,8 @@ status = 'initial'
 features = []
 
 [[host-package]]
-name = 'serde_json'
-version = '1.0.68'
-crates-io = true
-status = 'direct'
-features = ['default', 'std']
-
-[[host-package]]
 name = 'unicode-xid'
 version = '0.2.2'
 crates-io = true
 status = 'direct'
 features = ['default']
-
-[[host-package]]
-name = 'itoa'
-version = '0.4.8'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'ryu'
-version = '1.0.5'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'serde'
-version = '1.0.130'
-crates-io = true
-status = 'transitive'
-features = ['std']

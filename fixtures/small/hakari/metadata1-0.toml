@@ -2,20 +2,51 @@
 #    cargo run -p fixture-manager -- generate-hakari --fixture metadata1
 
 ### BEGIN HAKARI SECTION
-# resolver = '1'
-# unify-target-host = 'auto'
+# resolver = 'install'
+# unify-target-host = 'replicate-target-on-host'
 # output-single-feature = false
-# dep-format-version = '2'
-# workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['riscv64gc-unknown-netbsd', 'armv7s-apple-ios']
+# dep-format-version = '4'
+# workspace-hack-line-style = 'version-only'
+# platforms = ['riscv64gc-unknown-openbsd', 'bpfeb-unknown-none']
+# [[traversal-excludes.ids]]
+# name = 'dtoa'
+# version = '0.4.4'
+# crates-io = true
+#
 # [[traversal-excludes.ids]]
 # name = 'linked-hash-map'
 # version = '0.5.2'
 # crates-io = true
-# [[final-excludes.ids]]
-# name = 'regex-syntax'
-# version = '0.6.12'
+#
+# [[traversal-excludes.ids]]
+# name = 'memchr'
+# version = '2.2.1'
 # crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'quote'
+# version = '1.0.2'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'serde'
+# version = '1.0.100'
+# crates-io = true
+# [[final-excludes.ids]]
+# name = 'mach'
+# version = '0.2.3'
+# crates-io = true
+#
+# [[final-excludes.ids]]
+# name = 'thread_local'
+# version = '0.3.6'
+# crates-io = true
+
+[dependencies]
+datatest = { version = "0.4", features = ["unsafe_test_runner"] }
+
+[build-dependencies]
+datatest = { version = "0.4", features = ["unsafe_test_runner"] }
 
 ### END HAKARI SECTION
 

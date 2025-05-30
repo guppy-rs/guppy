@@ -5,11 +5,11 @@
 
 use cfg_if::cfg_if;
 use determinator::{
-    rules::{DeterminatorRules, PathMatch, RuleIndex},
     Determinator, Utf8Paths0,
+    rules::{DeterminatorRules, PathMatch, RuleIndex},
 };
 use fixtures::json::JsonFixture;
-use guppy::{graph::feature::StandardFeatures, CargoMetadata};
+use guppy::{CargoMetadata, graph::feature::StandardFeatures};
 
 #[test]
 fn guppy_no_rules() {

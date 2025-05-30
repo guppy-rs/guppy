@@ -8,16 +8,16 @@ use crate::{
 };
 use camino::{Utf8Path, Utf8PathBuf};
 use clap::Parser;
-use color_eyre::eyre::{bail, eyre, Result, WrapErr};
+use color_eyre::eyre::{Result, WrapErr, bail, eyre};
 use guppy::{
-    graph::{PackageGraph, PackageSet},
     MetadataCommand,
+    graph::{PackageGraph, PackageSet},
 };
 use hakari::{
+    DepFormatVersion, HakariBuilder, HakariCargoToml, HakariOutputOptions, TomlOutError,
     cli_ops::{HakariInit, WorkspaceOps},
     diffy::PatchFormatter,
-    summaries::{HakariConfig, DEFAULT_CONFIG_PATH, FALLBACK_CONFIG_PATH},
-    DepFormatVersion, HakariBuilder, HakariCargoToml, HakariOutputOptions, TomlOutError,
+    summaries::{DEFAULT_CONFIG_PATH, FALLBACK_CONFIG_PATH, HakariConfig},
 };
 use log::{error, info};
 use owo_colors::OwoColorize;
@@ -306,7 +306,14 @@ impl CommandWithBuilder {
                         // 102 is picked pretty arbitrarily because regular errors exit with 101.
                         return Ok(102);
                     }
-                    Err(err) => Err(err).with_context(|| "error generating new hakari.toml")?,
+                    Err(
+                        err @ TomlOutError::Platform(_)
+                        | err @ TomlOutError::Toml { .. }
+                        | err @ TomlOutError::FmtWrite(_)
+                        | err @ TomlOutError::UnrecognizedExternal { .. }
+                        | err @ TomlOutError::PathWithoutHakari { .. }
+                        | err,
+                    ) => Err(err).with_context(|| "error generating new hakari.toml")?,
                 };
 
                 let existing_toml = hakari
@@ -497,15 +504,15 @@ fn write_to_cargo_toml(
 ) -> Result<i32> {
     if diff {
         let patch = existing_toml.diff_toml(new_contents);
-        let mut formatter = PatchFormatter::new();
-        if output.color.is_enabled() {
-            formatter = formatter.with_color();
-        }
-        info!("\n{}", formatter.fmt_patch(&patch));
         if patch.hunks().is_empty() {
             // No differences.
             Ok(0)
         } else {
+            let mut formatter = PatchFormatter::new();
+            if output.color.is_enabled() {
+                formatter = formatter.with_color();
+            }
+            info!("\n{}", formatter.fmt_patch(&patch));
             Ok(1)
         }
     } else {

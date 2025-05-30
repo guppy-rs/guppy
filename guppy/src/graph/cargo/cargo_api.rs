@@ -2,14 +2,14 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use crate::{
+    Error, PackageId,
     graph::{
+        DependencyDirection, PackageGraph, PackageIx, PackageLink, PackageResolver, PackageSet,
         cargo::build::CargoSetBuildState,
         feature::{FeatureGraph, FeatureSet},
-        DependencyDirection, PackageGraph, PackageIx, PackageLink, PackageSet,
     },
     platform::PlatformSpec,
     sorted_set::SortedSet,
-    Error, PackageId,
 };
 use petgraph::prelude::*;
 use serde::{Deserialize, Serialize};
@@ -114,7 +114,7 @@ impl<'a> CargoOptions<'a> {
     }
 }
 
-impl<'a> Default for CargoOptions<'a> {
+impl Default for CargoOptions<'_> {
     fn default() -> Self {
         Self::new()
     }
@@ -153,10 +153,29 @@ pub enum CargoResolverVersion {
     /// * with dev-dependencies for initials, if tests aren't currently being built
     /// * with [platform-specific dependencies](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#platform-specific-dependencies) that are currently inactive
     ///
-    /// Version 2 of the feature resolver can be enabled by specifying `resolver = "2"` in the
-    /// workspace's `Cargo.toml`.
+    /// Version 2 of the feature resolver can be enabled by specifying `resolver
+    /// = "2"` in the workspace's `Cargo.toml`. It is also [the default resolver
+    /// version](https://doc.rust-lang.org/beta/edition-guide/rust-2021/default-cargo-resolver.html)
+    /// for [the Rust 2021
+    /// edition](https://doc.rust-lang.org/edition-guide/rust-2021/index.html).
     #[serde(rename = "2", alias = "v2")]
     V2,
+
+    /// [Version 3 of the dependency
+    /// resolver](https://doc.rust-lang.org/beta/cargo/reference/resolver.html#resolver-versions),
+    /// available since Rust 1.84.
+    ///
+    /// Version 3 of the resolver enables [MSRV-aware dependency
+    /// resolution](https://doc.rust-lang.org/beta/cargo/reference/config.html#resolverincompatible-rust-versions).
+    /// There are no changes to feature resolution compared to version 2.
+    ///
+    /// Version 3 of the feature resolver can be enabled by specifying `resolver
+    /// = "3"` in the workspace's `Cargo.toml`. It is also [the default resolver
+    /// version](https://doc.rust-lang.org/beta/edition-guide/rust-2024/cargo-resolver.html)
+    /// for [the Rust 2024
+    /// edition](https://doc.rust-lang.org/beta/edition-guide/rust-2024/index.html).
+    #[serde(rename = "3", alias = "v3")]
+    V3,
 }
 
 /// For a given Cargo build simulation, what platform to assume the initials are being built on.
@@ -206,6 +225,8 @@ pub struct CargoSet<'g> {
     pub(super) host_direct_deps: PackageSet<'g>,
     pub(super) proc_macro_edge_ixs: SortedSet<EdgeIndex<PackageIx>>,
     pub(super) build_dep_edge_ixs: SortedSet<EdgeIndex<PackageIx>>,
+    pub(super) target_edge_ixs: SortedSet<EdgeIndex<PackageIx>>,
+    pub(super) host_edge_ixs: SortedSet<EdgeIndex<PackageIx>>,
 }
 
 assert_covariant!(CargoSet);
@@ -236,8 +257,37 @@ impl<'g> CargoSet<'g> {
         features_only: FeatureSet<'g>,
         opts: &CargoOptions<'_>,
     ) -> Result<Self, Error> {
+        Self::new_internal(initials, features_only, None, opts)
+    }
+
+    /// Like `Cargo.new`, but takes an additional [`PackageResolver`] which can
+    /// be used to filter out some dependency edges, or to collect additional
+    /// information.
+    ///
+    /// [`resolver.accept`] is called for both target and host dependencies. It
+    /// is called after static filtering through
+    /// [`CargoOptions::add_omitted_packages`], but before any other decisions
+    /// are made.
+    ///
+    /// [`resolver.accept`]: PackageResolver::accept
+    pub fn with_package_resolver(
+        initials: FeatureSet<'g>,
+        features_only: FeatureSet<'g>,
+        mut resolver: impl PackageResolver<'g>,
+        opts: &CargoOptions<'_>,
+    ) -> Result<Self, Error> {
+        Self::new_internal(initials, features_only, Some(&mut resolver), opts)
+    }
+
+    /// Internal helper to deduplicate code across `CargoSet::new` and `CargoSet::with_resolver`.
+    fn new_internal(
+        initials: FeatureSet<'g>,
+        features_only: FeatureSet<'g>,
+        resolver: Option<&mut dyn PackageResolver<'g>>,
+        opts: &CargoOptions<'_>,
+    ) -> Result<Self, Error> {
         let build_state = CargoSetBuildState::new(initials.graph().package_graph, opts)?;
-        Ok(build_state.build(initials, features_only))
+        Ok(build_state.build(initials, features_only, resolver))
     }
 
     /// Creates a new `CargoIntermediateSet` based on the given query and options.
@@ -352,6 +402,7 @@ impl<'g> CargoSet<'g> {
     /// ## Notes
     ///
     /// Procedural macro packages will be included in the *host* feature set.
+    /// See also [`Self::host_features`].
     ///
     /// The returned iterator will include proc macros that are depended on normally or in dev
     /// builds from initials (if `include_dev` is set), but not the ones in the
@@ -376,6 +427,39 @@ impl<'g> CargoSet<'g> {
     pub fn build_dep_links<'a>(&'a self) -> impl ExactSizeIterator<Item = PackageLink<'g>> + 'a {
         let package_graph = self.target_features.graph().package_graph;
         self.build_dep_edge_ixs
+            .iter()
+            .map(move |edge_ix| package_graph.edge_ix_to_link(*edge_ix))
+    }
+
+    /// Returns `PackageLink` instances for normal dependencies between target packages.
+    ///
+    /// ## Notes
+    ///
+    /// For each link, both the `from` and the `to` package are built on the target.
+    ///
+    /// Target packages will be included in the *target* feature set.
+    /// See also [`Self::target_features`].
+    pub fn target_links<'a>(&'a self) -> impl ExactSizeIterator<Item = PackageLink<'g>> + 'a {
+        let package_graph = self.target_features.graph().package_graph;
+        self.target_edge_ixs
+            .iter()
+            .map(move |edge_ix| package_graph.edge_ix_to_link(*edge_ix))
+    }
+
+    /// Returns `PackageLink` instances for dependencies between host packages.
+    ///
+    /// ## Notes
+    ///
+    /// For each link, both the `from` and the `to` package are built on the host.
+    /// Typically most links are normal dependencies, but it is possible to have
+    /// build dependencies as well (e.g. dependencies of a build script used
+    /// in a proc-macro package).
+    ///
+    /// Host packages will be included in the *host* feature set.
+    /// See also [`Self::host_features`].
+    pub fn host_links<'a>(&'a self) -> impl ExactSizeIterator<Item = PackageLink<'g>> + 'a {
+        let package_graph = self.target_features.graph().package_graph;
+        self.host_edge_ixs
             .iter()
             .map(move |edge_ix| package_graph.edge_ix_to_link(*edge_ix))
     }

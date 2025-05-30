@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use crate::common::GuppyCargoCommon;
-use guppy::graph::{cargo::CargoResolverVersion, PackageGraph};
+use guppy::graph::{PackageGraph, cargo::CargoResolverVersion};
 use guppy_cmdlib::CargoMetadataOptions;
 use once_cell::sync::Lazy;
 use proptest::prelude::*;
@@ -90,6 +90,10 @@ impl Fixture {
             let resolver_version = match resolver {
                 CargoResolverVersion::V1 | CargoResolverVersion::V1Install => "1",
                 CargoResolverVersion::V2 => "2",
+                // Note: resolver v3 has the same feature resolution as v2 so
+                // not having coverage for it isn't a huge deal. Enable this
+                // once the MSRV moves to 1.84.
+                CargoResolverVersion::V3 => panic!("resolver v3 not yet supported in Cargo"),
                 _ => panic!("unknown resolver {:?}", resolver),
             };
             writeln!(f, "resolver = \"{}\"", resolver_version).expect("file written successfully");

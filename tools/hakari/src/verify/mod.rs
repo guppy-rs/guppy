@@ -21,7 +21,7 @@ mod display;
 #[cfg(feature = "cli-support")]
 pub use display::VerifyErrorsDisplay;
 
-use crate::{explain::HakariExplain, Hakari, HakariBuilder};
+use crate::{Hakari, HakariBuilder, explain::HakariExplain};
 use guppy::PackageId;
 use std::collections::BTreeSet;
 
@@ -49,7 +49,7 @@ impl<'g> HakariBuilder<'g> {
                 }
             }
             Err(VerifyErrors {
-                hakari,
+                hakari: Box::new(hakari),
                 dependency_ids,
             })
         }
@@ -67,7 +67,7 @@ pub struct VerifyErrors<'g> {
     ///
     /// This is a special "verify mode" instance; for more about it, see the documentation for the
     /// [`verify`](crate::verify) module.
-    pub hakari: Hakari<'g>,
+    pub hakari: Box<Hakari<'g>>,
 
     /// The dependency package IDs that were built with more than one feature set.
     pub dependency_ids: BTreeSet<&'g PackageId>,
@@ -93,7 +93,7 @@ impl<'g> VerifyErrors<'g> {
 #[cfg(test)]
 #[cfg(feature = "cli-support")]
 mod cli_support_tests {
-    use crate::summaries::{HakariConfig, DEFAULT_CONFIG_PATH};
+    use crate::summaries::{DEFAULT_CONFIG_PATH, HakariConfig};
     use guppy::MetadataCommand;
 
     /// Verify that this repo's `workspace-hack` works correctly.

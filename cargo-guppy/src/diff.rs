@@ -1,8 +1,8 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-use guppy::{graph::PackageMetadata, PackageId};
-use serde::{ser::SerializeStruct, Serialize, Serializer};
+use guppy::{PackageId, graph::PackageMetadata};
+use serde::{Serialize, Serializer, ser::SerializeStruct};
 use std::{collections::HashMap, ops::Deref};
 
 #[derive(Debug, Default)]
@@ -123,7 +123,7 @@ impl<'a> Deref for Package<'a> {
     }
 }
 
-impl<'a> Serialize for Package<'a> {
+impl Serialize for Package<'_> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
@@ -143,7 +143,7 @@ pub struct Diff<'a> {
     added: Vec<(Package<'a>, Option<Vec<Package<'a>>>)>,
 }
 
-impl<'a> ::std::fmt::Display for Diff<'a> {
+impl ::std::fmt::Display for Diff<'_> {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         fn write_dups(
             f: &mut ::std::fmt::Formatter<'_>,

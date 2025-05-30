@@ -14,8 +14,8 @@
 //! ```
 
 use guppy::{
-    graph::{DotWrite, PackageDotVisitor, PackageLink, PackageMetadata},
     CargoMetadata, Error,
+    graph::{DotWrite, PackageDotVisitor, PackageLink, PackageMetadata},
 };
 use std::fmt;
 

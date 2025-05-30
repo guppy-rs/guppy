@@ -7,12 +7,12 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'mipsel-sony-psp'
+triple = 'mipsisa32r6-unknown-linux-gnu'
 target-features = 'unknown'
 flags = ['abc']
 
 [metadata.target-platform]
-triple = 'xtensa-esp32-espidf'
+triple = 'x86_64h-apple-darwin'
 target-features = 'unknown'
 flags = ['abc']
 

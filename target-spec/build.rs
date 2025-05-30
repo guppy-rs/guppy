@@ -5,7 +5,7 @@ use std::{env, fs, path::Path};
 
 fn main() {
     let out_dir = env::var_os("OUT_DIR").unwrap();
-    let dest_path = Path::new(&out_dir).join("current_platform.rs");
+    let dest_path = Path::new(&out_dir).join("build_target.rs");
 
     let target = env::var("TARGET").unwrap();
 
@@ -24,9 +24,9 @@ fn main() {
     fs::write(
         dest_path,
         format!(
-            "static CURRENT_TARGET: &str = \"{}\";\n\
+            "static BUILD_TARGET: &str = \"{}\";\n\
             \n\
-            static CURRENT_TARGET_FEATURES: &[&str] = {};\
+            static BUILD_TARGET_FEATURES: &[&str] = {};\
             ",
             target, features,
         ),

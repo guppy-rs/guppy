@@ -2,20 +2,17 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_alternate_registries
 
 [metadata]
-resolver = '2'
+resolver = '3'
 include-dev = false
-initials-platform = 'standard'
+initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'loongarch64-unknown-linux-musl'
-target-features = 'all'
+spec = 'always'
 
 [metadata.target-platform]
-spec = 'any'
-[[metadata.omitted-packages.ids]]
-name = 'syn'
-version = '1.0.80'
-source = 'registry+https://github.com/fakeorg/crates.io-index'
+triple = 'x86_64-unknown-haiku'
+target-features = ['bmi2', 'fma', 'rdrand', 'sse4.1', 'sse4.2', 'xsavec']
+flags = ['cargo_web', 'flag-test']
 
 [[target-package]]
 name = 'debug-ignore'

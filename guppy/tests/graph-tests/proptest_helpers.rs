@@ -1,13 +1,13 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-use fixtures::dep_helpers::{assert_link_order, GraphAssert, GraphMetadata, GraphQuery, GraphSet};
+use fixtures::dep_helpers::{GraphAssert, GraphMetadata, GraphQuery, GraphSet, assert_link_order};
 use guppy::{
-    graph::{
-        feature::{FeatureId, FeatureLabel, FeatureSet, StandardFeatures},
-        DependencyDirection, PackageGraph, Prop010Resolver,
-    },
     PackageId,
+    graph::{
+        DependencyDirection, PackageGraph, Prop010Resolver,
+        feature::{FeatureId, FeatureLabel, FeatureSet, StandardFeatures},
+    },
 };
 use pretty_assertions::assert_eq;
 use proptest::{collection::vec, prelude::*, sample::Index};

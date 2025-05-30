@@ -1,28 +1,28 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-use crate::{type_conversions::ToGuppy, GlobalContext};
+use crate::{GlobalContext, type_conversions::ToGuppy};
 use cargo::{
     core::{
-        compiler::{CompileKind, CompileTarget, RustcTargetData},
-        resolver::{features::FeaturesFor, CliFeatures, ForceAllTargets, HasDevUnits},
         FeatureValue, PackageIdSpec, Workspace,
+        compiler::{CompileKind, CompileTarget, RustcTargetData},
+        resolver::{CliFeatures, ForceAllTargets, HasDevUnits, features::FeaturesFor},
     },
     ops::resolve_ws_with_opts,
     util::interning::InternedString,
 };
 use clap::Parser;
-use color_eyre::eyre::{bail, Result};
+use color_eyre::eyre::{Result, bail};
 use guppy::{
+    PackageId,
     graph::{
+        DependencyDirection, PackageGraph,
         cargo::{CargoOptions, CargoResolverVersion, CargoSet},
         feature::FeatureSet,
-        DependencyDirection, PackageGraph,
     },
     platform::{Platform, TargetFeatures},
-    PackageId,
 };
-use guppy_cmdlib::{proptest::triple_strategy, CargoMetadataOptions, PackagesAndFeatures};
+use guppy_cmdlib::{CargoMetadataOptions, PackagesAndFeatures, proptest::triple_strategy};
 use proptest::prelude::*;
 use std::{
     collections::{BTreeMap, BTreeSet},
@@ -257,7 +257,7 @@ impl GuppyCargoCommon {
     }
 
     fn guppy_current_platform(&self) -> Result<Platform> {
-        Ok(Platform::current()?)
+        Ok(Platform::build_target()?)
     }
 }
 

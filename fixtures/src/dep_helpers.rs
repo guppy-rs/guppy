@@ -3,13 +3,13 @@
 
 use crate::details::PackageDetails;
 use guppy::{
+    DependencyKind, Error, PackageId,
     graph::{
-        feature::{FeatureGraph, FeatureId, FeatureMetadata, FeatureQuery, FeatureSet},
         DependencyDirection, DependencyReq, PackageGraph, PackageLink, PackageLinkPtrs,
         PackageMetadata, PackageQuery, PackageSet,
+        feature::{FeatureGraph, FeatureId, FeatureMetadata, FeatureQuery, FeatureSet},
     },
     platform::PlatformSpec,
-    DependencyKind, Error, PackageId,
 };
 use pretty_assertions::assert_eq;
 use std::{
@@ -76,7 +76,7 @@ impl<'a> DirectionDesc<'a> {
     }
 }
 
-impl<'a> From<DependencyDirection> for DirectionDesc<'a> {
+impl From<DependencyDirection> for DirectionDesc<'_> {
     fn from(direction: DependencyDirection) -> Self {
         Self::new(direction)
     }
@@ -349,7 +349,7 @@ pub(crate) fn assert_all_links(graph: &PackageGraph, direction: DependencyDirect
 }
 
 fn assert_enabled_status_is_known(req: DependencyReq<'_>, msg: &str) {
-    let current_platform = PlatformSpec::current().expect("current platform is known");
+    let current_platform = PlatformSpec::build_target().expect("current platform is known");
     assert!(
         req.status().enabled_on(&current_platform).is_known(),
         "{}: enabled status known for current platform",

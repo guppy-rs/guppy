@@ -2,16 +2,17 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_builddep
 
 [metadata]
-resolver = '2'
-include-dev = false
+resolver = '3'
+include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'wasm32-wasip2'
-target-features = 'all'
+spec = 'always'
 
 [metadata.target-platform]
-spec = 'always'
+triple = 'x86_64-pc-windows-msvc'
+target-features = 'all'
+flags = ['flag-test', 'test-flag']
 [[metadata.omitted-packages.ids]]
 name = 'main'
 version = '0.1.0'

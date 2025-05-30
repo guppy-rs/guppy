@@ -6,17 +6,18 @@ edition = "2018"
 publish = false
 
 [dependencies]
-anyhow = "1.0.86"
-cargo = { version = "0.82.0", features = ["vendored-libgit2"] }
+anyhow = "1.0.98"
+# need a cfg-expr update to use newer versions of Cargo
+cargo = { version = "0.87.1", features = ["vendored-libgit2"] }
 clap = { version = "3.2.25", features = ["derive"] }
 color-eyre = { version = "0.6.3", default-features = false }
 diffus = "0.10.0"
-either = "1.11.0"
+either = "1.15.0"
 fs_extra = "1.3.0"
-itertools = "0.13.0"
+itertools = "0.14.0"
 guppy = { path = "../../guppy" }
 guppy-cmdlib = { path = "../../guppy-cmdlib", features = ["proptest1"] }
-tempfile = "3.10.1"
-once_cell = "1.19.0"
-pathdiff = "0.2.1"
-proptest = "1.5.0"
+tempfile = "3.20.0"
+once_cell = "1.21.3"
+pathdiff = "0.2.3"
+proptest = "1.6.0"

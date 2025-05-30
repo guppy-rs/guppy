@@ -2,20 +2,24 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata1
 
 [metadata]
-resolver = 'install'
-include-dev = false
+resolver = '2'
+include-dev = true
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-spec = 'any'
+spec = 'always'
 
 [metadata.target-platform]
-triple = 'sparcv9-sun-solaris'
-target-features = 'all'
+spec = 'any'
 [[metadata.omitted-packages.ids]]
-name = 'serde'
-version = '1.0.100'
+name = 'walkdir'
+version = '2.2.9'
 crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'walkdir'
+version = '2.2.9'
+source = 'git+https://github.com/BurntSushi/walkdir?tag=2.2.9#7c7013259eb9db400b3e5c7bc60330ca08068826'
 
 [[metadata.features-only]]
 name = 'testcrate'
@@ -35,7 +39,8 @@ name = 'datatest'
 version = '0.4.2'
 crates-io = true
 status = 'direct'
-features = ['default']
+features = ['default', 'region', 'unsafe_test_runner']
+optional-deps = ['region']
 
 [[target-package]]
 name = 'aho-corasick'
@@ -43,6 +48,13 @@ version = '0.7.6'
 crates-io = true
 status = 'transitive'
 features = ['default', 'std']
+
+[[target-package]]
+name = 'bitflags'
+version = '1.1.0'
+crates-io = true
+status = 'transitive'
+features = ['default']
 
 [[target-package]]
 name = 'dtoa'
@@ -59,11 +71,25 @@ status = 'transitive'
 features = []
 
 [[target-package]]
+name = 'libc'
+version = '0.2.62'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std', 'use_std']
+
+[[target-package]]
 name = 'linked-hash-map'
 version = '0.5.2'
 crates-io = true
 status = 'transitive'
 features = []
+
+[[target-package]]
+name = 'mach'
+version = '0.2.3'
+crates-io = true
+status = 'transitive'
+features = ['default', 'deprecated', 'use_std']
 
 [[target-package]]
 name = 'memchr'
@@ -88,11 +114,18 @@ status = 'transitive'
 features = ['unicode-age', 'unicode-bool', 'unicode-case', 'unicode-gencat', 'unicode-perl', 'unicode-script', 'unicode-segment']
 
 [[target-package]]
-name = 'same-file'
-version = '1.0.5'
+name = 'region'
+version = '2.1.2'
 crates-io = true
 status = 'transitive'
 features = []
+
+[[target-package]]
+name = 'serde'
+version = '1.0.100'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
 
 [[target-package]]
 name = 'serde_yaml'
@@ -109,9 +142,23 @@ status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'walkdir'
-version = '2.2.9'
-source = 'git+https://github.com/BurntSushi/walkdir?tag=2.2.9#7c7013259eb9db400b3e5c7bc60330ca08068826'
+name = 'winapi'
+version = '0.3.8'
+crates-io = true
+status = 'transitive'
+features = ['basetsd', 'memoryapi', 'minwindef', 'sysinfoapi', 'winnt']
+
+[[target-package]]
+name = 'winapi-i686-pc-windows-gnu'
+version = '0.4.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'winapi-x86_64-pc-windows-gnu'
+version = '0.4.0'
+crates-io = true
 status = 'transitive'
 features = []
 

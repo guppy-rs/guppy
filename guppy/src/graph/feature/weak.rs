@@ -4,8 +4,8 @@
 //! Support for weak features.
 
 use crate::graph::{
-    feature::{ConditionalLink, FeatureEdgeReference},
     PackageIx,
+    feature::{ConditionalLink, FeatureEdgeReference},
 };
 use indexmap::IndexSet;
 use itertools::Either;
@@ -135,7 +135,7 @@ pub(super) enum SingleBufferState<'g> {
     Accepted,
 }
 
-impl<'g> Default for SingleBufferState<'g> {
+impl Default for SingleBufferState<'_> {
     fn default() -> Self {
         Self::Buffered(SingleBufferVec::new())
     }

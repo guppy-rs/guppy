@@ -1,6 +1,6 @@
 [package]
 name = "target-spec-miette"
-version = "0.4.0"
+version = "0.4.4"
 description = "Integrate target-spec errors with the miette library"
 documentation = "https://docs.rs/target-spec-miette"
 repository = "https://github.com/guppy-rs/guppy"
@@ -11,10 +11,31 @@ categories = ["development-tools"]
 edition = "2021"
 rust-version.workspace = true
 
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg=doc_cfg"]
+
 [dependencies]
-target-spec = { version = "3.2.2", path = "../target-spec" }
-miette.workspace = true
 guppy-workspace-hack.workspace = true
+include_dir = { workspace = true, optional = true }
+miette.workspace = true
+target-spec = { version = "3.4.2", path = "../target-spec" }
+
+[dev-dependencies]
+datatest-stable.workspace = true
+miette = { workspace = true, features = ["fancy"] }
+snapbox.workspace = true
+target-spec = { version = "3.4.2", path = "../target-spec", features = [
+    "custom",
+] }
 
 [lints]
 workspace = true
+
+[[test]]
+name = "datatest-snapshot"
+harness = false
+required-features = ["fixtures"]
+
+[features]
+fixtures = ["dep:include_dir"]

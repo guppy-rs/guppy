@@ -130,6 +130,7 @@ mod hakari;
 mod helpers;
 #[cfg(feature = "proptest1")]
 mod proptest_helpers;
+mod registry;
 #[cfg(feature = "cli-support")]
 pub mod summaries;
 mod toml_out;

@@ -2,17 +2,17 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_builddep
 
 [metadata]
-resolver = '1'
+resolver = 'install'
 include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'arm-linux-androideabi'
-target-features = 'all'
-flags = ['cargo_web', 'foo']
+spec = 'any'
 
 [metadata.target-platform]
-spec = 'any'
+triple = 'x86_64h-apple-darwin'
+target-features = ['fma', 'rdrand', 'sha']
+flags = ['abc']
 
 [[host-package]]
 name = 'builddep'

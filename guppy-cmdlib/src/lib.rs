@@ -11,13 +11,13 @@ pub mod proptest;
 use clap::{ArgEnum, Parser};
 use color_eyre::eyre::Result;
 use guppy::{
+    MetadataCommand,
     graph::{
-        cargo::{CargoResolverVersion, InitialsPlatform},
-        feature::{named_feature_filter, FeatureSet, StandardFeatures},
         PackageGraph,
+        cargo::{CargoResolverVersion, InitialsPlatform},
+        feature::{FeatureSet, StandardFeatures, named_feature_filter},
     },
     platform::{Platform, PlatformSpec, TargetFeatures},
-    MetadataCommand,
 };
 use std::{env, path::PathBuf};
 
@@ -90,6 +90,7 @@ pub enum CargoResolverVersionCmd {
     V1,
     V1Install,
     V2,
+    V3,
 }
 
 #[derive(ArgEnum, Clone, Copy, Debug)]
@@ -124,6 +125,7 @@ impl CargoResolverVersionCmd {
             CargoResolverVersionCmd::V1 => CargoResolverVersion::V1,
             CargoResolverVersionCmd::V1Install => CargoResolverVersion::V1Install,
             CargoResolverVersionCmd::V2 => CargoResolverVersion::V2,
+            CargoResolverVersionCmd::V3 => CargoResolverVersion::V3,
         }
     }
 }
@@ -180,7 +182,7 @@ impl CargoMetadataOptions {
 /// TODO: This should eventually support JSON specs as well, probably.
 pub fn string_to_platform_spec(s: Option<&str>) -> Result<PlatformSpec> {
     match s {
-        Some("current") => Ok(PlatformSpec::current()?),
+        Some("current") => Ok(PlatformSpec::build_target()?),
         Some("always") => Ok(PlatformSpec::Always),
         Some("any") => Ok(PlatformSpec::Any),
         Some(triple) => Ok(Platform::new(triple.to_owned(), TargetFeatures::Unknown)?.into()),

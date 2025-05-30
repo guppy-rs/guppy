@@ -8,10 +8,10 @@ use crate::{
 use ahash::AHashMap;
 use camino::{Utf8Component, Utf8Path, Utf8PathBuf};
 use guppy::{
+    CargoMetadata, DependencyKind,
     errors::{FeatureBuildStage, FeatureGraphWarning},
     graph::{BuildTargetId, BuildTargetKind, PackageGraph},
     platform::{EnabledTernary, Platform, TargetFeatures},
-    CargoMetadata, DependencyKind,
 };
 use once_cell::sync::{Lazy, OnceCell};
 use std::{collections::BTreeMap, fs};
@@ -48,10 +48,8 @@ pub static METADATA_DUPS_BYTES_05: &str =
     "bytes 0.5.4 (registry+https://github.com/rust-lang/crates.io-index)";
 
 pub static METADATA_CYCLE1_PATH: &str = "../small/metadata_cycle1.json";
-pub static METADATA_CYCLE1_BASE: &str =
-    "testcycles-base 0.1.0 (path+file:///Users/fakeuser/local/testcrates/testcycles/testcycles-base)";
-pub static METADATA_CYCLE1_HELPER: &str =
-    "testcycles-helper 0.1.0 (path+file:///Users/fakeuser/local/testcrates/testcycles/testcycles-helper)";
+pub static METADATA_CYCLE1_BASE: &str = "testcycles-base 0.1.0 (path+file:///Users/fakeuser/local/testcrates/testcycles/testcycles-base)";
+pub static METADATA_CYCLE1_HELPER: &str = "testcycles-helper 0.1.0 (path+file:///Users/fakeuser/local/testcrates/testcycles/testcycles-helper)";
 
 pub static METADATA_CYCLE2_PATH: &str = "../small/metadata_cycle2.json";
 pub static METADATA_CYCLE2_UPPER_A: &str =
@@ -111,8 +109,7 @@ pub static METADATA_WEAK_NAMESPACED_TINYVEC: &str =
     "tinyvec 1.5.1 (registry+https://github.com/rust-lang/crates.io-index)";
 
 pub static METADATA_LIBRA_PATH: &str = "../large/metadata_libra.json";
-pub static METADATA_LIBRA_ADMISSION_CONTROL_SERVICE: &str =
-    "admission-control-service 0.1.0 (path+file:///Users/fakeuser/local/libra/admission_control/admission-control-service)";
+pub static METADATA_LIBRA_ADMISSION_CONTROL_SERVICE: &str = "admission-control-service 0.1.0 (path+file:///Users/fakeuser/local/libra/admission_control/admission-control-service)";
 pub static METADATA_LIBRA_COMPILER: &str =
     "compiler 0.1.0 (path+file:///Users/fakeuser/local/libra/language/compiler)";
 pub static METADATA_LIBRA_E2E_TESTS: &str =
@@ -137,16 +134,13 @@ pub static METADATA_LIBRA_MOVE_VM_RUNTIME: &str =
     "move-vm-runtime 0.1.0 (path+file:///Users/fakeuser/local/libra/language/move-vm/runtime)";
 pub static METADATA_LIBRA_STDLIB: &str =
     "stdlib 0.1.0 (path+file:///Users/fakeuser/local/libra/language/stdlib)";
-pub static METADATA_LIBRA_TEST_GENERATION: &str =
-    "test-generation 0.1.0 (path+file:///Users/fakeuser/local/libra/language/tools/test-generation)";
-pub static METADATA_LIBRA_TRANSACTION_BUILDER: &str =
-    "transaction-builder 0.1.0 (path+file:///Users/fakeuser/local/libra/language/transaction-builder)";
+pub static METADATA_LIBRA_TEST_GENERATION: &str = "test-generation 0.1.0 (path+file:///Users/fakeuser/local/libra/language/tools/test-generation)";
+pub static METADATA_LIBRA_TRANSACTION_BUILDER: &str = "transaction-builder 0.1.0 (path+file:///Users/fakeuser/local/libra/language/transaction-builder)";
 pub static METADATA_LIBRA_VM_GENESIS: &str =
     "vm-genesis 0.1.0 (path+file:///Users/fakeuser/local/libra/language/tools/vm-genesis)";
 pub static METADATA_LIBRA_LANGUAGE_BENCHMARKS: &str =
     "language_benchmarks 0.1.0 (path+file:///Users/fakeuser/local/libra/language/benchmarks)";
-pub static METADATA_LIBRA_TREE_HEAP: &str =
-    "tree_heap 0.1.0 (path+file:///Users/fakeuser/local/libra/language/stackless-bytecode/tree_heap)";
+pub static METADATA_LIBRA_TREE_HEAP: &str = "tree_heap 0.1.0 (path+file:///Users/fakeuser/local/libra/language/stackless-bytecode/tree_heap)";
 pub static METADATA_LIBRA_LAZY_STATIC: &str =
     "lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)";
 pub static METADATA_LIBRA_BACKTRACE: &str =

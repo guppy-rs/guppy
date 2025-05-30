@@ -5,7 +5,7 @@ use crate::context::ContextImpl;
 use anyhow::Result;
 use camino::{Utf8Path, Utf8PathBuf};
 use fixtures::json::*;
-use hakari::{diffy::PatchFormatter, Hakari, HakariBuilder, HakariCargoToml, HakariOutputOptions};
+use hakari::{Hakari, HakariBuilder, HakariCargoToml, HakariOutputOptions, diffy::PatchFormatter};
 use once_cell::sync::Lazy;
 use proptest::prelude::*;
 use proptest_ext::ValueGenerator;

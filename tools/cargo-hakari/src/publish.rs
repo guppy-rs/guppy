@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use crate::{cargo_cli::CargoCli, helpers::regenerate_lockfile, output::OutputContext};
-use color_eyre::{eyre::WrapErr, Result};
+use color_eyre::{Result, eyre::WrapErr};
 use guppy::graph::PackageMetadata;
 use hakari::HakariBuilder;
 use log::{error, info};
@@ -127,7 +127,7 @@ impl<'g> TempRemoveDep<'g> {
     }
 }
 
-impl<'g> Drop for TempRemoveDep<'g> {
+impl Drop for TempRemoveDep<'_> {
     fn drop(&mut self) {
         // Ignore errors in this impl.
         let _ = self.finish(false);
@@ -141,7 +141,7 @@ struct TempRemoveDepInner<'g> {
     output: OutputContext,
 }
 
-impl<'g> TempRemoveDepInner<'g> {
+impl TempRemoveDepInner<'_> {
     fn finish(self, success: bool) -> Result<()> {
         let package_set = self.package.to_package_set();
         let add_ops = self

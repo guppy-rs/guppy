@@ -4,19 +4,19 @@
 use std::fmt;
 
 use crate::{
+    Error, PackageId,
     debug_ignore::DebugIgnore,
     graph::{
+        DependencyDirection, FeatureGraphSpec, FeatureIx, PackageIx, PackageMetadata, PackageSet,
         cargo::{CargoOptions, CargoSet},
         feature::{
-            build::FeatureEdgeReference, ConditionalLink, FeatureEdge, FeatureGraph, FeatureId,
-            FeatureList, FeatureMetadata, FeatureQuery, FeatureResolver,
+            ConditionalLink, FeatureEdge, FeatureGraph, FeatureId, FeatureList, FeatureMetadata,
+            FeatureQuery, FeatureResolver, build::FeatureEdgeReference,
         },
         resolve_core::ResolveCore,
-        DependencyDirection, FeatureGraphSpec, FeatureIx, PackageIx, PackageMetadata, PackageSet,
     },
-    petgraph_support::{dfs::BufferedEdgeFilterFn, IxBitSet},
+    petgraph_support::{IxBitSet, dfs::BufferedEdgeFilterFn},
     sorted_set::SortedSet,
-    Error, PackageId,
 };
 use fixedbitset::FixedBitSet;
 use itertools::Either;
@@ -70,7 +70,7 @@ pub struct FeatureSet<'g> {
     core: ResolveCore<FeatureGraphSpec>,
 }
 
-impl<'g> fmt::Debug for FeatureSet<'g> {
+impl fmt::Debug for FeatureSet<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_set()
             .entries(self.packages_with_features(DependencyDirection::Forward))
@@ -605,11 +605,11 @@ impl<'g> FeatureSet<'g> {
     }
 }
 
-impl<'g> PartialEq for FeatureSet<'g> {
+impl PartialEq for FeatureSet<'_> {
     fn eq(&self, other: &Self) -> bool {
         ::std::ptr::eq(self.graph.package_graph, other.graph.package_graph)
             && self.core == other.core
     }
 }
 
-impl<'g> Eq for FeatureSet<'g> {}
+impl Eq for FeatureSet<'_> {}

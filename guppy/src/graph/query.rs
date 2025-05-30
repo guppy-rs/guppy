@@ -2,14 +2,14 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use crate::{
+    Error, PackageId,
     graph::{
-        feature::{FeatureFilter, FeatureQuery},
-        query_core::QueryParams,
         DependencyDirection, PackageGraph, PackageIx, PackageLink, PackageMetadata,
         PackageResolver, PackageSet, ResolverFn,
+        feature::{FeatureFilter, FeatureQuery},
+        query_core::QueryParams,
     },
     sorted_set::SortedSet,
-    Error, PackageId,
 };
 use camino::Utf8Path;
 use petgraph::prelude::*;

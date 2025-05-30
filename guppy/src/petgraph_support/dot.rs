@@ -45,7 +45,7 @@ where
     }
 }
 
-impl<'a, NR, ER, T> DotVisitor<NR, ER> for &'a T
+impl<NR, ER, T> DotVisitor<NR, ER> for &T
 where
     T: DotVisitor<NR, ER>,
 {
@@ -155,7 +155,7 @@ impl<'a, 'b> DotWrite<'a, 'b> {
     }
 }
 
-impl<'a, 'b> Write for DotWrite<'a, 'b> {
+impl Write for DotWrite<'_, '_> {
     fn write_str(&mut self, s: &str) -> fmt::Result {
         for c in s.chars() {
             self.write_char(c)?;
@@ -185,9 +185,5 @@ fn graph_type<G: GraphProp>(graph: G) -> &'static str {
 }
 
 fn edge_str<G: GraphProp>(graph: G) -> &'static str {
-    if graph.is_directed() {
-        "->"
-    } else {
-        "--"
-    }
+    if graph.is_directed() { "->" } else { "--" }
 }

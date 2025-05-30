@@ -2,21 +2,28 @@
 #   cargo run -p fixture-manager -- generate-summaries --fixture metadata_cycle_features
 
 [metadata]
-resolver = '1'
+resolver = 'install'
 include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-spec = 'any'
+triple = 'xtensa-esp32s3-none-elf'
+target-features = 'unknown'
+flags = ['bar', 'test-flag']
 
 [metadata.target-platform]
-triple = 'armebv7r-none-eabihf'
-target-features = ['fma', 'rdrand', 'sha']
-flags = ['flag-test']
+triple = 'wasm32-unknown-emscripten'
+target-features = 'all'
+flags = ['cargo_web', 'test-flag']
 [[metadata.omitted-packages.ids]]
 name = 'testcycles-base'
 version = '0.1.0'
 workspace-path = 'testcycles-base'
+
+[[metadata.omitted-packages.ids]]
+name = 'testcycles-helper'
+version = '0.1.0'
+workspace-path = 'testcycles-helper'
 
 [[metadata.features-only]]
 name = 'testcycles-base'

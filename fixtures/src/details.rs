@@ -11,13 +11,13 @@ use crate::{
 use ahash::AHashMap;
 use camino::Utf8PathBuf;
 use guppy::{
+    DependencyKind, PackageId, Version,
     errors::FeatureGraphWarning,
     graph::{
         BuildTargetId, BuildTargetKind, DependencyDirection, EnabledStatus, PackageGraph,
         PackageLink, PackageMetadata, PackageSource, Workspace,
     },
     platform::{EnabledTernary, Platform, PlatformSpec},
-    DependencyKind, PackageId, Version,
 };
 use pretty_assertions::assert_eq;
 use std::collections::BTreeMap;

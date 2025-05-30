@@ -1,6 +1,6 @@
-use cargo_metadata::{Metadata, Target};
+use cargo_metadata::{CrateType, Metadata, Target, TargetKind};
 use fixtures::json::JsonFixture;
-use guppy::{errors::FeatureGraphWarning, graph::PackageGraph, Error, PackageId};
+use guppy::{Error, PackageId, errors::FeatureGraphWarning, graph::PackageGraph};
 
 #[test]
 fn optional_dev_dep() {
@@ -75,7 +75,7 @@ fn proc_macro_mixed_kinds() {
         let package = metadata
             .packages
             .iter_mut()
-            .find(|p| p.name == "macro")
+            .find(|p| p.name.as_str() == "macro")
             .expect("valid package");
         package
             .targets
@@ -88,7 +88,7 @@ fn proc_macro_mixed_kinds() {
         .expect("parsing metadata JSON should succeed");
     {
         let target = macro_target(&mut metadata);
-        target.kind = vec!["lib".to_string(), "proc-macro".to_string()];
+        target.kind = vec![TargetKind::Lib, TargetKind::ProcMacro];
     }
 
     let json = serde_json::to_string(&metadata).expect("serializing worked");
@@ -98,9 +98,9 @@ fn proc_macro_mixed_kinds() {
         let target = macro_target(&mut metadata);
 
         // Reset target.kind to its old value.
-        target.kind = vec!["proc-macro".to_string()];
+        target.kind = vec![TargetKind::ProcMacro];
 
-        target.crate_types = vec!["lib".to_string(), "proc-macro".to_string()];
+        target.crate_types = vec![CrateType::Lib, CrateType::ProcMacro];
     }
 
     let json = serde_json::to_string(&metadata).expect("serializing worked");
@@ -109,12 +109,16 @@ fn proc_macro_mixed_kinds() {
 
 fn assert_invalid(json: &str, search_str: &str) {
     let err = PackageGraph::from_json(json).expect_err("expected error for invalid metadata");
+    let Error::PackageGraphConstructError(s) = err else {
+        panic!(
+            "expected PackageGraphConstructError, got: {} ({:?}",
+            err, err
+        );
+    };
     assert!(
-        matches!(
-            err,
-            Error::PackageGraphConstructError(ref s) if s.contains(search_str),
-        ),
-        "actual error is: {}",
-        err,
+        s.contains(search_str),
+        "expected error to contain '{}', got: {}",
+        search_str,
+        s
     );
 }

@@ -13,7 +13,7 @@ use crate::{
     hakari_toml::HakariTomlContext,
     summaries::*,
 };
-use anyhow::{anyhow, bail, Result};
+use anyhow::{Result, anyhow, bail};
 use clap::arg_enum;
 use fixtures::json::JsonFixture;
 use structopt::StructOpt;

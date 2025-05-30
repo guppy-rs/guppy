@@ -11,9 +11,9 @@
 pub use crate::report::SummaryReport;
 use crate::{PackageInfo, PackageMap, PackageStatus, Summary, SummaryId, SummarySource};
 use ahash::AHashMap;
-use diffus::{edit, Diffable};
+use diffus::{Diffable, edit};
 use semver::Version;
-use serde::{ser::SerializeStruct, Serialize};
+use serde::{Serialize, ser::SerializeStruct};
 use std::{
     collections::{BTreeMap, BTreeSet},
     fmt, mem,
@@ -247,7 +247,7 @@ pub(crate) fn changed_sort_key<'a>(
     (status.tag(), status.latest_status(), summary_id)
 }
 
-impl<'a> Serialize for PackageDiff<'a> {
+impl Serialize for PackageDiff<'_> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: serde::Serializer,
@@ -384,8 +384,11 @@ impl<'a> SummaryDiffStatus<'a> {
         let [added_features, removed_features, unchanged_features] =
             Self::make_changed_diff(&old_info.features, &new_info.features);
 
-        let [added_optional_deps, removed_optional_deps, unchanged_optional_deps] =
-            Self::make_changed_diff(&old_info.optional_deps, &new_info.optional_deps);
+        let [
+            added_optional_deps,
+            removed_optional_deps,
+            unchanged_optional_deps,
+        ] = Self::make_changed_diff(&old_info.optional_deps, &new_info.optional_deps);
 
         SummaryDiffStatus::Modified {
             old_version,

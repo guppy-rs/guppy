@@ -47,12 +47,26 @@ pub enum PlatformSpec {
 }
 
 impl PlatformSpec {
-    /// Returns a `PlatformSpec` corresponding to the current platform, as detected at build time.
+    /// Previous name for [`Self::build_target`], renamed to clarify what
+    /// `current` means.
     ///
-    /// Returns an error if the current platform was unknown to the version of `target-spec` in
-    /// use.
+    /// This method is deprecated and will be removed in a future version.
+    #[deprecated(
+        since = "0.17.13",
+        note = "this method has been renamed to `build_target`"
+    )]
+    #[inline]
     pub fn current() -> Result<Self, TargetSpecError> {
-        Ok(PlatformSpec::Platform(Arc::new(Platform::current()?)))
+        Self::build_target()
+    }
+
+    /// Returns a `PlatformSpec` corresponding to the target platform, as
+    /// determined at build time.
+    ///
+    /// Returns an error if the build target was unknown to the version of
+    /// `target-spec` in use.
+    pub fn build_target() -> Result<Self, TargetSpecError> {
+        Ok(PlatformSpec::Platform(Arc::new(Platform::build_target()?)))
     }
 }
 
