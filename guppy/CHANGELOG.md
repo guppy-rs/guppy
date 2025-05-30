@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.17.19] - 2025-05-29
+
+### Changed
+
+- Internal dependency update: `cargo_metadata` updated to 0.20.0.
+- Some older versions of Cargo, when the unstable [bindeps feature](https://github.com/rust-lang/cargo/issues/9096) is enabled, generate JSON output that is no longer supported by `cargo_metadata`. If you run into an error, please update your nightly toolchain. Nightly versions from at least 2024-07 do not appear to produce invalid metadata.
+- MSRV updated to Rust 1.82.
+
 ## [0.17.18] - 2025-04-29
 
 ### Added
@@ -770,6 +778,7 @@ lazy_static = "0.2"
 
 - Initial release.
 
+[0.17.19]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.19
 [0.17.18]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.18
 [0.17.17]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.17
 [0.17.16]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.16

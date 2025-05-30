@@ -16,6 +16,7 @@ use camino::{Utf8Path, Utf8PathBuf};
 use cargo_metadata::{
     DepKindInfo, Dependency, DependencyKind, Metadata, Node, NodeDep, Package, Target,
 };
+use cargo_util_schemas::manifest::PackageName;
 use fixedbitset::FixedBitSet;
 use indexmap::{IndexMap, IndexSet};
 use once_cell::sync::OnceCell;
@@ -509,29 +510,27 @@ impl<'g> ReqResolvedName<'g> {
         }
     }
 
-    fn matches(&self, name: &str) -> bool {
+    fn matches(&self, name: &PackageName) -> bool {
         if let Some(rename) = &self.renamed {
-            if rename == name {
+            if rename == name.as_str() {
                 return true;
             }
         }
 
         match self.resolved_name {
-            ResolvedName::LibNameSpecified(resolved_name) => *resolved_name == name,
-            ResolvedName::LibNameNotSpecified(resolved_name) => *resolved_name == name,
+            ResolvedName::LibNameSpecified(resolved_name) => *resolved_name == name.as_str(),
+            ResolvedName::LibNameNotSpecified(resolved_name) => *resolved_name == name.as_str(),
             ResolvedName::NoLibTarget => {
-                // This code path is only hit with nightly Rust as of 2023-11. It depends on Rust
-                // RFC 3028. at https://github.com/rust-lang/cargo/issues/9096.
+                // Prior versions of Rust produced no lib target when the
+                // unstable bindeps feature (Rust RFC 3028) was enabled. See
+                // https://github.com/rust-lang/cargo/issues/9096. In the past,
+                // we'd return true here if `name.is_empty()` was true.
                 //
-                // This isn't quite right -- if we have two or more non-lib dependencies, we'll
-                // return true for both of them over here. What we need to do instead is use the
-                // extern_name and bin_name fields that are present in nightly DepKindInfo, but that
-                // aren't in stable yet. For now, this is the best we can do.
-                //
-                // (If we're going to be relying on heuristics, it is also possible to use the
-                // package ID over here, but that's documented to be an opaque string. It also
-                // wouldn't be resilient to patch and replace.)
-                name.is_empty()
+                // Versions of Rust from at least 2024-07 do not produce this
+                // no-lib-target case, instead omitting bindeps from the
+                // resolved map altogether. Also, cargo_metadata 0.20.0 and
+                // above reject empty package names. So we always return false.
+                false
             }
         }
     }
@@ -760,7 +759,7 @@ impl<'g> DependencyResolver<'g> {
     /// name and package ID.
     fn resolve<'a>(
         &'a self,
-        resolved_name: &'a str,
+        resolved_name: &'a PackageName,
         dep_id: &PackageId,
         dep_kinds: &'a [DepKindInfo],
     ) -> Result<
@@ -799,7 +798,7 @@ impl<'g> DependencyReqs<'g> {
 
     fn matches_for<'a>(
         &'a self,
-        resolved_name: &'a str,
+        resolved_name: &'a PackageName,
         package_data: &'a PackageDataValue,
         dep_kinds: &'a [DepKindInfo],
     ) -> impl Iterator<Item = &'g Dependency> + 'a {

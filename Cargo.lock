@@ -2356,6 +2356,7 @@ version = "0.17.18"
 dependencies = [
  "ahash",
  "camino",
+ "cargo-util-schemas 0.2.0",
  "cargo_metadata",
  "cfg-if",
  "debug-ignore",
