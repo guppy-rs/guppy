@@ -249,12 +249,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8c3c1a368f70d6cf7302d78f8f7093da241fb8e8807c05cc9e51a125895a6d5b"
 
 [[package]]
-name = "bimap"
-version = "0.6.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "230c5f1ca6a325a32553f8640d31ac9b49f2411e901e427570154868b46da4f7"
-
-[[package]]
 name = "bit-set"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1094,6 +1088,17 @@ checksum = "b42b6fa04a440b495c8b04d0e71b707c585f83cb9cb28cf8cd0d976c315e31b4"
 dependencies = [
  "powerfmt",
  "serde",
+]
+
+[[package]]
+name = "derive-where"
+version = "1.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e73f2692d4bd3cac41dca28934a39894200c9fabf49586d77d0e5954af1d7902"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.101",
 ]
 
 [[package]]
@@ -2428,6 +2433,7 @@ dependencies = [
  "clap 4.5.30",
  "clap_builder",
  "getrandom 0.2.15",
+ "hashbrown 0.15.3",
  "include_dir",
  "indexmap 1.9.3",
  "libc",
@@ -2460,7 +2466,6 @@ version = "0.17.8"
 dependencies = [
  "ahash",
  "atomicwrites",
- "bimap",
  "camino",
  "cfg-if",
  "debug-ignore",
@@ -2468,6 +2473,7 @@ dependencies = [
  "fixtures",
  "guppy",
  "guppy-workspace-hack",
+ "iddqd",
  "include_dir",
  "indenter",
  "itertools 0.14.0",
@@ -2516,6 +2522,7 @@ version = "0.15.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "84b26c544d002229e640969970a2e74021aadf6e2f96372b9c58eff97de08eb3"
 dependencies = [
+ "allocator-api2",
  "foldhash",
 ]
 
@@ -2737,6 +2744,21 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.101",
+]
+
+[[package]]
+name = "iddqd"
+version = "0.3.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7c3407dc49fe79cf7281b48d3a251cf8c11ff960a652e32cbef8848216c4b3c8"
+dependencies = [
+ "allocator-api2",
+ "debug-ignore",
+ "derive-where",
+ "equivalent",
+ "foldhash",
+ "hashbrown 0.15.3",
+ "rustc-hash",
 ]
 
 [[package]]

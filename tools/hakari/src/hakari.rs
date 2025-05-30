@@ -4,11 +4,11 @@
 use crate::{
     CargoTomlError, HakariCargoToml, TomlOutError,
     explain::HakariExplain,
+    registry::Registry,
     toml_name_map,
     toml_out::{HakariOutputOptions, write_toml},
 };
 use ahash::AHashMap;
-use bimap::BiHashMap;
 use debug_ignore::DebugIgnore;
 use guppy::{
     PackageId,
@@ -20,6 +20,7 @@ use guppy::{
     },
     platform::{Platform, PlatformSpec, TargetFeatures},
 };
+use iddqd::BiHashMap;
 use rayon::prelude::*;
 use std::{
     borrow::Cow,
@@ -40,7 +41,7 @@ pub struct HakariBuilder<'g> {
     pub(crate) verify_mode: bool,
     pub(crate) traversal_excludes: HashSet<&'g PackageId>,
     final_excludes: HashSet<&'g PackageId>,
-    pub(crate) registries: BiHashMap<String, String, ahash::RandomState, ahash::RandomState>,
+    pub(crate) registries: BiHashMap<Registry, ahash::RandomState>,
     unify_target_host: UnifyTargetHost,
     output_single_feature: bool,
     pub(crate) dep_format_version: DepFormatVersion,
@@ -79,7 +80,7 @@ impl<'g> HakariBuilder<'g> {
             verify_mode: false,
             traversal_excludes: HashSet::new(),
             final_excludes: HashSet::new(),
-            registries: BiHashMap::with_hashers(Default::default(), Default::default()),
+            registries: BiHashMap::default(),
             unify_target_host: UnifyTargetHost::default(),
             output_single_feature: false,
             dep_format_version: DepFormatVersion::default(),
@@ -262,11 +263,11 @@ impl<'g> HakariBuilder<'g> {
         &mut self,
         registries: impl IntoIterator<Item = (impl Into<String>, impl Into<String>)>,
     ) -> &mut Self {
-        self.registries.extend(
-            registries
-                .into_iter()
-                .map(|(name, url)| (name.into(), url.into())),
-        );
+        self.registries
+            .extend(registries.into_iter().map(|(name, url)| Registry {
+                name: name.into(),
+                url: url.into(),
+            }));
         self
     }
 
@@ -409,17 +410,20 @@ mod summaries {
                 })
                 .collect::<Result<Vec<_>, _>>()?;
 
-            let registries: BiHashMap<_, _, ahash::RandomState, ahash::RandomState> = summary
+            let registries: BiHashMap<_, ahash::RandomState> = summary
                 .registries
                 .iter()
-                .map(|(name, url)| (name.clone(), url.clone()))
+                .map(|(name, url)| Registry {
+                    name: name.clone(),
+                    url: url.clone(),
+                })
                 .collect();
 
             let traversal_excludes = summary
                 .traversal_excludes
                 .to_package_set_registry(
                     graph,
-                    |name| registries.get_by_left(name).map(|s| s.as_str()),
+                    |name| registries.get1(name).map(|registry| registry.url.as_str()),
                     "resolving hakari traversal-excludes",
                 )?
                 .package_ids(DependencyDirection::Forward)
@@ -428,7 +432,7 @@ mod summaries {
                 .final_excludes
                 .to_package_set_registry(
                     graph,
-                    |name| registries.get_by_left(name).map(|s| s.as_str()),
+                    |name| registries.get1(name).map(|registry| registry.url.as_str()),
                     "resolving hakari final-excludes",
                 )?
                 .package_ids(DependencyDirection::Forward)

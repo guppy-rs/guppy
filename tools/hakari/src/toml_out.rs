@@ -409,12 +409,12 @@ pub(crate) fn write_toml(
                             };
                         }
                         Some(ExternalSource::Registry(registry_url)) => {
-                            let registry_name = builder
-                                .registries
-                                .get_by_right(registry_url)
-                                .ok_or_else(|| TomlOutError::UnrecognizedRegistry {
-                                    package_id: dep.id().clone(),
-                                    registry_url: registry_url.to_owned(),
+                            let registry =
+                                builder.registries.get2(registry_url).ok_or_else(|| {
+                                    TomlOutError::UnrecognizedRegistry {
+                                        package_id: dep.id().clone(),
+                                        registry_url: registry_url.to_owned(),
+                                    }
                                 })?;
                             itable.insert(
                                 "version",
@@ -428,16 +428,15 @@ pub(crate) fn write_toml(
                                 )
                                 .into(),
                             );
-                            itable.insert("registry", registry_name.into());
+                            itable.insert("registry", registry.name.clone().into());
                         }
                         Some(ExternalSource::Sparse(registry_url)) => {
-                            let registry_name = builder
+                            let registry = builder
                                 .registries
-                                .get_by_right(&format!(
-                                    "{}{}",
-                                    ExternalSource::SPARSE_PLUS,
-                                    registry_url
-                                ))
+                                .get2(
+                                    format!("{}{}", ExternalSource::SPARSE_PLUS, registry_url)
+                                        .as_str(),
+                                )
                                 .ok_or_else(|| TomlOutError::UnrecognizedRegistry {
                                     package_id: dep.id().clone(),
                                     registry_url: registry_url.to_owned(),
@@ -454,7 +453,7 @@ pub(crate) fn write_toml(
                                 )
                                 .into(),
                             );
-                            itable.insert("registry", registry_name.into());
+                            itable.insert("registry", registry.name.clone().into());
                         }
                         _ => {
                             return Err(TomlOutError::UnrecognizedExternal {
