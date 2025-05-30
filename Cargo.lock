@@ -421,7 +421,7 @@ dependencies = [
  "tempfile",
  "thiserror 2.0.12",
  "time",
- "toml 0.8.22",
+ "toml",
  "toml_edit",
  "tracing",
  "tracing-chrome",
@@ -582,7 +582,7 @@ dependencies = [
  "serde-untagged",
  "serde-value",
  "thiserror 1.0.69",
- "toml 0.8.22",
+ "toml",
  "unicode-xid",
  "url",
 ]
@@ -598,7 +598,7 @@ dependencies = [
  "serde-untagged",
  "serde-value",
  "thiserror 2.0.12",
- "toml 0.8.22",
+ "toml",
  "unicode-xid",
  "url",
 ]
@@ -1116,7 +1116,7 @@ dependencies = [
  "petgraph",
  "rayon",
  "serde",
- "toml 0.5.11",
+ "toml",
 ]
 
 [[package]]
@@ -2380,7 +2380,7 @@ dependencies = [
  "smallvec",
  "static_assertions",
  "target-spec",
- "toml 0.5.11",
+ "toml",
 ]
 
 [[package]]
@@ -2419,7 +2419,7 @@ dependencies = [
  "semver",
  "serde",
  "serde_json",
- "toml 0.5.11",
+ "toml",
 ]
 
 [[package]]
@@ -2435,8 +2435,8 @@ dependencies = [
  "clap_builder",
  "foldhash",
  "getrandom 0.2.15",
+ "hashbrown 0.15.3",
  "include_dir",
- "indexmap 1.9.3",
  "libc",
  "log",
  "miette",
@@ -2455,7 +2455,7 @@ dependencies = [
  "smallvec",
  "syn 2.0.101",
  "textwrap 0.16.1",
- "toml 0.5.11",
+ "toml",
  "toml_edit",
  "windows-sys 0.59.0",
  "zerocopy",
@@ -2486,7 +2486,7 @@ dependencies = [
  "serde",
  "tabular",
  "target-spec",
- "toml 0.5.11",
+ "toml",
  "toml_edit",
  "twox-hash",
 ]
@@ -4434,7 +4434,7 @@ dependencies = [
  "serde_json",
  "target-lexicon",
  "test-case",
- "toml 0.5.11",
+ "toml",
 ]
 
 [[package]]
@@ -4651,20 +4651,11 @@ checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
 
 [[package]]
 name = "toml"
-version = "0.5.11"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f4f7f0dd8d50a853a531c426359045b1998f04219d88799810762cd4ad314234"
-dependencies = [
- "indexmap 1.9.3",
- "serde",
-]
-
-[[package]]
-name = "toml"
 version = "0.8.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "05ae329d1f08c4d17a59bed7ff5b5a769d062e64a62d34a3261b219e62cd5aae"
 dependencies = [
+ "indexmap 2.9.0",
  "serde",
  "serde_spanned",
  "toml_datetime",
