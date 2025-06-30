@@ -2433,7 +2433,6 @@ dependencies = [
  "clap 4.5.30",
  "clap_builder",
  "foldhash",
- "getrandom 0.2.15",
  "include_dir",
  "indexmap 1.9.3",
  "libc",
@@ -2457,7 +2456,6 @@ dependencies = [
  "toml 0.5.11",
  "toml_edit",
  "windows-sys 0.59.0",
- "zerocopy 0.7.35",
 ]
 
 [[package]]
