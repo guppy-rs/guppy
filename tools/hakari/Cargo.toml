@@ -25,7 +25,7 @@ rustdoc-args = ["--cfg=doc_cfg"]
 workspace = true
 
 [dependencies]
-ahash = "0.8.11"
+ahash = "0.8.12"
 atomicwrites = "0.4.4"
 camino = "1.1.9"
 cfg-if = "1.0.0"
