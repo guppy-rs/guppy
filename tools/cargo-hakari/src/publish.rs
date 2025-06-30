@@ -58,7 +58,7 @@ pub(crate) fn publish_hakari(
         Ok(_) => remove_dep.finish(true),
         Err(err) => {
             remove_dep.finish(false)?;
-            Err(err).wrap_err_with(|| format!("`{}` failed", all_args))
+            Err(err).wrap_err_with(|| format!("`{all_args}` failed"))
         }
     }
 }

@@ -32,7 +32,7 @@ fn main() -> Result<(), Error> {
     let package_set = query.resolve();
     for dep_id in package_set.package_ids(DependencyDirection::Forward) {
         // PackageSet also has an `links()` method which returns links instead of package IDs.
-        println!("transitive: {}", dep_id);
+        println!("transitive: {dep_id}");
     }
     Ok(())
 }

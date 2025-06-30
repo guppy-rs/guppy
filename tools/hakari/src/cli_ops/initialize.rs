@@ -219,7 +219,7 @@ impl fmt::Display for InitError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             InitError::ConfigPathExists { abs_path } => {
-                write!(f, "config already exists at path {}", abs_path)
+                write!(f, "config already exists at path {abs_path}")
             }
             InitError::PackageNameExists {
                 package_name,
@@ -227,8 +227,7 @@ impl fmt::Display for InitError {
             } => {
                 write!(
                     f,
-                    "package name {} already exists at path {}",
-                    package_name, workspace_path
+                    "package name {package_name} already exists at path {workspace_path}"
                 )
             }
             InitError::WorkspacePathNotInRoot {
@@ -237,15 +236,14 @@ impl fmt::Display for InitError {
             } => {
                 write!(
                     f,
-                    "path {} is not within workspace {}",
-                    abs_path, workspace_root
+                    "path {abs_path} is not within workspace {workspace_root}"
                 )
             }
             InitError::WorkspacePathExists { abs_path } => {
-                write!(f, "workspace path {} already exists", abs_path)
+                write!(f, "workspace path {abs_path} already exists")
             }
             InitError::Io { path, .. } => {
-                write!(f, "IO error while accessing {}", path)
+                write!(f, "IO error while accessing {path}")
             }
         }
     }

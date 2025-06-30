@@ -65,7 +65,7 @@ impl Fixture {
 
             for entry in std::fs::read_dir(temp_dir.path()).unwrap() {
                 let entry = entry.unwrap();
-                println!("{:?}", entry);
+                println!("{entry:?}");
             }
 
             // Grab the path to `Cargo.toml`. (fs_extra copies the directory into the tempdir so we
@@ -96,7 +96,7 @@ impl Fixture {
                 CargoResolverVersion::V3 => panic!("resolver v3 not yet supported in Cargo"),
                 _ => panic!("unknown resolver {:?}", resolver),
             };
-            writeln!(f, "resolver = \"{}\"", resolver_version).expect("file written successfully");
+            writeln!(f, "resolver = \"{resolver_version}\"").expect("file written successfully");
 
             (Some(temp_dir), workspace_dir)
         } else {

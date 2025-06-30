@@ -70,7 +70,7 @@ fn executable_name(subcommand: &str) -> String {
 
     #[cfg(not(target_os = "windows"))]
     {
-        format!("cargo-{}", subcommand)
+        format!("cargo-{subcommand}")
     }
 }
 

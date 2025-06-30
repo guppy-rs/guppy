@@ -391,18 +391,15 @@ impl FeatureGraphBuildState {
     ) {
         // The from node should always be present because it is a known node.
         let from_ix = self.lookup_node(&from_node).unwrap_or_else(|| {
-            panic!(
-                "while adding feature edges, missing 'from': {:?}",
-                from_node
-            );
+            panic!("while adding feature edges, missing 'from': {from_node:?}");
         });
 
         let to_nodes_edges = to_nodes_edges.into_iter().collect::<Vec<_>>();
 
         to_nodes_edges.into_iter().for_each(|(to_node, edge)| {
-            let to_ix = self.lookup_node(&to_node).unwrap_or_else(|| {
-                panic!("while adding feature edges, missing 'to': {:?}", to_node)
-            });
+            let to_ix = self
+                .lookup_node(&to_node)
+                .unwrap_or_else(|| panic!("while adding feature edges, missing 'to': {to_node:?}"));
 
             if from_ix == to_ix {
                 let (package_id, feature_label) = from_node.package_id_and_feature_label(graph);

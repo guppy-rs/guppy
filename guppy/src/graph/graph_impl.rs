@@ -92,8 +92,7 @@ impl PackageGraph {
         let package_count = self.data.packages.len();
         if node_count != package_count {
             return Err(Error::PackageGraphInternalError(format!(
-                "number of nodes = {} different from packages = {}",
-                node_count, package_count,
+                "number of nodes = {node_count} different from packages = {package_count}",
             )));
         }
 
@@ -114,8 +113,7 @@ impl PackageGraph {
                     let metadata2_id = metadata2.map(|metadata| metadata.id());
                     if !matches!(metadata2_id, Ok(id) if id == package_id) {
                         return Err(Error::PackageGraphInternalError(format!(
-                            "package {} has workspace path {:?} but query by path returned {:?}",
-                            package_id, workspace_path, metadata2_id,
+                            "package {package_id} has workspace path {workspace_path:?} but query by path returned {metadata2_id:?}",
                         )));
                     }
 
@@ -134,8 +132,7 @@ impl PackageGraph {
                     // This package is not in the workspace.
                     if workspace_ids.contains(package_id) {
                         return Err(Error::PackageGraphInternalError(format!(
-                            "package {} has no workspace path but is in workspace",
-                            package_id,
+                            "package {package_id} has no workspace path but is in workspace",
                         )));
                     }
                 }
@@ -205,8 +202,7 @@ impl PackageGraph {
                 // See https://github.com/steveklabnik/semver/issues/98.
                 if !cargo_version_matches(req, to_version) {
                     return Err(Error::PackageGraphInternalError(format!(
-                        "{} -> {}: version ({}) doesn't match requirement ({:?})",
-                        package_id, to_id, to_version, req,
+                        "{package_id} -> {to_id}: version ({to_version}) doesn't match requirement ({req:?})",
                     )));
                 }
 
@@ -216,8 +212,7 @@ impl PackageGraph {
 
                 if !is_any {
                     return Err(Error::PackageGraphInternalError(format!(
-                        "{} -> {}: no edge info found",
-                        package_id, to_id,
+                        "{package_id} -> {to_id}: no edge info found",
                     )));
                 }
             }
@@ -1328,9 +1323,9 @@ impl<'g> PackageSource<'g> {
 impl fmt::Display for PackageSource<'_> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            PackageSource::Workspace(path) => write!(f, "{}", path),
-            PackageSource::Path(path) => write!(f, "{}", path),
-            PackageSource::External(source) => write!(f, "{}", source),
+            PackageSource::Workspace(path) => write!(f, "{path}"),
+            PackageSource::Path(path) => write!(f, "{path}"),
+            PackageSource::External(source) => write!(f, "{source}"),
         }
     }
 }
@@ -1596,7 +1591,7 @@ impl fmt::Display for ExternalSource<'_> {
                     GitReq::Rev(rev) => write!(f, "{}{}", Self::REV_EQ, rev)?,
                     GitReq::Default => {}
                 };
-                write!(f, "#{}", resolved)
+                write!(f, "#{resolved}")
             }
         }
     }
@@ -2127,8 +2122,8 @@ impl NamedFeatureDep {
 impl fmt::Display for NamedFeatureDep {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Self::NamedFeature(feature) => write!(f, "{}", feature),
-            Self::OptionalDependency(dep_name) => write!(f, "dep:{}", dep_name),
+            Self::NamedFeature(feature) => write!(f, "{feature}"),
+            Self::OptionalDependency(dep_name) => write!(f, "dep:{dep_name}"),
             Self::DependencyNamedFeature {
                 dep_name,
                 feature,

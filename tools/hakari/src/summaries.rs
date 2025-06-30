@@ -180,7 +180,7 @@ impl HakariBuilderSummary {
             if line.is_empty() {
                 writeln!(out, "#")?;
             } else {
-                writeln!(out, "# {}", line)?;
+                writeln!(out, "# {line}")?;
             }
         }
         Ok(())

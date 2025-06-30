@@ -154,7 +154,7 @@ impl GenerateOpts {
         let mut num_changed = 0;
 
         for (name, fixture) in fixtures {
-            println!("generating outputs for {}...", name);
+            println!("generating outputs for {name}...");
 
             let context: GenerateContext<'_, T> =
                 GenerateContext::new(fixture, &args, self.mode == GenerateMode::Force)?;
@@ -184,7 +184,7 @@ impl GenerateOpts {
             bail!("{} outputs changed", num_changed);
         }
 
-        println!("{} outputs changed", num_changed);
+        println!("{num_changed} outputs changed");
 
         Ok(())
     }

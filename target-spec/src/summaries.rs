@@ -252,8 +252,7 @@ mod target_features_impl {
                         "unknown" => Ok(TargetFeaturesSummary::Unknown),
                         "all" => Ok(TargetFeaturesSummary::All),
                         other => Err(D::Error::custom(format!(
-                            "unknown string for target features: {}",
-                            other,
+                            "unknown string for target features: {other}",
                         ))),
                     }
                 }
@@ -361,15 +360,15 @@ mod tests {
         ));
 
         for (input, expected) in valid {
-            let actual: Wrapper = toml::from_str(input)
-                .unwrap_or_else(|err| panic!("input {} is valid: {}", input, err));
-            assert_eq!(actual.platform, expected, "for input: {}", input);
+            let actual: Wrapper =
+                toml::from_str(input).unwrap_or_else(|err| panic!("input {input} is valid: {err}"));
+            assert_eq!(actual.platform, expected, "for input: {input}");
 
             // Serialize and deserialize again.
             let serialized = toml::to_string(&actual).expect("serialized correctly");
             let actual_2: Wrapper = toml::from_str(&serialized)
-                .unwrap_or_else(|err| panic!("serialized input: {} is valid: {}", input, err));
-            assert_eq!(actual, actual_2, "for input: {}", input);
+                .unwrap_or_else(|err| panic!("serialized input: {input} is valid: {err}"));
+            assert_eq!(actual, actual_2, "for input: {input}");
 
             // Check that custom JSON functionality works.
             if actual.platform.custom_json.is_some() {

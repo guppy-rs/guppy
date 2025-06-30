@@ -282,26 +282,26 @@ pub enum ThirdPartySource {
 impl fmt::Display for ThirdPartySource {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            ThirdPartySource::Path(path) => write!(f, "{{ path = {} }}", path),
+            ThirdPartySource::Path(path) => write!(f, "{{ path = {path} }}"),
             ThirdPartySource::Registry(Some(registry)) => {
-                write!(f, "{{ registry = \"{}\" }}", registry)
+                write!(f, "{{ registry = \"{registry}\" }}")
             }
             ThirdPartySource::Registry(None) => write!(f, "crates.io"),
             ThirdPartySource::Git { repo, req } => match req {
                 GitReqSummary::Branch(branch) => {
-                    write!(f, "{{ git = \"{}\", branch = \"{}\" }}", repo, branch)
+                    write!(f, "{{ git = \"{repo}\", branch = \"{branch}\" }}")
                 }
                 GitReqSummary::Tag(tag) => {
-                    write!(f, "{{ git = \"{}\", tag = \"{}\" }}", repo, tag)
+                    write!(f, "{{ git = \"{repo}\", tag = \"{tag}\" }}")
                 }
                 GitReqSummary::Rev(rev) => {
-                    write!(f, "{{ git = \"{}\", rev = \"{}\" }}", repo, rev)
+                    write!(f, "{{ git = \"{repo}\", rev = \"{rev}\" }}")
                 }
                 GitReqSummary::Default => {
-                    write!(f, "{{ git = \"{}\" }}", repo)
+                    write!(f, "{{ git = \"{repo}\" }}")
                 }
             },
-            ThirdPartySource::Url(url) => write!(f, "{{ url = \"{}\" }}", url),
+            ThirdPartySource::Url(url) => write!(f, "{{ url = \"{url}\" }}"),
         }
     }
 }
@@ -899,19 +899,18 @@ mod tests {
 
         for (input, expected) in valids {
             let formatted_input = format_input(input);
-            let actual = toml::de::from_str(input).unwrap_or_else(|err| {
-                panic!("{}\ndeserialization error: {}", formatted_input, err)
-            });
-            assert_eq!(expected, actual, "{}", formatted_input);
+            let actual = toml::de::from_str(input)
+                .unwrap_or_else(|err| panic!("{formatted_input}\ndeserialization error: {err}"));
+            assert_eq!(expected, actual, "{formatted_input}");
 
             let serialized = toml::ser::to_string(&actual)
-                .unwrap_or_else(|err| panic!("{}\nserialization error: {}", formatted_input, err));
+                .unwrap_or_else(|err| panic!("{formatted_input}\nserialization error: {err}"));
 
             // Check that the serialized output matches by parsing it again.
             let actual2 = toml::de::from_str(&serialized).unwrap_or_else(|err| {
-                panic!("{}\ndeserialization error try 2: {}", formatted_input, err)
+                panic!("{formatted_input}\ndeserialization error try 2: {err}")
             });
-            assert_eq!(actual, actual2, "{}", formatted_input);
+            assert_eq!(actual, actual2, "{formatted_input}");
         }
     }
 
@@ -975,25 +974,21 @@ mod tests {
         for (input, err_msg) in invalids {
             let formatted_input = format_input(input);
             let err = match toml::de::from_str::<PackageSetSummary>(input) {
-                Ok(output) => panic!(
-                    "invalid input did not fail, {}\noutput: {:?}",
-                    formatted_input, output,
-                ),
+                Ok(output) => {
+                    panic!("invalid input did not fail, {formatted_input}\noutput: {output:?}",)
+                }
                 Err(err) => err,
             };
 
-            let err_display = format!("{}", err);
+            let err_display = format!("{err}");
             assert!(
                 err_display.contains(err_msg),
-                "{}\nerror message '{}' did not contain '{}",
-                formatted_input,
-                err_display,
-                err_msg
+                "{formatted_input}\nerror message '{err_display}' did not contain '{err_msg}"
             );
         }
     }
 
     fn format_input(input: &str) -> String {
-        format!("input:\n---\n{}\n---", input)
+        format!("input:\n---\n{input}\n---")
     }
 }

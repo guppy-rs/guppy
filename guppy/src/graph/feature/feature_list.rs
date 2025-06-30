@@ -202,7 +202,7 @@ impl fmt::Display for DisplayFeatures<'_, '_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let len = self.0.len();
         for (idx, label) in self.0.iter().enumerate() {
-            write!(f, "{}", label)?;
+            write!(f, "{label}")?;
             if idx < len - 1 {
                 write!(f, ", ")?;
             }
@@ -214,6 +214,6 @@ impl fmt::Display for DisplayFeatures<'_, '_> {
 impl fmt::Debug for DisplayFeatures<'_, '_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // Use the Display impl as the debug one because it's easier to read.
-        write!(f, "{}", self)
+        write!(f, "{self}")
     }
 }

@@ -34,7 +34,7 @@ fn main() -> Result<(), Error> {
         .resolve()
         .package_ids(DependencyDirection::Forward)
         .count();
-    println!("number of packages before: {}", before_count);
+    println!("number of packages before: {before_count}");
 
     let resolver_fn = |link: PackageLink<'_>| {
         if link.dev_only() {
@@ -62,7 +62,7 @@ fn main() -> Result<(), Error> {
         })
         .package_ids(DependencyDirection::Forward)
         .len();
-    println!("number of packages after: {}", resolve_with_len);
+    println!("number of packages after: {resolve_with_len}");
 
     Ok(())
 }

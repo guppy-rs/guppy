@@ -137,13 +137,13 @@ impl fmt::Display for PackageReport<'_> {
                         } else {
                             "DOWNGRADED"
                         };
-                        writeln!(f, "    * version {} from {}", change_str, old_version)?;
+                        writeln!(f, "    * version {change_str} from {old_version}")?;
                     }
                     if let Some(old_source) = old_source {
-                        writeln!(f, "    * source changed from {}", old_source)?;
+                        writeln!(f, "    * source changed from {old_source}")?;
                     }
                     if let Some(old_status) = old_status {
-                        writeln!(f, "    * status changed from {}", old_status)?;
+                        writeln!(f, "    * status changed from {old_status}")?;
                     }
 
                     // ---
@@ -198,7 +198,7 @@ where
     }
 
     for (idx, item) in items.enumerate() {
-        write!(f, "{}", item)?;
+        write!(f, "{item}")?;
         // Add a comma for all items except the last one.
         if idx + 1 < len {
             write!(f, ", ")?;

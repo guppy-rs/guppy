@@ -1560,8 +1560,7 @@ impl<'g> OutputMapBuild<'g> {
                     FeatureLabel::OptionalDependency(name) => {
                         debug_assert!(
                             false,
-                            "root features must be named or base, found optional dependency {}",
-                            name,
+                            "root features must be named or base, found optional dependency {name}",
                         );
                         None
                     }

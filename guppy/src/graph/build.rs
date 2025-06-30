@@ -99,7 +99,7 @@ impl WorkspaceImpl {
         for id in members {
             // Strip off the workspace path from the manifest path.
             let package_metadata = packages.get(&id).ok_or_else(|| {
-                Error::PackageGraphConstructError(format!("workspace member '{}' not found", id))
+                Error::PackageGraphConstructError(format!("workspace member '{id}' not found"))
             })?;
 
             let workspace_path = match &package_metadata.source {
@@ -308,10 +308,7 @@ impl<'a> GraphBuildState<'a> {
                     if let NamedFeatureDep::OptionalDependency(d) = &dep {
                         let index = optional_deps.get_index_of(d.as_ref()).ok_or_else(|| {
                             Error::PackageGraphConstructError(format!(
-                                "package '{}': named feature {} specifies 'dep:{d}', but {d} is not an optional dependency",
-                                package_id,
-                                feature_name,
-                                d = d))
+                                "package '{package_id}': named feature {feature_name} specifies 'dep:{d}', but {d} is not an optional dependency"))
                         })?;
                         seen_explicit.set(index, true);
                     }
@@ -386,7 +383,7 @@ impl<'a> GraphBuildState<'a> {
         id: &PackageId,
     ) -> Result<(Rc<PackageDataValue>, BuildTargetMap), Box<Error>> {
         let package_data = self.package_data.get(id).ok_or_else(|| {
-            Error::PackageGraphConstructError(format!("no package data found for package '{}'", id))
+            Error::PackageGraphConstructError(format!("no package data found for package '{id}'"))
         })?;
         let package_data = package_data.clone();
         let build_targets = std::mem::take(&mut *package_data.build_targets.borrow_mut());
@@ -409,8 +406,7 @@ impl<'a> GraphBuildState<'a> {
             })?;
         let workspace_path = workspace_path.parent().ok_or_else(|| {
             Error::PackageGraphConstructError(format!(
-                "workspace member '{}' has invalid manifest path {:?}",
-                id, manifest_path
+                "workspace member '{id}' has invalid manifest path {manifest_path:?}"
             ))
         })?;
         Ok(convert_relative_forward_slashes(workspace_path).into_boxed_path())
@@ -887,8 +883,7 @@ impl PackageLinkImpl {
 
         let dep_name = dep_name.ok_or_else(|| {
             Error::PackageGraphConstructError(format!(
-                "for package '{}': no dependencies found matching '{}'",
-                from_id, resolved_name,
+                "for package '{from_id}': no dependencies found matching '{resolved_name}'",
             ))
         })?;
         let version_req = version_req.unwrap_or_else(|| {
@@ -951,7 +946,7 @@ impl DepRequiredOrOptional {
         let target_spec = match dep.target.as_ref() {
             Some(spec_or_triple) => {
                 // This is a platform-specific dependency, so add it to the list of specs.
-                let spec_or_triple = format!("{}", spec_or_triple);
+                let spec_or_triple = format!("{spec_or_triple}");
                 let target_spec: TargetSpec = spec_or_triple.parse().map_err(|err| {
                     Error::PackageGraphConstructError(format!(
                         "for package '{}': for dependency '{}', parsing target '{}' failed: {}",

@@ -39,7 +39,7 @@ fn main() -> Result<(), Error> {
     // Keep iterating over package IDs until no more remain.
     while !current.is_empty() {
         // Print out details for this level.
-        writeln!(f, "level {}:", level).unwrap();
+        writeln!(f, "level {level}:").unwrap();
         for (id, metadata) in &current {
             writeln!(f, "* {}: {}", id, metadata.name()).unwrap();
         }

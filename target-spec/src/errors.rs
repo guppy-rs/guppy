@@ -480,8 +480,7 @@ impl fmt::Display for RustcVersionVerboseParseError {
             RustcVersionVerboseParseError::MissingHostLine { output } => {
                 write!(
                     f,
-                    "output from `rustc -vV` did not contain a `host: ` line; output:\n---\n{}---",
-                    output
+                    "output from `rustc -vV` did not contain a `host: ` line; output:\n---\n{output}---"
                 )
             }
         }

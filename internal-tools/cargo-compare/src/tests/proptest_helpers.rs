@@ -44,7 +44,7 @@ pub(super) fn compare(graph: &PackageGraph, common: GuppyCargoCommon) -> TestCas
         .compute_diff(&ctx)
         .expect("compute_diff succeeded");
     if target_host_diff.any_diff() {
-        println!("{}", target_host_diff);
+        println!("{target_host_diff}");
         Err(TestCaseError::fail("diff found"))
     } else {
         Ok(())

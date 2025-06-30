@@ -13,7 +13,7 @@ fn executable_name(subcommand: &str) -> String {
         if #[cfg(target_os = "windows")] {
             format!("cargo-{}.exe", subcommand)
         } else {
-            format!("cargo-{}", subcommand)
+            format!("cargo-{subcommand}")
         }
     }
 }

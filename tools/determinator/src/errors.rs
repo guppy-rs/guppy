@@ -82,13 +82,13 @@ pub enum RulesErrorKind {
 impl fmt::Display for RulesErrorKind {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            RulesErrorKind::ResolveRef(err) => write!(f, "{}", err),
+            RulesErrorKind::ResolveRef(err) => write!(f, "{err}"),
             RulesErrorKind::GlobParse {
                 glob: Some(glob),
                 err,
-            } => write!(f, "while parsing glob '{}': {}", glob, err),
+            } => write!(f, "while parsing glob '{glob}': {err}"),
             RulesErrorKind::GlobParse { glob: None, err } => {
-                write!(f, "while parsing a glob: {}", err)
+                write!(f, "while parsing a glob: {err}")
             }
         }
     }

@@ -259,10 +259,7 @@ fn platform_not_matched_features() {
         "windows-weak",
     ] {
         let cargo_set = make_linux_cargo_set(feature_set_fn(&[feature_name]));
-        let msg = format!(
-            "while checking Cargo resolution for default + {}",
-            feature_name
-        );
+        let msg = format!("while checking Cargo resolution for default + {feature_name}");
         assert_features_for_package(
             cargo_set.target_features(),
             &package_id(json::METADATA_WEAK_NAMESPACED_ID),
@@ -314,10 +311,7 @@ fn platform_matched_features() {
         "windows-weak",
     ] {
         let cargo_set = make_windows_cargo_set(feature_set_fn(&[feature_name]));
-        let msg = format!(
-            "while checking Cargo resolution for default + {}",
-            feature_name
-        );
+        let msg = format!("while checking Cargo resolution for default + {feature_name}");
         assert_features_for_package(
             cargo_set.target_features(),
             &package_id(json::METADATA_WEAK_NAMESPACED_ID),
@@ -391,10 +385,7 @@ fn test_edge_upgrades() {
         "upgrade8",
     ] {
         let cargo_set = make_linux_cargo_set(feature_set_fn(&[feature_name]));
-        let msg = format!(
-            "while checking Cargo resolution for default + {}",
-            feature_name
-        );
+        let msg = format!("while checking Cargo resolution for default + {feature_name}");
         assert_features_for_package(
             cargo_set.target_features(),
             &package_id(json::METADATA_WEAK_NAMESPACED_ID),

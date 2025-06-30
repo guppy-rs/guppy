@@ -146,7 +146,7 @@ impl fmt::Display for HakariExplainDisplay<'_, '_, '_> {
             }
         }
 
-        writeln!(f, "{}", table)
+        writeln!(f, "{table}")
     }
 }
 
@@ -195,10 +195,10 @@ impl fmt::Display for FeatureDisplay<'_, '_> {
         for (position, feature) in self.features.iter().with_position() {
             match position {
                 Position::First | Position::Middle => {
-                    write!(f, "{}, ", feature)?;
+                    write!(f, "{feature}, ")?;
                 }
                 Position::Last | Position::Only => {
-                    write!(f, "{}", feature)?;
+                    write!(f, "{feature}")?;
                 }
             }
         }

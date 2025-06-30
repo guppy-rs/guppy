@@ -415,9 +415,9 @@ pub enum RuleIndex {
 impl fmt::Display for RuleIndex {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            RuleIndex::CustomPath(index) => write!(f, "custom path rule {}", index),
-            RuleIndex::DefaultPath(index) => write!(f, "default path rule {}", index),
-            RuleIndex::Package(index) => write!(f, "package rule {}", index),
+            RuleIndex::CustomPath(index) => write!(f, "custom path rule {index}"),
+            RuleIndex::DefaultPath(index) => write!(f, "default path rule {index}"),
+            RuleIndex::Package(index) => write!(f, "package rule {index}"),
         }
     }
 }
@@ -589,8 +589,7 @@ mod mark_changed_impl {
             MarkChangedDeserialized::String(s) => match s.as_str() {
                 "all" => Ok(DeterminatorMarkChanged::All),
                 other => Err(D::Error::custom(format!(
-                    "unknown string for mark-changed: {}",
-                    other,
+                    "unknown string for mark-changed: {other}",
                 ))),
             },
             MarkChangedDeserialized::VecString(strings) => {
@@ -810,9 +809,8 @@ mod tests {
             if res.is_ok() {
                 panic!(
                     "parsing should have failed but succeeded:\n\
-                     input = {}\n\
-                     output: {:?}\n",
-                    bad, res
+                     input = {bad}\n\
+                     output: {res:?}\n"
                 );
             }
         }

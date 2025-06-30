@@ -218,7 +218,7 @@ impl HakariCargoToml {
     /// Writes out the full contents, including the provided TOML, to the given writer.
     pub fn write(&self, toml: &str, mut out: impl io::Write) -> io::Result<()> {
         write!(out, "{}", &self.contents[..self.start_offset])?;
-        write!(out, "{}", toml)?;
+        write!(out, "{toml}")?;
         write!(out, "{}", &self.contents[self.end_offset..])
     }
 
@@ -231,7 +231,7 @@ impl HakariCargoToml {
     pub fn write_to_fmt(&self, toml: &str, mut out: impl fmt::Write) -> fmt::Result {
         // No alternative to copy-pasting :(
         write!(out, "{}", &self.contents[..self.start_offset])?;
-        write!(out, "{}", toml)?;
+        write!(out, "{toml}")?;
         write!(out, "{}", &self.contents[self.end_offset..])
     }
 }
@@ -261,16 +261,15 @@ impl fmt::Display for CargoTomlError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             CargoTomlError::Io { toml_path, .. } => {
-                write!(f, "error while reading path '{}'", toml_path)
+                write!(f, "error while reading path '{toml_path}'")
             }
             CargoTomlError::GeneratedSectionNotFound { toml_path, .. } => {
                 write!(
                     f,
-                    "in '{}', unable to find\n\
+                    "in '{toml_path}', unable to find\n\
                 ### BEGIN HAKARI SECTION\n\
                 ...\n\
-                ### END HAKARI SECTION",
-                    toml_path
+                ### END HAKARI SECTION"
                 )
             }
         }

@@ -120,7 +120,7 @@ impl MvOptions {
                 diff_utf8_paths(manifest_path, workspace_root).unwrap()
             );
             for edit in edits {
-                println!("  * {}", edit);
+                println!("  * {edit}");
             }
         }
 
@@ -507,7 +507,7 @@ fn update_root_toml(
 
     let mut out = fs::File::create(&root_manifest_path)
         .wrap_err_with(|| eyre!("Error while opening {}", root_manifest_path))?;
-    write!(out, "{}", document)?;
+    write!(out, "{document}")?;
 
     Ok(())
 }

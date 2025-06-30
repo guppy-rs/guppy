@@ -241,7 +241,7 @@ mod proptests {
                     assert_eq!(platform.target_features(), platform2.target_features(), "target features match");
                     assert_eq!(platform.flags().collect::<HashSet<_>>(), platform2.flags().collect::<HashSet<_>>(), "flags match");
                 }
-                (other, other2) => panic!("platform specs do not match: original: {:?}, roundtrip: {:?}", other, other2),
+                (other, other2) => panic!("platform specs do not match: original: {other:?}, roundtrip: {other2:?}"),
             }
         }
     }

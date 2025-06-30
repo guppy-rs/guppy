@@ -103,14 +103,10 @@ mod cli_support_tests {
             .build_graph()
             .expect("package graph built correctly");
         let config_path = graph.workspace().root().join(DEFAULT_CONFIG_PATH);
-        let config_str = std::fs::read_to_string(&config_path).unwrap_or_else(|err| {
-            panic!("could not read hakari config at {}: {}", config_path, err)
-        });
+        let config_str = std::fs::read_to_string(&config_path)
+            .unwrap_or_else(|err| panic!("could not read hakari config at {config_path}: {err}"));
         let config: HakariConfig = config_str.parse().unwrap_or_else(|err| {
-            panic!(
-                "could not deserialize hakari config at {}: {}",
-                config_path, err
-            )
+            panic!("could not deserialize hakari config at {config_path}: {err}")
         });
 
         let builder = config.builder.to_hakari_builder(&graph).unwrap();

@@ -303,7 +303,7 @@ mod tests {
     fn test_single() {
         let expr = match TargetSpec::new("cfg(windows)").unwrap() {
             TargetSpec::PlainString(triple) => {
-                panic!("expected expression, got triple: {:?}", triple)
+                panic!("expected expression, got triple: {triple:?}")
             }
             TargetSpec::Expression(expr) => expr,
         };
@@ -320,7 +320,7 @@ mod tests {
                 .unwrap()
             {
                 TargetSpec::PlainString(triple) => {
-                    panic!("expected expression, got triple: {:?}", triple)
+                    panic!("expected expression, got triple: {triple:?}")
                 }
                 TargetSpec::Expression(expr) => expr,
             };
@@ -346,7 +346,7 @@ mod tests {
     fn test_testequal() {
         let expr = match TargetSpec::new("cfg(target_os = \"windows\")").unwrap() {
             TargetSpec::PlainString(triple) => {
-                panic!("expected spec, got triple: {:?}", triple)
+                panic!("expected spec, got triple: {triple:?}")
             }
             TargetSpec::Expression(expr) => expr,
         };
@@ -399,7 +399,7 @@ mod tests {
     fn test_unknown_flag() {
         let expr = match TargetSpec::new("cfg(foo)").unwrap() {
             TargetSpec::PlainString(triple) => {
-                panic!("expected spec, got triple: {:?}", triple)
+                panic!("expected spec, got triple: {triple:?}")
             }
             TargetSpec::Expression(expr) => expr,
         };
@@ -416,7 +416,7 @@ mod tests {
             .expect("unknown predicate should parse")
         {
             TargetSpec::PlainString(triple) => {
-                panic!("expected spec, got triple: {:?}", triple)
+                panic!("expected spec, got triple: {triple:?}")
             }
             TargetSpec::Expression(expr) => expr,
         };

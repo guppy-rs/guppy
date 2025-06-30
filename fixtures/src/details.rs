@@ -254,7 +254,7 @@ impl FixtureDetails {
             );
 
             let link = links.pop().unwrap();
-            let msg = format!("{}: {} -> {}", msg, from, to);
+            let msg = format!("{msg}: {from} -> {to}");
             details.assert_metadata(link, &msg);
         }
     }

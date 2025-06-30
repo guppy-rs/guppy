@@ -81,8 +81,8 @@ mod tests {
     fn test_bogus_families() {
         // Known bogus families.
         for family in &["test", "debug_assertions", "proc_macro"] {
-            let cfg = format!("cfg({})", family);
-            let cfg_not = format!("cfg(not({}))", family);
+            let cfg = format!("cfg({family})");
+            let cfg_not = format!("cfg(not({family}))");
             assert_eq!(eval(&cfg, "x86_64-unknown-linux-gnu").unwrap(), Some(false));
             assert_eq!(
                 eval(&cfg_not, "x86_64-unknown-linux-gnu").unwrap(),
@@ -96,8 +96,8 @@ mod tests {
         platform_with_flags.add_flags(["foo", "bar"].iter().copied());
 
         for family in &["foo", "bar"] {
-            let cfg = format!("cfg({})", family);
-            let cfg_not = format!("cfg(not({}))", family);
+            let cfg = format!("cfg({family})");
+            let cfg_not = format!("cfg(not({family}))");
 
             // eval always means flags are evaluated to false.
             assert_eq!(eval(&cfg, "x86_64-unknown-linux-gnu").unwrap(), Some(false));
@@ -119,8 +119,8 @@ mod tests {
         }
 
         for family in &["baz", "nonsense"] {
-            let cfg = format!("cfg({})", family);
-            let cfg_not = format!("cfg(not({}))", family);
+            let cfg = format!("cfg({family})");
+            let cfg_not = format!("cfg(not({family}))");
 
             // eval always means flags are evaluated to false.
             assert_eq!(eval(&cfg, "x86_64-unknown-linux-gnu").unwrap(), Some(false));

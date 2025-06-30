@@ -77,7 +77,7 @@ pub fn cmd_cycles(metadata_opts: CargoMetadataOptions, features: bool) -> Result
                 if n > 0 {
                     print!(" -> ");
                 }
-                println!("{}", feature_id);
+                println!("{feature_id}");
             }
             println!(" -> {}", cycle[0]);
         }
@@ -95,7 +95,7 @@ pub fn cmd_cycles(metadata_opts: CargoMetadataOptions, features: bool) -> Result
                 if n > 0 {
                     print!(" -> ");
                 }
-                println!("{}", package_id);
+                println!("{package_id}");
             }
             println!(" -> {}", cycle[0]);
         }
@@ -123,7 +123,7 @@ pub fn cmd_diff(json: bool, old: &str, new: &str) -> Result<()> {
     if json {
         println!("{}", serde_json::to_string_pretty(&diff).unwrap());
     } else {
-        print!("{}", diff);
+        print!("{diff}");
     }
 
     Ok(())
@@ -195,7 +195,7 @@ pub fn cmd_dups(opts: &DupsOptions) -> Result<()> {
 
         let output = itertools::join(dupes.iter().map(|p| p.version()), ", ");
 
-        println!("{} ({})", name, output);
+        println!("{name} ({output})");
     }
 
     Ok(())
@@ -377,14 +377,14 @@ pub fn cmd_select(options: &CmdSelectOptions) -> Result<()> {
             Kind::ThirdParty => !in_workspace,
         };
         if show_package {
-            println!("{}", package_id);
+            println!("{package_id}");
         }
     }
 
     if let Some(ref output_file) = options.output_dot {
         let dot = package_set.display_dot(NameVisitor);
         let mut f = fs::File::create(output_file)?;
-        write!(f, "{}", dot)?;
+        write!(f, "{dot}")?;
     }
 
     Ok(())
@@ -482,7 +482,7 @@ pub fn cmd_subtree_size(options: &SubtreeSizeOptions) -> Result<()> {
             println!("{} {}", deps.len(), package_id);
         }
         for dep in deps {
-            println!("    {}", dep);
+            println!("    {dep}");
         }
     }
 

@@ -24,7 +24,7 @@ fn dot_fmt() {
     graph.add_edge(c, d, 400);
 
     let dot_fmt = DotFmt::new(&graph, DisplayVisitor);
-    let output = format!("{}", dot_fmt);
+    let output = format!("{dot_fmt}");
     static EXPECTED_DOT: &str = r#"digraph {
     0 [label="A"]
     1 [label="B1\"B2"]
@@ -39,7 +39,7 @@ fn dot_fmt() {
     assert_eq!(&output, EXPECTED_DOT, "dot output matches");
 
     let no_escape_dot_fmt = DotFmt::new(&graph, NoEscapeDisplayVisitor);
-    let output = format!("{}", no_escape_dot_fmt);
+    let output = format!("{no_escape_dot_fmt}");
     static EXPECTED_DOT_NO_ESCAPE: &str = r#"digraph {
     0 [label="A"]
     1 [label="B1\"B2"]

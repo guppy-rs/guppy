@@ -30,7 +30,7 @@ impl DiffOpts {
     /// Executes this command.
     pub fn exec(self, ctx: &GlobalContext) -> Result<()> {
         let target_host_diff = self.compute_diff(ctx)?;
-        println!("{}", target_host_diff);
+        println!("{target_host_diff}");
 
         if target_host_diff.any_diff() {
             bail!("non-empty diff!")
@@ -159,14 +159,14 @@ impl fmt::Display for FeatureDiff<'_> {
                                 match diff {
                                     Edit::Copy(_) => {
                                         if self.verbose {
-                                            writeln!(f, "  * {}: unchanged", feature_name)?
+                                            writeln!(f, "  * {feature_name}: unchanged")?
                                         }
                                     }
                                     Edit::Insert(_) => {
-                                        writeln!(f, "  * {}: added", feature_name)?;
+                                        writeln!(f, "  * {feature_name}: added")?;
                                     }
                                     Edit::Remove(_) => {
-                                        writeln!(f, "  * {}: removed", feature_name)?;
+                                        writeln!(f, "  * {feature_name}: removed")?;
                                     }
                                 }
                             }

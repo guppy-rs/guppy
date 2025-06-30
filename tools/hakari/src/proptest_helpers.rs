@@ -101,13 +101,13 @@ mod test {
             );
             proptest!(|(builder in strategy)| {
                 let summary = builder.to_summary().unwrap_or_else(|err| {
-                    panic!("for fixture {}, builder -> summary conversion failed: {}", name, err);
+                    panic!("for fixture {name}, builder -> summary conversion failed: {err}");
                 });
                 let builder2 = summary.to_hakari_builder(graph).unwrap_or_else(|err| {
-                    panic!("for fixture {}, summary -> builder conversion failed: {}", name, err);
+                    panic!("for fixture {name}, summary -> builder conversion failed: {err}");
                 });
                 let summary2 = builder2.to_summary().unwrap_or_else(|err| {
-                    panic!("for fixture {}, second builder -> summary conversion failed: {}", name, err);
+                    panic!("for fixture {name}, second builder -> summary conversion failed: {err}");
                 });
                 assert_eq!(summary, summary2, "summary roundtripped correctly");
             });
@@ -129,8 +129,7 @@ mod test {
                 if let Some(package) = builder.hakari_package() {
                     assert!(
                         builder.is_traversal_excluded(package.id()).expect("valid package ID"),
-                        "for fixture {}, hakari package is excluded from traversals",
-                        name,
+                        "for fixture {name}, hakari package is excluded from traversals",
                     );
                 }
                 // Ensure that omits_package and omitted_packages match.
@@ -139,8 +138,7 @@ mod test {
                     assert_eq!(
                         traversal_excludes.contains(query_id),
                         builder.is_traversal_excluded(query_id).expect("valid package ID"),
-                        "for fixture {}, traversal_excludes and is_traversal_excluded match",
-                        name,
+                        "for fixture {name}, traversal_excludes and is_traversal_excluded match",
                     );
                 }
             });
