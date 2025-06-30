@@ -8,13 +8,15 @@ initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
 triple = 'riscv32imafc-unknown-nuttx-elf'
-target-features = ['ssse3', 'xsaves']
-flags = ['cargo_web', 'foo']
+target-features = ['bmi2', 'rdrand', 'sse2', 'xsave', 'xsaves']
+flags = ['test-flag']
 
 [metadata.target-platform]
-triple = 'x86_64-unknown-linux-none'
-target-features = 'unknown'
-flags = ['test-flag']
+spec = 'any'
+[[metadata.omitted-packages.ids]]
+name = 'build-user'
+version = '0.1.0'
+workspace-path = 'build-user'
 
 [[target-package]]
 name = 'build-user'
@@ -27,13 +29,6 @@ features = []
 name = 'macro'
 version = '0.1.0'
 workspace-path = 'macro'
-status = 'initial'
-features = []
-
-[[target-package]]
-name = 'normal-user'
-version = '0.1.0'
-workspace-path = 'normal-user'
 status = 'initial'
 features = []
 

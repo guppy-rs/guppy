@@ -8,105 +8,32 @@ initials-platform = 'standard'
 
 [metadata.host-platform]
 triple = 'sparc-unknown-linux-gnu'
-target-features = ['bmi2', 'sse2', 'sse4.1']
+target-features = ['avx2', 'sse2', 'ssse3', 'xsaves']
 flags = ['flag-test']
 
 [metadata.target-platform]
 spec = 'always'
 [[metadata.omitted-packages.ids]]
-name = 'guppy-benchmarks'
-version = '0.1.0'
-workspace-path = 'internal-tools/benchmarks'
+name = 'determinator'
+version = '0.7.0'
+workspace-path = 'tools/determinator'
 
 [[metadata.features-only]]
-name = 'cargo-compare'
-version = '0.1.0'
-workspace-path = 'internal-tools/cargo-compare'
+name = 'determinator'
+version = '0.7.0'
+workspace-path = 'tools/determinator'
 features = []
 
 [[metadata.features-only]]
 name = 'hakari'
 version = '0.8.1'
 workspace-path = 'tools/hakari'
-features = ['cli-support', 'include_dir', 'owo-colors', 'proptest', 'proptest-derive', 'proptest1', 'serde', 'strip-ansi-escapes', 'toml']
-optional-deps = ['include_dir', 'owo-colors', 'proptest', 'proptest-derive', 'serde', 'strip-ansi-escapes', 'toml']
+features = []
 
 [[metadata.features-only]]
 name = 'proptest-ext'
 version = '0.1.0'
 workspace-path = 'internal-tools/proptest-ext'
-features = []
-
-[[target-package]]
-name = 'cargo-compare'
-version = '0.1.0'
-workspace-path = 'internal-tools/cargo-compare'
-status = 'initial'
-features = []
-
-[[target-package]]
-name = 'cargo-guppy'
-version = '0.1.0'
-workspace-path = 'cargo-guppy'
-status = 'initial'
-features = []
-
-[[target-package]]
-name = 'cargo-hakari'
-version = '0.9.11'
-workspace-path = 'tools/cargo-hakari'
-status = 'initial'
-features = []
-
-[[target-package]]
-name = 'determinator'
-version = '0.7.0'
-workspace-path = 'tools/determinator'
-status = 'initial'
-features = []
-
-[[target-package]]
-name = 'fixture-manager'
-version = '0.1.0'
-workspace-path = 'internal-tools/fixture-manager'
-status = 'initial'
-features = []
-
-[[target-package]]
-name = 'fixtures'
-version = '0.1.0'
-workspace-path = 'fixtures'
-status = 'initial'
-features = []
-
-[[target-package]]
-name = 'guppy'
-version = '0.12.4'
-workspace-path = 'guppy'
-status = 'initial'
-features = ['guppy-summaries', 'proptest', 'proptest-derive', 'proptest1', 'rayon', 'rayon1', 'summaries', 'toml']
-optional-deps = ['guppy-summaries', 'proptest', 'proptest-derive', 'rayon', 'toml']
-
-[[target-package]]
-name = 'guppy-benchmarks'
-version = '0.1.0'
-workspace-path = 'internal-tools/benchmarks'
-status = 'initial'
-features = []
-
-[[target-package]]
-name = 'guppy-cmdlib'
-version = '0.1.0'
-workspace-path = 'guppy-cmdlib'
-status = 'initial'
-features = ['proptest', 'proptest1']
-optional-deps = ['proptest']
-
-[[target-package]]
-name = 'guppy-summaries'
-version = '0.6.1'
-workspace-path = 'guppy-summaries'
-status = 'initial'
 features = []
 
 [[target-package]]
@@ -117,24 +44,8 @@ status = 'initial'
 features = []
 
 [[target-package]]
-name = 'hakari'
-version = '0.8.1'
-workspace-path = 'tools/hakari'
-status = 'initial'
-features = ['cli-support', 'include_dir', 'owo-colors', 'proptest', 'proptest-derive', 'proptest1', 'serde', 'strip-ansi-escapes', 'toml']
-optional-deps = ['include_dir', 'owo-colors', 'proptest', 'proptest-derive', 'serde', 'strip-ansi-escapes', 'toml']
-
-[[target-package]]
-name = 'proptest-ext'
-version = '0.1.0'
-workspace-path = 'internal-tools/proptest-ext'
-status = 'initial'
-features = []
-
-[[target-package]]
 name = 'target-spec'
 version = '0.9.0'
 workspace-path = 'target-spec'
 status = 'initial'
-features = ['proptest', 'proptest1', 'serde', 'summaries']
-optional-deps = ['proptest', 'serde']
+features = []

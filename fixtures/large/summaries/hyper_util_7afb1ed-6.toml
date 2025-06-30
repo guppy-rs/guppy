@@ -12,27 +12,6 @@ spec = 'always'
 [metadata.target-platform]
 triple = 'x86_64-unknown-freebsd'
 target-features = 'all'
-[[metadata.omitted-packages.ids]]
-name = 'httpdate'
-version = '1.0.3'
-crates-io = true
-
-[[metadata.omitted-packages.ids]]
-name = 'regex'
-version = '1.10.5'
-crates-io = true
-
-[[metadata.omitted-packages.ids]]
-name = 'tokio'
-version = '1.39.2'
-crates-io = true
-
-[[metadata.features-only]]
-name = 'hyper-util'
-version = '0.1.6'
-workspace-path = ''
-features = ['__internal_happy_eyeballs_tests', 'client', 'client-legacy', 'default', 'full', 'http1', 'http2', 'server', 'server-auto', 'server-graceful', 'service', 'tokio']
-optional-deps = ['futures-channel', 'socket2', 'tokio', 'tower', 'tower-service', 'tracing']
 
 [[host-package]]
 name = 'hyper-util'
@@ -163,6 +142,13 @@ status = 'transitive'
 features = ['default', 'std']
 
 [[host-package]]
+name = 'httpdate'
+version = '1.0.3'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'indexmap'
 version = '2.2.6'
 crates-io = true
@@ -203,6 +189,14 @@ version = '1.13.2'
 crates-io = true
 status = 'transitive'
 features = ['const_generics', 'const_new']
+
+[[host-package]]
+name = 'tokio'
+version = '1.39.2'
+crates-io = true
+status = 'transitive'
+features = ['bytes', 'default', 'io-util', 'sync']
+optional-deps = ['bytes']
 
 [[host-package]]
 name = 'tokio-util'

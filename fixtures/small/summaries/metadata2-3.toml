@@ -9,15 +9,16 @@ initials-platform = 'standard'
 [metadata.host-platform]
 triple = 'riscv64gc-unknown-hermit'
 target-features = 'all'
+flags = ['flag-test', 'foo']
 
 [metadata.target-platform]
-triple = 'riscv64gc-unknown-netbsd'
-target-features = ['sse4.2', 'xsaveopt', 'xsaves']
-flags = ['test-flag']
-[[metadata.omitted-packages.ids]]
-name = 'serde_yaml'
-version = '0.8.9'
-crates-io = true
+spec = 'any'
+
+[[metadata.features-only]]
+name = 'testworkspace-crate'
+version = '0.1.0'
+workspace-path = 'testcrate'
+features = []
 
 [[metadata.features-only]]
 name = 'walkdir'
@@ -36,7 +37,7 @@ features = []
 name = 'walkdir'
 version = '2.2.9'
 workspace-path = 'walkdir'
-status = 'initial'
+status = 'workspace'
 features = []
 
 [[target-package]]
@@ -66,6 +67,13 @@ version = '0.7.6'
 crates-io = true
 status = 'transitive'
 features = ['default', 'std']
+
+[[target-package]]
+name = 'dtoa'
+version = '0.4.4'
+crates-io = true
+status = 'transitive'
+features = []
 
 [[target-package]]
 name = 'lazy_static'
@@ -118,8 +126,43 @@ status = 'transitive'
 features = ['default', 'std']
 
 [[target-package]]
+name = 'serde_yaml'
+version = '0.8.9'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
 name = 'thread_local'
 version = '0.3.6'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'winapi'
+version = '0.3.8'
+crates-io = true
+status = 'transitive'
+features = ['consoleapi', 'errhandlingapi', 'fileapi', 'minwindef', 'processenv', 'std', 'winbase', 'wincon', 'winerror', 'winnt']
+
+[[target-package]]
+name = 'winapi-i686-pc-windows-gnu'
+version = '0.4.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'winapi-util'
+version = '0.1.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'winapi-x86_64-pc-windows-gnu'
+version = '0.4.0'
 crates-io = true
 status = 'transitive'
 features = []

@@ -5,11 +5,28 @@
 # resolver = '3'
 # unify-target-host = 'none'
 # output-single-feature = false
-# dep-format-version = '2'
+# dep-format-version = '4'
 # workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['powerpc-unknown-linux-muslspe', 'aarch64-apple-visionos', 'wasm32-unknown-emscripten']
+# platforms = ['aarch64-unknown-openbsd', 'i686-unknown-linux-gnu', 'thumbv7em-nuttx-eabi']
+# [[traversal-excludes.ids]]
+# name = 'lower-a'
+# version = '0.1.0'
+# workspace-path = 'lower-a'
 #
-# [traversal-excludes]
+# [[traversal-excludes.ids]]
+# name = 'lower-b'
+# version = '0.1.0'
+# workspace-path = 'lower-b'
+#
+# [[traversal-excludes.ids]]
+# name = 'upper-a'
+# version = '0.1.0'
+# workspace-path = 'upper-a'
+#
+# [[traversal-excludes.ids]]
+# name = 'upper-b'
+# version = '0.1.0'
+# workspace-path = 'upper-b'
 # [[final-excludes.ids]]
 # name = 'lower-a'
 # version = '0.1.0'
@@ -24,11 +41,6 @@
 # name = 'upper-a'
 # version = '0.1.0'
 # workspace-path = 'upper-a'
-#
-# [[final-excludes.ids]]
-# name = 'upper-b'
-# version = '0.1.0'
-# workspace-path = 'upper-b'
 
 ### END HAKARI SECTION
 

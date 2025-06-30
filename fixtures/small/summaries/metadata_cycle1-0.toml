@@ -12,7 +12,7 @@ spec = 'any'
 [metadata.target-platform]
 triple = 'armv7-sony-vita-newlibeabihf'
 target-features = 'unknown'
-flags = ['bar']
+flags = ['foo']
 
 [[metadata.features-only]]
 name = 'testcycles-base'

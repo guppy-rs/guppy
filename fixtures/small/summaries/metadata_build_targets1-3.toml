@@ -11,8 +11,8 @@ spec = 'always'
 
 [metadata.target-platform]
 triple = 'thumbv7a-uwp-windows-msvc'
-target-features = ['aes', 'sha', 'sse', 'sse4.2', 'xsave', 'xsaves']
-flags = ['test-flag']
+target-features = ['rdrand', 'sse', 'xsavec', 'xsaveopt']
+flags = ['bar', 'cargo_web']
 [[metadata.omitted-packages.ids]]
 name = 'testcrate'
 version = '0.1.0'

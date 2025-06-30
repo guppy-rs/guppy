@@ -3,28 +3,29 @@
 
 ### BEGIN HAKARI SECTION
 # resolver = '3'
-# unify-target-host = 'auto'
+# unify-target-host = 'replicate-target-on-host'
 # output-single-feature = true
-# dep-format-version = '2'
-# workspace-hack-line-style = 'version-only'
-# platforms = ['sparc64-unknown-openbsd', 'riscv64gc-unknown-freebsd', 'riscv32imac-unknown-none-elf']
+# dep-format-version = '1'
+# workspace-hack-line-style = 'workspace-dotted'
+# platforms = []
+# [[traversal-excludes.ids]]
+# name = 'arrayvec'
+# version = '0.7.2'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'pathdiff'
+# version = '0.2.1'
+# crates-io = true
+#
 # [[traversal-excludes.ids]]
 # name = 'smallvec'
 # version = '1.8.0'
 # crates-io = true
 # [[final-excludes.ids]]
-# name = 'namespaced-weak'
-# version = '0.1.0'
-# workspace-path = ''
-#
-# [[final-excludes.ids]]
-# name = 'tinyvec'
-# version = '1.5.1'
+# name = 'smallvec'
+# version = '1.8.0'
 # crates-io = true
-
-[dependencies]
-arrayvec = { version = "0.7", default-features = false, features = ["std"] }
-pathdiff = { version = "0.2", default-features = false }
 
 ### END HAKARI SECTION
 

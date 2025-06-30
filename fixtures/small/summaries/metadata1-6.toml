@@ -9,12 +9,19 @@ initials-platform = 'standard'
 [metadata.host-platform]
 triple = 'i686-unknown-freebsd'
 target-features = 'all'
-flags = ['abc']
+flags = ['flag-test']
 
 [metadata.target-platform]
-triple = 'x86_64-apple-ios-macabi'
-target-features = ['avx2', 'sse2', 'ssse3', 'xsave']
-flags = ['abc']
+spec = 'always'
+[[metadata.omitted-packages.ids]]
+name = 'mach'
+version = '0.2.3'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'winapi-util'
+version = '0.1.2'
+crates-io = true
 
 [[metadata.features-only]]
 name = 'testcrate'
@@ -72,7 +79,7 @@ name = 'libc'
 version = '0.2.62'
 crates-io = true
 status = 'transitive'
-features = ['default', 'std', 'use_std']
+features = ['default', 'std']
 
 [[target-package]]
 name = 'linked-hash-map'
@@ -80,13 +87,6 @@ version = '0.5.2'
 crates-io = true
 status = 'transitive'
 features = []
-
-[[target-package]]
-name = 'mach'
-version = '0.2.3'
-crates-io = true
-status = 'transitive'
-features = ['default', 'deprecated', 'use_std']
 
 [[target-package]]
 name = 'memchr'

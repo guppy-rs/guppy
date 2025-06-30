@@ -12,6 +12,7 @@ spec = 'always'
 [metadata.target-platform]
 triple = 'i586-unknown-linux-musl'
 target-features = 'unknown'
+flags = ['foo']
 [[metadata.omitted-packages.ids]]
 name = 'proc-macro2'
 version = '1.0.29'

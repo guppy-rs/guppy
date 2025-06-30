@@ -9,19 +9,10 @@ initials-platform = 'host'
 [metadata.host-platform]
 triple = 'armv7r-none-eabi'
 target-features = 'unknown'
-flags = ['abc', 'bar']
 
 [metadata.target-platform]
-spec = 'always'
-[[metadata.omitted-packages.ids]]
-name = 'dep-a'
-version = '0.1.0'
-path = '../dep-a'
-
-[[metadata.omitted-packages.ids]]
-name = 'lazy_static'
-version = '1.4.0'
-crates-io = true
+triple = 'powerpc-wrs-vxworks'
+target-features = ['sha']
 
 [[metadata.features-only]]
 name = 'testcrate-targets'
@@ -47,8 +38,22 @@ features = ['default', 'serde', 'std']
 optional-deps = ['serde']
 
 [[host-package]]
+name = 'dep-a'
+version = '0.1.0'
+path = '../dep-a'
+status = 'direct'
+features = ['bar', 'baz', 'foo', 'quux']
+
+[[host-package]]
 name = 'lazy_static'
 version = '0.2.11'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
+name = 'lazy_static'
+version = '1.4.0'
 crates-io = true
 status = 'direct'
 features = []

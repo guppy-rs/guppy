@@ -2,21 +2,25 @@
 #    cargo run -p fixture-manager -- generate-hakari --fixture metadata_cycle1
 
 ### BEGIN HAKARI SECTION
-# resolver = '3'
-# unify-target-host = 'auto'
+# resolver = '1'
+# unify-target-host = 'replicate-target-on-host'
 # output-single-feature = true
-# dep-format-version = '2'
-# workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['wasm32-unknown-emscripten', 'x86_64-apple-ios-macabi']
-#
-# [traversal-excludes]
-# [[final-excludes.ids]]
+# dep-format-version = '3'
+# workspace-hack-line-style = 'version-only'
+# platforms = ['x86_64-unknown-fuchsia']
+# [[traversal-excludes.ids]]
 # name = 'testcycles-base'
 # version = '0.1.0'
 # workspace-path = ''
-
-[dependencies]
-testcycles-helper = { path = "/Users/fakeuser/local/testcrates/testcycles/testcycles-base/../testcycles-helper", default-features = false }
+#
+# [[traversal-excludes.ids]]
+# name = 'testcycles-helper'
+# version = '0.1.0'
+# path = '../testcycles-helper'
+# [[final-excludes.ids]]
+# name = 'testcycles-helper'
+# version = '0.1.0'
+# path = '../testcycles-helper'
 
 ### END HAKARI SECTION
 

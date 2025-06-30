@@ -8,24 +8,16 @@ initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
 triple = 'x86_64-apple-watchos-sim'
-target-features = ['sse2', 'sse4.2', 'ssse3']
+target-features = []
+flags = ['bar']
 
 [metadata.target-platform]
-spec = 'always'
+triple = 'armv7a-none-eabi'
+target-features = ['rdrand', 'sse4.1', 'xsavec', 'xsaves']
 [[metadata.omitted-packages.ids]]
-name = 'quote'
-version = '1.0.10'
-source = 'registry+https://github.com/fakeorg/crates.io-index'
-
-[[metadata.omitted-packages.ids]]
-name = 'serde'
-version = '1.0.130'
-source = 'registry+https://github.com/fakeorg/crates.io-index'
-
-[[metadata.omitted-packages.ids]]
-name = 'syn'
-version = '1.0.80'
-source = 'registry+https://github.com/fakeorg/crates.io-index'
+name = 'unicode-xid'
+version = '0.2.2'
+crates-io = true
 
 [[metadata.features-only]]
 name = 'debug-ignore'
@@ -43,8 +35,45 @@ features = ['serde']
 optional-deps = ['serde']
 
 [[target-package]]
+name = 'serde'
+version = '1.0.130'
+source = 'registry+https://github.com/fakeorg/crates.io-index'
+status = 'direct'
+features = ['derive', 'serde_derive']
+optional-deps = ['serde_derive']
+
+[[host-package]]
+name = 'proc-macro2'
+version = '1.0.29'
+source = 'registry+https://github.com/fakeorg/crates.io-index'
+status = 'transitive'
+features = ['default', 'proc-macro']
+
+[[host-package]]
+name = 'quote'
+version = '1.0.10'
+source = 'registry+https://github.com/fakeorg/crates.io-index'
+status = 'transitive'
+features = ['default', 'proc-macro']
+
+[[host-package]]
+name = 'serde_derive'
+version = '1.0.130'
+source = 'registry+https://github.com/fakeorg/crates.io-index'
+status = 'transitive'
+features = ['default']
+
+[[host-package]]
+name = 'syn'
+version = '1.0.80'
+source = 'registry+https://github.com/fakeorg/crates.io-index'
+status = 'transitive'
+features = ['clone-impls', 'default', 'derive', 'parsing', 'printing', 'proc-macro', 'quote']
+optional-deps = ['quote']
+
+[[host-package]]
 name = 'unicode-xid'
 version = '0.2.2'
-crates-io = true
-status = 'direct'
+source = 'registry+https://github.com/fakeorg/crates.io-index'
+status = 'transitive'
 features = ['default']

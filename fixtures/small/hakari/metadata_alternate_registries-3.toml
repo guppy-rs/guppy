@@ -4,19 +4,14 @@
 ### BEGIN HAKARI SECTION
 # resolver = '2'
 # unify-target-host = 'unify-if-both'
-# output-single-feature = true
-# dep-format-version = '3'
-# workspace-hack-line-style = 'full'
-# platforms = ['riscv32emc-unknown-none-elf']
+# output-single-feature = false
+# dep-format-version = '4'
+# workspace-hack-line-style = 'workspace-dotted'
+# platforms = ['armebv7r-none-eabihf', 'powerpc64le-unknown-linux-musl', 'aarch64-wrs-vxworks']
 # [[traversal-excludes.ids]]
-# name = 'quote'
-# version = '1.0.10'
-# source = 'registry+https://github.com/fakeorg/crates.io-index'
-#
-# [[traversal-excludes.ids]]
-# name = 'ryu'
-# version = '1.0.5'
-# crates-io = true
+# name = 'debug-ignore'
+# version = '1.0.1'
+# workspace-path = ''
 #
 # [[traversal-excludes.ids]]
 # name = 'serde'
@@ -24,35 +19,45 @@
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
+# name = 'serde'
+# version = '1.0.130'
+# source = 'registry+https://github.com/fakeorg/crates.io-index'
+#
+# [[traversal-excludes.ids]]
 # name = 'serde_derive'
 # version = '1.0.130'
 # source = 'registry+https://github.com/fakeorg/crates.io-index'
+#
+# [[traversal-excludes.ids]]
+# name = 'syn'
+# version = '1.0.80'
+# source = 'registry+https://github.com/fakeorg/crates.io-index'
 # [[final-excludes.ids]]
-# name = 'proc-macro2'
-# version = '1.0.29'
+# name = 'serde_derive'
+# version = '1.0.130'
 # source = 'registry+https://github.com/fakeorg/crates.io-index'
 #
 # [[final-excludes.ids]]
-# name = 'quote'
-# version = '1.0.10'
-# source = 'registry+https://github.com/fakeorg/crates.io-index'
-#
-# [[final-excludes.ids]]
-# name = 'ryu'
-# version = '1.0.5'
+# name = 'serde_json'
+# version = '1.0.68'
 # crates-io = true
+#
+# [[final-excludes.ids]]
+# name = 'syn'
+# version = '1.0.80'
+# source = 'registry+https://github.com/fakeorg/crates.io-index'
 #
 # [[final-excludes.ids]]
 # name = 'unicode-xid'
 # version = '0.2.2'
 # crates-io = true
+#
+# [[final-excludes.ids]]
+# name = 'unicode-xid'
+# version = '0.2.2'
+# source = 'registry+https://github.com/fakeorg/crates.io-index'
 # [registries.my-registry]
 # index = 'https://github.com/fakeorg/crates.io-index'
-
-[dependencies]
-itoa = { version = "0.4", default-features = false }
-serde = { version = "1", registry = "my-registry", default-features = false, features = ["derive"] }
-serde_json = { version = "1" }
 
 ### END HAKARI SECTION
 

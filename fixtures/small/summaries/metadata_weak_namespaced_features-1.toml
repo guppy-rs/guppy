@@ -9,14 +9,13 @@ initials-platform = 'standard'
 [metadata.host-platform]
 triple = 'i686-pc-windows-gnullvm'
 target-features = 'unknown'
+flags = ['cargo_web']
 
 [metadata.target-platform]
-triple = 'aarch64-unknown-freebsd'
-target-features = 'unknown'
-flags = ['bar', 'foo']
+spec = 'any'
 [[metadata.omitted-packages.ids]]
-name = 'smallvec'
-version = '1.8.0'
+name = 'pathdiff'
+version = '0.2.1'
 crates-io = true
 
 [[metadata.features-only]]

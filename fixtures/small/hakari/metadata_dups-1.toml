@@ -2,28 +2,40 @@
 #    cargo run -p fixture-manager -- generate-hakari --fixture metadata_dups
 
 ### BEGIN HAKARI SECTION
-# resolver = 'install'
+# resolver = '2'
 # unify-target-host = 'none'
 # output-single-feature = false
-# dep-format-version = '1'
-# workspace-hack-line-style = 'full'
-# platforms = ['i686-apple-darwin', 'riscv64gc-unknown-freebsd', 'armv5te-none-eabi']
+# dep-format-version = '3'
+# workspace-hack-line-style = 'workspace-dotted'
+# platforms = []
 # [[traversal-excludes.ids]]
-# name = 'lazy_static'
-# version = '0.2.11'
+# name = 'bytes'
+# version = '0.3.0'
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
 # name = 'lazy_static'
 # version = '1.4.0'
 # crates-io = true
+# [[final-excludes.ids]]
+# name = 'bytes'
+# version = '0.3.0'
+# crates-io = true
 #
-# [[traversal-excludes.ids]]
+# [[final-excludes.ids]]
+# name = 'bytes'
+# version = '0.5.4'
+# crates-io = true
+#
+# [[final-excludes.ids]]
+# name = 'lazy_static'
+# version = '1.4.0'
+# crates-io = true
+#
+# [[final-excludes.ids]]
 # name = 'testcrate-dups'
 # version = '0.1.0'
 # workspace-path = ''
-#
-# [final-excludes]
 
 ### END HAKARI SECTION
 

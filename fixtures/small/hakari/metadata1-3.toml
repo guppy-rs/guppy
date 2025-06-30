@@ -2,33 +2,54 @@
 #    cargo run -p fixture-manager -- generate-hakari --fixture metadata1
 
 ### BEGIN HAKARI SECTION
-# resolver = 'install'
-# unify-target-host = 'auto'
+# resolver = '1'
+# unify-target-host = 'unify-if-both'
 # output-single-feature = true
-# dep-format-version = '4'
-# workspace-hack-line-style = 'full'
-# platforms = ['x86_64-unknown-fuchsia', 'i686-unknown-linux-musl', 'armv7r-none-eabi']
+# dep-format-version = '3'
+# workspace-hack-line-style = 'workspace-dotted'
+# platforms = ['powerpc64-wrs-vxworks']
 # [[traversal-excludes.ids]]
-# name = 'bitflags'
-# version = '1.1.0'
+# name = 'same-file'
+# version = '1.0.5'
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
-# name = 'winapi'
-# version = '0.3.8'
-# crates-io = true
-# [[final-excludes.ids]]
-# name = 'datatest'
-# version = '0.4.2'
-# crates-io = true
-#
-# [[final-excludes.ids]]
 # name = 'winapi-util'
 # version = '0.1.2'
 # crates-io = true
+# [[final-excludes.ids]]
+# name = 'aho-corasick'
+# version = '0.7.6'
+# crates-io = true
+#
+# [[final-excludes.ids]]
+# name = 'ctor'
+# version = '0.1.10'
+# crates-io = true
+#
+# [[final-excludes.ids]]
+# name = 'proc-macro2'
+# version = '1.0.3'
+# crates-io = true
+#
+# [[final-excludes.ids]]
+# name = 'quote'
+# version = '1.0.2'
+# crates-io = true
+#
+# [[final-excludes.ids]]
+# name = 'same-file'
+# version = '1.0.5'
+# crates-io = true
+#
+# [[final-excludes.ids]]
+# name = 'version_check'
+# version = '0.9.1'
+# crates-io = true
 
 [dependencies]
-aho-corasick = { version = "0.7" }
+bitflags = { version = "1" }
+datatest = { version = "0.4", features = ["unsafe_test_runner"] }
 dtoa = { version = "0.4", default-features = false }
 lazy_static = { version = "1", default-features = false }
 libc = { version = "0.2", features = ["use_std"] }
@@ -37,7 +58,6 @@ memchr = { version = "2" }
 regex = { version = "1" }
 regex-syntax = { version = "0.6", default-features = false, features = ["unicode-age", "unicode-bool", "unicode-case", "unicode-gencat", "unicode-perl", "unicode-script", "unicode-segment"] }
 region = { version = "2", default-features = false }
-same-file = { version = "1", default-features = false }
 serde = { version = "1" }
 serde_yaml = { version = "0.8", default-features = false }
 thread_local = { version = "0.3", default-features = false }
@@ -45,13 +65,10 @@ walkdir = { git = "https://github.com/BurntSushi/walkdir", tag = "2.2.9", defaul
 yaml-rust = { version = "0.4", default-features = false }
 
 [build-dependencies]
-ctor = { version = "0.1", default-features = false }
 datatest-derive = { version = "0.4", default-features = false }
-proc-macro2 = { version = "1" }
 quote = { path = "/fakepath/testcrate/../quote" }
 syn = { version = "1", features = ["fold", "full"] }
 unicode-xid = { version = "0.2" }
-version_check = { version = "0.9", default-features = false }
 
 ### END HAKARI SECTION
 

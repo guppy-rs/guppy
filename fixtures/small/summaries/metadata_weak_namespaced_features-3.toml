@@ -8,15 +8,17 @@ initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
 triple = 'mipsisa64r6-unknown-linux-gnuabi64'
-target-features = []
-flags = ['test-flag']
+target-features = ['sse4.2', 'xsavec', 'xsaves']
 
 [metadata.target-platform]
 spec = 'always'
-[[metadata.omitted-packages.ids]]
-name = 'arrayvec'
-version = '0.7.2'
-crates-io = true
+
+[[metadata.features-only]]
+name = 'namespaced-weak'
+version = '0.1.0'
+workspace-path = ''
+features = ['arrayvec', 'bar', 'baz', 'foo', 'pathdiff2', 'smallvec', 'smallvec-union', 'tinyvec', 'upgrade1', 'upgrade2', 'upgrade3', 'upgrade4', 'upgrade5', 'upgrade6', 'upgrade7', 'upgrade8', 'windows-dep', 'windows-named', 'windows-non-weak', 'windows-weak']
+optional-deps = ['arrayvec', 'pathdiff', 'smallvec', 'tinyvec']
 
 [[target-package]]
 name = 'namespaced-weak'
@@ -25,6 +27,13 @@ workspace-path = ''
 status = 'initial'
 features = ['arrayvec', 'bar', 'baz', 'foo', 'pathdiff2', 'smallvec', 'smallvec-union', 'tinyvec', 'upgrade1', 'upgrade2', 'upgrade3', 'upgrade4', 'upgrade5', 'upgrade6', 'upgrade7', 'upgrade8', 'windows-dep', 'windows-named', 'windows-non-weak', 'windows-weak']
 optional-deps = ['arrayvec', 'pathdiff', 'smallvec', 'tinyvec']
+
+[[target-package]]
+name = 'arrayvec'
+version = '0.7.2'
+crates-io = true
+status = 'direct'
+features = ['std']
 
 [[target-package]]
 name = 'pathdiff'

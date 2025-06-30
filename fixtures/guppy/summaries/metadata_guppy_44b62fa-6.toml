@@ -9,12 +9,16 @@ initials-platform = 'host'
 [metadata.host-platform]
 triple = 'arm64e-apple-tvos'
 target-features = 'unknown'
-flags = ['bar', 'cargo_web']
+flags = ['cargo_web', 'foo']
 
 [metadata.target-platform]
-triple = 'powerpc-wrs-vxworks'
-target-features = []
-flags = ['flag-test']
+triple = 'x86_64-wrs-vxworks'
+target-features = 'unknown'
+flags = ['abc', 'flag-test']
+[[metadata.omitted-packages.ids]]
+name = 'guppy-benchmarks'
+version = '0.1.0'
+workspace-path = 'internal-tools/benchmarks'
 
 [[metadata.features-only]]
 name = 'cargo-guppy'
@@ -28,15 +32,39 @@ version = '0.1.0'
 workspace-path = 'internal-tools/benchmarks'
 features = []
 
-[[metadata.features-only]]
-name = 'guppy-summaries'
-version = '0.6.1'
-workspace-path = 'guppy-summaries'
+[[host-package]]
+name = 'cargo-compare'
+version = '0.1.0'
+workspace-path = 'internal-tools/cargo-compare'
+status = 'initial'
 features = []
 
 [[host-package]]
-name = 'cargo-guppy'
-version = '0.1.0'
-workspace-path = 'cargo-guppy'
+name = 'determinator'
+version = '0.7.0'
+workspace-path = 'tools/determinator'
 status = 'initial'
 features = []
+
+[[host-package]]
+name = 'guppy-benchmarks'
+version = '0.1.0'
+workspace-path = 'internal-tools/benchmarks'
+status = 'initial'
+features = []
+
+[[host-package]]
+name = 'guppy-cmdlib'
+version = '0.1.0'
+workspace-path = 'guppy-cmdlib'
+status = 'initial'
+features = ['proptest', 'proptest1']
+optional-deps = ['proptest']
+
+[[host-package]]
+name = 'hakari'
+version = '0.8.1'
+workspace-path = 'tools/hakari'
+status = 'initial'
+features = ['cli-support', 'include_dir', 'owo-colors', 'proptest', 'proptest-derive', 'proptest1', 'serde', 'strip-ansi-escapes', 'toml']
+optional-deps = ['include_dir', 'owo-colors', 'proptest', 'proptest-derive', 'serde', 'strip-ansi-escapes', 'toml']

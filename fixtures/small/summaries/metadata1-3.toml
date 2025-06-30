@@ -12,20 +12,19 @@ spec = 'always'
 [metadata.target-platform]
 spec = 'any'
 [[metadata.omitted-packages.ids]]
-name = 'walkdir'
-version = '2.2.9'
+name = 'bitflags'
+version = '1.1.0'
 crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'testcrate'
+version = '0.1.0'
+workspace-path = ''
 
 [[metadata.omitted-packages.ids]]
 name = 'walkdir'
 version = '2.2.9'
-source = 'git+https://github.com/BurntSushi/walkdir?tag=2.2.9#7c7013259eb9db400b3e5c7bc60330ca08068826'
-
-[[metadata.features-only]]
-name = 'testcrate'
-version = '0.1.0'
-workspace-path = ''
-features = []
+crates-io = true
 
 [[target-package]]
 name = 'testcrate'
@@ -48,13 +47,6 @@ version = '0.7.6'
 crates-io = true
 status = 'transitive'
 features = ['default', 'std']
-
-[[target-package]]
-name = 'bitflags'
-version = '1.1.0'
-crates-io = true
-status = 'transitive'
-features = ['default']
 
 [[target-package]]
 name = 'dtoa'
@@ -121,6 +113,13 @@ status = 'transitive'
 features = []
 
 [[target-package]]
+name = 'same-file'
+version = '1.0.5'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
 name = 'serde'
 version = '1.0.100'
 crates-io = true
@@ -142,15 +141,29 @@ status = 'transitive'
 features = []
 
 [[target-package]]
+name = 'walkdir'
+version = '2.2.9'
+source = 'git+https://github.com/BurntSushi/walkdir?tag=2.2.9#7c7013259eb9db400b3e5c7bc60330ca08068826'
+status = 'transitive'
+features = []
+
+[[target-package]]
 name = 'winapi'
 version = '0.3.8'
 crates-io = true
 status = 'transitive'
-features = ['basetsd', 'memoryapi', 'minwindef', 'sysinfoapi', 'winnt']
+features = ['basetsd', 'consoleapi', 'errhandlingapi', 'fileapi', 'memoryapi', 'minwindef', 'processenv', 'std', 'sysinfoapi', 'winbase', 'wincon', 'winerror', 'winnt']
 
 [[target-package]]
 name = 'winapi-i686-pc-windows-gnu'
 version = '0.4.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'winapi-util'
+version = '0.1.2'
 crates-io = true
 status = 'transitive'
 features = []

@@ -12,33 +12,45 @@ spec = 'always'
 [metadata.target-platform]
 triple = 'x86_64-unknown-netbsd'
 target-features = 'unknown'
-flags = ['test-flag']
+[[metadata.omitted-packages.ids]]
+name = 'assert_matches'
+version = '1.4.0'
+crates-io = true
 
-[[metadata.features-only]]
+[[metadata.omitted-packages.ids]]
+name = 'either'
+version = '1.6.1'
+crates-io = true
+
+[[host-package]]
 name = 'cargo-guppy'
 version = '0.1.0'
 workspace-path = 'cargo-guppy'
+status = 'initial'
 features = []
 
-[[metadata.features-only]]
-name = 'fixture-manager'
+[[host-package]]
+name = 'guppy-cmdlib'
 version = '0.1.0'
-workspace-path = 'internal-tools/fixture-manager'
+workspace-path = 'guppy-cmdlib'
+status = 'initial'
+features = ['proptest', 'proptest010']
+optional-deps = ['proptest']
+
+[[host-package]]
+name = 'guppy-summaries'
+version = '0.2.0'
+workspace-path = 'guppy-summaries'
+status = 'initial'
 features = []
 
-[[metadata.features-only]]
+[[host-package]]
 name = 'target-spec'
 version = '0.4.1'
 workspace-path = 'target-spec'
+status = 'initial'
 features = ['proptest', 'proptest010', 'serde', 'summaries']
 optional-deps = ['proptest', 'serde']
-
-[[host-package]]
-name = 'cargo-compare'
-version = '0.1.0'
-workspace-path = 'internal-tools/cargo-compare'
-status = 'initial'
-features = []
 
 [[host-package]]
 name = 'guppy'
@@ -49,41 +61,11 @@ features = ['guppy-summaries', 'proptest', 'proptest-derive', 'proptest010', 'su
 optional-deps = ['guppy-summaries', 'proptest', 'proptest-derive']
 
 [[host-package]]
-name = 'guppy-cmdlib'
-version = '0.1.0'
-workspace-path = 'guppy-cmdlib'
-status = 'workspace'
-features = ['proptest', 'proptest010']
-optional-deps = ['proptest']
-
-[[host-package]]
-name = 'guppy-summaries'
-version = '0.2.0'
-workspace-path = 'guppy-summaries'
-status = 'workspace'
-features = []
-
-[[host-package]]
-name = 'target-spec'
-version = '0.4.1'
-workspace-path = 'target-spec'
-status = 'workspace'
-features = ['proptest', 'proptest010', 'serde', 'summaries']
-optional-deps = ['proptest', 'serde']
-
-[[host-package]]
 name = 'anyhow'
 version = '1.0.33'
 crates-io = true
 status = 'direct'
 features = ['default', 'std']
-
-[[host-package]]
-name = 'cargo'
-version = '0.46.0'
-source = 'git+https://github.com/rust-lang/cargo.git?rev=0227f048fcb7c798026ede6cc20c92befc84c3a4#0227f048fcb7c798026ede6cc20c92befc84c3a4'
-status = 'direct'
-features = []
 
 [[host-package]]
 name = 'cargo_metadata'
@@ -100,18 +82,26 @@ status = 'direct'
 features = ['default']
 
 [[host-package]]
+name = 'clap'
+version = '2.33.3'
+crates-io = true
+status = 'direct'
+features = ['ansi_term', 'atty', 'color', 'default', 'strsim', 'suggestions', 'vec_map']
+optional-deps = ['atty', 'strsim', 'vec_map']
+
+[[host-package]]
+name = 'dialoguer'
+version = '0.6.2'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
 name = 'diffus'
 version = '0.9.1'
 crates-io = true
 status = 'direct'
 features = ['default']
-
-[[host-package]]
-name = 'either'
-version = '1.6.1'
-crates-io = true
-status = 'direct'
-features = ['default', 'use_std']
 
 [[host-package]]
 name = 'fixedbitset'
@@ -198,7 +188,7 @@ name = 'serde_json'
 version = '1.0.58'
 crates-io = true
 status = 'direct'
-features = ['default', 'raw_value', 'std']
+features = ['default', 'std']
 
 [[host-package]]
 name = 'structopt'
@@ -215,13 +205,6 @@ status = 'direct'
 features = []
 
 [[host-package]]
-name = 'tempfile'
-version = '3.1.0'
-crates-io = true
-status = 'direct'
-features = []
-
-[[host-package]]
 name = 'toml'
 version = '0.5.7'
 crates-io = true
@@ -229,11 +212,18 @@ status = 'direct'
 features = ['default']
 
 [[host-package]]
-name = 'aho-corasick'
-version = '0.7.13'
+name = 'toml_edit'
+version = '0.2.0'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
+name = 'ascii'
+version = '0.9.3'
 crates-io = true
 status = 'transitive'
-features = ['default', 'std']
+features = ['std']
 
 [[host-package]]
 name = 'atty'
@@ -271,47 +261,11 @@ status = 'transitive'
 features = ['default']
 
 [[host-package]]
-name = 'bitmaps'
-version = '2.1.0'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
-
-[[host-package]]
-name = 'bstr'
-version = '0.2.13'
-crates-io = true
-status = 'transitive'
-features = ['std']
-
-[[host-package]]
 name = 'byteorder'
 version = '1.3.4'
 crates-io = true
 status = 'transitive'
 features = ['std']
-
-[[host-package]]
-name = 'bytesize'
-version = '1.0.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'cargo-platform'
-version = '0.1.1'
-source = 'git+https://github.com/rust-lang/cargo.git?rev=0227f048fcb7c798026ede6cc20c92befc84c3a4#0227f048fcb7c798026ede6cc20c92befc84c3a4'
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'cc'
-version = '1.0.61'
-crates-io = true
-status = 'transitive'
-features = ['jobserver', 'parallel']
-optional-deps = ['jobserver']
 
 [[host-package]]
 name = 'cfg-if'
@@ -321,79 +275,27 @@ status = 'transitive'
 features = []
 
 [[host-package]]
-name = 'clap'
-version = '2.33.3'
+name = 'chrono'
+version = '0.4.19'
 crates-io = true
 status = 'transitive'
-features = ['ansi_term', 'atty', 'color', 'default', 'strsim', 'suggestions', 'vec_map']
-optional-deps = ['atty', 'strsim', 'vec_map']
+features = ['clock', 'default', 'libc', 'oldtime', 'std', 'time', 'winapi']
+optional-deps = ['libc', 'time']
 
 [[host-package]]
-name = 'crates-io'
-version = '0.31.1'
-source = 'git+https://github.com/rust-lang/cargo.git?rev=0227f048fcb7c798026ede6cc20c92befc84c3a4#0227f048fcb7c798026ede6cc20c92befc84c3a4'
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'crc32fast'
-version = '1.2.0'
+name = 'combine'
+version = '3.8.1'
 crates-io = true
 status = 'transitive'
 features = ['default', 'std']
 
 [[host-package]]
-name = 'crossbeam-utils'
-version = '0.7.2'
+name = 'console'
+version = '0.11.3'
 crates-io = true
 status = 'transitive'
-features = ['default', 'lazy_static', 'std']
-optional-deps = ['lazy_static']
-
-[[host-package]]
-name = 'crypto-hash'
-version = '0.3.4'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'curl'
-version = '0.4.33'
-crates-io = true
-status = 'transitive'
-features = ['default', 'http2', 'openssl-probe', 'openssl-sys', 'ssl']
-
-[[host-package]]
-name = 'curl-sys'
-version = '0.4.36+curl-7.71.1'
-crates-io = true
-status = 'transitive'
-features = ['default', 'http2', 'libnghttp2-sys', 'openssl-sys', 'ssl']
-optional-deps = ['libnghttp2-sys']
-
-[[host-package]]
-name = 'env_logger'
-version = '0.7.1'
-crates-io = true
-status = 'transitive'
-features = ['atty', 'default', 'humantime', 'regex', 'termcolor']
-optional-deps = ['atty', 'humantime', 'regex', 'termcolor']
-
-[[host-package]]
-name = 'filetime'
-version = '0.2.12'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'flate2'
-version = '1.0.18'
-crates-io = true
-status = 'transitive'
-features = ['any_zlib', 'libz-sys', 'zlib']
-optional-deps = ['libz-sys']
+features = ['ansi-parsing', 'default', 'regex', 'unicode-width', 'winapi-util', 'windows-console-colors']
+optional-deps = ['regex', 'unicode-width']
 
 [[host-package]]
 name = 'fnv'
@@ -410,34 +312,6 @@ status = 'transitive'
 features = ['std']
 
 [[host-package]]
-name = 'git2'
-version = '0.13.11'
-crates-io = true
-status = 'transitive'
-features = ['default', 'https', 'openssl-probe', 'openssl-sys', 'ssh', 'ssh_key_from_memory']
-
-[[host-package]]
-name = 'git2-curl'
-version = '0.14.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'glob'
-version = '0.3.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'globset'
-version = '0.4.5'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
 name = 'hashbrown'
 version = '0.9.1'
 crates-io = true
@@ -447,62 +321,6 @@ features = ['raw']
 [[host-package]]
 name = 'heck'
 version = '0.3.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'hex'
-version = '0.3.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'hex'
-version = '0.4.2'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
-
-[[host-package]]
-name = 'home'
-version = '0.5.3'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'humantime'
-version = '1.3.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'humantime'
-version = '2.0.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'idna'
-version = '0.2.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'ignore'
-version = '0.4.16'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'im-rc'
-version = '15.0.0'
 crates-io = true
 status = 'transitive'
 features = []
@@ -522,22 +340,8 @@ status = 'transitive'
 features = []
 
 [[host-package]]
-name = 'jobserver'
-version = '0.1.21'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
 name = 'lazy_static'
 version = '1.4.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'lazycell'
-version = '1.3.0'
 crates-io = true
 status = 'transitive'
 features = []
@@ -550,45 +354,8 @@ status = 'transitive'
 features = ['default', 'std']
 
 [[host-package]]
-name = 'libgit2-sys'
-version = '0.12.13+1.0.1'
-crates-io = true
-status = 'transitive'
-features = ['https', 'libssh2-sys', 'openssl-sys', 'ssh', 'ssh_key_from_memory']
-optional-deps = ['libssh2-sys']
-
-[[host-package]]
-name = 'libnghttp2-sys'
-version = '0.1.4+1.41.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'libssh2-sys'
-version = '0.2.19'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'libz-sys'
-version = '1.1.2'
-crates-io = true
-status = 'transitive'
-features = ['libc']
-optional-deps = ['libc']
-
-[[host-package]]
-name = 'log'
-version = '0.4.11'
-crates-io = true
-status = 'transitive'
-features = ['std']
-
-[[host-package]]
-name = 'matches'
-version = '0.1.8'
+name = 'linked-hash-map'
+version = '0.5.3'
 crates-io = true
 status = 'transitive'
 features = []
@@ -598,7 +365,14 @@ name = 'memchr'
 version = '2.3.3'
 crates-io = true
 status = 'transitive'
-features = ['default', 'std', 'use_std']
+features = ['std', 'use_std']
+
+[[host-package]]
+name = 'num-integer'
+version = '0.1.43'
+crates-io = true
+status = 'transitive'
+features = []
 
 [[host-package]]
 name = 'num-traits'
@@ -606,34 +380,6 @@ version = '0.2.12'
 crates-io = true
 status = 'transitive'
 features = ['std']
-
-[[host-package]]
-name = 'num_cpus'
-version = '1.13.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'opener'
-version = '0.4.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'percent-encoding'
-version = '2.1.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'pkg-config'
-version = '0.3.18'
-crates-io = true
-status = 'transitive'
-features = []
 
 [[host-package]]
 name = 'ppv-lite86'
@@ -723,19 +469,11 @@ status = 'transitive'
 features = []
 
 [[host-package]]
-name = 'rand_xoshiro'
-version = '0.4.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
 name = 'regex'
 version = '1.3.9'
 crates-io = true
 status = 'transitive'
-features = ['aho-corasick', 'default', 'memchr', 'perf', 'perf-cache', 'perf-dfa', 'perf-inline', 'perf-literal', 'std', 'thread_local', 'unicode', 'unicode-age', 'unicode-bool', 'unicode-case', 'unicode-gencat', 'unicode-perl', 'unicode-script', 'unicode-segment']
-optional-deps = ['aho-corasick', 'memchr', 'thread_local']
+features = ['std']
 
 [[host-package]]
 name = 'regex-syntax'
@@ -747,20 +485,6 @@ features = ['default', 'unicode', 'unicode-age', 'unicode-bool', 'unicode-case',
 [[host-package]]
 name = 'remove_dir_all'
 version = '0.5.3'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'rustc-workspace-hack'
-version = '1.0.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'rustfix'
-version = '0.5.1'
 crates-io = true
 status = 'transitive'
 features = []
@@ -781,13 +505,6 @@ status = 'transitive'
 features = []
 
 [[host-package]]
-name = 'same-file'
-version = '1.0.6'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
 name = 'semver-parser'
 version = '0.7.0'
 crates-io = true
@@ -802,43 +519,8 @@ status = 'transitive'
 features = ['default']
 
 [[host-package]]
-name = 'serde_ignored'
-version = '0.1.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'shell-escape'
-version = '0.1.5'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'sized-chunks'
-version = '0.6.2'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
-
-[[host-package]]
 name = 'smallvec'
 version = '1.4.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'socket2'
-version = '0.3.15'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'strip-ansi-escapes'
-version = '0.1.0'
 crates-io = true
 status = 'transitive'
 features = []
@@ -874,15 +556,15 @@ features = ['clone-impls', 'default', 'derive', 'full', 'parsing', 'printing', '
 optional-deps = ['quote']
 
 [[host-package]]
-name = 'tar'
-version = '0.4.30'
+name = 'tempfile'
+version = '3.1.0'
 crates-io = true
 status = 'transitive'
 features = []
 
 [[host-package]]
-name = 'termcolor'
-version = '1.1.0'
+name = 'terminal_size'
+version = '0.1.13'
 crates-io = true
 status = 'transitive'
 features = []
@@ -895,39 +577,11 @@ status = 'transitive'
 features = []
 
 [[host-package]]
-name = 'thread_local'
-version = '1.0.1'
+name = 'time'
+version = '0.1.44'
 crates-io = true
 status = 'transitive'
 features = []
-
-[[host-package]]
-name = 'tinyvec'
-version = '0.3.4'
-crates-io = true
-status = 'transitive'
-features = ['alloc', 'default']
-
-[[host-package]]
-name = 'typenum'
-version = '1.12.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'unicode-bidi'
-version = '0.3.4'
-crates-io = true
-status = 'transitive'
-features = ['default']
-
-[[host-package]]
-name = 'unicode-normalization'
-version = '0.1.13'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
 
 [[host-package]]
 name = 'unicode-segmentation'
@@ -958,15 +612,8 @@ status = 'transitive'
 features = ['default']
 
 [[host-package]]
-name = 'url'
-version = '2.1.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'utf8parse'
-version = '0.1.1'
+name = 'unreachable'
+version = '1.0.0'
 crates-io = true
 status = 'transitive'
 features = []
@@ -986,8 +633,8 @@ status = 'transitive'
 features = []
 
 [[host-package]]
-name = 'vte'
-version = '0.3.3'
+name = 'void'
+version = '1.0.2'
 crates-io = true
 status = 'transitive'
 features = []
@@ -995,13 +642,6 @@ features = []
 [[host-package]]
 name = 'wait-timeout'
 version = '0.2.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'walkdir'
-version = '2.3.1'
 crates-io = true
 status = 'transitive'
 features = []

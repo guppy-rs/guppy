@@ -9,7 +9,6 @@ initials-platform = 'host'
 [metadata.host-platform]
 triple = 'riscv32e-unknown-none-elf'
 target-features = 'all'
-flags = ['cargo_web', 'foo']
 
 [metadata.target-platform]
 spec = 'always'
@@ -21,29 +20,22 @@ workspace-path = 'upper-a'
 features = []
 
 [[host-package]]
+name = 'upper-b'
+version = '0.1.0'
+workspace-path = 'upper-b'
+status = 'initial'
+features = []
+
+[[host-package]]
 name = 'lower-a'
 version = '0.1.0'
 workspace-path = 'lower-a'
-status = 'initial'
+status = 'workspace'
 features = []
 
 [[host-package]]
 name = 'lower-b'
 version = '0.1.0'
 workspace-path = 'lower-b'
-status = 'initial'
-features = []
-
-[[host-package]]
-name = 'upper-a'
-version = '0.1.0'
-workspace-path = 'upper-a'
-status = 'initial'
-features = []
-
-[[host-package]]
-name = 'upper-b'
-version = '0.1.0'
-workspace-path = 'upper-b'
-status = 'initial'
+status = 'workspace'
 features = []

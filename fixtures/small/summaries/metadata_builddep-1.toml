@@ -9,10 +9,16 @@ initials-platform = 'host'
 [metadata.host-platform]
 triple = 'armv7r-none-eabi'
 target-features = 'all'
-flags = ['test-flag']
+flags = ['bar']
 
 [metadata.target-platform]
-spec = 'any'
+triple = 'riscv32imac-unknown-none-elf'
+target-features = ['avx', 'avx2', 'fma', 'rdrand', 'sse3', 'ssse3', 'xsaves']
+flags = ['flag-test']
+[[metadata.omitted-packages.ids]]
+name = 'builddep'
+version = '0.1.0'
+workspace-path = 'builddep'
 
 [[metadata.features-only]]
 name = 'builddep'
@@ -24,13 +30,6 @@ features = []
 name = 'main'
 version = '0.1.0'
 workspace-path = 'main'
-features = []
-
-[[host-package]]
-name = 'builddep'
-version = '0.1.0'
-workspace-path = 'builddep'
-status = 'initial'
 features = []
 
 [[host-package]]

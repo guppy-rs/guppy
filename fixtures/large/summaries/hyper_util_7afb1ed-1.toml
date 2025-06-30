@@ -12,22 +12,11 @@ spec = 'always'
 [metadata.target-platform]
 triple = 'riscv32gc-unknown-linux-musl'
 target-features = 'all'
-flags = ['abc']
+flags = ['test-flag']
 [[metadata.omitted-packages.ids]]
-name = 'tracing'
-version = '0.1.40'
+name = 'serde'
+version = '1.0.204'
 crates-io = true
-
-[[metadata.omitted-packages.ids]]
-name = 'want'
-version = '0.3.1'
-crates-io = true
-
-[[metadata.features-only]]
-name = 'hyper-util'
-version = '0.1.6'
-workspace-path = ''
-features = []
 
 [[target-package]]
 name = 'hyper-util'
@@ -287,6 +276,13 @@ status = 'transitive'
 features = ['std']
 
 [[target-package]]
+name = 'once_cell'
+version = '1.19.0'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'default', 'race', 'std']
+
+[[target-package]]
 name = 'pin-utils'
 version = '0.1.0'
 crates-io = true
@@ -331,13 +327,6 @@ status = 'transitive'
 features = ['std']
 
 [[target-package]]
-name = 'serde'
-version = '1.0.204'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
-
-[[target-package]]
 name = 'signal-hook-registry'
 version = '1.4.2'
 crates-io = true
@@ -378,6 +367,35 @@ version = '0.7.11'
 crates-io = true
 status = 'transitive'
 features = ['codec', 'default', 'io']
+
+[[target-package]]
+name = 'tracing'
+version = '0.1.40'
+crates-io = true
+status = 'transitive'
+features = ['std']
+
+[[target-package]]
+name = 'tracing-core'
+version = '0.1.32'
+crates-io = true
+status = 'transitive'
+features = ['once_cell', 'std']
+optional-deps = ['once_cell']
+
+[[target-package]]
+name = 'try-lock'
+version = '0.2.5'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'want'
+version = '0.3.1'
+crates-io = true
+status = 'transitive'
+features = []
 
 [[host-package]]
 name = 'async-stream-impl'

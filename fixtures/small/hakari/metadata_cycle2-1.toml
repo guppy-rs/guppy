@@ -5,37 +5,32 @@
 # resolver = 'install'
 # unify-target-host = 'replicate-target-on-host'
 # output-single-feature = false
-# dep-format-version = '3'
-# workspace-hack-line-style = 'version-only'
-# platforms = ['armv7-unknown-linux-gnueabihf']
-# [[traversal-excludes.ids]]
-# name = 'lower-a'
-# version = '0.1.0'
-# workspace-path = 'lower-a'
-#
+# dep-format-version = '2'
+# workspace-hack-line-style = 'workspace-dotted'
+# platforms = ['armv7-unknown-freebsd']
 # [[traversal-excludes.ids]]
 # name = 'lower-b'
 # version = '0.1.0'
 # workspace-path = 'lower-b'
 #
 # [[traversal-excludes.ids]]
-# name = 'upper-b'
-# version = '0.1.0'
-# workspace-path = 'upper-b'
-# [[final-excludes.ids]]
-# name = 'lower-a'
-# version = '0.1.0'
-# workspace-path = 'lower-a'
-#
-# [[final-excludes.ids]]
-# name = 'lower-b'
-# version = '0.1.0'
-# workspace-path = 'lower-b'
-#
-# [[final-excludes.ids]]
 # name = 'upper-a'
 # version = '0.1.0'
 # workspace-path = 'upper-a'
+# [[final-excludes.ids]]
+# name = 'lower-a'
+# version = '0.1.0'
+# workspace-path = 'lower-a'
+#
+# [[final-excludes.ids]]
+# name = 'lower-b'
+# version = '0.1.0'
+# workspace-path = 'lower-b'
+#
+# [[final-excludes.ids]]
+# name = 'upper-b'
+# version = '0.1.0'
+# workspace-path = 'upper-b'
 
 ### END HAKARI SECTION
 

@@ -13,15 +13,6 @@ spec = 'always'
 triple = 'riscv32imafc-unknown-none-elf'
 target-features = 'all'
 flags = ['cargo_web']
-[[metadata.omitted-packages.ids]]
-name = 'itoa'
-version = '0.4.8'
-crates-io = true
-
-[[metadata.omitted-packages.ids]]
-name = 'serde_derive'
-version = '1.0.130'
-source = 'registry+https://github.com/fakeorg/crates.io-index'
 
 [[target-package]]
 name = 'debug-ignore'
@@ -54,6 +45,13 @@ status = 'direct'
 features = ['default']
 
 [[target-package]]
+name = 'itoa'
+version = '0.4.8'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
 name = 'ryu'
 version = '1.0.5'
 crates-io = true
@@ -66,3 +64,39 @@ version = '1.0.130'
 crates-io = true
 status = 'transitive'
 features = ['std']
+
+[[host-package]]
+name = 'proc-macro2'
+version = '1.0.29'
+source = 'registry+https://github.com/fakeorg/crates.io-index'
+status = 'transitive'
+features = ['default', 'proc-macro']
+
+[[host-package]]
+name = 'quote'
+version = '1.0.10'
+source = 'registry+https://github.com/fakeorg/crates.io-index'
+status = 'transitive'
+features = ['default', 'proc-macro']
+
+[[host-package]]
+name = 'serde_derive'
+version = '1.0.130'
+source = 'registry+https://github.com/fakeorg/crates.io-index'
+status = 'transitive'
+features = ['default']
+
+[[host-package]]
+name = 'syn'
+version = '1.0.80'
+source = 'registry+https://github.com/fakeorg/crates.io-index'
+status = 'transitive'
+features = ['clone-impls', 'default', 'derive', 'parsing', 'printing', 'proc-macro', 'quote']
+optional-deps = ['quote']
+
+[[host-package]]
+name = 'unicode-xid'
+version = '0.2.2'
+source = 'registry+https://github.com/fakeorg/crates.io-index'
+status = 'transitive'
+features = ['default']

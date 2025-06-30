@@ -3,11 +3,11 @@
 
 ### BEGIN HAKARI SECTION
 # resolver = 'install'
-# unify-target-host = 'replicate-target-on-host'
+# unify-target-host = 'none'
 # output-single-feature = false
-# dep-format-version = '2'
+# dep-format-version = '1'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['thumbv7neon-linux-androideabi']
+# platforms = ['aarch64-unknown-redox', 'loongarch64-unknown-none']
 # [[traversal-excludes.ids]]
 # name = 'testcrate'
 # version = '0.1.0'

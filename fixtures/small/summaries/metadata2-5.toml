@@ -12,11 +12,27 @@ spec = 'any'
 [metadata.target-platform]
 triple = 'riscv32gc-unknown-linux-gnu'
 target-features = 'all'
-flags = ['bar', 'cargo_web']
+flags = ['cargo_web', 'foo']
+[[metadata.omitted-packages.ids]]
+name = 'testworkspace-crate'
+version = '0.1.0'
+workspace-path = 'testcrate'
+
 [[metadata.omitted-packages.ids]]
 name = 'winapi-i686-pc-windows-gnu'
 version = '0.4.0'
 crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'winapi-util'
+version = '0.1.2'
+crates-io = true
+
+[[metadata.features-only]]
+name = 'walkdir'
+version = '2.2.9'
+workspace-path = 'walkdir'
+features = []
 
 [[host-package]]
 name = 'testworkspace-crate'
@@ -186,14 +202,7 @@ name = 'winapi'
 version = '0.3.8'
 crates-io = true
 status = 'transitive'
-features = ['consoleapi', 'errhandlingapi', 'fileapi', 'minwindef', 'processenv', 'std', 'winbase', 'wincon', 'winerror', 'winnt']
-
-[[host-package]]
-name = 'winapi-util'
-version = '0.1.2'
-crates-io = true
-status = 'transitive'
-features = []
+features = ['std', 'winnt']
 
 [[host-package]]
 name = 'winapi-x86_64-pc-windows-gnu'

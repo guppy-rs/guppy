@@ -11,8 +11,14 @@ spec = 'any'
 
 [metadata.target-platform]
 triple = 'x86_64h-apple-darwin'
-target-features = ['fma', 'rdrand', 'sha']
+target-features = ['aes', 'avx', 'rdrand', 'sse']
 flags = ['abc']
+
+[[metadata.features-only]]
+name = 'builddep'
+version = '0.1.0'
+workspace-path = 'builddep'
+features = []
 
 [[host-package]]
 name = 'builddep'

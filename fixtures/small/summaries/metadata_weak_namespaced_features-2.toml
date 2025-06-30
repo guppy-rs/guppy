@@ -11,15 +11,15 @@ spec = 'always'
 
 [metadata.target-platform]
 triple = 'x86_64-pc-windows-msvc'
-target-features = ['avx2']
+target-features = ['bmi1', 'fma', 'sse', 'ssse3', 'xsavec']
 [[metadata.omitted-packages.ids]]
-name = 'namespaced-weak'
-version = '0.1.0'
-workspace-path = ''
+name = 'arrayvec'
+version = '0.7.2'
+crates-io = true
 
 [[metadata.omitted-packages.ids]]
-name = 'pathdiff'
-version = '0.2.1'
+name = 'smallvec'
+version = '1.8.0'
 crates-io = true
 
 [[metadata.omitted-packages.ids]]

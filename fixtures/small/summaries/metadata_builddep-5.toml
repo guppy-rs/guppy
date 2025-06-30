@@ -12,7 +12,11 @@ spec = 'always'
 [metadata.target-platform]
 triple = 'x86_64-pc-windows-msvc'
 target-features = 'all'
-flags = ['flag-test', 'test-flag']
+[[metadata.omitted-packages.ids]]
+name = 'builddep'
+version = '0.1.0'
+workspace-path = 'builddep'
+
 [[metadata.omitted-packages.ids]]
 name = 'main'
 version = '0.1.0'
@@ -41,12 +45,5 @@ features = []
 name = 'main'
 version = '0.1.0'
 workspace-path = 'main'
-status = 'initial'
-features = []
-
-[[host-package]]
-name = 'builddep'
-version = '0.1.0'
-workspace-path = 'builddep'
 status = 'initial'
 features = []

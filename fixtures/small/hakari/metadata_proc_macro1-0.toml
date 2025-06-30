@@ -2,33 +2,18 @@
 #    cargo run -p fixture-manager -- generate-hakari --fixture metadata_proc_macro1
 
 ### BEGIN HAKARI SECTION
-# resolver = 'install'
-# unify-target-host = 'replicate-target-on-host'
+# resolver = '1'
+# unify-target-host = 'auto'
 # output-single-feature = false
 # dep-format-version = '4'
-# workspace-hack-line-style = 'full'
-# platforms = ['aarch64-wrs-vxworks', 'xtensa-esp32s3-none-elf', 'riscv32e-unknown-none-elf']
-#
-# [traversal-excludes]
-# [[final-excludes.ids]]
-# name = 'build-user'
-# version = '0.1.0'
-# workspace-path = 'build-user'
-#
-# [[final-excludes.ids]]
+# workspace-hack-line-style = 'workspace-dotted'
+# platforms = ['mipsisa64r6el-unknown-linux-gnuabi64']
+# [[traversal-excludes.ids]]
 # name = 'dev-user'
 # version = '0.1.0'
 # workspace-path = 'dev-user'
 #
-# [[final-excludes.ids]]
-# name = 'macro'
-# version = '0.1.0'
-# workspace-path = 'macro'
-#
-# [[final-excludes.ids]]
-# name = 'normal-user'
-# version = '0.1.0'
-# workspace-path = 'normal-user'
+# [final-excludes]
 
 ### END HAKARI SECTION
 

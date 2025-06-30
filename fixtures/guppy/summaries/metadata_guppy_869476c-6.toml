@@ -12,17 +12,7 @@ spec = 'always'
 [metadata.target-platform]
 triple = 'mips-unknown-linux-gnu'
 target-features = 'unknown'
-flags = ['test-flag']
-[[metadata.omitted-packages.ids]]
-name = 'rand_xoshiro'
-version = '0.4.0'
-crates-io = true
-
-[[metadata.features-only]]
-name = 'cargo-compare'
-version = '0.1.0'
-workspace-path = 'internal-tools/cargo-compare'
-features = []
+flags = ['flag-test']
 
 [[metadata.features-only]]
 name = 'fixture-manager'
@@ -30,18 +20,16 @@ version = '0.1.0'
 workspace-path = 'internal-tools/fixture-manager'
 features = []
 
-[[target-package]]
-name = 'fixture-manager'
+[[metadata.features-only]]
+name = 'guppy-cmdlib'
 version = '0.1.0'
-workspace-path = 'internal-tools/fixture-manager'
-status = 'initial'
+workspace-path = 'guppy-cmdlib'
 features = []
 
-[[target-package]]
-name = 'fixtures'
-version = '0.1.0'
-workspace-path = 'fixtures'
-status = 'initial'
+[[metadata.features-only]]
+name = 'guppy-summaries'
+version = '0.2.0'
+workspace-path = 'guppy-summaries'
 features = []
 
 [[target-package]]
@@ -61,26 +49,26 @@ features = ['proptest', 'proptest010']
 optional-deps = ['proptest']
 
 [[target-package]]
-name = 'guppy-summaries'
-version = '0.2.0'
-workspace-path = 'guppy-summaries'
-status = 'initial'
-features = []
-
-[[target-package]]
-name = 'proptest-ext'
-version = '0.1.0'
-workspace-path = 'internal-tools/proptest-ext'
-status = 'workspace'
-features = []
-
-[[target-package]]
 name = 'target-spec'
 version = '0.4.1'
 workspace-path = 'target-spec'
-status = 'workspace'
+status = 'initial'
 features = ['proptest', 'proptest010', 'serde', 'summaries']
 optional-deps = ['proptest', 'serde']
+
+[[target-package]]
+name = 'fixtures'
+version = '0.1.0'
+workspace-path = 'fixtures'
+status = 'workspace'
+features = []
+
+[[target-package]]
+name = 'guppy-summaries'
+version = '0.2.0'
+workspace-path = 'guppy-summaries'
+status = 'workspace'
+features = []
 
 [[target-package]]
 name = 'anyhow'
@@ -109,14 +97,6 @@ version = '0.4.1'
 crates-io = true
 status = 'direct'
 features = ['default']
-
-[[target-package]]
-name = 'clap'
-version = '2.33.3'
-crates-io = true
-status = 'direct'
-features = ['ansi_term', 'atty', 'color', 'default', 'strsim', 'suggestions', 'vec_map']
-optional-deps = ['ansi_term', 'atty', 'strsim', 'vec_map']
 
 [[target-package]]
 name = 'diffus'
@@ -210,7 +190,7 @@ name = 'serde_json'
 version = '1.0.58'
 crates-io = true
 status = 'direct'
-features = ['default', 'raw_value', 'std']
+features = ['default', 'std']
 
 [[target-package]]
 name = 'structopt'
@@ -283,6 +263,14 @@ status = 'transitive'
 features = []
 
 [[target-package]]
+name = 'clap'
+version = '2.33.3'
+crates-io = true
+status = 'transitive'
+features = ['ansi_term', 'atty', 'color', 'default', 'strsim', 'suggestions', 'vec_map']
+optional-deps = ['ansi_term', 'atty', 'strsim', 'vec_map']
+
+[[target-package]]
 name = 'difference'
 version = '2.0.0'
 crates-io = true
@@ -294,7 +282,7 @@ name = 'either'
 version = '1.6.1'
 crates-io = true
 status = 'transitive'
-features = ['default', 'use_std']
+features = []
 
 [[target-package]]
 name = 'fnv'

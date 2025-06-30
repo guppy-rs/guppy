@@ -12,13 +12,8 @@ spec = 'always'
 [metadata.target-platform]
 spec = 'always'
 [[metadata.omitted-packages.ids]]
-name = 'proc-macro2'
-version = '1.0.3'
-crates-io = true
-
-[[metadata.omitted-packages.ids]]
-name = 'winapi-i686-pc-windows-gnu'
-version = '0.4.0'
+name = 'datatest'
+version = '0.4.2'
 crates-io = true
 
 [[metadata.features-only]]
@@ -34,8 +29,36 @@ workspace-path = 'walkdir'
 features = []
 
 [[host-package]]
+name = 'testworkspace-crate'
+version = '0.1.0'
+workspace-path = 'testcrate'
+status = 'initial'
+features = []
+
+[[host-package]]
 name = 'walkdir'
 version = '2.2.9'
 workspace-path = 'walkdir'
 status = 'initial'
+features = []
+
+[[host-package]]
+name = 'walkdir'
+version = '0.1.0'
+path = '../walkdir'
+status = 'direct'
+features = []
+
+[[host-package]]
+name = 'walkdir'
+version = '2.2.9'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
+name = 'same-file'
+version = '1.0.5'
+crates-io = true
+status = 'transitive'
 features = []
