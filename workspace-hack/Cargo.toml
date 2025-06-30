@@ -37,7 +37,7 @@ regex-automata = { version = "0.4.9", default-features = false, features = ["dfa
 regex-syntax = { version = "0.8.5" }
 serde = { version = "1.0.219", features = ["alloc", "derive"] }
 serde_json = { version = "1.0.140", features = ["unbounded_depth"] }
-smallvec = { version = "1.15.0", default-features = false, features = ["const_generics"] }
+smallvec = { version = "1.15.1", default-features = false, features = ["const_generics"] }
 textwrap = { version = "0.16.1", default-features = false, features = ["unicode-linebreak", "unicode-width"] }
 toml = { version = "0.5.11", features = ["preserve_order"] }
 toml_edit = { version = "0.22.26", features = ["serde"] }
