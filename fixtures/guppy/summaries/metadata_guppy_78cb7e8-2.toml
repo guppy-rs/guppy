@@ -12,10 +12,6 @@ spec = 'any'
 [metadata.target-platform]
 triple = 'riscv32ima-unknown-none-elf'
 target-features = 'all'
-[[metadata.omitted-packages.ids]]
-name = 'textwrap'
-version = '0.11.0'
-crates-io = true
 
 [[metadata.features-only]]
 name = 'guppy'
@@ -24,9 +20,9 @@ workspace-path = 'guppy'
 features = []
 
 [[metadata.features-only]]
-name = 'guppy-summaries'
-version = '0.2.0'
-workspace-path = 'guppy-summaries'
+name = 'guppy-benchmarks'
+version = '0.1.0'
+workspace-path = 'internal-tools/benchmarks'
 features = []
 
 [[target-package]]
@@ -37,26 +33,20 @@ status = 'initial'
 features = []
 
 [[target-package]]
-name = 'cargo-guppy'
-version = '0.1.0'
-workspace-path = 'cargo-guppy'
+name = 'target-spec'
+version = '0.4.1'
+workspace-path = 'target-spec'
 status = 'initial'
-features = []
-
-[[target-package]]
-name = 'guppy-summaries'
-version = '0.2.0'
-workspace-path = 'guppy-summaries'
-status = 'initial'
-features = []
+features = ['proptest', 'proptest010']
+optional-deps = ['proptest']
 
 [[target-package]]
 name = 'guppy'
 version = '0.5.0'
 workspace-path = 'guppy'
 status = 'workspace'
-features = ['guppy-summaries', 'proptest', 'proptest-derive', 'proptest010', 'summaries']
-optional-deps = ['guppy-summaries', 'proptest', 'proptest-derive']
+features = ['proptest', 'proptest-derive', 'proptest010']
+optional-deps = ['proptest', 'proptest-derive']
 
 [[target-package]]
 name = 'guppy-cmdlib'
@@ -65,14 +55,6 @@ workspace-path = 'guppy-cmdlib'
 status = 'workspace'
 features = ['proptest', 'proptest010']
 optional-deps = ['proptest']
-
-[[target-package]]
-name = 'target-spec'
-version = '0.4.1'
-workspace-path = 'target-spec'
-status = 'workspace'
-features = ['proptest', 'proptest010', 'serde', 'summaries']
-optional-deps = ['proptest', 'serde']
 
 [[target-package]]
 name = 'anyhow'
@@ -101,21 +83,6 @@ version = '0.4.1'
 crates-io = true
 status = 'direct'
 features = ['default']
-
-[[target-package]]
-name = 'clap'
-version = '2.33.3'
-crates-io = true
-status = 'direct'
-features = ['ansi_term', 'atty', 'color', 'default', 'strsim', 'suggestions', 'vec_map']
-optional-deps = ['ansi_term', 'atty', 'strsim', 'vec_map']
-
-[[target-package]]
-name = 'dialoguer'
-version = '0.6.2'
-crates-io = true
-status = 'direct'
-features = []
 
 [[target-package]]
 name = 'diffus'
@@ -233,20 +200,6 @@ status = 'direct'
 features = []
 
 [[target-package]]
-name = 'toml'
-version = '0.5.6'
-crates-io = true
-status = 'direct'
-features = ['default']
-
-[[target-package]]
-name = 'toml_edit'
-version = '0.2.0'
-crates-io = true
-status = 'direct'
-features = []
-
-[[target-package]]
 name = 'aho-corasick'
 version = '0.7.13'
 crates-io = true
@@ -259,13 +212,6 @@ version = '0.11.0'
 crates-io = true
 status = 'transitive'
 features = []
-
-[[target-package]]
-name = 'ascii'
-version = '0.9.3'
-crates-io = true
-status = 'transitive'
-features = ['std']
 
 [[target-package]]
 name = 'atty'
@@ -338,27 +284,12 @@ status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'chrono'
-version = '0.4.19'
+name = 'clap'
+version = '2.33.3'
 crates-io = true
 status = 'transitive'
-features = ['clock', 'default', 'libc', 'oldtime', 'std', 'time', 'winapi']
-optional-deps = ['libc', 'time', 'winapi']
-
-[[target-package]]
-name = 'combine'
-version = '3.8.1'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
-
-[[target-package]]
-name = 'console'
-version = '0.11.3'
-crates-io = true
-status = 'transitive'
-features = ['ansi-parsing', 'default', 'regex', 'unicode-width', 'winapi-util', 'windows-console-colors']
-optional-deps = ['regex', 'unicode-width', 'winapi-util']
+features = ['ansi_term', 'atty', 'color', 'default', 'strsim', 'suggestions', 'vec_map']
+optional-deps = ['ansi_term', 'atty', 'strsim', 'vec_map']
 
 [[target-package]]
 name = 'crates-io'
@@ -621,13 +552,6 @@ features = ['libc']
 optional-deps = ['libc']
 
 [[target-package]]
-name = 'linked-hash-map'
-version = '0.5.3'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
 name = 'log'
 version = '0.4.11'
 crates-io = true
@@ -647,13 +571,6 @@ version = '2.3.3'
 crates-io = true
 status = 'transitive'
 features = ['default', 'std', 'use_std']
-
-[[target-package]]
-name = 'num-integer'
-version = '0.1.43'
-crates-io = true
-status = 'transitive'
-features = []
 
 [[target-package]]
 name = 'num-traits'
@@ -877,8 +794,8 @@ status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'terminal_size'
-version = '0.1.13'
+name = 'textwrap'
+version = '0.11.0'
 crates-io = true
 status = 'transitive'
 features = []
@@ -891,18 +808,18 @@ status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'time'
-version = '0.1.44'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
 name = 'tinyvec'
 version = '0.3.4'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default']
+
+[[target-package]]
+name = 'toml'
+version = '0.5.6'
+crates-io = true
+status = 'transitive'
+features = ['default']
 
 [[target-package]]
 name = 'typenum'
@@ -940,13 +857,6 @@ status = 'transitive'
 features = ['default']
 
 [[target-package]]
-name = 'unreachable'
-version = '1.0.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
 name = 'url'
 version = '2.1.1'
 crates-io = true
@@ -963,13 +873,6 @@ features = []
 [[target-package]]
 name = 'vec_map'
 version = '0.8.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'void'
-version = '1.0.2'
 crates-io = true
 status = 'transitive'
 features = []

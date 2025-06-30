@@ -9,16 +9,20 @@ initials-platform = 'proc-macros-on-target'
 [metadata.host-platform]
 triple = 'riscv64gc-unknown-hermit'
 target-features = 'all'
-flags = ['abc']
+flags = ['cargo_web']
 
 [metadata.target-platform]
 spec = 'any'
+[[metadata.omitted-packages.ids]]
+name = 'testcycles-base'
+version = '0.1.0'
+workspace-path = 'testcycles-base'
 
 [[metadata.features-only]]
 name = 'testcycles-base'
 version = '0.1.0'
 workspace-path = 'testcycles-base'
-features = []
+features = ['default', 'default-enable', 'default-transitive', 'helper-enable', 'helper-transitive']
 
 [[metadata.features-only]]
 name = 'testcycles-helper'

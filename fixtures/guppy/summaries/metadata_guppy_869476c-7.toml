@@ -12,24 +12,39 @@ spec = 'any'
 [metadata.target-platform]
 spec = 'always'
 [[metadata.omitted-packages.ids]]
-name = 'miniz_oxide'
-version = '0.4.3'
+name = 'openssl-probe'
+version = '0.1.2'
 crates-io = true
 
-[[metadata.omitted-packages.ids]]
-name = 'petgraph'
-version = '0.5.1'
-crates-io = true
+[[metadata.features-only]]
+name = 'guppy'
+version = '0.5.0'
+workspace-path = 'guppy'
+features = []
 
-[[metadata.omitted-packages.ids]]
-name = 'wait-timeout'
+[[metadata.features-only]]
+name = 'guppy-benchmarks'
+version = '0.1.0'
+workspace-path = 'internal-tools/benchmarks'
+features = []
+
+[[metadata.features-only]]
+name = 'guppy-summaries'
 version = '0.2.0'
-crates-io = true
+workspace-path = 'guppy-summaries'
+features = []
 
 [[target-package]]
 name = 'cargo-guppy'
 version = '0.1.0'
 workspace-path = 'cargo-guppy'
+status = 'initial'
+features = []
+
+[[target-package]]
+name = 'fixture-manager'
+version = '0.1.0'
+workspace-path = 'internal-tools/fixture-manager'
 status = 'initial'
 features = []
 
@@ -41,9 +56,16 @@ status = 'initial'
 features = []
 
 [[target-package]]
-name = 'guppy-summaries'
-version = '0.2.0'
-workspace-path = 'guppy-summaries'
+name = 'guppy-benchmarks'
+version = '0.1.0'
+workspace-path = 'internal-tools/benchmarks'
+status = 'initial'
+features = []
+
+[[target-package]]
+name = 'proptest-ext'
+version = '0.1.0'
+workspace-path = 'internal-tools/proptest-ext'
 status = 'initial'
 features = []
 
@@ -52,13 +74,21 @@ name = 'guppy'
 version = '0.5.0'
 workspace-path = 'guppy'
 status = 'workspace'
-features = ['guppy-summaries', 'summaries']
-optional-deps = ['guppy-summaries']
+features = ['guppy-summaries', 'proptest', 'proptest-derive', 'proptest010', 'summaries']
+optional-deps = ['guppy-summaries', 'proptest', 'proptest-derive']
 
 [[target-package]]
 name = 'guppy-cmdlib'
 version = '0.1.0'
 workspace-path = 'guppy-cmdlib'
+status = 'workspace'
+features = ['proptest', 'proptest010']
+optional-deps = ['proptest']
+
+[[target-package]]
+name = 'guppy-summaries'
+version = '0.2.0'
+workspace-path = 'guppy-summaries'
 status = 'workspace'
 features = []
 
@@ -67,8 +97,8 @@ name = 'target-spec'
 version = '0.4.1'
 workspace-path = 'target-spec'
 status = 'workspace'
-features = ['serde', 'summaries']
-optional-deps = ['serde']
+features = ['proptest', 'proptest010', 'serde', 'summaries']
+optional-deps = ['proptest', 'serde']
 
 [[target-package]]
 name = 'anyhow'
@@ -156,11 +186,26 @@ status = 'direct'
 features = []
 
 [[target-package]]
+name = 'petgraph'
+version = '0.5.1'
+crates-io = true
+status = 'direct'
+features = []
+
+[[target-package]]
 name = 'pretty_assertions'
 version = '0.6.1'
 crates-io = true
 status = 'direct'
 features = []
+
+[[target-package]]
+name = 'proptest'
+version = '0.10.1'
+crates-io = true
+status = 'direct'
+features = ['bit-set', 'break-dead-code', 'default', 'fork', 'lazy_static', 'quick-error', 'regex-syntax', 'rusty-fork', 'std', 'tempfile', 'timeout']
+optional-deps = ['bit-set', 'lazy_static', 'quick-error', 'regex-syntax', 'rusty-fork', 'tempfile']
 
 [[target-package]]
 name = 'semver'
@@ -235,6 +280,20 @@ status = 'transitive'
 features = []
 
 [[target-package]]
+name = 'bit-set'
+version = '0.5.2'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
+name = 'bit-vec'
+version = '0.6.2'
+crates-io = true
+status = 'transitive'
+features = ['std']
+
+[[target-package]]
 name = 'bitflags'
 version = '1.2.1'
 crates-io = true
@@ -291,6 +350,13 @@ version = '1.6.1'
 crates-io = true
 status = 'transitive'
 features = ['use_std']
+
+[[target-package]]
+name = 'fnv'
+version = '1.0.7'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
 
 [[target-package]]
 name = 'getrandom'
@@ -360,6 +426,20 @@ name = 'num-traits'
 version = '0.2.12'
 crates-io = true
 status = 'transitive'
+features = ['std']
+
+[[target-package]]
+name = 'ppv-lite86'
+version = '0.2.9'
+crates-io = true
+status = 'transitive'
+features = ['simd']
+
+[[target-package]]
+name = 'quick-error'
+version = '1.2.3'
+crates-io = true
+status = 'transitive'
 features = []
 
 [[target-package]]
@@ -371,12 +451,26 @@ features = ['alloc', 'default', 'getrandom', 'getrandom_package', 'libc', 'std']
 optional-deps = ['getrandom_package']
 
 [[target-package]]
+name = 'rand_chacha'
+version = '0.2.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
 name = 'rand_core'
 version = '0.5.1'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'getrandom', 'std']
 optional-deps = ['getrandom']
+
+[[target-package]]
+name = 'rand_xorshift'
+version = '0.2.0'
+crates-io = true
+status = 'transitive'
+features = []
 
 [[target-package]]
 name = 'regex'
@@ -390,7 +484,7 @@ name = 'regex-syntax'
 version = '0.6.18'
 crates-io = true
 status = 'transitive'
-features = []
+features = ['default', 'unicode', 'unicode-age', 'unicode-bool', 'unicode-case', 'unicode-gencat', 'unicode-perl', 'unicode-script', 'unicode-segment']
 
 [[target-package]]
 name = 'remove_dir_all'
@@ -398,6 +492,14 @@ version = '0.5.3'
 crates-io = true
 status = 'transitive'
 features = []
+
+[[target-package]]
+name = 'rusty-fork'
+version = '0.3.0'
+crates-io = true
+status = 'transitive'
+features = ['timeout', 'wait-timeout']
+optional-deps = ['wait-timeout']
 
 [[target-package]]
 name = 'ryu'
@@ -483,6 +585,20 @@ crates-io = true
 status = 'transitive'
 features = []
 
+[[target-package]]
+name = 'wait-timeout'
+version = '0.2.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'proptest-derive'
+version = '0.2.0'
+crates-io = true
+status = 'direct'
+features = []
+
 [[host-package]]
 name = 'autocfg'
 version = '1.0.1'
@@ -514,7 +630,21 @@ features = []
 
 [[host-package]]
 name = 'proc-macro2'
+version = '0.4.30'
+crates-io = true
+status = 'transitive'
+features = ['default', 'proc-macro']
+
+[[host-package]]
+name = 'proc-macro2'
 version = '1.0.24'
+crates-io = true
+status = 'transitive'
+features = ['default', 'proc-macro']
+
+[[host-package]]
+name = 'quote'
+version = '0.6.13'
 crates-io = true
 status = 'transitive'
 features = ['default', 'proc-macro']
@@ -542,6 +672,14 @@ features = []
 
 [[host-package]]
 name = 'syn'
+version = '0.15.44'
+crates-io = true
+status = 'transitive'
+features = ['clone-impls', 'default', 'derive', 'extra-traits', 'full', 'parsing', 'printing', 'proc-macro', 'quote', 'visit']
+optional-deps = ['quote']
+
+[[host-package]]
+name = 'syn'
 version = '1.0.42'
 crates-io = true
 status = 'transitive'
@@ -554,6 +692,13 @@ version = '1.6.0'
 crates-io = true
 status = 'transitive'
 features = []
+
+[[host-package]]
+name = 'unicode-xid'
+version = '0.1.0'
+crates-io = true
+status = 'transitive'
+features = ['default']
 
 [[host-package]]
 name = 'unicode-xid'

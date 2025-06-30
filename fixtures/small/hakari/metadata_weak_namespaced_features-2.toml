@@ -2,28 +2,18 @@
 #    cargo run -p fixture-manager -- generate-hakari --fixture metadata_weak_namespaced_features
 
 ### BEGIN HAKARI SECTION
-# resolver = '3'
-# unify-target-host = 'replicate-target-on-host'
+# resolver = 'install'
+# unify-target-host = 'unify-if-both'
 # output-single-feature = false
-# dep-format-version = '1'
-# workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['wasm64-unknown-unknown', 'mipsel-unknown-netbsd']
+# dep-format-version = '4'
+# workspace-hack-line-style = 'full'
+# platforms = ['x86_64-unknown-trusty', 'x86_64-uwp-windows-gnu', 'riscv32gc-unknown-linux-musl']
 # [[traversal-excludes.ids]]
 # name = 'arrayvec'
 # version = '0.7.2'
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
-# name = 'namespaced-weak'
-# version = '0.1.0'
-# workspace-path = ''
-#
-# [[traversal-excludes.ids]]
-# name = 'pathdiff'
-# version = '0.2.1'
-# crates-io = true
-#
-# [[traversal-excludes.ids]]
 # name = 'smallvec'
 # version = '1.8.0'
 # crates-io = true
@@ -38,18 +28,8 @@
 # workspace-path = ''
 #
 # [[final-excludes.ids]]
-# name = 'pathdiff'
-# version = '0.2.1'
-# crates-io = true
-#
-# [[final-excludes.ids]]
 # name = 'smallvec'
 # version = '1.8.0'
-# crates-io = true
-#
-# [[final-excludes.ids]]
-# name = 'tinyvec'
-# version = '1.5.1'
 # crates-io = true
 
 ### END HAKARI SECTION

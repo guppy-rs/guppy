@@ -8,19 +8,20 @@ initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
 triple = 'i686-uwp-windows-gnu'
-target-features = ['avx']
-flags = ['foo']
+target-features = ['avx', 'bmi2', 'rdrand', 'sse2', 'xsaves']
+flags = ['abc']
 
 [metadata.target-platform]
-triple = 'i586-unknown-netbsd'
-target-features = 'unknown'
-flags = ['bar', 'cargo_web']
-
-[[metadata.features-only]]
+spec = 'always'
+[[metadata.omitted-packages.ids]]
 name = 'namespaced-weak'
 version = '0.1.0'
 workspace-path = ''
-features = []
+
+[[metadata.omitted-packages.ids]]
+name = 'smallvec'
+version = '1.8.0'
+crates-io = true
 
 [[target-package]]
 name = 'namespaced-weak'

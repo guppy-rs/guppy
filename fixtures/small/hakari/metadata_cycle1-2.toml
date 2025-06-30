@@ -2,14 +2,21 @@
 #    cargo run -p fixture-manager -- generate-hakari --fixture metadata_cycle1
 
 ### BEGIN HAKARI SECTION
-# resolver = '1'
-# unify-target-host = 'auto'
-# output-single-feature = true
-# dep-format-version = '4'
-# workspace-hack-line-style = 'version-only'
-# platforms = []
+# resolver = 'install'
+# unify-target-host = 'unify-if-both'
+# output-single-feature = false
+# dep-format-version = '1'
+# workspace-hack-line-style = 'full'
+# platforms = ['armv8r-none-eabihf']
+# [[traversal-excludes.ids]]
+# name = 'testcycles-base'
+# version = '0.1.0'
+# workspace-path = ''
 #
-# [traversal-excludes]
+# [[traversal-excludes.ids]]
+# name = 'testcycles-helper'
+# version = '0.1.0'
+# path = '../testcycles-helper'
 # [[final-excludes.ids]]
 # name = 'testcycles-base'
 # version = '0.1.0'

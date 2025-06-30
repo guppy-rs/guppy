@@ -12,15 +12,17 @@ spec = 'always'
 [metadata.target-platform]
 triple = 'armv6-unknown-netbsd-eabihf'
 target-features = 'unknown'
+flags = ['abc', 'flag-test']
 [[metadata.omitted-packages.ids]]
 name = 'builddep'
 version = '0.1.0'
 workspace-path = 'builddep'
 
-[[metadata.omitted-packages.ids]]
-name = 'main'
+[[metadata.features-only]]
+name = 'builddep'
 version = '0.1.0'
-workspace-path = 'main'
+workspace-path = 'builddep'
+features = []
 
 [[host-package]]
 name = 'builddep'

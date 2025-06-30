@@ -4,21 +4,23 @@
 ### BEGIN HAKARI SECTION
 # resolver = 'install'
 # unify-target-host = 'replicate-target-on-host'
-# output-single-feature = true
-# dep-format-version = '4'
-# workspace-hack-line-style = 'full'
-# platforms = []
-# [[traversal-excludes.ids]]
-# name = 'testcycles-base'
-# version = '0.1.0'
-# workspace-path = ''
-#
+# output-single-feature = false
+# dep-format-version = '2'
+# workspace-hack-line-style = 'version-only'
+# platforms = ['i686-apple-darwin']
 # [[traversal-excludes.ids]]
 # name = 'testcycles-helper'
 # version = '0.1.0'
 # path = '../testcycles-helper'
+# [[final-excludes.ids]]
+# name = 'testcycles-base'
+# version = '0.1.0'
+# workspace-path = ''
 #
-# [final-excludes]
+# [[final-excludes.ids]]
+# name = 'testcycles-helper'
+# version = '0.1.0'
+# path = '../testcycles-helper'
 
 ### END HAKARI SECTION
 

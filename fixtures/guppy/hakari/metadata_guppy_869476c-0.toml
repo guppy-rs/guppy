@@ -2,37 +2,43 @@
 #    cargo run -p fixture-manager -- generate-hakari --fixture metadata_guppy_869476c
 
 ### BEGIN HAKARI SECTION
-# resolver = '2'
+# resolver = '3'
 # unify-target-host = 'none'
 # output-single-feature = false
 # dep-format-version = '3'
-# workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['xtensa-esp32s3-none-elf', 'aarch64_be-unknown-linux-gnu_ilp32']
+# workspace-hack-line-style = 'full'
+# platforms = ['x86_64-unknown-redox', 'riscv64gc-unknown-nuttx-elf']
 # [[traversal-excludes.ids]]
-# name = 'libz-sys'
-# version = '1.1.2'
-# crates-io = true
-#
-# [[traversal-excludes.ids]]
-# name = 'rand_xorshift'
+# name = 'commoncrypto-sys'
 # version = '0.2.0'
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
-# name = 'rustc-workspace-hack'
-# version = '1.0.0'
+# name = 'percent-encoding'
+# version = '2.1.0'
 # crates-io = true
 # [[final-excludes.ids]]
-# name = 'bstr'
-# version = '0.2.13'
+# name = 'jobserver'
+# version = '0.1.21'
 # crates-io = true
 #
 # [[final-excludes.ids]]
-# name = 'winapi-i686-pc-windows-gnu'
-# version = '0.4.0'
+# name = 'semver'
+# version = '0.10.0'
+# crates-io = true
+#
+# [[final-excludes.ids]]
+# name = 'serde_ignored'
+# version = '0.1.2'
+# crates-io = true
+#
+# [[final-excludes.ids]]
+# name = 'vte'
+# version = '0.3.3'
 # crates-io = true
 
 [dependencies]
+bstr = { version = "0.2", features = ["serde1"] }
 byteorder = { version = "1", default-features = false, features = ["std"] }
 clap = { version = "2" }
 either = { version = "1" }
@@ -49,10 +55,16 @@ proc-macro2 = { version = "1" }
 quote = { version = "1" }
 syn = { version = "1", features = ["full", "visit"] }
 
-[target.aarch64_be-unknown-linux-gnu_ilp32.dependencies]
+[target.x86_64-unknown-redox.dependencies]
 libc = { version = "0.2" }
 
-[target.aarch64_be-unknown-linux-gnu_ilp32.build-dependencies]
+[target.x86_64-unknown-redox.build-dependencies]
+libc = { version = "0.2" }
+
+[target.riscv64gc-unknown-nuttx-elf.dependencies]
+libc = { version = "0.2" }
+
+[target.riscv64gc-unknown-nuttx-elf.build-dependencies]
 libc = { version = "0.2" }
 
 ### END HAKARI SECTION

@@ -9,13 +9,13 @@ initials-platform = 'proc-macros-on-target'
 [metadata.host-platform]
 triple = 'x86_64-pc-windows-gnullvm'
 target-features = 'unknown'
+flags = ['abc', 'foo']
 
 [metadata.target-platform]
-triple = 'riscv32imc-unknown-nuttx-elf'
-target-features = ['avx']
+spec = 'always'
 [[metadata.omitted-packages.ids]]
-name = 'thread_local'
-version = '0.3.6'
+name = 'unicode-xid'
+version = '0.2.0'
 crates-io = true
 
 [[metadata.omitted-packages.ids]]
@@ -23,21 +23,10 @@ name = 'version_check'
 version = '0.9.1'
 crates-io = true
 
-[[metadata.omitted-packages.ids]]
-name = 'winapi-util'
-version = '0.1.2'
-crates-io = true
-
 [[metadata.features-only]]
 name = 'testworkspace-crate'
 version = '0.1.0'
 workspace-path = 'testcrate'
-features = []
-
-[[metadata.features-only]]
-name = 'walkdir'
-version = '2.2.9'
-workspace-path = 'walkdir'
 features = []
 
 [[target-package]]
@@ -85,6 +74,13 @@ features = ['default', 'std']
 [[target-package]]
 name = 'dtoa'
 version = '0.4.4'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'lazy_static'
+version = '1.4.0'
 crates-io = true
 status = 'transitive'
 features = []
@@ -140,6 +136,13 @@ status = 'transitive'
 features = []
 
 [[target-package]]
+name = 'thread_local'
+version = '0.3.6'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
 name = 'yaml-rust'
 version = '0.4.3'
 crates-io = true
@@ -181,10 +184,3 @@ crates-io = true
 status = 'transitive'
 features = ['clone-impls', 'default', 'derive', 'fold', 'full', 'parsing', 'printing', 'proc-macro', 'quote']
 optional-deps = ['quote']
-
-[[host-package]]
-name = 'unicode-xid'
-version = '0.2.0'
-crates-io = true
-status = 'transitive'
-features = ['default']

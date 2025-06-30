@@ -12,16 +12,13 @@ target-features = 'all'
 flags = ['abc']
 
 [metadata.target-platform]
-spec = 'always'
+triple = 'thumbv7neon-unknown-linux-gnueabihf'
+target-features = 'all'
+flags = ['cargo_web']
 [[metadata.omitted-packages.ids]]
 name = 'ryu'
 version = '1.0.5'
 crates-io = true
-
-[[metadata.omitted-packages.ids]]
-name = 'serde_derive'
-version = '1.0.130'
-source = 'registry+https://github.com/fakeorg/crates.io-index'
 
 [[metadata.features-only]]
 name = 'debug-ignore'

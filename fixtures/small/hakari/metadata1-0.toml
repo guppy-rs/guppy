@@ -4,49 +4,48 @@
 ### BEGIN HAKARI SECTION
 # resolver = 'install'
 # unify-target-host = 'replicate-target-on-host'
-# output-single-feature = false
-# dep-format-version = '4'
+# output-single-feature = true
+# dep-format-version = '2'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['riscv64gc-unknown-openbsd', 'bpfeb-unknown-none']
+# platforms = ['thumbv7m-none-eabi', 'i686-win7-windows-msvc', 'i686-unknown-netbsd']
 # [[traversal-excludes.ids]]
+# name = 'regex'
+# version = '1.3.1'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'testcrate'
+# version = '0.1.0'
+# workspace-path = ''
+#
+# [[traversal-excludes.ids]]
+# name = 'walkdir'
+# version = '2.2.9'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'walkdir'
+# version = '2.2.9'
+# source = 'git+https://github.com/BurntSushi/walkdir?tag=2.2.9#7c7013259eb9db400b3e5c7bc60330ca08068826'
+# [[final-excludes.ids]]
+# name = 'ctor'
+# version = '0.1.10'
+# crates-io = true
+#
+# [[final-excludes.ids]]
 # name = 'dtoa'
 # version = '0.4.4'
 # crates-io = true
 #
-# [[traversal-excludes.ids]]
-# name = 'linked-hash-map'
-# version = '0.5.2'
-# crates-io = true
-#
-# [[traversal-excludes.ids]]
+# [[final-excludes.ids]]
 # name = 'memchr'
 # version = '2.2.1'
 # crates-io = true
 #
-# [[traversal-excludes.ids]]
+# [[final-excludes.ids]]
 # name = 'quote'
 # version = '1.0.2'
-# crates-io = true
-#
-# [[traversal-excludes.ids]]
-# name = 'serde'
-# version = '1.0.100'
-# crates-io = true
-# [[final-excludes.ids]]
-# name = 'mach'
-# version = '0.2.3'
-# crates-io = true
-#
-# [[final-excludes.ids]]
-# name = 'thread_local'
-# version = '0.3.6'
-# crates-io = true
-
-[dependencies]
-datatest = { version = "0.4", features = ["unsafe_test_runner"] }
-
-[build-dependencies]
-datatest = { version = "0.4", features = ["unsafe_test_runner"] }
+# path = '../quote'
 
 ### END HAKARI SECTION
 

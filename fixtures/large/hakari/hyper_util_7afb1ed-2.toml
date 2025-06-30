@@ -2,79 +2,142 @@
 #    cargo run -p fixture-manager -- generate-hakari --fixture hyper_util_7afb1ed
 
 ### BEGIN HAKARI SECTION
-# resolver = '3'
+# resolver = 'install'
 # unify-target-host = 'replicate-target-on-host'
-# output-single-feature = false
-# dep-format-version = '2'
-# workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['i686-unknown-netbsd', 'armv7-unknown-linux-uclibceabihf']
+# output-single-feature = true
+# dep-format-version = '3'
+# workspace-hack-line-style = 'version-only'
+# platforms = ['aarch64-unknown-linux-musl']
 # [[traversal-excludes.ids]]
-# name = 'aho-corasick'
-# version = '1.1.3'
+# name = 'http-body-util'
+# version = '0.1.2'
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
-# name = 'futures-util'
-# version = '0.3.30'
-# crates-io = true
-#
-# [[traversal-excludes.ids]]
-# name = 'slab'
-# version = '0.4.9'
-# crates-io = true
-#
-# [[traversal-excludes.ids]]
-# name = 'tracing'
-# version = '0.1.40'
-# crates-io = true
-#
-# [[traversal-excludes.ids]]
-# name = 'tracing-core'
-# version = '0.1.32'
-# crates-io = true
-#
-# [[traversal-excludes.ids]]
-# name = 'winapi-util'
-# version = '0.1.8'
-# crates-io = true
-#
-# [[traversal-excludes.ids]]
-# name = 'windows_aarch64_gnullvm'
+# name = 'windows_i686_gnu'
 # version = '0.52.6'
 # crates-io = true
-# [[final-excludes.ids]]
-# name = 'adler'
-# version = '1.0.2'
-# crates-io = true
 #
-# [[final-excludes.ids]]
-# name = 'httparse'
-# version = '1.9.4'
-# crates-io = true
-#
-# [[final-excludes.ids]]
-# name = 'itoa'
-# version = '1.0.11'
-# crates-io = true
-#
-# [[final-excludes.ids]]
-# name = 'rustc-demangle'
-# version = '0.1.24'
-# crates-io = true
-#
-# [[final-excludes.ids]]
-# name = 'windows_aarch64_msvc'
-# version = '0.52.6'
-# crates-io = true
+# [final-excludes]
 
 [dependencies]
-hyper = { version = "1", features = ["client", "full", "http1", "http2", "server"] }
-tokio = { version = "1", features = ["bytes", "io-util", "libc", "macros", "mio", "net", "rt", "signal", "signal-hook-registry", "socket2", "sync", "test-util", "time", "tokio-macros"] }
+aho-corasick = { version = "1", default-features = false, features = ["perf-literal", "std"] }
+async-stream = { version = "0.3", default-features = false }
+atomic-waker = { version = "1", default-features = false }
+bytes = { version = "1" }
+env_logger = { version = "0.10" }
+equivalent = { version = "1", default-features = false }
+fnv = { version = "1" }
+futures-channel = { version = "0.3" }
+futures-core = { version = "0.3" }
+futures-sink = { version = "0.3" }
+futures-task = { version = "0.3", default-features = false }
+futures-util = { version = "0.3", default-features = false }
+h2 = { version = "0.4", default-features = false }
+hashbrown = { version = "0.14", default-features = false, features = ["raw"] }
+http-body = { version = "1", default-features = false }
+http = { version = "1" }
+httparse = { version = "1" }
+httpdate = { version = "1", default-features = false }
+humantime = { version = "2", default-features = false }
+hyper = { version = "1", features = ["full"] }
+indexmap = { version = "2" }
+is-terminal = { version = "0.4", default-features = false }
+itoa = { version = "1", default-features = false }
+log = { version = "0.4", default-features = false, features = ["std"] }
+memchr = { version = "2", default-features = false, features = ["std"] }
+mio = { version = "1", default-features = false, features = ["net", "os-ext"] }
+once_cell = { version = "1" }
+pin-project-lite = { version = "0.2", default-features = false }
+pin-utils = { version = "0.1", default-features = false }
+pretty_env_logger = { version = "0.5", default-features = false }
+regex-automata = { version = "0.4", default-features = false, features = ["dfa-onepass", "hybrid", "meta", "nfa-backtrack", "perf-inline", "perf-literal"] }
+regex-syntax = { version = "0.8", default-features = false, features = ["std"] }
+regex = { version = "1", default-features = false, features = ["perf", "std"] }
+slab = { version = "0.4" }
+smallvec = { version = "1", default-features = false, features = ["const_new"] }
+termcolor = { version = "1", default-features = false }
+tokio-stream = { version = "0.1" }
+tokio-test = { version = "0.4", default-features = false }
+tokio-util = { version = "0.7", features = ["codec", "io"] }
+tokio = { version = "1", features = ["io-util", "macros", "net", "signal", "test-util"] }
+tracing-core = { version = "0.1", default-features = false, features = ["std"] }
+tracing = { version = "0.1", default-features = false, features = ["std"] }
+try-lock = { version = "0.2", default-features = false }
+want = { version = "0.3", default-features = false }
 
 [build-dependencies]
-hyper = { version = "1", features = ["client", "full", "http1", "http2", "server"] }
-syn = { version = "2", features = ["clone-impls", "derive", "full", "parsing", "printing", "proc-macro", "visit-mut"] }
-tokio = { version = "1", features = ["bytes", "io-util", "libc", "macros", "mio", "net", "rt", "signal", "signal-hook-registry", "socket2", "sync", "test-util", "time", "tokio-macros"] }
+aho-corasick = { version = "1", default-features = false, features = ["perf-literal", "std"] }
+async-stream-impl = { version = "0.3", default-features = false }
+async-stream = { version = "0.3", default-features = false }
+atomic-waker = { version = "1", default-features = false }
+autocfg = { version = "1", default-features = false }
+bytes = { version = "1" }
+env_logger = { version = "0.10" }
+equivalent = { version = "1", default-features = false }
+fnv = { version = "1" }
+futures-channel = { version = "0.3" }
+futures-core = { version = "0.3" }
+futures-sink = { version = "0.3" }
+futures-task = { version = "0.3", default-features = false }
+futures-util = { version = "0.3", default-features = false }
+h2 = { version = "0.4", default-features = false }
+hashbrown = { version = "0.14", default-features = false, features = ["raw"] }
+http-body = { version = "1", default-features = false }
+http = { version = "1" }
+httparse = { version = "1" }
+httpdate = { version = "1", default-features = false }
+humantime = { version = "2", default-features = false }
+hyper = { version = "1", features = ["full"] }
+indexmap = { version = "2" }
+is-terminal = { version = "0.4", default-features = false }
+itoa = { version = "1", default-features = false }
+log = { version = "0.4", default-features = false, features = ["std"] }
+memchr = { version = "2", default-features = false, features = ["std"] }
+mio = { version = "1", default-features = false, features = ["net", "os-ext"] }
+once_cell = { version = "1" }
+pin-project-lite = { version = "0.2", default-features = false }
+pin-utils = { version = "0.1", default-features = false }
+pretty_env_logger = { version = "0.5", default-features = false }
+proc-macro2 = { version = "1" }
+quote = { version = "1" }
+regex-automata = { version = "0.4", default-features = false, features = ["dfa-onepass", "hybrid", "meta", "nfa-backtrack", "perf-inline", "perf-literal"] }
+regex-syntax = { version = "0.8", default-features = false, features = ["std"] }
+regex = { version = "1", default-features = false, features = ["perf", "std"] }
+slab = { version = "0.4" }
+smallvec = { version = "1", default-features = false, features = ["const_new"] }
+syn = { version = "2", features = ["full", "visit-mut"] }
+termcolor = { version = "1", default-features = false }
+tokio-macros = { version = "2", default-features = false }
+tokio-stream = { version = "0.1" }
+tokio-test = { version = "0.4", default-features = false }
+tokio-util = { version = "0.7", features = ["codec", "io"] }
+tokio = { version = "1", features = ["io-util", "macros", "net", "signal", "test-util"] }
+tracing-core = { version = "0.1", default-features = false, features = ["std"] }
+tracing = { version = "0.1", default-features = false, features = ["std"] }
+try-lock = { version = "0.2", default-features = false }
+unicode-ident = { version = "1", default-features = false }
+want = { version = "0.3", default-features = false }
+
+[target.aarch64-unknown-linux-musl.dependencies]
+ipnetwork = { version = "0.20" }
+libc = { version = "0.2" }
+no-std-net = { version = "0.6", default-features = false, features = ["std"] }
+pnet_base = { version = "0.35", default-features = false, features = ["std"] }
+pnet_datalink = { version = "0.35" }
+pnet_sys = { version = "0.35", default-features = false }
+serde = { version = "1" }
+signal-hook-registry = { version = "1", default-features = false }
+
+[target.aarch64-unknown-linux-musl.build-dependencies]
+ipnetwork = { version = "0.20" }
+libc = { version = "0.2" }
+no-std-net = { version = "0.6", default-features = false, features = ["std"] }
+pnet_base = { version = "0.35", default-features = false, features = ["std"] }
+pnet_datalink = { version = "0.35" }
+pnet_sys = { version = "0.35", default-features = false }
+serde = { version = "1" }
+signal-hook-registry = { version = "1", default-features = false }
 
 ### END HAKARI SECTION
 

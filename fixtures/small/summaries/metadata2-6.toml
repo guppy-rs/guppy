@@ -11,6 +11,20 @@ spec = 'any'
 
 [metadata.target-platform]
 spec = 'always'
+[[metadata.omitted-packages.ids]]
+name = 'dtoa'
+version = '0.4.4'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'lazy_static'
+version = '1.4.0'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'winapi-x86_64-pc-windows-gnu'
+version = '0.4.0'
+crates-io = true
 
 [[host-package]]
 name = 'testworkspace-crate'
@@ -64,20 +78,6 @@ features = []
 [[host-package]]
 name = 'datatest-derive'
 version = '0.4.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'dtoa'
-version = '0.4.4'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'lazy_static'
-version = '1.4.0'
 crates-io = true
 status = 'transitive'
 features = []
@@ -192,13 +192,6 @@ features = []
 [[host-package]]
 name = 'winapi-util'
 version = '0.1.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'winapi-x86_64-pc-windows-gnu'
-version = '0.4.0'
 crates-io = true
 status = 'transitive'
 features = []

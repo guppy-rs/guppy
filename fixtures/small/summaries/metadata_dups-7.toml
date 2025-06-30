@@ -12,9 +12,10 @@ spec = 'always'
 [metadata.target-platform]
 triple = 'riscv64-linux-android'
 target-features = 'all'
+flags = ['bar', 'cargo_web']
 [[metadata.omitted-packages.ids]]
-name = 'lazy_static'
-version = '1.4.0'
+name = 'bytes'
+version = '0.5.4'
 crates-io = true
 
 [[metadata.features-only]]
@@ -38,15 +39,15 @@ status = 'direct'
 features = []
 
 [[target-package]]
-name = 'bytes'
-version = '0.5.4'
+name = 'lazy_static'
+version = '0.2.11'
 crates-io = true
 status = 'direct'
-features = ['default', 'std']
+features = []
 
 [[target-package]]
 name = 'lazy_static'
-version = '0.2.11'
+version = '1.4.0'
 crates-io = true
 status = 'direct'
 features = []

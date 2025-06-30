@@ -8,29 +8,57 @@ initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
 triple = 'powerpc64le-unknown-linux-musl'
-target-features = ['avx2', 'bmi2', 'fma', 'sse', 'sse3', 'xsaveopt']
-flags = ['foo']
+target-features = ['aes', 'avx', 'avx2', 'bmi2', 'xsaves']
+flags = ['test-flag']
 
 [metadata.target-platform]
-triple = 'riscv64-wrs-vxworks'
-target-features = 'unknown'
-flags = ['abc', 'foo']
-
-[[metadata.features-only]]
-name = 'guppy-benchmarks'
+spec = 'any'
+[[metadata.omitted-packages.ids]]
+name = 'cargo-compare'
 version = '0.1.0'
-workspace-path = 'internal-tools/benchmarks'
-features = []
+workspace-path = 'internal-tools/cargo-compare'
 
-[[metadata.features-only]]
-name = 'guppy-summaries'
-version = '0.6.1'
-workspace-path = 'guppy-summaries'
-features = []
-
-[[target-package]]
+[[metadata.omitted-packages.ids]]
 name = 'cargo-guppy'
 version = '0.1.0'
 workspace-path = 'cargo-guppy'
+
+[[metadata.omitted-packages.ids]]
+name = 'determinator'
+version = '0.7.0'
+workspace-path = 'tools/determinator'
+
+[[metadata.features-only]]
+name = 'cargo-compare'
+version = '0.1.0'
+workspace-path = 'internal-tools/cargo-compare'
+features = []
+
+[[metadata.features-only]]
+name = 'guppy-cmdlib'
+version = '0.1.0'
+workspace-path = 'guppy-cmdlib'
+features = ['proptest', 'proptest1']
+optional-deps = ['proptest']
+
+[[target-package]]
+name = 'determinator'
+version = '0.7.0'
+workspace-path = 'tools/determinator'
 status = 'initial'
 features = []
+
+[[target-package]]
+name = 'fixture-manager'
+version = '0.1.0'
+workspace-path = 'internal-tools/fixture-manager'
+status = 'initial'
+features = []
+
+[[target-package]]
+name = 'guppy-cmdlib'
+version = '0.1.0'
+workspace-path = 'guppy-cmdlib'
+status = 'initial'
+features = ['proptest', 'proptest1']
+optional-deps = ['proptest']

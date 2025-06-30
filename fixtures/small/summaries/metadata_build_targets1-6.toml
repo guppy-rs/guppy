@@ -12,6 +12,7 @@ spec = 'always'
 [metadata.target-platform]
 triple = 'riscv32i-unknown-none-elf'
 target-features = 'all'
+flags = ['abc']
 [[metadata.omitted-packages.ids]]
 name = 'testcrate'
 version = '0.1.0'

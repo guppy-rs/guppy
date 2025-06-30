@@ -2,49 +2,64 @@
 #    cargo run -p fixture-manager -- generate-hakari --fixture metadata_guppy_c9b4f76
 
 ### BEGIN HAKARI SECTION
-# resolver = '1'
-# unify-target-host = 'unify-if-both'
+# resolver = '3'
+# unify-target-host = 'auto'
 # output-single-feature = true
-# dep-format-version = '2'
+# dep-format-version = '1'
 # workspace-hack-line-style = 'full'
-# platforms = ['xtensa-esp32-espidf']
+# platforms = ['mipsel-unknown-netbsd']
 # [[traversal-excludes.ids]]
-# name = 'git2-curl'
-# version = '0.14.1'
-# crates-io = true
-#
-# [[traversal-excludes.ids]]
-# name = 'target-spec'
-# version = '0.4.1'
-# workspace-path = 'target-spec'
-#
-# [[traversal-excludes.ids]]
-# name = 'vec_map'
+# name = 'crossbeam-epoch'
 # version = '0.8.2'
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
-# name = 'web-sys'
-# version = '0.3.45'
+# name = 'env_logger'
+# version = '0.7.1'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'hashbrown'
+# version = '0.9.1'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'miow'
+# version = '0.3.5'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'output_vt100'
+# version = '0.1.2'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'serde_json'
+# version = '1.0.58'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'version_check'
+# version = '0.9.2'
 # crates-io = true
 # [[final-excludes.ids]]
-# name = 'cast'
+# name = 'adler'
 # version = '0.2.3'
 # crates-io = true
 #
 # [[final-excludes.ids]]
-# name = 'crypto-hash'
-# version = '0.3.4'
+# name = 'guppy'
+# version = '0.5.0'
+# workspace-path = 'guppy'
+#
+# [[final-excludes.ids]]
+# name = 'num-traits'
+# version = '0.2.12'
 # crates-io = true
 #
 # [[final-excludes.ids]]
-# name = 'miniz_oxide'
-# version = '0.4.3'
-# crates-io = true
-#
-# [[final-excludes.ids]]
-# name = 'wasi'
-# version = '0.9.0+wasi-snapshot-preview1'
+# name = 'socket2'
+# version = '0.3.15'
 # crates-io = true
 
 [dependencies]
@@ -64,6 +79,8 @@ bytesize = { version = "1", default-features = false }
 cargo = { git = "https://github.com/rust-lang/cargo.git", rev = "0227f048fcb7c798026ede6cc20c92befc84c3a4", default-features = false }
 cargo-platform = { git = "https://github.com/rust-lang/cargo.git", rev = "0227f048fcb7c798026ede6cc20c92befc84c3a4", default-features = false }
 cargo_metadata = { version = "0.11" }
+cast = { version = "0.2", features = ["std"] }
+cfg-expr = { version = "0.4" }
 cfg-if = { version = "0.1", default-features = false }
 chrono = { version = "0.4", features = ["clock", "libc", "oldtime", "std", "time", "winapi"] }
 clap = { version = "2", features = ["ansi_term", "atty", "color", "strsim", "suggestions", "vec_map"] }
@@ -75,8 +92,8 @@ criterion = { version = "0.3" }
 criterion-plot = { version = "0.4", default-features = false }
 crossbeam-channel = { version = "0.4", default-features = false }
 crossbeam-deque = { version = "0.7", default-features = false }
-crossbeam-epoch = { version = "0.8", features = ["lazy_static", "std"] }
 crossbeam-utils = { version = "0.7", features = ["lazy_static", "std"] }
+crypto-hash = { version = "0.3", default-features = false }
 csv = { version = "1", default-features = false }
 csv-core = { version = "0.1" }
 curl = { version = "0.4", features = ["http2", "openssl-probe", "openssl-sys", "ssl"] }
@@ -85,22 +102,20 @@ dialoguer = { version = "0.6", default-features = false }
 difference = { version = "2" }
 diffus = { version = "0.9" }
 either = { version = "1", features = ["use_std"] }
-env_logger = { version = "0.7", features = ["atty", "humantime", "regex", "termcolor"] }
 filetime = { version = "0.2", default-features = false }
 fixedbitset = { version = "0.2", default-features = false }
 flate2 = { version = "1", default-features = false, features = ["any_zlib", "libz-sys", "zlib"] }
 fnv = { version = "1", features = ["std"] }
 getrandom = { version = "0.1", default-features = false, features = ["std"] }
 git2 = { version = "0.13", features = ["https", "openssl-probe", "openssl-sys", "ssh", "ssh_key_from_memory"] }
+git2-curl = { version = "0.14", default-features = false }
 glob = { version = "0.3", default-features = false }
 globset = { version = "0.4", default-features = false }
 half = { version = "1", default-features = false }
-hashbrown = { version = "0.9", default-features = false, features = ["raw"] }
 hex-468e82937335b1c9 = { package = "hex", version = "0.3", default-features = false }
 hex-9fbad63c4bcf4a8f = { package = "hex", version = "0.4", features = ["std"] }
 home = { version = "0.5", default-features = false }
-humantime-dff4ba8e3ae991db = { package = "humantime", version = "1", default-features = false }
-humantime-f595c2ba2a3f28df = { package = "humantime", version = "2", default-features = false }
+humantime = { version = "2", default-features = false }
 idna = { version = "0.2", default-features = false }
 ignore = { version = "0.4", default-features = false }
 im-rc = { version = "15", default-features = false }
@@ -117,14 +132,12 @@ libnghttp2-sys = { version = "0.1", default-features = false }
 libssh2-sys = { version = "0.2", default-features = false }
 libz-sys = { version = "1", default-features = false, features = ["libc"] }
 linked-hash-map = { version = "0.5", default-features = false }
-log = { version = "0.4", default-features = false, features = ["std"] }
+log = { version = "0.4", default-features = false }
 matches = { version = "0.1", default-features = false }
 maybe-uninit = { version = "2", default-features = false }
 memchr = { version = "2", features = ["std", "use_std"] }
-memoffset = { version = "0.5" }
 nested = { version = "0.1", default-features = false }
 num-integer = { version = "0.1", default-features = false }
-num-traits = { version = "0.2", features = ["std"] }
 num_cpus = { version = "1", default-features = false }
 once_cell = { version = "1", features = ["std"] }
 oorandom = { version = "11", default-features = false }
@@ -133,12 +146,12 @@ pathdiff = { version = "0.2", default-features = false }
 percent-encoding = { version = "2", default-features = false }
 petgraph = { version = "0.5", default-features = false }
 plotters = { version = "0.2", default-features = false, features = ["area_series", "line_series", "svg"] }
-ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }
+ppv-lite86 = { version = "0.2", default-features = false, features = ["simd"] }
 pretty_assertions = { version = "0.6", default-features = false }
 proptest = { version = "0.10", features = ["bit-set", "break-dead-code", "fork", "lazy_static", "quick-error", "regex-syntax", "rusty-fork", "std", "tempfile", "timeout"] }
 quick-error = { version = "1", default-features = false }
 rand = { version = "0.7", features = ["alloc", "getrandom", "getrandom_package", "libc", "std"] }
-rand_chacha = { version = "0.2", default-features = false, features = ["std"] }
+rand_chacha = { version = "0.2", default-features = false }
 rand_core = { version = "0.5", default-features = false, features = ["alloc", "getrandom", "std"] }
 rand_xorshift = { version = "0.2", default-features = false }
 rand_xoshiro = { version = "0.4", default-features = false }
@@ -153,16 +166,14 @@ rustfix = { version = "0.5", default-features = false }
 rusty-fork = { version = "0.3", default-features = false, features = ["timeout", "wait-timeout"] }
 ryu = { version = "1", default-features = false }
 same-file = { version = "1", default-features = false }
-scopeguard = { version = "1", default-features = false }
 semver-93f6ce9d446188ac = { package = "semver", version = "0.10", features = ["serde"] }
 semver-parser = { version = "0.7", default-features = false }
 serde = { version = "1", features = ["derive", "serde_derive", "std"] }
 serde_cbor = { version = "0.11", features = ["std"] }
 serde_ignored = { version = "0.1", default-features = false }
-serde_json = { version = "1", features = ["raw_value", "std"] }
 shell-escape = { version = "0.1", default-features = false }
 sized-chunks = { version = "0.6", features = ["std"] }
-socket2 = { version = "0.3", default-features = false }
+smallvec = { version = "1", default-features = false }
 strip-ansi-escapes = { version = "0.1", default-features = false }
 strsim = { version = "0.8", default-features = false }
 structopt = { version = "0.3" }
@@ -186,6 +197,7 @@ unicode-xid-6f8ce4dd05d13bba = { package = "unicode-xid", version = "0.2" }
 unreachable = { version = "1", default-features = false }
 url = { version = "2", default-features = false }
 utf8parse = { version = "0.1", default-features = false }
+vec_map = { version = "0.8", default-features = false }
 void = { version = "1", default-features = false }
 vte = { version = "0.3", default-features = false }
 wait-timeout = { version = "0.2", default-features = false }
@@ -214,17 +226,18 @@ syn-dff4ba8e3ae991db = { package = "syn", version = "1", features = ["clone-impl
 unicode-segmentation = { version = "1", default-features = false }
 unicode-xid-c65f7effa3be6d31 = { package = "unicode-xid", version = "0.1" }
 unicode-xid-6f8ce4dd05d13bba = { package = "unicode-xid", version = "0.2" }
-version_check = { version = "0.9", default-features = false }
 
-[target.xtensa-esp32-espidf.dependencies]
+[target.mipsel-unknown-netbsd.dependencies]
 foreign-types = { version = "0.3", default-features = false }
 foreign-types-shared = { version = "0.1", default-features = false }
 openssl = { version = "0.10", default-features = false }
 openssl-probe = { version = "0.1", default-features = false }
 openssl-sys = { version = "0.9", default-features = false }
+ppv-lite86 = { version = "0.2", default-features = false, features = ["std"] }
+rand_chacha = { version = "0.2", default-features = false, features = ["std"] }
 termios = { version = "0.3", default-features = false }
 
-[target.xtensa-esp32-espidf.build-dependencies]
+[target.mipsel-unknown-netbsd.build-dependencies]
 libc = { version = "0.2", features = ["std"] }
 
 ### END HAKARI SECTION

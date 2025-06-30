@@ -9,26 +9,40 @@ initials-platform = 'host'
 [metadata.host-platform]
 triple = 'x86_64-unknown-hermit'
 target-features = 'unknown'
+flags = ['abc']
 
 [metadata.target-platform]
-spec = 'always'
+triple = 'arm-unknown-linux-musleabihf'
+target-features = 'unknown'
 [[metadata.omitted-packages.ids]]
-name = 'proc-macro2'
-version = '1.0.29'
+name = 'serde'
+version = '1.0.130'
+source = 'registry+https://github.com/fakeorg/crates.io-index'
+
+[[metadata.omitted-packages.ids]]
+name = 'serde_json'
+version = '1.0.68'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'syn'
+version = '1.0.80'
 source = 'registry+https://github.com/fakeorg/crates.io-index'
 
 [[metadata.features-only]]
 name = 'debug-ignore'
 version = '1.0.1'
 workspace-path = ''
-features = []
+features = ['serde']
+optional-deps = ['serde']
 
 [[host-package]]
 name = 'debug-ignore'
 version = '1.0.1'
 workspace-path = ''
 status = 'initial'
-features = []
+features = ['serde']
+optional-deps = ['serde']
 
 [[host-package]]
 name = 'unicode-xid'

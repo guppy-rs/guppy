@@ -2,39 +2,42 @@
 #    cargo run -p fixture-manager -- generate-hakari --fixture metadata_alternate_registries
 
 ### BEGIN HAKARI SECTION
-# resolver = 'install'
+# resolver = '1'
 # unify-target-host = 'replicate-target-on-host'
-# output-single-feature = true
-# dep-format-version = '1'
-# workspace-hack-line-style = 'full'
+# output-single-feature = false
+# dep-format-version = '2'
+# workspace-hack-line-style = 'workspace-dotted'
 # platforms = []
+# [[traversal-excludes.ids]]
+# name = 'proc-macro2'
+# version = '1.0.29'
+# source = 'registry+https://github.com/fakeorg/crates.io-index'
 #
-# [traversal-excludes]
-# [[final-excludes.ids]]
+# [[traversal-excludes.ids]]
 # name = 'serde'
 # version = '1.0.130'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'serde_json'
+# version = '1.0.68'
+# crates-io = true
+# [[final-excludes.ids]]
+# name = 'ryu'
+# version = '1.0.5'
+# crates-io = true
+#
+# [[final-excludes.ids]]
+# name = 'serde_derive'
+# version = '1.0.130'
 # source = 'registry+https://github.com/fakeorg/crates.io-index'
+#
+# [[final-excludes.ids]]
+# name = 'unicode-xid'
+# version = '0.2.2'
+# crates-io = true
 # [registries.my-registry]
 # index = 'https://github.com/fakeorg/crates.io-index'
-
-[dependencies]
-itoa = { version = "0.4", default-features = false }
-ryu = { version = "1", default-features = false }
-serde = { version = "1", default-features = false, features = ["std"] }
-serde_json = { version = "1", features = ["std"] }
-unicode-xid-6f8ce4dd05d13bba = { package = "unicode-xid", version = "0.2" }
-
-[build-dependencies]
-itoa = { version = "0.4", default-features = false }
-proc-macro2 = { version = "1", registry = "my-registry", features = ["proc-macro"] }
-quote = { version = "1", registry = "my-registry", features = ["proc-macro"] }
-ryu = { version = "1", default-features = false }
-serde = { version = "1", default-features = false, features = ["std"] }
-serde_derive = { version = "1", registry = "my-registry" }
-serde_json = { version = "1", features = ["std"] }
-syn = { version = "1", registry = "my-registry", features = ["clone-impls", "derive", "parsing", "printing", "proc-macro", "quote"] }
-unicode-xid-980856a117328ede = { package = "unicode-xid", version = "0.2", registry = "my-registry" }
-unicode-xid-6f8ce4dd05d13bba = { package = "unicode-xid", version = "0.2" }
 
 ### END HAKARI SECTION
 

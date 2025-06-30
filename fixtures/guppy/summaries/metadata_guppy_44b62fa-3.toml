@@ -12,6 +12,7 @@ spec = 'any'
 [metadata.target-platform]
 triple = 'aarch64-unknown-redox'
 target-features = 'all'
+flags = ['flag-test']
 [[metadata.omitted-packages.ids]]
 name = 'cargo-guppy'
 version = '0.1.0'
@@ -27,9 +28,15 @@ name = 'guppy-workspace-hack'
 version = '0.1.0'
 workspace-path = 'workspace-hack'
 
-[[host-package]]
+[[metadata.features-only]]
 name = 'cargo-hakari'
 version = '0.9.11'
 workspace-path = 'tools/cargo-hakari'
+features = []
+
+[[host-package]]
+name = 'fixtures'
+version = '0.1.0'
+workspace-path = 'fixtures'
 status = 'initial'
 features = []

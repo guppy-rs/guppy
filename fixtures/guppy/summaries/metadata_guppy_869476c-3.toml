@@ -11,20 +11,6 @@ spec = 'always'
 
 [metadata.target-platform]
 spec = 'always'
-[[metadata.omitted-packages.ids]]
-name = 'encode_unicode'
-version = '0.3.6'
-crates-io = true
-
-[[metadata.omitted-packages.ids]]
-name = 'jobserver'
-version = '0.1.21'
-crates-io = true
-
-[[metadata.omitted-packages.ids]]
-name = 'quick-error'
-version = '1.2.3'
-crates-io = true
 
 [[metadata.features-only]]
 name = 'fixtures'
@@ -40,19 +26,12 @@ status = 'initial'
 features = []
 
 [[target-package]]
-name = 'fixture-manager'
-version = '0.1.0'
-workspace-path = 'internal-tools/fixture-manager'
+name = 'guppy'
+version = '0.5.0'
+workspace-path = 'guppy'
 status = 'initial'
-features = []
-
-[[target-package]]
-name = 'guppy-cmdlib'
-version = '0.1.0'
-workspace-path = 'guppy-cmdlib'
-status = 'initial'
-features = ['proptest', 'proptest010']
-optional-deps = ['proptest']
+features = ['guppy-summaries', 'proptest', 'proptest-derive', 'proptest010', 'summaries']
+optional-deps = ['guppy-summaries', 'proptest', 'proptest-derive']
 
 [[target-package]]
 name = 'fixtures'
@@ -62,24 +41,16 @@ status = 'workspace'
 features = []
 
 [[target-package]]
-name = 'guppy'
-version = '0.5.0'
-workspace-path = 'guppy'
+name = 'guppy-cmdlib'
+version = '0.1.0'
+workspace-path = 'guppy-cmdlib'
 status = 'workspace'
-features = ['guppy-summaries', 'proptest', 'proptest-derive', 'proptest010', 'summaries']
-optional-deps = ['guppy-summaries', 'proptest', 'proptest-derive']
+features = []
 
 [[target-package]]
 name = 'guppy-summaries'
 version = '0.2.0'
 workspace-path = 'guppy-summaries'
-status = 'workspace'
-features = []
-
-[[target-package]]
-name = 'proptest-ext'
-version = '0.1.0'
-workspace-path = 'internal-tools/proptest-ext'
 status = 'workspace'
 features = []
 
@@ -97,6 +68,13 @@ version = '1.0.33'
 crates-io = true
 status = 'direct'
 features = ['default', 'std']
+
+[[target-package]]
+name = 'assert_matches'
+version = '1.4.0'
+crates-io = true
+status = 'direct'
+features = []
 
 [[target-package]]
 name = 'cargo_metadata'
@@ -425,6 +403,13 @@ version = '0.2.9'
 crates-io = true
 status = 'transitive'
 features = ['simd', 'std']
+
+[[target-package]]
+name = 'quick-error'
+version = '1.2.3'
+crates-io = true
+status = 'transitive'
+features = []
 
 [[target-package]]
 name = 'rand'

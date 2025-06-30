@@ -12,9 +12,9 @@ spec = 'always'
 [metadata.target-platform]
 spec = 'always'
 [[metadata.omitted-packages.ids]]
-name = 'upper-a'
+name = 'upper-b'
 version = '0.1.0'
-workspace-path = 'upper-a'
+workspace-path = 'upper-b'
 
 [[metadata.features-only]]
 name = 'lower-b'
@@ -23,9 +23,9 @@ workspace-path = 'lower-b'
 features = []
 
 [[metadata.features-only]]
-name = 'upper-b'
+name = 'upper-a'
 version = '0.1.0'
-workspace-path = 'upper-b'
+workspace-path = 'upper-a'
 features = []
 
 [[target-package]]
@@ -36,15 +36,8 @@ status = 'initial'
 features = []
 
 [[target-package]]
-name = 'upper-b'
-version = '0.1.0'
-workspace-path = 'upper-b'
-status = 'initial'
-features = []
-
-[[target-package]]
 name = 'lower-b'
 version = '0.1.0'
 workspace-path = 'lower-b'
-status = 'workspace'
+status = 'initial'
 features = []

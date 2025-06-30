@@ -9,15 +9,9 @@ initials-platform = 'host'
 [metadata.host-platform]
 triple = 'mips-unknown-linux-gnu'
 target-features = 'unknown'
-flags = ['cargo_web']
 
 [metadata.target-platform]
-triple = 'x86_64-unknown-fuchsia'
-target-features = 'all'
-[[metadata.omitted-packages.ids]]
-name = 'lazy_static'
-version = '1.4.0'
-crates-io = true
+spec = 'any'
 
 [[metadata.features-only]]
 name = 'testcrate-dups'
@@ -49,6 +43,13 @@ features = ['default', 'std']
 [[host-package]]
 name = 'lazy_static'
 version = '0.2.11'
+crates-io = true
+status = 'direct'
+features = []
+
+[[host-package]]
+name = 'lazy_static'
+version = '1.4.0'
 crates-io = true
 status = 'direct'
 features = []

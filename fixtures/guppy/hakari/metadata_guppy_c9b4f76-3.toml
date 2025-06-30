@@ -3,48 +3,65 @@
 
 ### BEGIN HAKARI SECTION
 # resolver = 'install'
-# unify-target-host = 'auto'
+# unify-target-host = 'replicate-target-on-host'
 # output-single-feature = true
-# dep-format-version = '3'
-# workspace-hack-line-style = 'full'
-# platforms = ['aarch64-pc-windows-msvc', 'i686-uwp-windows-gnu', 'x86_64-unknown-linux-none']
+# dep-format-version = '4'
+# workspace-hack-line-style = 'version-only'
+# platforms = []
 # [[traversal-excludes.ids]]
-# name = 'cargo-compare'
+# name = 'globset'
+# version = '0.4.5'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'guppy'
+# version = '0.5.0'
+# workspace-path = 'guppy'
+#
+# [[traversal-excludes.ids]]
+# name = 'itoa'
+# version = '0.4.6'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'proc-macro2'
+# version = '0.4.30'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'rand_xorshift'
+# version = '0.2.0'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'strip-ansi-escapes'
 # version = '0.1.0'
-# workspace-path = 'internal-tools/cargo-compare'
-#
-# [[traversal-excludes.ids]]
-# name = 'crc32fast'
-# version = '1.2.0'
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
-# name = 'proptest'
-# version = '0.10.1'
+# name = 'unicode-xid'
+# version = '0.2.1'
 # crates-io = true
-#
-# [[traversal-excludes.ids]]
-# name = 'same-file'
-# version = '1.0.6'
+# [[final-excludes.ids]]
+# name = 'csv'
+# version = '1.1.3'
 # crates-io = true
-#
-# [[traversal-excludes.ids]]
-# name = 'sized-chunks'
-# version = '0.6.2'
-# crates-io = true
-#
-# [final-excludes]
 
 [dependencies]
+aho-corasick = { version = "0.7" }
 ansi_term = { version = "0.11", default-features = false }
 anyhow = { version = "1" }
 ascii = { version = "0.9", default-features = false, features = ["std"] }
-assert_matches = { version = "1", default-features = false }
 atty = { version = "0.2", default-features = false }
+bit-set = { version = "0.5" }
+bit-vec = { version = "0.6", default-features = false, features = ["std"] }
 bitflags = { version = "1" }
+bitmaps = { version = "2" }
 bstr = { version = "0.2", features = ["serde1"] }
 byteorder = { version = "1", default-features = false, features = ["std"] }
-cargo_metadata = { version = "0.11" }
+bytesize = { version = "1", default-features = false }
+cargo = { git = "https://github.com/rust-lang/cargo.git", rev = "0227f048fcb7c798026ede6cc20c92befc84c3a4", default-features = false }
+cargo-platform = { git = "https://github.com/rust-lang/cargo.git", rev = "0227f048fcb7c798026ede6cc20c92befc84c3a4", default-features = false }
 cast = { version = "0.2" }
 cfg-expr = { version = "0.4" }
 cfg-if = { version = "0.1", default-features = false }
@@ -52,122 +69,266 @@ chrono = { version = "0.4" }
 clap = { version = "2" }
 combine = { version = "3" }
 console = { version = "0.11" }
+crates-io = { git = "https://github.com/rust-lang/cargo.git", rev = "0227f048fcb7c798026ede6cc20c92befc84c3a4", default-features = false }
+crc32fast = { version = "1" }
 criterion = { version = "0.3" }
 criterion-plot = { version = "0.4", default-features = false }
 crossbeam-channel = { version = "0.4", default-features = false }
 crossbeam-deque = { version = "0.7", default-features = false }
 crossbeam-epoch = { version = "0.8" }
 crossbeam-utils = { version = "0.7" }
-csv = { version = "1", default-features = false }
+crypto-hash = { version = "0.3", default-features = false }
 csv-core = { version = "0.1" }
+curl = { version = "0.4", features = ["http2"] }
+curl-sys = { version = "0.4", features = ["http2"] }
 dialoguer = { version = "0.6", default-features = false }
 difference = { version = "2" }
 diffus = { version = "0.9" }
-either = { version = "1", default-features = false, features = ["use_std"] }
-fixedbitset = { version = "0.2", default-features = false }
+either = { version = "1" }
+env_logger = { version = "0.7" }
+filetime = { version = "0.2", default-features = false }
+flate2 = { version = "1", default-features = false, features = ["zlib"] }
+fnv = { version = "1" }
 getrandom = { version = "0.1", default-features = false, features = ["std"] }
+git2 = { version = "0.13" }
+git2-curl = { version = "0.14", default-features = false }
+glob = { version = "0.3", default-features = false }
 half = { version = "1", default-features = false }
-hashbrown = { version = "0.9", default-features = false, features = ["raw"] }
-indexmap = { version = "1", default-features = false }
-itertools-c38e5c1d305a1b54 = { package = "itertools", version = "0.8" }
+hex-468e82937335b1c9 = { package = "hex", version = "0.3", default-features = false }
+hex-9fbad63c4bcf4a8f = { package = "hex", version = "0.4" }
+home = { version = "0.5", default-features = false }
+humantime-dff4ba8e3ae991db = { package = "humantime", version = "1", default-features = false }
+humantime-f595c2ba2a3f28df = { package = "humantime", version = "2", default-features = false }
+idna = { version = "0.2", default-features = false }
+ignore = { version = "0.4", default-features = false }
+im-rc = { version = "15", default-features = false }
 itertools-274715c4dabd11b0 = { package = "itertools", version = "0.9" }
-itoa = { version = "0.4" }
+itertools-c38e5c1d305a1b54 = { package = "itertools", version = "0.8" }
+jobserver = { version = "0.1", default-features = false }
 lazy_static = { version = "1", default-features = false }
+lazycell = { version = "1", default-features = false }
 libc = { version = "0.2" }
+libgit2-sys = { version = "0.12", default-features = false, features = ["https", "ssh", "ssh_key_from_memory"] }
+libnghttp2-sys = { version = "0.1", default-features = false }
+libssh2-sys = { version = "0.2", default-features = false }
+libz-sys = { version = "1", default-features = false, features = ["libc"] }
 linked-hash-map = { version = "0.5", default-features = false }
+log = { version = "0.4", default-features = false, features = ["std"] }
+matches = { version = "0.1", default-features = false }
 maybe-uninit = { version = "2", default-features = false }
-memchr = { version = "2", default-features = false, features = ["use_std"] }
+memchr = { version = "2", features = ["use_std"] }
 memoffset = { version = "0.5" }
-nested = { version = "0.1", default-features = false }
 num-integer = { version = "0.1", default-features = false }
 num-traits = { version = "0.2" }
 num_cpus = { version = "1", default-features = false }
 once_cell = { version = "1" }
 oorandom = { version = "11", default-features = false }
+opener = { version = "0.4", default-features = false }
 pathdiff = { version = "0.2", default-features = false }
-petgraph = { version = "0.5", default-features = false }
+percent-encoding = { version = "2", default-features = false }
 plotters = { version = "0.2", default-features = false, features = ["area_series", "line_series", "svg"] }
+ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }
 pretty_assertions = { version = "0.6", default-features = false }
+proptest = { version = "0.10" }
+quick-error = { version = "1", default-features = false }
 rand = { version = "0.7" }
+rand_chacha = { version = "0.2", default-features = false, features = ["std"] }
 rand_core = { version = "0.5", default-features = false, features = ["std"] }
+rand_xoshiro = { version = "0.4", default-features = false }
 rayon = { version = "1", default-features = false }
 rayon-core = { version = "1", default-features = false }
-regex = { version = "1", default-features = false, features = ["std"] }
+regex = { version = "1" }
 regex-automata = { version = "0.1", default-features = false }
-regex-syntax = { version = "0.6", default-features = false }
+regex-syntax = { version = "0.6" }
 remove_dir_all = { version = "0.5", default-features = false }
+rustc-workspace-hack = { version = "1", default-features = false }
+rustfix = { version = "0.5", default-features = false }
+rusty-fork = { version = "0.3", default-features = false, features = ["timeout"] }
 ryu = { version = "1", default-features = false }
+same-file = { version = "1", default-features = false }
 scopeguard = { version = "1", default-features = false }
 semver-93f6ce9d446188ac = { package = "semver", version = "0.10", features = ["serde"] }
 semver-parser = { version = "0.7", default-features = false }
 serde = { version = "1", features = ["derive"] }
 serde_cbor = { version = "0.11" }
-serde_json = { version = "1" }
+serde_ignored = { version = "0.1", default-features = false }
+serde_json = { version = "1", features = ["raw_value"] }
+shell-escape = { version = "0.1", default-features = false }
+sized-chunks = { version = "0.6" }
 smallvec = { version = "1", default-features = false }
+socket2 = { version = "0.3", default-features = false }
 strsim = { version = "0.8", default-features = false }
 structopt = { version = "0.3" }
-supercow = { version = "0.1", default-features = false }
+tar = { version = "0.4", default-features = false }
 tempfile = { version = "3", default-features = false }
+termcolor = { version = "1", default-features = false }
 terminal_size = { version = "0.1", default-features = false }
 textwrap = { version = "0.11", default-features = false }
+thread_local = { version = "1", default-features = false }
 time = { version = "0.1", default-features = false }
 tinytemplate = { version = "1", default-features = false }
+tinyvec = { version = "0.3", features = ["alloc"] }
 toml = { version = "0.5" }
 toml_edit = { version = "0.2", default-features = false }
+typenum = { version = "1", default-features = false }
+unicode-bidi = { version = "0.3" }
+unicode-normalization = { version = "0.1" }
 unicode-width = { version = "0.1" }
 unreachable = { version = "1", default-features = false }
+url = { version = "2", default-features = false }
 vec_map = { version = "0.8", default-features = false }
 void = { version = "1", default-features = false }
+wait-timeout = { version = "0.2", default-features = false }
 walkdir = { version = "2", default-features = false }
 
 [build-dependencies]
+aho-corasick = { version = "0.7" }
+ansi_term = { version = "0.11", default-features = false }
+anyhow = { version = "1" }
+ascii = { version = "0.9", default-features = false, features = ["std"] }
+atty = { version = "0.2", default-features = false }
 autocfg = { version = "1", default-features = false }
+bit-set = { version = "0.5" }
+bit-vec = { version = "0.6", default-features = false, features = ["std"] }
+bitflags = { version = "1" }
+bitmaps = { version = "2" }
+bstr = { version = "0.2", features = ["serde1"] }
+byteorder = { version = "1", default-features = false, features = ["std"] }
+bytesize = { version = "1", default-features = false }
+cargo = { git = "https://github.com/rust-lang/cargo.git", rev = "0227f048fcb7c798026ede6cc20c92befc84c3a4", default-features = false }
+cargo-platform = { git = "https://github.com/rust-lang/cargo.git", rev = "0227f048fcb7c798026ede6cc20c92befc84c3a4", default-features = false }
+cast = { version = "0.2" }
+cc = { version = "1", default-features = false, features = ["parallel"] }
+cfg-expr = { version = "0.4" }
+cfg-if = { version = "0.1", default-features = false }
+chrono = { version = "0.4" }
+clap = { version = "2" }
+combine = { version = "3" }
+console = { version = "0.11" }
+crates-io = { git = "https://github.com/rust-lang/cargo.git", rev = "0227f048fcb7c798026ede6cc20c92befc84c3a4", default-features = false }
+crc32fast = { version = "1" }
+criterion = { version = "0.3" }
+criterion-plot = { version = "0.4", default-features = false }
+crossbeam-channel = { version = "0.4", default-features = false }
+crossbeam-deque = { version = "0.7", default-features = false }
+crossbeam-epoch = { version = "0.8" }
+crossbeam-utils = { version = "0.7" }
+crypto-hash = { version = "0.3", default-features = false }
+csv-core = { version = "0.1" }
+curl = { version = "0.4", features = ["http2"] }
+curl-sys = { version = "0.4", features = ["http2"] }
+dialoguer = { version = "0.6", default-features = false }
+difference = { version = "2" }
+diffus = { version = "0.9" }
+either = { version = "1" }
+env_logger = { version = "0.7" }
+filetime = { version = "0.2", default-features = false }
+flate2 = { version = "1", default-features = false, features = ["zlib"] }
+fnv = { version = "1" }
+getrandom = { version = "0.1", default-features = false, features = ["std"] }
+git2 = { version = "0.13" }
+git2-curl = { version = "0.14", default-features = false }
+glob = { version = "0.3", default-features = false }
+half = { version = "1", default-features = false }
 heck = { version = "0.3", default-features = false }
+hex-468e82937335b1c9 = { package = "hex", version = "0.3", default-features = false }
+hex-9fbad63c4bcf4a8f = { package = "hex", version = "0.4" }
+home = { version = "0.5", default-features = false }
+humantime-dff4ba8e3ae991db = { package = "humantime", version = "1", default-features = false }
+humantime-f595c2ba2a3f28df = { package = "humantime", version = "2", default-features = false }
+idna = { version = "0.2", default-features = false }
+ignore = { version = "0.4", default-features = false }
+im-rc = { version = "15", default-features = false }
+itertools-274715c4dabd11b0 = { package = "itertools", version = "0.9" }
+itertools-c38e5c1d305a1b54 = { package = "itertools", version = "0.8" }
+jobserver = { version = "0.1", default-features = false }
+lazy_static = { version = "1", default-features = false }
+lazycell = { version = "1", default-features = false }
+libc = { version = "0.2" }
+libgit2-sys = { version = "0.12", default-features = false, features = ["https", "ssh", "ssh_key_from_memory"] }
+libnghttp2-sys = { version = "0.1", default-features = false }
+libssh2-sys = { version = "0.2", default-features = false }
+libz-sys = { version = "1", default-features = false, features = ["libc"] }
+linked-hash-map = { version = "0.5", default-features = false }
+log = { version = "0.4", default-features = false, features = ["std"] }
+matches = { version = "0.1", default-features = false }
+maybe-uninit = { version = "2", default-features = false }
+memchr = { version = "2", features = ["use_std"] }
+memoffset = { version = "0.5" }
+num-integer = { version = "0.1", default-features = false }
+num-traits = { version = "0.2" }
+num_cpus = { version = "1", default-features = false }
+once_cell = { version = "1" }
+oorandom = { version = "11", default-features = false }
+opener = { version = "0.4", default-features = false }
+pathdiff = { version = "0.2", default-features = false }
+percent-encoding = { version = "2", default-features = false }
+pkg-config = { version = "0.3", default-features = false }
+plotters = { version = "0.2", default-features = false, features = ["area_series", "line_series", "svg"] }
+ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }
+pretty_assertions = { version = "0.6", default-features = false }
 proc-macro-error = { version = "1" }
 proc-macro-error-attr = { version = "1", default-features = false }
-proc-macro2-9fbad63c4bcf4a8f = { package = "proc-macro2", version = "0.4" }
-proc-macro2-dff4ba8e3ae991db = { package = "proc-macro2", version = "1" }
-proptest-derive = { version = "0.2", default-features = false }
-quote-3b31131e45eafb45 = { package = "quote", version = "0.6" }
-quote-dff4ba8e3ae991db = { package = "quote", version = "1" }
+proc-macro2 = { version = "1" }
+proptest = { version = "0.10" }
+quick-error = { version = "1", default-features = false }
+quote = { version = "1" }
+rand = { version = "0.7" }
+rand_chacha = { version = "0.2", default-features = false, features = ["std"] }
+rand_core = { version = "0.5", default-features = false, features = ["std"] }
+rand_xoshiro = { version = "0.4", default-features = false }
+rayon = { version = "1", default-features = false }
+rayon-core = { version = "1", default-features = false }
+regex = { version = "1" }
+regex-automata = { version = "0.1", default-features = false }
+regex-syntax = { version = "0.6" }
+remove_dir_all = { version = "0.5", default-features = false }
+rustc-workspace-hack = { version = "1", default-features = false }
 rustc_version = { version = "0.2", default-features = false }
+rustfix = { version = "0.5", default-features = false }
+rusty-fork = { version = "0.3", default-features = false, features = ["timeout"] }
+ryu = { version = "1", default-features = false }
+same-file = { version = "1", default-features = false }
+scopeguard = { version = "1", default-features = false }
 semver-274715c4dabd11b0 = { package = "semver", version = "0.9" }
+semver-93f6ce9d446188ac = { package = "semver", version = "0.10", features = ["serde"] }
 semver-parser = { version = "0.7", default-features = false }
+serde = { version = "1", features = ["derive"] }
+serde_cbor = { version = "0.11" }
 serde_derive = { version = "1" }
+serde_ignored = { version = "0.1", default-features = false }
+serde_json = { version = "1", features = ["raw_value"] }
+shell-escape = { version = "0.1", default-features = false }
+sized-chunks = { version = "0.6" }
+smallvec = { version = "1", default-features = false }
+socket2 = { version = "0.3", default-features = false }
+strsim = { version = "0.8", default-features = false }
+structopt = { version = "0.3" }
 structopt-derive = { version = "0.4", default-features = false }
-syn-3575ec1268b04181 = { package = "syn", version = "0.15", features = ["extra-traits", "full", "visit"] }
-syn-dff4ba8e3ae991db = { package = "syn", version = "1", features = ["full", "visit"] }
+syn = { version = "1", features = ["full", "visit"] }
+tar = { version = "0.4", default-features = false }
+tempfile = { version = "3", default-features = false }
+termcolor = { version = "1", default-features = false }
+terminal_size = { version = "0.1", default-features = false }
+textwrap = { version = "0.11", default-features = false }
+thread_local = { version = "1", default-features = false }
+time = { version = "0.1", default-features = false }
+tinytemplate = { version = "1", default-features = false }
+tinyvec = { version = "0.3", features = ["alloc"] }
+toml = { version = "0.5" }
+toml_edit = { version = "0.2", default-features = false }
+typenum = { version = "1", default-features = false }
+unicode-bidi = { version = "0.3" }
+unicode-normalization = { version = "0.1" }
 unicode-segmentation = { version = "1", default-features = false }
-unicode-xid-c65f7effa3be6d31 = { package = "unicode-xid", version = "0.1" }
-unicode-xid-6f8ce4dd05d13bba = { package = "unicode-xid", version = "0.2" }
+unicode-width = { version = "0.1" }
+unreachable = { version = "1", default-features = false }
+url = { version = "2", default-features = false }
+vec_map = { version = "0.8", default-features = false }
 version_check = { version = "0.9", default-features = false }
-
-[target.aarch64-pc-windows-msvc.dependencies]
-encode_unicode = { version = "0.3" }
-output_vt100 = { version = "0.1", default-features = false }
-ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }
-rand_chacha = { version = "0.2", default-features = false, features = ["std"] }
-winapi = { version = "0.3", default-features = false, features = ["consoleapi", "errhandlingapi", "fileapi", "handleapi", "minwinbase", "minwindef", "ntdef", "processenv", "profileapi", "std", "sysinfoapi", "timezoneapi", "winbase", "wincon", "winerror", "winnt", "winuser"] }
-winapi-util = { version = "0.1", default-features = false }
-
-[target.aarch64-pc-windows-msvc.build-dependencies]
-ctor = { version = "0.1", default-features = false }
-
-[target.i686-uwp-windows-gnu.dependencies]
-encode_unicode = { version = "0.3" }
-output_vt100 = { version = "0.1", default-features = false }
-ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }
-rand_chacha = { version = "0.2", default-features = false, features = ["std"] }
-winapi = { version = "0.3", default-features = false, features = ["consoleapi", "errhandlingapi", "fileapi", "handleapi", "minwinbase", "minwindef", "ntdef", "processenv", "profileapi", "std", "sysinfoapi", "timezoneapi", "winbase", "wincon", "winerror", "winnt", "winuser"] }
-winapi-util = { version = "0.1", default-features = false }
-
-[target.i686-uwp-windows-gnu.build-dependencies]
-ctor = { version = "0.1", default-features = false }
-
-[target.x86_64-unknown-linux-none.dependencies]
-ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }
-rand_chacha = { version = "0.2", default-features = false, features = ["std"] }
-termios = { version = "0.3", default-features = false }
+void = { version = "1", default-features = false }
+wait-timeout = { version = "0.2", default-features = false }
+walkdir = { version = "2", default-features = false }
 
 ### END HAKARI SECTION
 

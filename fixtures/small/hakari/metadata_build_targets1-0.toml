@@ -2,12 +2,12 @@
 #    cargo run -p fixture-manager -- generate-hakari --fixture metadata_build_targets1
 
 ### BEGIN HAKARI SECTION
-# resolver = 'install'
+# resolver = '3'
 # unify-target-host = 'replicate-target-on-host'
 # output-single-feature = false
 # dep-format-version = '4'
 # workspace-hack-line-style = 'full'
-# platforms = []
+# platforms = ['riscv32im-risc0-zkvm-elf', 'aarch64_be-unknown-linux-gnu_ilp32', 'i686-unknown-openbsd']
 # [[traversal-excludes.ids]]
 # name = 'testcrate'
 # version = '0.1.0'

@@ -12,8 +12,13 @@ spec = 'always'
 [metadata.target-platform]
 spec = 'always'
 [[metadata.omitted-packages.ids]]
-name = 'smallvec'
-version = '1.8.0'
+name = 'arrayvec'
+version = '0.7.2'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'pathdiff'
+version = '0.2.1'
 crates-io = true
 
 [[metadata.features-only]]
@@ -32,15 +37,8 @@ features = ['arrayvec', 'bar', 'baz', 'foo', 'pathdiff2', 'smallvec', 'smallvec-
 optional-deps = ['arrayvec', 'pathdiff', 'smallvec', 'tinyvec']
 
 [[target-package]]
-name = 'arrayvec'
-version = '0.7.2'
+name = 'smallvec'
+version = '1.8.0'
 crates-io = true
 status = 'direct'
-features = ['std']
-
-[[target-package]]
-name = 'pathdiff'
-version = '0.2.1'
-crates-io = true
-status = 'direct'
-features = []
+features = ['union']

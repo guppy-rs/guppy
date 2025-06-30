@@ -9,15 +9,21 @@ initials-platform = 'standard'
 [metadata.host-platform]
 triple = 'i686-pc-windows-msvc'
 target-features = 'all'
+flags = ['bar']
 
 [metadata.target-platform]
-spec = 'any'
+spec = 'always'
 
-[[target-package]]
-name = 'fixtures'
+[[metadata.features-only]]
+name = 'cargo-compare'
 version = '0.1.0'
-workspace-path = 'fixtures'
-status = 'initial'
+workspace-path = 'internal-tools/cargo-compare'
+features = []
+
+[[metadata.features-only]]
+name = 'cargo-guppy'
+version = '0.1.0'
+workspace-path = 'cargo-guppy'
 features = []
 
 [[target-package]]
@@ -25,22 +31,16 @@ name = 'guppy'
 version = '0.5.0'
 workspace-path = 'guppy'
 status = 'initial'
-features = ['proptest', 'proptest-derive', 'proptest010']
-optional-deps = ['proptest', 'proptest-derive']
-
-[[target-package]]
-name = 'guppy-benchmarks'
-version = '0.1.0'
-workspace-path = 'internal-tools/benchmarks'
-status = 'initial'
-features = []
+features = ['guppy-summaries', 'proptest', 'proptest-derive', 'proptest010', 'summaries']
+optional-deps = ['guppy-summaries', 'proptest', 'proptest-derive']
 
 [[target-package]]
 name = 'guppy-cmdlib'
 version = '0.1.0'
 workspace-path = 'guppy-cmdlib'
 status = 'initial'
-features = []
+features = ['proptest', 'proptest010']
+optional-deps = ['proptest']
 
 [[target-package]]
 name = 'guppy-summaries'
@@ -50,19 +50,12 @@ status = 'initial'
 features = []
 
 [[target-package]]
-name = 'proptest-ext'
-version = '0.1.0'
-workspace-path = 'internal-tools/proptest-ext'
-status = 'initial'
-features = []
-
-[[target-package]]
 name = 'target-spec'
 version = '0.4.1'
 workspace-path = 'target-spec'
-status = 'workspace'
-features = ['proptest', 'proptest010']
-optional-deps = ['proptest']
+status = 'initial'
+features = ['proptest', 'proptest010', 'serde', 'summaries']
+optional-deps = ['proptest', 'serde']
 
 [[target-package]]
 name = 'anyhow'
@@ -142,13 +135,6 @@ status = 'direct'
 features = []
 
 [[target-package]]
-name = 'pretty_assertions'
-version = '0.6.1'
-crates-io = true
-status = 'direct'
-features = []
-
-[[target-package]]
 name = 'proptest'
 version = '0.10.1'
 crates-io = true
@@ -177,7 +163,7 @@ name = 'serde_json'
 version = '1.0.58'
 crates-io = true
 status = 'direct'
-features = ['default', 'std']
+features = ['default', 'raw_value', 'std']
 
 [[target-package]]
 name = 'structopt'
@@ -199,13 +185,6 @@ version = '0.5.7'
 crates-io = true
 status = 'direct'
 features = ['default']
-
-[[target-package]]
-name = 'ansi_term'
-version = '0.11.0'
-crates-io = true
-status = 'transitive'
-features = []
 
 [[target-package]]
 name = 'atty'
@@ -258,18 +237,11 @@ features = ['ansi_term', 'atty', 'color', 'default', 'strsim', 'suggestions', 'v
 optional-deps = ['ansi_term', 'atty', 'strsim', 'vec_map']
 
 [[target-package]]
-name = 'difference'
-version = '2.0.0'
-crates-io = true
-status = 'transitive'
-features = ['default']
-
-[[target-package]]
 name = 'either'
 version = '1.6.1'
 crates-io = true
 status = 'transitive'
-features = []
+features = ['default', 'use_std']
 
 [[target-package]]
 name = 'fnv'
@@ -293,13 +265,6 @@ status = 'transitive'
 features = ['raw']
 
 [[target-package]]
-name = 'hermit-abi'
-version = '0.1.17'
-crates-io = true
-status = 'transitive'
-features = ['default']
-
-[[target-package]]
 name = 'itertools'
 version = '0.8.2'
 crates-io = true
@@ -311,7 +276,7 @@ name = 'itoa'
 version = '0.4.6'
 crates-io = true
 status = 'transitive'
-features = ['default', 'std']
+features = []
 
 [[target-package]]
 name = 'lazy_static'
@@ -321,25 +286,11 @@ status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'libc'
-version = '0.2.79'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
-
-[[target-package]]
 name = 'num-traits'
 version = '0.2.12'
 crates-io = true
 status = 'transitive'
-features = ['default', 'std']
-
-[[target-package]]
-name = 'output_vt100'
-version = '0.1.2'
-crates-io = true
-status = 'transitive'
-features = []
+features = ['std']
 
 [[target-package]]
 name = 'ppv-lite86'
@@ -379,22 +330,8 @@ features = ['alloc', 'getrandom', 'std']
 optional-deps = ['getrandom']
 
 [[target-package]]
-name = 'rand_hc'
-version = '0.2.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
 name = 'rand_xorshift'
 version = '0.2.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'redox_syscall'
-version = '0.1.57'
 crates-io = true
 status = 'transitive'
 features = []
@@ -484,34 +421,6 @@ crates-io = true
 status = 'transitive'
 features = []
 
-[[target-package]]
-name = 'wasi'
-version = '0.9.0+wasi-snapshot-preview1'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
-
-[[target-package]]
-name = 'winapi'
-version = '0.3.9'
-crates-io = true
-status = 'transitive'
-features = ['consoleapi', 'errhandlingapi', 'fileapi', 'handleapi', 'minwinbase', 'minwindef', 'processenv', 'std', 'winbase', 'wincon', 'winerror', 'winnt', 'winuser']
-
-[[target-package]]
-name = 'winapi-i686-pc-windows-gnu'
-version = '0.4.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'winapi-x86_64-pc-windows-gnu'
-version = '0.4.0'
-crates-io = true
-status = 'transitive'
-features = []
-
 [[host-package]]
 name = 'proptest-derive'
 version = '0.2.0'
@@ -522,13 +431,6 @@ features = []
 [[host-package]]
 name = 'autocfg'
 version = '1.0.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'ctor'
-version = '0.1.16'
 crates-io = true
 status = 'transitive'
 features = []

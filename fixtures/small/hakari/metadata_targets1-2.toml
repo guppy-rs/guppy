@@ -2,40 +2,32 @@
 #    cargo run -p fixture-manager -- generate-hakari --fixture metadata_targets1
 
 ### BEGIN HAKARI SECTION
-# resolver = 'install'
-# unify-target-host = 'replicate-target-on-host'
-# output-single-feature = false
-# dep-format-version = '4'
+# resolver = '2'
+# unify-target-host = 'auto'
+# output-single-feature = true
+# dep-format-version = '1'
 # workspace-hack-line-style = 'full'
-# platforms = ['i686-unknown-openbsd', 'armebv7r-none-eabihf', 'riscv32em-unknown-none-elf']
+# platforms = ['i686-unknown-linux-musl', 'x86_64-unknown-fuchsia']
 # [[traversal-excludes.ids]]
-# name = 'serde'
-# version = '1.0.105'
-# crates-io = true
-#
-# [[traversal-excludes.ids]]
-# name = 'testcrate-targets'
-# version = '0.1.0'
-# workspace-path = ''
-# [[final-excludes.ids]]
 # name = 'bytes'
 # version = '0.5.3'
 # crates-io = true
-#
 # [[final-excludes.ids]]
-# name = 'lazy_static'
-# version = '0.1.16'
+# name = 'serde'
+# version = '1.0.105'
 # crates-io = true
-#
-# [[final-excludes.ids]]
-# name = 'lazy_static'
-# version = '0.2.11'
-# crates-io = true
-#
-# [[final-excludes.ids]]
-# name = 'testcrate-targets'
-# version = '0.1.0'
-# workspace-path = ''
+
+[dependencies]
+dep-a = { path = "/Users/fakeuser/local/testcrates/testcrate-targets/../dep-a", default-features = false }
+lazy_static-dff4ba8e3ae991db = { package = "lazy_static", version = "1", default-features = false }
+
+[target.i686-unknown-linux-musl.dependencies]
+dep-a = { path = "/Users/fakeuser/local/testcrates/testcrate-targets/../dep-a", default-features = false, features = ["bar", "baz", "foo", "quux"] }
+lazy_static-6f8ce4dd05d13bba = { package = "lazy_static", version = "0.2", default-features = false }
+
+[target.x86_64-unknown-fuchsia.dependencies]
+dep-a = { path = "/Users/fakeuser/local/testcrates/testcrate-targets/../dep-a", default-features = false, features = ["baz", "foo", "quux"] }
+lazy_static-6f8ce4dd05d13bba = { package = "lazy_static", version = "0.2", default-features = false }
 
 ### END HAKARI SECTION
 

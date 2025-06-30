@@ -3,33 +3,23 @@
 
 ### BEGIN HAKARI SECTION
 # resolver = '3'
-# unify-target-host = 'replicate-target-on-host'
+# unify-target-host = 'none'
 # output-single-feature = false
-# dep-format-version = '3'
+# dep-format-version = '1'
 # workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['loongarch64-unknown-linux-musl', 'arm64e-apple-ios']
-# [[traversal-excludes.ids]]
-# name = 'serde'
-# version = '1.0.130'
-# source = 'registry+https://github.com/fakeorg/crates.io-index'
-#
+# platforms = ['armv6k-nintendo-3ds']
 # [[traversal-excludes.ids]]
 # name = 'unicode-xid'
 # version = '0.2.2'
 # crates-io = true
-#
-# [[traversal-excludes.ids]]
-# name = 'unicode-xid'
-# version = '0.2.2'
+# [[final-excludes.ids]]
+# name = 'quote'
+# version = '1.0.10'
 # source = 'registry+https://github.com/fakeorg/crates.io-index'
+#
 # [[final-excludes.ids]]
 # name = 'serde_derive'
 # version = '1.0.130'
-# source = 'registry+https://github.com/fakeorg/crates.io-index'
-#
-# [[final-excludes.ids]]
-# name = 'syn'
-# version = '1.0.80'
 # source = 'registry+https://github.com/fakeorg/crates.io-index'
 #
 # [[final-excludes.ids]]

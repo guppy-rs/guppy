@@ -12,6 +12,7 @@ spec = 'always'
 [metadata.target-platform]
 triple = 'csky-unknown-linux-gnuabiv2hf'
 target-features = 'all'
+flags = ['bar', 'foo']
 [[metadata.omitted-packages.ids]]
 name = 'testcrate'
 version = '0.1.0'

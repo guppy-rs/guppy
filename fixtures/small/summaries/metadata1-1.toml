@@ -9,24 +9,22 @@ initials-platform = 'proc-macros-on-target'
 [metadata.host-platform]
 triple = 'armv7-unknown-linux-uclibceabihf'
 target-features = 'unknown'
-flags = ['cargo_web', 'flag-test']
 
 [metadata.target-platform]
-triple = 'i686-apple-darwin'
-target-features = ['sse3', 'sse4.1', 'sse4.2', 'ssse3', 'xsave']
+spec = 'any'
 [[metadata.omitted-packages.ids]]
-name = 'linked-hash-map'
-version = '0.5.2'
+name = 'quote'
+version = '1.0.2'
 crates-io = true
 
 [[metadata.omitted-packages.ids]]
-name = 'testcrate'
-version = '0.1.0'
-workspace-path = ''
+name = 'winapi-util'
+version = '0.1.2'
+crates-io = true
 
 [[metadata.omitted-packages.ids]]
-name = 'walkdir'
-version = '2.2.9'
+name = 'yaml-rust'
+version = '0.4.3'
 crates-io = true
 
 [[metadata.features-only]]
@@ -86,6 +84,13 @@ version = '0.2.62'
 crates-io = true
 status = 'transitive'
 features = ['default', 'std', 'use_std']
+
+[[target-package]]
+name = 'linked-hash-map'
+version = '0.5.2'
+crates-io = true
+status = 'transitive'
+features = []
 
 [[target-package]]
 name = 'mach'
@@ -159,8 +164,22 @@ status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'yaml-rust'
-version = '0.4.3'
+name = 'winapi'
+version = '0.3.8'
+crates-io = true
+status = 'transitive'
+features = ['basetsd', 'memoryapi', 'minwindef', 'std', 'sysinfoapi', 'winnt']
+
+[[target-package]]
+name = 'winapi-i686-pc-windows-gnu'
+version = '0.4.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'winapi-x86_64-pc-windows-gnu'
+version = '0.4.0'
 crates-io = true
 status = 'transitive'
 features = []

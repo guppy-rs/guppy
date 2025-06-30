@@ -2,40 +2,16 @@
 #    cargo run -p fixture-manager -- generate-hakari --fixture metadata_guppy_44b62fa
 
 ### BEGIN HAKARI SECTION
-# resolver = '1'
-# unify-target-host = 'unify-if-both'
+# resolver = 'install'
+# unify-target-host = 'none'
 # output-single-feature = true
 # dep-format-version = '4'
 # workspace-hack-line-style = 'full'
 # platforms = []
-# [[traversal-excludes.ids]]
-# name = 'guppy-cmdlib'
-# version = '0.1.0'
-# workspace-path = 'guppy-cmdlib'
 #
-# [[traversal-excludes.ids]]
-# name = 'guppy-summaries'
-# version = '0.6.1'
-# workspace-path = 'guppy-summaries'
-# [[final-excludes.ids]]
-# name = 'guppy-benchmarks'
-# version = '0.1.0'
-# workspace-path = 'internal-tools/benchmarks'
+# [traversal-excludes]
 #
-# [[final-excludes.ids]]
-# name = 'guppy-workspace-hack'
-# version = '0.1.0'
-# workspace-path = 'workspace-hack'
-#
-# [[final-excludes.ids]]
-# name = 'hakari'
-# version = '0.8.1'
-# workspace-path = 'tools/hakari'
-#
-# [[final-excludes.ids]]
-# name = 'proptest-ext'
-# version = '0.1.0'
-# workspace-path = 'internal-tools/proptest-ext'
+# [final-excludes]
 
 ### END HAKARI SECTION
 

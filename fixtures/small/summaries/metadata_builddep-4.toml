@@ -11,17 +11,15 @@ spec = 'any'
 
 [metadata.target-platform]
 spec = 'always'
+[[metadata.omitted-packages.ids]]
+name = 'builddep'
+version = '0.1.0'
+workspace-path = 'builddep'
 
 [[metadata.features-only]]
 name = 'builddep'
 version = '0.1.0'
 workspace-path = 'builddep'
-features = []
-
-[[metadata.features-only]]
-name = 'main'
-version = '0.1.0'
-workspace-path = 'main'
 features = []
 
 [[host-package]]

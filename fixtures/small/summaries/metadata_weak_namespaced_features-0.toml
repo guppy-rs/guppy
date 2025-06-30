@@ -12,11 +12,7 @@ spec = 'always'
 [metadata.target-platform]
 triple = 'armv7-unknown-linux-gnueabi'
 target-features = 'unknown'
-flags = ['test-flag']
-[[metadata.omitted-packages.ids]]
-name = 'smallvec'
-version = '1.8.0'
-crates-io = true
+flags = ['abc']
 
 [[metadata.features-only]]
 name = 'namespaced-weak'
@@ -46,3 +42,10 @@ version = '0.2.1'
 crates-io = true
 status = 'direct'
 features = []
+
+[[host-package]]
+name = 'smallvec'
+version = '1.8.0'
+crates-io = true
+status = 'direct'
+features = ['union']

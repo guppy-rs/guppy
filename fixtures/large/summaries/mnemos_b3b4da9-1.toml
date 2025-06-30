@@ -12,32 +12,24 @@ spec = 'always'
 [metadata.target-platform]
 triple = 'riscv32imac-esp-espidf'
 target-features = 'unknown'
-flags = ['foo']
+flags = ['abc', 'foo']
 [[metadata.omitted-packages.ids]]
 name = 'hkdf'
 version = '0.12.3'
 crates-io = true
 
-[[target-package]]
+[[metadata.features-only]]
 name = 'f3repl'
 version = '0.1.0'
 workspace-path = 'tools/f3repl'
-status = 'initial'
 features = []
 
 [[target-package]]
-name = 'mnemos-beepy'
+name = 'mnemos-esp32c3-buddy'
 version = '0.1.0'
-workspace-path = 'platforms/beepy'
+workspace-path = 'platforms/esp32c3-buddy'
 status = 'initial'
 features = []
-
-[[target-package]]
-name = 'mnemos-config'
-version = '0.1.0'
-workspace-path = 'source/config'
-status = 'initial'
-features = ['default']
 
 [[target-package]]
 name = 'forth3'
@@ -51,7 +43,8 @@ name = 'mnemos'
 version = '0.1.0'
 workspace-path = 'source/kernel'
 status = 'workspace'
-features = []
+features = ['mnemos-trace-proto', 'serial-trace', 'tracing-core', 'tracing-serde-structured']
+optional-deps = ['mnemos-trace-proto', 'tracing-core', 'tracing-serde-structured']
 
 [[target-package]]
 name = 'mnemos-abi'
@@ -68,6 +61,13 @@ status = 'workspace'
 features = ['default']
 
 [[target-package]]
+name = 'mnemos-trace-proto'
+version = '0.1.0'
+workspace-path = 'source/trace-proto'
+status = 'workspace'
+features = []
+
+[[target-package]]
 name = 'sermux-proto'
 version = '0.1.0'
 workspace-path = 'source/sermux-proto'
@@ -80,14 +80,6 @@ version = '0.1.0'
 workspace-path = 'source/spitebuf'
 status = 'workspace'
 features = []
-
-[[target-package]]
-name = 'bbq10kbd'
-version = '0.1.0'
-source = 'git+https://github.com/hawkw/bbq10kbd?branch=eliza/async#d2365be8726e9320b0e4ab626043c1a8a41246f8'
-status = 'direct'
-features = ['embedded-hal-async']
-optional-deps = ['embedded-hal-async']
 
 [[target-package]]
 name = 'cfg-if'
@@ -111,6 +103,13 @@ status = 'direct'
 features = ['alloc', 'default']
 
 [[target-package]]
+name = 'critical-section'
+version = '1.1.2'
+crates-io = true
+status = 'direct'
+features = []
+
+[[target-package]]
 name = 'embedded-graphics'
 version = '0.7.1'
 crates-io = true
@@ -123,6 +122,36 @@ version = '0.2.0-alpha.2'
 crates-io = true
 status = 'direct'
 features = []
+
+[[target-package]]
+name = 'esp-alloc'
+version = '0.3.0'
+crates-io = true
+status = 'direct'
+features = []
+
+[[target-package]]
+name = 'esp-backtrace'
+version = '0.7.0'
+crates-io = true
+status = 'direct'
+features = ['esp-println', 'esp32c3', 'exception-handler', 'panic-handler', 'print-uart']
+optional-deps = ['esp-println']
+
+[[target-package]]
+name = 'esp-println'
+version = '0.5.0'
+crates-io = true
+status = 'direct'
+features = ['colors', 'critical-section', 'default', 'esp32c3', 'uart']
+optional-deps = ['critical-section']
+
+[[target-package]]
+name = 'esp32c3-hal'
+version = '0.11.0'
+source = 'git+https://github.com/esp-rs/esp-hal?rev=5a8be302b4049a6ebc17bd712d97c85a9fd83f76#5a8be302b4049a6ebc17bd712d97c85a9fd83f76'
+status = 'direct'
+features = ['default', 'rt', 'vectored']
 
 [[target-package]]
 name = 'futures'
@@ -158,7 +187,7 @@ name = 'linked_list_allocator'
 version = '0.10.5'
 crates-io = true
 status = 'direct'
-features = []
+features = ['const_mut_refs']
 
 [[target-package]]
 name = 'maitake'
@@ -186,7 +215,8 @@ name = 'portable-atomic'
 version = '1.4.2'
 crates-io = true
 status = 'direct'
-features = ['default', 'fallback', 'require-cas']
+features = ['critical-section', 'default', 'fallback', 'require-cas']
+optional-deps = ['critical-section']
 
 [[target-package]]
 name = 'postcard'
@@ -211,6 +241,13 @@ status = 'direct'
 features = ['default']
 
 [[target-package]]
+name = 'riscv'
+version = '0.10.1'
+crates-io = true
+status = 'direct'
+features = []
+
+[[target-package]]
 name = 'serde'
 version = '1.0.188'
 crates-io = true
@@ -225,6 +262,20 @@ crates-io = true
 status = 'direct'
 features = ['attributes', 'tracing-attributes']
 optional-deps = ['tracing-attributes']
+
+[[target-package]]
+name = 'tracing-core'
+version = '0.1.31'
+crates-io = true
+status = 'direct'
+features = []
+
+[[target-package]]
+name = 'tracing-serde-structured'
+version = '0.2.0'
+source = 'git+https://github.com/hawkw/tracing-serde-structured?branch=eliza/span-fields#d8c384a09f27eb06aaf31dd3f9bb9c69b33f7e66'
+status = 'direct'
+features = []
 
 [[target-package]]
 name = 'uuid'
@@ -242,11 +293,32 @@ status = 'transitive'
 features = []
 
 [[target-package]]
+name = 'bit_field'
+version = '0.10.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'bitfield'
+version = '0.14.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
 name = 'bitflags'
 version = '1.3.2'
 crates-io = true
 status = 'transitive'
 features = ['default']
+
+[[target-package]]
+name = 'bitflags'
+version = '2.3.3'
+crates-io = true
+status = 'transitive'
+features = []
 
 [[target-package]]
 name = 'byteorder'
@@ -270,6 +342,13 @@ status = 'transitive'
 features = []
 
 [[target-package]]
+name = 'embedded-dma'
+version = '0.2.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
 name = 'embedded-graphics-core'
 version = '0.3.3'
 crates-io = true
@@ -281,7 +360,7 @@ name = 'embedded-hal'
 version = '0.2.7'
 crates-io = true
 status = 'transitive'
-features = []
+features = ['unproven']
 
 [[target-package]]
 name = 'embedded-hal'
@@ -291,12 +370,49 @@ status = 'transitive'
 features = []
 
 [[target-package]]
+name = 'embedded-io'
+version = '0.5.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'esp-hal-common'
+version = '0.11.0'
+source = 'git+https://github.com/esp-rs/esp-hal?rev=5a8be302b4049a6ebc17bd712d97c85a9fd83f76#5a8be302b4049a6ebc17bd712d97c85a9fd83f76'
+status = 'transitive'
+features = ['esp-riscv-rt', 'esp32c3', 'rv-zero-rtc-bss', 'vectored']
+optional-deps = ['esp-riscv-rt', 'esp32c3']
+
+[[target-package]]
+name = 'esp-riscv-rt'
+version = '0.5.0'
+source = 'git+https://github.com/esp-rs/esp-hal?rev=5a8be302b4049a6ebc17bd712d97c85a9fd83f76#5a8be302b4049a6ebc17bd712d97c85a9fd83f76'
+status = 'transitive'
+features = ['zero-rtc-fast-bss']
+
+[[target-package]]
+name = 'esp32c3'
+version = '0.16.0'
+crates-io = true
+status = 'transitive'
+features = ['critical-section', 'default']
+optional-deps = ['critical-section']
+
+[[target-package]]
 name = 'float-cmp'
 version = '0.8.0'
 crates-io = true
 status = 'transitive'
 features = ['default', 'num-traits', 'ratio']
 optional-deps = ['num-traits']
+
+[[target-package]]
+name = 'fugit'
+version = '0.3.7'
+crates-io = true
+status = 'transitive'
+features = []
 
 [[target-package]]
 name = 'futures-channel'
@@ -343,8 +459,22 @@ features = ['async-await', 'async-await-macro', 'futures-macro', 'futures-sink',
 optional-deps = ['futures-macro', 'futures-sink']
 
 [[target-package]]
+name = 'gcd'
+version = '2.3.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
 name = 'hash32'
 version = '0.2.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'log'
+version = '0.4.20'
 crates-io = true
 status = 'transitive'
 features = []
@@ -361,7 +491,7 @@ name = 'nb'
 version = '0.1.3'
 crates-io = true
 status = 'transitive'
-features = []
+features = ['unstable']
 
 [[target-package]]
 name = 'nb'
@@ -406,6 +536,14 @@ status = 'transitive'
 features = []
 
 [[target-package]]
+name = 'strum'
+version = '0.25.0'
+crates-io = true
+status = 'transitive'
+features = ['derive', 'strum_macros']
+optional-deps = ['strum_macros']
+
+[[target-package]]
 name = 'tracing'
 version = '0.2.0'
 source = 'git+https://github.com/tokio-rs/tracing#941b1591faeea55d62c1c8cf524ffa3e95b66887'
@@ -415,15 +553,15 @@ optional-deps = ['tracing-attributes']
 
 [[target-package]]
 name = 'tracing-core'
-version = '0.1.31'
-crates-io = true
+version = '0.2.0'
+source = 'git+https://github.com/tokio-rs/tracing#941b1591faeea55d62c1c8cf524ffa3e95b66887'
 status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'tracing-core'
-version = '0.2.0'
-source = 'git+https://github.com/tokio-rs/tracing#941b1591faeea55d62c1c8cf524ffa3e95b66887'
+name = 'vcell'
+version = '0.1.3'
+crates-io = true
 status = 'transitive'
 features = []
 
@@ -457,11 +595,40 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'basic-toml'
+version = '0.1.4'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'const_format_proc_macros'
 version = '0.2.31'
 crates-io = true
 status = 'transitive'
 features = ['default']
+
+[[host-package]]
+name = 'darling'
+version = '0.20.3'
+crates-io = true
+status = 'transitive'
+features = ['default', 'suggestions']
+
+[[host-package]]
+name = 'darling_core'
+version = '0.20.3'
+crates-io = true
+status = 'transitive'
+features = ['strsim', 'suggestions']
+optional-deps = ['strsim']
+
+[[host-package]]
+name = 'darling_macro'
+version = '0.20.3'
+crates-io = true
+status = 'transitive'
+features = []
 
 [[host-package]]
 name = 'defmt-macros'
@@ -478,6 +645,27 @@ status = 'transitive'
 features = ['unstable']
 
 [[host-package]]
+name = 'equivalent'
+version = '1.0.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'esp-hal-procmacros'
+version = '0.6.0'
+source = 'git+https://github.com/esp-rs/esp-hal?rev=5a8be302b4049a6ebc17bd712d97c85a9fd83f76#5a8be302b4049a6ebc17bd712d97c85a9fd83f76'
+status = 'transitive'
+features = ['interrupt']
+
+[[host-package]]
+name = 'fnv'
+version = '1.0.7'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[host-package]]
 name = 'futures-macro'
 version = '0.3.28'
 crates-io = true
@@ -485,8 +673,50 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'hashbrown'
+version = '0.14.0'
+crates-io = true
+status = 'transitive'
+features = ['raw']
+
+[[host-package]]
+name = 'heck'
+version = '0.4.1'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[host-package]]
+name = 'ident_case'
+version = '1.0.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'indexmap'
+version = '2.0.0'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[host-package]]
 name = 'itoa'
 version = '1.0.6'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'once_cell'
+version = '1.18.0'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'default', 'race', 'std']
+
+[[host-package]]
+name = 'paste'
+version = '1.0.14'
 crates-io = true
 status = 'transitive'
 features = []
@@ -501,6 +731,13 @@ features = []
 [[host-package]]
 name = 'postcard-derive'
 version = '0.1.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'proc-macro-crate'
+version = '1.3.1'
 crates-io = true
 status = 'transitive'
 features = []
@@ -535,6 +772,13 @@ status = 'transitive'
 features = ['default', 'proc-macro']
 
 [[host-package]]
+name = 'riscv-rt-macros'
+version = '0.2.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'rustc_version'
 version = '0.4.0'
 crates-io = true
@@ -556,6 +800,14 @@ status = 'transitive'
 features = ['default', 'std']
 
 [[host-package]]
+name = 'serde'
+version = '1.0.188'
+crates-io = true
+status = 'transitive'
+features = ['default', 'derive', 'serde_derive', 'std']
+optional-deps = ['serde_derive']
+
+[[host-package]]
 name = 'serde_derive'
 version = '1.0.188'
 crates-io = true
@@ -563,11 +815,25 @@ status = 'transitive'
 features = ['default']
 
 [[host-package]]
+name = 'strsim'
+version = '0.10.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'strum_macros'
+version = '0.25.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'syn'
 version = '1.0.109'
 crates-io = true
 status = 'transitive'
-features = ['clone-impls', 'default', 'derive', 'parsing', 'printing', 'proc-macro', 'quote']
+features = ['clone-impls', 'default', 'derive', 'extra-traits', 'full', 'parsing', 'printing', 'proc-macro', 'quote']
 optional-deps = ['quote']
 
 [[host-package]]
@@ -608,6 +874,20 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'toml_datetime'
+version = '0.6.3'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'toml_edit'
+version = '0.19.14'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[host-package]]
 name = 'tracing-attributes'
 version = '0.1.26'
 crates-io = true
@@ -641,3 +921,10 @@ version = '0.9.4'
 crates-io = true
 status = 'transitive'
 features = []
+
+[[host-package]]
+name = 'winnow'
+version = '0.5.2'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'default', 'std']
