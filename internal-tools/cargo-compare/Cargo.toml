@@ -20,4 +20,4 @@ guppy-cmdlib = { path = "../../guppy-cmdlib", features = ["proptest1"] }
 tempfile = "3.20.0"
 once_cell = "1.21.3"
 pathdiff = "0.2.3"
-proptest = "1.6.0"
+proptest = "1.7.0"
