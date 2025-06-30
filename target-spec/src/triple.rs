@@ -459,7 +459,7 @@ mod tests {
             .output()
             .expect("rustc -vV is successful");
         if !output.status.success() {
-            panic!("rustc -vV failed: {:?}", output);
+            panic!("rustc -vV failed: {output:?}");
         }
 
         let triple = super::Triple::from_rustc_version_verbose(output.stdout).unwrap();

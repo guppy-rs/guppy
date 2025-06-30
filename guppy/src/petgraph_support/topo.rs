@@ -152,13 +152,12 @@ mod proptests {
             let topo_ix = topo.topo_ix(NodeIndex::new(i));
             assert!(
                 !seen[topo_ix],
-                "topo_ix {} should be seen exactly once, but seen twice",
-                topo_ix
+                "topo_ix {topo_ix} should be seen exactly once, but seen twice"
             );
             seen[topo_ix] = true;
         }
         for (i, &this_seen) in seen.iter().enumerate() {
-            assert!(this_seen, "topo_ix {} should be seen, but wasn't", i);
+            assert!(this_seen, "topo_ix {i} should be seen, but wasn't");
         }
     }
 }

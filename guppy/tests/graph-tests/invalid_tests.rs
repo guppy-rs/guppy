@@ -110,15 +110,10 @@ fn proc_macro_mixed_kinds() {
 fn assert_invalid(json: &str, search_str: &str) {
     let err = PackageGraph::from_json(json).expect_err("expected error for invalid metadata");
     let Error::PackageGraphConstructError(s) = err else {
-        panic!(
-            "expected PackageGraphConstructError, got: {} ({:?}",
-            err, err
-        );
+        panic!("expected PackageGraphConstructError, got: {err} ({err:?}");
     };
     assert!(
         s.contains(search_str),
-        "expected error to contain '{}', got: {}",
-        search_str,
-        s
+        "expected error to contain '{search_str}', got: {s}"
     );
 }

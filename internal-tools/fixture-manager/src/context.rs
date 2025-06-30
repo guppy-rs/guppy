@@ -123,7 +123,7 @@ impl<'g, T: ContextImpl<'g>> ContextItem<'g, T> {
         let mut out = String::new();
 
         if let Err(err) = T::write_to_string(self.fixture, &self.item, &mut out) {
-            eprintln!("** Partially generated output:\n{}", out);
+            eprintln!("** Partially generated output:\n{out}");
             bail!(
                 "Error while writing to string: {}\n\nPartially generated output:\n{}",
                 err,

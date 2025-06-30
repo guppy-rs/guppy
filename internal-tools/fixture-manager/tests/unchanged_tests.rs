@@ -16,7 +16,7 @@ fn summaries_unchanged() -> Result<()> {
     for (name, fixture) in JsonFixture::all_fixtures() {
         let count = GenerateSummariesOpts::default_count();
 
-        println!("generating {} summaries for {}...", count, name);
+        println!("generating {count} summaries for {name}...");
 
         let context: GenerateContext<'_, SummaryContext> =
             GenerateContext::new(fixture, &count, false)?;
@@ -46,7 +46,7 @@ fn hakari_unchanged() -> Result<()> {
     for (name, fixture) in JsonFixture::all_fixtures() {
         let count = GenerateHakariOpts::default_count();
 
-        println!("generating {} outputs for {}...", count, name);
+        println!("generating {count} outputs for {name}...");
 
         let context: GenerateContext<'_, HakariTomlContext> =
             GenerateContext::new(fixture, &GenerateHakariOpts::default_count(), false)?;

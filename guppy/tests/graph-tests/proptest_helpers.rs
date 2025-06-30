@@ -275,7 +275,7 @@ pub(super) fn depends_on<'g, G: GraphAssert<'g>>(
     query_indexes: Vec<Index>,
     msg: &str,
 ) {
-    let msg = format!("{}: reachable means depends on", msg);
+    let msg = format!("{msg}: reachable means depends on");
     let reachable_ids = graph.ids(ids, query_direction, iter_direction);
 
     for index in query_indexes {
@@ -326,7 +326,7 @@ pub(super) fn link_order(
         links,
         initials,
         iter_direction,
-        &format!("{}: link order", msg),
+        &format!("{msg}: link order"),
     );
 }
 

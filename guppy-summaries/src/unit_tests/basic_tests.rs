@@ -483,7 +483,7 @@ fn test_serialization() {
     );
 
     let j = serde_json::to_string_pretty(&to_serialize).expect("should serialize");
-    println!("json output: {}", j);
+    println!("json output: {j}");
     assert_eq!(j, EXPECTED_JSON);
 
     static EXPECTED_TOML: &str = indoc::indoc!(
@@ -570,14 +570,14 @@ fn test_serialization() {
 "#
     );
     let toml_out = toml::to_string(&to_serialize).expect("should serialize");
-    println!("toml output: {}", toml_out);
+    println!("toml output: {toml_out}");
     assert_eq!(toml_out, EXPECTED_TOML);
 
     // TODO: add roundtrip test into the proper data structure. For now we just check that the output is valid TOML.
     let parsed = toml_out
         .parse::<toml::Value>()
         .expect("deserialization from value should work");
-    println!("parsed output: {:?}", parsed);
+    println!("parsed output: {parsed:?}");
 }
 
 fn make_summary(list: Vec<(SummaryId, PackageStatus, Vec<&str>, Vec<&str>)>) -> PackageMap {

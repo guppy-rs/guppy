@@ -227,20 +227,18 @@ impl fmt::Display for TomlOutError {
         match self {
             TomlOutError::Platform(_) => write!(f, "while serializing platform information"),
             #[cfg(feature = "cli-support")]
-            TomlOutError::Toml { context, .. } => write!(f, "while serializing TOML: {}", context),
+            TomlOutError::Toml { context, .. } => write!(f, "while serializing TOML: {context}"),
             TomlOutError::FmtWrite(_) => write!(f, "while writing to fmt::Write"),
             TomlOutError::PathWithoutHakari {
                 package_id,
                 rel_path,
             } => write!(
                 f,
-                "for path dependency '{}', no Hakari package was specified (relative path {})",
-                package_id, rel_path,
+                "for path dependency '{package_id}', no Hakari package was specified (relative path {rel_path})",
             ),
             TomlOutError::UnrecognizedExternal { package_id, source } => write!(
                 f,
-                "for third-party dependency '{}', unrecognized external source {}",
-                package_id, source,
+                "for third-party dependency '{package_id}', unrecognized external source {source}",
             ),
             TomlOutError::UnrecognizedRegistry {
                 package_id,
@@ -248,8 +246,7 @@ impl fmt::Display for TomlOutError {
             } => {
                 write!(
                     f,
-                    "for third-party dependency '{}', unrecognized registry at URL {}",
-                    package_id, registry_url,
+                    "for third-party dependency '{package_id}', unrecognized registry at URL {registry_url}",
                 )
             }
         }
@@ -495,7 +492,7 @@ pub(crate) fn write_toml(
 
     // Match formatting with older versions of hakari: if the document is non-empty, print out a
     // newline at the end.
-    write!(out, "{}", document)?;
+    write!(out, "{document}")?;
     if !document.is_empty() {
         writeln!(out)?;
     }
@@ -601,9 +598,7 @@ mod tests {
         for &needle in MATCH_STRINGS {
             assert!(
                 output.contains(needle),
-                "output did not contain string '{}', actual output follows:\n***\n{}\n",
-                needle,
-                output
+                "output did not contain string '{needle}', actual output follows:\n***\n{output}\n"
             );
         }
     }

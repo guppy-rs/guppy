@@ -201,7 +201,7 @@ pub(crate) fn assert_transitive_deps_internal(
         actual_deps,
         package_set.root_ids(direction),
         desc,
-        &format!("{}: actual link order", msg),
+        &format!("{msg}: actual link order"),
     );
 
     // Do a query in the opposite direction as well to test link order.
@@ -221,7 +221,7 @@ pub(crate) fn assert_transitive_deps_internal(
         opposite_deps,
         package_set.root_ids(opposite),
         opposite_desc,
-        &format!("{}: opposite link order", msg),
+        &format!("{msg}: opposite link order"),
     );
 
     for dep_id in expected_dep_ids {

@@ -85,9 +85,7 @@ mod tests {
             let version_req = VersionReq::parse(min).expect("valid version req");
             assert!(
                 version_req.matches(&version),
-                "version req {} should match version {}",
-                min,
-                version
+                "version req {min} should match version {version}"
             );
             assert_eq!(
                 &format!("{}", VersionDisplay::new(&version, false, false)),

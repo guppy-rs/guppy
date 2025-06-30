@@ -82,7 +82,7 @@ impl CheckOpts {
                 if self.print_every != 0 {
                     let test_count = test_count.fetch_add(1, Ordering::SeqCst);
                     if test_count % self.print_every == 0 && test_count != 0 {
-                        println!("finished running {} tests", test_count);
+                        println!("finished running {test_count} tests");
                     };
                 };
 

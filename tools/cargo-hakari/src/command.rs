@@ -410,7 +410,7 @@ impl CommandWithBuilder {
                 if output.color.is_enabled() {
                     display.colorize();
                 }
-                info!("\n{}", display);
+                info!("\n{display}");
                 Ok(0)
             }
             CommandWithBuilder::Publish {
@@ -466,12 +466,7 @@ fn cwd_rel_to_workspace_rel(path: &Utf8Path, workspace_root: &Utf8Path) -> Resul
     abs_path
         .strip_prefix(workspace_root)
         .map(|p| p.to_owned())
-        .with_context(|| {
-            format!(
-                "path {} is not inside workspace root {}",
-                abs_path, workspace_root
-            )
-        })
+        .with_context(|| format!("path {abs_path} is not inside workspace root {workspace_root}"))
 }
 
 fn make_builder_and_output(
@@ -485,12 +480,12 @@ fn make_builder_and_output(
 
     let config: HakariConfig = contents
         .parse()
-        .wrap_err_with(|| format!("error deserializing Hakari config at {}", config_path))?;
+        .wrap_err_with(|| format!("error deserializing Hakari config at {config_path}"))?;
 
     let builder = config
         .builder
         .to_hakari_builder(package_graph)
-        .wrap_err_with(|| format!("error resolving Hakari config at {}", config_path))?;
+        .wrap_err_with(|| format!("error resolving Hakari config at {config_path}"))?;
     let hakari_output = config.output.to_options();
 
     Ok((builder, hakari_output))
@@ -540,7 +535,7 @@ fn apply_on_dialog(
     if output.color.is_enabled() {
         display.colorize();
     }
-    info!("operations to perform:\n\n{}", display);
+    info!("operations to perform:\n\n{display}");
 
     if dry_run {
         // dry-run + non-empty ops implies exit status 1.

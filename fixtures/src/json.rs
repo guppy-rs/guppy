@@ -310,7 +310,7 @@ impl JsonFixture {
                     .parse_external()
                     .unwrap_or_else(|| panic!("cannot parse external source {}", source));
                 assert_eq!(
-                    format!("{}", external),
+                    format!("{external}"),
                     source.external_source().expect("is_external is true"),
                     "roundtrip with ExternalSource"
                 );
@@ -323,7 +323,7 @@ impl JsonFixture {
         self.details.assert_topo(graph);
 
         for id in self.details.known_ids() {
-            let msg = format!("error while verifying package '{}'", id);
+            let msg = format!("error while verifying package '{id}'");
             let metadata = graph.metadata(id).expect(&msg);
             self.details.assert_metadata(id, metadata, &msg);
 
@@ -342,24 +342,21 @@ impl JsonFixture {
 
             // Check for transitive dependency queries. Use both ID based and edge-based queries.
             if self.details.has_transitive_deps(id) {
-                self.details.assert_transitive_deps(
-                    graph,
-                    id,
-                    &format!("{} (transitive deps)", msg),
-                );
+                self.details
+                    .assert_transitive_deps(graph, id, &format!("{msg} (transitive deps)"));
             }
             if self.details.has_transitive_reverse_deps(id) {
                 self.details.assert_transitive_reverse_deps(
                     graph,
                     id,
-                    &format!("{} (transitive reverse deps)", msg),
+                    &format!("{msg} (transitive reverse deps)"),
                 );
             }
 
             // Check for named features.
             if self.details.has_named_features(id) {
                 self.details
-                    .assert_named_features(graph, id, &format!("{} (named features)", msg));
+                    .assert_named_features(graph, id, &format!("{msg} (named features)"));
             }
         }
 

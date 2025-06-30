@@ -197,16 +197,13 @@ mod small {
                 feature_graph
                     .is_default_feature(this_id)
                     .expect("valid feature ID"),
-                "{} is a default feature",
-                f,
+                "{f} is a default feature",
             );
             assert!(
                 feature_graph
                     .depends_on(default_id, this_id)
                     .expect("valid feature IDs"),
-                "{} should depend on {} but does not",
-                default_id,
-                this_id,
+                "{default_id} should depend on {this_id} but does not",
             );
         }
 
@@ -218,16 +215,13 @@ mod small {
                 !feature_graph
                     .is_default_feature(this_id)
                     .expect("valid feature ID"),
-                "{} is NOT a default feature",
-                f,
+                "{f} is NOT a default feature",
             );
             assert!(
                 feature_graph
                     .depends_on(default_id, this_id)
                     .expect("valid feature IDs"),
-                "{} should depend on {} but does not",
-                default_id,
-                this_id,
+                "{default_id} should depend on {this_id} but does not",
             );
         }
     }

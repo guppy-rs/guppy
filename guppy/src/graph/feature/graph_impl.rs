@@ -585,8 +585,8 @@ impl fmt::Display for FeatureLabel<'_> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Base => write!(f, "[base]"),
-            Self::Named(feature_name) => write!(f, "{}", feature_name),
-            Self::OptionalDependency(dep_name) => write!(f, "dep:{}", dep_name),
+            Self::Named(feature_name) => write!(f, "{feature_name}"),
+            Self::OptionalDependency(dep_name) => write!(f, "dep:{dep_name}"),
         }
     }
 }

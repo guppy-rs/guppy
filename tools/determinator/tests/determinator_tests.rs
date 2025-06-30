@@ -433,8 +433,7 @@ fn guppy_match_paths() {
         assert_eq!(
             determinator.match_path(path, |_| {}),
             m,
-            "expected rule match for {}",
-            path
+            "expected rule match for {path}"
         );
     }
 }

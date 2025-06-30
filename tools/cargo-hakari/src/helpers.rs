@@ -26,8 +26,7 @@ pub(crate) fn read_contents(
                 continue;
             }
             Err(err) => {
-                return Err(err)
-                    .wrap_err_with(|| format!("error reading contents at {}", abs_path));
+                return Err(err).wrap_err_with(|| format!("error reading contents at {abs_path}"));
             }
         }
     }

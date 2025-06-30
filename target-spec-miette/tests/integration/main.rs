@@ -13,7 +13,7 @@ fn unavailable_snapshot() {
     let report = miette::Report::new(CustomTripleCreateError::Unavailable.into_diagnostic());
     // Use the Debug format to get the report ace the fancy displayer would show
     // it.
-    let actual = format!("{:?}", report);
+    let actual = format!("{report:?}");
 
     let b = snapbox::Assert::new().action_env("SNAPSHOTS");
 

@@ -48,7 +48,7 @@ impl fmt::Display for VerifyErrorsDisplay<'_, '_> {
             if self.color {
                 display.colorize();
             }
-            write!(indented(f).with_str("  "), "{}", display)?;
+            write!(indented(f).with_str("  "), "{display}")?;
         }
 
         Ok(())

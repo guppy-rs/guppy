@@ -19,8 +19,6 @@ pub(super) fn assert_features_for_package(
     assert_eq!(
         actual.as_ref().map(|list| list.labels()),
         expected,
-        "{}: for package {}, features in feature set match",
-        msg,
-        package_id
+        "{msg}: for package {package_id}, features in feature set match"
     );
 }

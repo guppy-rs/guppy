@@ -92,18 +92,18 @@ impl fmt::Display for Error {
             CommandError(_) => write!(f, "`cargo metadata` execution failed"),
             MetadataParseError(_) => write!(f, "`cargo metadata` returned invalid JSON output"),
             MetadataSerializeError(_) => write!(f, "failed to serialize `cargo metadata` to JSON"),
-            PackageGraphConstructError(s) => write!(f, "failed to construct package graph: {}", s),
-            UnknownPackageId(id) => write!(f, "unknown package ID: {}", id),
+            PackageGraphConstructError(s) => write!(f, "failed to construct package graph: {s}"),
+            UnknownPackageId(id) => write!(f, "unknown package ID: {id}"),
             UnknownFeatureId(package_id, feature) => {
-                write!(f, "unknown feature ID: '{}/{}'", package_id, feature)
+                write!(f, "unknown feature ID: '{package_id}/{feature}'")
             }
-            UnknownWorkspacePath(path) => write!(f, "unknown workspace path: {}", path),
-            UnknownWorkspaceName(name) => write!(f, "unknown workspace package name: {}", name),
-            TargetSpecError(msg, _) => write!(f, "target spec error while {}", msg),
-            PackageGraphInternalError(msg) => write!(f, "internal error in package graph: {}", msg),
-            FeatureGraphInternalError(msg) => write!(f, "internal error in feature graph: {}", msg),
+            UnknownWorkspacePath(path) => write!(f, "unknown workspace path: {path}"),
+            UnknownWorkspaceName(name) => write!(f, "unknown workspace package name: {name}"),
+            TargetSpecError(msg, _) => write!(f, "target spec error while {msg}"),
+            PackageGraphInternalError(msg) => write!(f, "internal error in package graph: {msg}"),
+            FeatureGraphInternalError(msg) => write!(f, "internal error in feature graph: {msg}"),
             #[cfg(feature = "summaries")]
-            UnknownSummaryId(summary_id) => write!(f, "unknown summary ID: {}", summary_id),
+            UnknownSummaryId(summary_id) => write!(f, "unknown summary ID: {summary_id}"),
             #[cfg(feature = "summaries")]
             UnknownPackageSetSummary {
                 message,
@@ -111,23 +111,23 @@ impl fmt::Display for Error {
                 unknown_workspace_members,
                 unknown_third_party,
             } => {
-                writeln!(f, "unknown elements: {}", message)?;
+                writeln!(f, "unknown elements: {message}")?;
                 if !unknown_summary_ids.is_empty() {
                     writeln!(f, "* unknown summary IDs:")?;
                     for summary_id in unknown_summary_ids {
-                        writeln!(f, "  - {}", summary_id)?;
+                        writeln!(f, "  - {summary_id}")?;
                     }
                 }
                 if !unknown_workspace_members.is_empty() {
                     writeln!(f, "* unknown workspace names:")?;
                     for workspace_member in unknown_workspace_members {
-                        writeln!(f, "  - {}", workspace_member)?;
+                        writeln!(f, "  - {workspace_member}")?;
                     }
                 }
                 if !unknown_third_party.is_empty() {
                     writeln!(f, "* unknown third-party:")?;
                     for third_party in unknown_third_party {
-                        writeln!(f, "  - {}", third_party)?;
+                        writeln!(f, "  - {third_party}")?;
                     }
                 }
                 Ok(())
@@ -140,8 +140,7 @@ impl fmt::Display for Error {
             } => {
                 writeln!(
                     f,
-                    "unknown registry name: {}\n* for third-party: {}\n* name: {}\n",
-                    message, summary, registry_name
+                    "unknown registry name: {message}\n* for third-party: {summary}\n* name: {registry_name}\n"
                 )
             }
             #[cfg(feature = "summaries")]
@@ -209,16 +208,14 @@ impl fmt::Display for FeatureGraphWarning {
                 feature_name,
             } => write!(
                 f,
-                "{}: for package '{}', missing feature '{}'",
-                stage, package_id, feature_name
+                "{stage}: for package '{package_id}', missing feature '{feature_name}'"
             ),
             SelfLoop {
                 package_id,
                 feature_name,
             } => write!(
                 f,
-                "for package '{}', self-loop detected for named feature '{}'",
-                package_id, feature_name
+                "for package '{package_id}', self-loop detected for named feature '{feature_name}'"
             ),
         }
     }
@@ -253,16 +250,14 @@ impl fmt::Display for FeatureBuildStage {
                 from_feature,
             } => write!(
                 f,
-                "for package '{}', while adding named feature edges from '{}'",
-                package_id, from_feature
+                "for package '{package_id}', while adding named feature edges from '{from_feature}'"
             ),
             AddDependencyEdges {
                 package_id,
                 dep_name,
             } => write!(
                 f,
-                "for package '{}', while adding edges for dependency '{}'",
-                package_id, dep_name,
+                "for package '{package_id}', while adding edges for dependency '{dep_name}'",
             ),
         }
     }

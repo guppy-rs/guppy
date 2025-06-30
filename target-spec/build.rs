@@ -24,11 +24,10 @@ fn main() {
     fs::write(
         dest_path,
         format!(
-            "static BUILD_TARGET: &str = \"{}\";\n\
+            "static BUILD_TARGET: &str = \"{target}\";\n\
             \n\
-            static BUILD_TARGET_FEATURES: &[&str] = {};\
+            static BUILD_TARGET_FEATURES: &[&str] = {features};\
             ",
-            target, features,
         ),
     )
     .unwrap();

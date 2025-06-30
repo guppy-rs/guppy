@@ -196,14 +196,14 @@ impl fmt::Display for SummarySource {
             // PackageStatus provides that info.
             SummarySource::Workspace { workspace_path } => {
                 let path_out = path_replace_slashes(workspace_path);
-                write!(f, "path '{}'", path_out)
+                write!(f, "path '{path_out}'")
             }
             SummarySource::Path { path } => {
                 let path_out = path_replace_slashes(path);
-                write!(f, "path '{}'", path_out)
+                write!(f, "path '{path_out}'")
             }
             SummarySource::CratesIo => write!(f, "crates.io"),
-            SummarySource::External { source } => write!(f, "external '{}'", source),
+            SummarySource::External { source } => write!(f, "external '{source}'"),
         }
     }
 }
@@ -252,7 +252,7 @@ impl fmt::Display for PackageStatus {
             PackageStatus::Direct => "direct third-party",
             PackageStatus::Transitive => "transitive third-party",
         };
-        write!(f, "{}", s)
+        write!(f, "{s}")
     }
 }
 

@@ -436,7 +436,7 @@ fn canonical_rel_path(
         .map_err(|_| {
             // This can happen under some symlink scenarios.
             ApplyError::misc(
-                format!("canonical path is not within base path {}", canonical_base),
+                format!("canonical path is not within base path {canonical_base}"),
                 &abs_path,
             )
         })
@@ -459,7 +459,7 @@ fn write_contents(contents: &[u8], path: &Utf8Path) -> Result<(), ApplyError> {
 }
 
 fn write_document(document: &DocumentMut, path: &Utf8Path) -> Result<(), ApplyError> {
-    write_atomic(path, |file| write!(file, "{}", document))
+    write_atomic(path, |file| write!(file, "{document}"))
 }
 
 fn write_atomic(
@@ -742,7 +742,7 @@ mod tests {
             );
             assert_eq!(
                 itable.to_string(),
-                format!("{{ version = \"{}\", path = \"../../path\" }}", version_str),
+                format!("{{ version = \"{version_str}\", path = \"../../path\" }}"),
                 "dep format v2 matches"
             );
 
@@ -754,10 +754,7 @@ mod tests {
             );
             assert_eq!(
                 itable.to_string(),
-                format!(
-                    "{{ version = \"{}\", path = \"../../path\" }}",
-                    version_str_v3
-                ),
+                format!("{{ version = \"{version_str_v3}\", path = \"../../path\" }}"),
                 "dep format v3 matches"
             );
 
@@ -769,7 +766,7 @@ mod tests {
             );
             assert_eq!(
                 itable.to_string(),
-                format!("{{ version = \"{}\" }}", version_str_v3),
+                format!("{{ version = \"{version_str_v3}\" }}"),
                 "version only matches"
             );
 

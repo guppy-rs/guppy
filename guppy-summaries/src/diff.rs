@@ -205,13 +205,13 @@ impl<'a> PackageDiff<'a> {
 
                 let old_info = match removed_status {
                     SummaryDiffStatus::Removed { old_info } => old_info,
-                    other => panic!("expected Removed, found {:?}", other),
+                    other => panic!("expected Removed, found {other:?}"),
                 };
 
                 let added_status = changed.get_mut(added).expect("added ID should be present");
                 let new_info = match &*added_status {
                     SummaryDiffStatus::Added { info } => *info,
-                    other => panic!("expected Added, found {:?}", other),
+                    other => panic!("expected Added, found {other:?}"),
                 };
 
                 let old_version = if added.version != removed.version {
