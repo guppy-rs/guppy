@@ -14,7 +14,7 @@ categories = [
     "development-tools",
     "parser-implementations",
 ]
-edition = "2021"
+edition = "2024"
 exclude = [
     # Readme template that doesn't need to be included.
     "README.tpl",

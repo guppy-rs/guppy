@@ -761,7 +761,7 @@ impl<'g> DependencyResolver<'g> {
     ) -> Result<
         (
             &'g Rc<PackageDataValue>,
-            impl Iterator<Item = &'g Dependency> + 'a,
+            impl Iterator<Item = &'g Dependency> + 'a + use<'g, 'a>,
         ),
         Error,
     > {

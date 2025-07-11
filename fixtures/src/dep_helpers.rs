@@ -104,7 +104,7 @@ pub(crate) fn assert_deps_internal(
         .collect();
     let actual_deps: Vec<_> = graph
         .metadata(known_details.id())
-        .unwrap_or_else(|err| panic!("{}: {}", msg, err))
+        .unwrap_or_else(|err| panic!("{msg}: {err}"))
         .direct_links_directed(direction)
         .collect();
     let mut actual_dep_ids: Vec<_> = actual_deps
@@ -352,24 +352,20 @@ fn assert_enabled_status_is_known(req: DependencyReq<'_>, msg: &str) {
     let current_platform = PlatformSpec::build_target().expect("current platform is known");
     assert!(
         req.status().enabled_on(&current_platform).is_known(),
-        "{}: enabled status known for current platform",
-        msg
+        "{msg}: enabled status known for current platform"
     );
     assert!(
         req.default_features()
             .enabled_on(&current_platform)
             .is_known(),
-        "{}: default feature status known for current platform",
-        msg
+        "{msg}: default feature status known for current platform"
     );
     for feature in req.features() {
         assert!(
             req.feature_status(feature)
                 .enabled_on(&current_platform)
                 .is_known(),
-            "{}: for feature '{}', status known for current platform",
-            msg,
-            feature
+            "{msg}: for feature '{feature}', status known for current platform"
         );
     }
 }

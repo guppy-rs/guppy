@@ -238,7 +238,7 @@ impl<'a> PackageDiff<'a> {
 pub(crate) fn changed_sort_key<'a>(
     summary_id: &'a SummaryId,
     status: &SummaryDiffStatus<'_>,
-) -> impl Ord + 'a {
+) -> impl Ord + 'a + use<'a> {
     // The sort order is:
     // * diff tag (added/modified/removed)
     // * package status

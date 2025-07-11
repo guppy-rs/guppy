@@ -308,7 +308,7 @@ impl JsonFixture {
             if source.is_external() {
                 let external = source
                     .parse_external()
-                    .unwrap_or_else(|| panic!("cannot parse external source {}", source));
+                    .unwrap_or_else(|| panic!("cannot parse external source {source}"));
                 assert_eq!(
                     format!("{external}"),
                     source.external_source().expect("is_external is true"),

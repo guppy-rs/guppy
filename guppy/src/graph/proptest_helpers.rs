@@ -60,7 +60,7 @@ impl PackageGraph {
     /// Returns a `Strategy` that generates a random `PackageResolver` instance from this graph.
     ///
     /// Requires the `proptest1` feature to be enabled.
-    pub fn proptest1_resolver_strategy(&self) -> impl Strategy<Value = Prop010Resolver> {
+    pub fn proptest1_resolver_strategy(&self) -> impl Strategy<Value = Prop010Resolver> + use<> {
         // Generate a FixedBitSet to filter based off of.
         fixedbitset_strategy(self.dep_graph.edge_count()).prop_map(Prop010Resolver::new)
     }
@@ -116,7 +116,7 @@ impl<'g> Workspace<'g> {
     /// ## Panics
     ///
     /// Panics if there are no packages in this `Workspace`.
-    pub fn proptest1_name_strategy(&self) -> impl Strategy<Value = &'g str> + 'g {
+    pub fn proptest1_name_strategy(&self) -> impl Strategy<Value = &'g str> + 'g + use<'g> {
         let name_list = self.name_list();
         (0..name_list.len()).prop_map(move |idx| name_list[idx].as_ref())
     }
@@ -128,7 +128,7 @@ impl<'g> Workspace<'g> {
     /// ## Panics
     ///
     /// Panics if there are no packages in this `Workspace`.
-    pub fn proptest1_id_strategy(&self) -> impl Strategy<Value = &'g PackageId> + 'g {
+    pub fn proptest1_id_strategy(&self) -> impl Strategy<Value = &'g PackageId> + 'g + use<'g> {
         let members_by_name = &self.inner.members_by_name;
         self.proptest1_name_strategy()
             .prop_map(move |name| &members_by_name[name])

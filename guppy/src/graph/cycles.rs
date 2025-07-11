@@ -300,7 +300,7 @@ impl<'g> Cycles<'g> {
     /// and Bar has a cyclic dev-dependency on Foo, then Foo is returned before Bar.
     ///
     /// See the type-level docs for details.
-    pub fn all_cycles(&self) -> impl DoubleEndedIterator<Item = Vec<&'g PackageId>> + 'g {
+    pub fn all_cycles(&self) -> impl DoubleEndedIterator<Item = Vec<&'g PackageId>> + 'g + use<'g> {
         let dep_graph = &self.package_graph.dep_graph;
         self.sccs
             .multi_sccs()

@@ -576,7 +576,7 @@ impl<'g> FeatureReq<'g> {
         }
     }
 
-    fn finish(self) -> impl Iterator<Item = (FeatureNode, FeatureEdge)> {
+    fn finish(self) -> impl Iterator<Item = (FeatureNode, FeatureEdge)> + use<> {
         let package_ix = self.to.package_ix();
         self.features
             .into_iter()

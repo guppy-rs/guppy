@@ -27,7 +27,7 @@ impl<'g> FeatureGraph<'g> {
     ///
     /// Panics if there are no packages in the `PackageGraph` from which this `FeatureGraph` was
     /// derived.
-    pub fn proptest1_id_strategy(&self) -> impl Strategy<Value = FeatureId<'g>> + 'g {
+    pub fn proptest1_id_strategy(&self) -> impl Strategy<Value = FeatureId<'g>> + 'g + use<'g> {
         let dep_graph = self.dep_graph();
         let package_graph = self.package_graph;
         any::<prop::sample::Index>().prop_map(move |index| {
@@ -37,7 +37,7 @@ impl<'g> FeatureGraph<'g> {
     }
 
     /// Returns a `Strategy` that generates random feature sets from this graph.
-    pub fn proptest1_set_strategy(&self) -> impl Strategy<Value = FeatureSet<'g>> + 'g {
+    pub fn proptest1_set_strategy(&self) -> impl Strategy<Value = FeatureSet<'g>> + 'g + use<'g> {
         let this = *self;
         fixedbitset_strategy(self.feature_count())
             .prop_map(move |included| FeatureSet::from_included(this, included))
