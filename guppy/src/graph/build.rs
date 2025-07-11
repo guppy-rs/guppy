@@ -16,7 +16,6 @@ use camino::{Utf8Path, Utf8PathBuf};
 use cargo_metadata::{
     DepKindInfo, Dependency, DependencyKind, Metadata, Node, NodeDep, Package, Target,
 };
-use cargo_util_schemas::manifest::PackageName;
 use fixedbitset::FixedBitSet;
 use indexmap::{IndexMap, IndexSet};
 use once_cell::sync::OnceCell;
@@ -506,16 +505,16 @@ impl<'g> ReqResolvedName<'g> {
         }
     }
 
-    fn matches(&self, name: &PackageName) -> bool {
+    fn matches(&self, name: &str) -> bool {
         if let Some(rename) = &self.renamed {
-            if rename == name.as_str() {
+            if rename == name {
                 return true;
             }
         }
 
         match self.resolved_name {
-            ResolvedName::LibNameSpecified(resolved_name) => *resolved_name == name.as_str(),
-            ResolvedName::LibNameNotSpecified(resolved_name) => *resolved_name == name.as_str(),
+            ResolvedName::LibNameSpecified(resolved_name) => *resolved_name == name,
+            ResolvedName::LibNameNotSpecified(resolved_name) => *resolved_name == name,
             ResolvedName::NoLibTarget => {
                 // Prior versions of Rust produced no lib target when the
                 // unstable bindeps feature (Rust RFC 3028) was enabled. See
@@ -755,7 +754,7 @@ impl<'g> DependencyResolver<'g> {
     /// name and package ID.
     fn resolve<'a>(
         &'a self,
-        resolved_name: &'a PackageName,
+        resolved_name: &'a str,
         dep_id: &PackageId,
         dep_kinds: &'a [DepKindInfo],
     ) -> Result<
@@ -794,7 +793,7 @@ impl<'g> DependencyReqs<'g> {
 
     fn matches_for<'a>(
         &'a self,
-        resolved_name: &'a PackageName,
+        resolved_name: &'a str,
         package_data: &'a PackageDataValue,
         dep_kinds: &'a [DepKindInfo],
     ) -> impl Iterator<Item = &'g Dependency> + 'a {
