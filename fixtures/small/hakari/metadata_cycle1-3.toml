@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '2'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['i686-apple-darwin']
+# platforms = ['i686-pc-nto-qnx700']
 # [[traversal-excludes.ids]]
 # name = 'testcycles-helper'
 # version = '0.1.0'

@@ -7,12 +7,12 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'thumbv6m-nuttx-eabi'
+triple = 'thumbv7a-uwp-windows-msvc'
 target-features = 'unknown'
 flags = ['bar']
 
 [metadata.target-platform]
-triple = 'loongarch64-unknown-none-softfloat'
+triple = 'm68k-unknown-none-elf'
 target-features = 'all'
 [[metadata.omitted-packages.ids]]
 name = 'httpdate'

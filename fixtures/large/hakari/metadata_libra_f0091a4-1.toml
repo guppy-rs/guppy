@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '2'
 # workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['mipsisa32r6-unknown-linux-gnu']
+# platforms = ['mipsel-unknown-none']
 #
 # [traversal-excludes]
 # [[final-excludes.ids]]
@@ -91,7 +91,7 @@ crossbeam-channel-468e82937335b1c9 = { package = "crossbeam-channel", version = 
 crossbeam-channel-9fbad63c4bcf4a8f = { package = "crossbeam-channel", version = "0.4", default-features = false }
 crossbeam-deque = { version = "0.7", default-features = false }
 crossbeam-epoch = { version = "0.8", features = ["lazy_static", "std"] }
-crossbeam-queue-6f8ce4dd05d13bba = { package = "crossbeam-queue", version = "0.2", features = ["std"] }
+crossbeam-queue = { version = "0.2", features = ["std"] }
 crossbeam-utils-3b31131e45eafb45 = { package = "crossbeam-utils", version = "0.6", features = ["lazy_static", "std"] }
 crossbeam-utils-ca01ad9e24f5d932 = { package = "crossbeam-utils", version = "0.7", features = ["lazy_static", "std"] }
 crunchy = { version = "0.2", features = ["limit_128"] }
@@ -449,7 +449,7 @@ crossbeam-channel-468e82937335b1c9 = { package = "crossbeam-channel", version = 
 crossbeam-channel-9fbad63c4bcf4a8f = { package = "crossbeam-channel", version = "0.4", default-features = false }
 crossbeam-deque = { version = "0.7", default-features = false }
 crossbeam-epoch = { version = "0.8", features = ["lazy_static", "std"] }
-crossbeam-queue-6f8ce4dd05d13bba = { package = "crossbeam-queue", version = "0.2", features = ["std"] }
+crossbeam-queue = { version = "0.2", features = ["std"] }
 crossbeam-utils-3b31131e45eafb45 = { package = "crossbeam-utils", version = "0.6", features = ["lazy_static", "std"] }
 crossbeam-utils-ca01ad9e24f5d932 = { package = "crossbeam-utils", version = "0.7", features = ["lazy_static", "std"] }
 crunchy = { version = "0.2", features = ["limit_128"] }
@@ -786,52 +786,32 @@ zeroize = { version = "1", default-features = false, features = ["alloc", "zeroi
 zeroize_derive = { version = "1", default-features = false }
 zstd-sys = { git = "https://github.com/gyscos/zstd-rs.git", features = ["legacy"] }
 
-[target.mipsisa32r6-unknown-linux-gnu.dependencies]
+[target.mipsel-unknown-none.dependencies]
 ansi_term-a6292c17cd707f01 = { package = "ansi_term", version = "0.11", default-features = false }
 c2-chacha = { version = "0.2", default-features = false, features = ["simd", "std"] }
-crossbeam-queue-c65f7effa3be6d31 = { package = "crossbeam-queue", version = "0.1", default-features = false }
 encoding_rs = { version = "0.8", default-features = false }
 hyper-rustls-cdcf2f9584511fe6 = { package = "hyper-rustls", version = "0.19", features = ["ct-logs", "rustls-native-certs", "tokio-runtime"] }
 mime = { version = "0.3", default-features = false }
 mime_guess = { version = "2", features = ["rev-mappings"] }
-mio-uds = { version = "0.6", default-features = false }
-nix-582f2526e08bb6a0 = { package = "nix", version = "0.14", default-features = false }
-nix-9067fe90e8c1f593 = { package = "nix", version = "0.17", default-features = false }
-openssl-probe = { version = "0.1", default-features = false }
 ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }
 rand_chacha-6f8ce4dd05d13bba = { package = "rand_chacha", version = "0.2", default-features = false, features = ["std"] }
 rustls-native-certs = { version = "0.1", default-features = false }
-signal-hook-registry = { version = "1", default-features = false }
 tokio-rustls-5ef9efb8ec2df382 = { package = "tokio-rustls", version = "0.12", default-features = false }
-tokio-signal = { version = "0.2", default-features = false }
-tokio-uds = { version = "0.2", default-features = false }
 unicase = { version = "2", default-features = false }
-utf8parse = { version = "0.1", default-features = false }
-void = { version = "1", features = ["std"] }
 
-[target.mipsisa32r6-unknown-linux-gnu.build-dependencies]
+[target.mipsel-unknown-none.build-dependencies]
 ansi_term-a6292c17cd707f01 = { package = "ansi_term", version = "0.11", default-features = false }
 c2-chacha = { version = "0.2", default-features = false, features = ["simd", "std"] }
-crossbeam-queue-c65f7effa3be6d31 = { package = "crossbeam-queue", version = "0.1", default-features = false }
 encoding_rs = { version = "0.8", default-features = false }
 hyper-rustls-cdcf2f9584511fe6 = { package = "hyper-rustls", version = "0.19", features = ["ct-logs", "rustls-native-certs", "tokio-runtime"] }
 mime = { version = "0.3", default-features = false }
 mime_guess = { version = "2", features = ["rev-mappings"] }
-mio-uds = { version = "0.6", default-features = false }
-nix-582f2526e08bb6a0 = { package = "nix", version = "0.14", default-features = false }
-nix-9067fe90e8c1f593 = { package = "nix", version = "0.17", default-features = false }
-openssl-probe = { version = "0.1", default-features = false }
 ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }
 rand_chacha-6f8ce4dd05d13bba = { package = "rand_chacha", version = "0.2", default-features = false, features = ["std"] }
 rustls-native-certs = { version = "0.1", default-features = false }
-signal-hook-registry = { version = "1", default-features = false }
 tokio-rustls-5ef9efb8ec2df382 = { package = "tokio-rustls", version = "0.12", default-features = false }
-tokio-signal = { version = "0.2", default-features = false }
-tokio-uds = { version = "0.2", default-features = false }
 unicase = { version = "2", default-features = false }
-utf8parse = { version = "0.1", default-features = false }
 version_check-274715c4dabd11b0 = { package = "version_check", version = "0.9", default-features = false }
-void = { version = "1", features = ["std"] }
 
 ### END HAKARI SECTION
 

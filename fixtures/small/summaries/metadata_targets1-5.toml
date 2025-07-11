@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'bpfeb-unknown-none'
+triple = 'avr-none'
 target-features = ['avx2', 'sse3', 'xsavec', 'xsaveopt']
 flags = ['foo']
 

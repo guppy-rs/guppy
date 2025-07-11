@@ -7,12 +7,12 @@ include-dev = false
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'aarch64-unknown-linux-ohos'
+triple = 'aarch64-unknown-none'
 target-features = 'unknown'
 flags = ['abc']
 
 [metadata.target-platform]
-triple = 'thumbv8m.base-none-eabi'
+triple = 'thumbv8m.main-none-eabihf'
 target-features = ['bmi2', 'sha', 'sse4.1']
 flags = ['bar', 'test-flag']
 [[metadata.omitted-packages.ids]]

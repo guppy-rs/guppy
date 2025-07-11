@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'sparc-unknown-linux-gnu'
+triple = 'sparc64-unknown-openbsd'
 target-features = ['avx2', 'sse2', 'ssse3', 'xsaves']
 flags = ['flag-test']
 

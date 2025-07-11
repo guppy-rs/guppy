@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '3'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['x86_64-unikraft-linux-musl', 'riscv64gc-unknown-openbsd']
+# platforms = ['x86_64-pc-windows-msvc', 's390x-unknown-linux-gnu']
 # [[traversal-excludes.ids]]
 # name = 'csv-core'
 # version = '0.1.10'
@@ -846,76 +846,73 @@ zstd = { version = "0.12", features = ["zstdmt"] }
 zstd-safe = { version = "6", default-features = false, features = ["arrays", "legacy", "std", "zdict_builder", "zstdmt"] }
 zstd-sys = { version = "2", default-features = false, features = ["legacy", "std", "zdict_builder", "zstdmt"] }
 
-[target.x86_64-unikraft-linux-musl.dependencies]
+[target.x86_64-pc-windows-msvc.dependencies]
+aho-corasick = { version = "1" }
+anstyle-wincon = { version = "2", default-features = false }
 async-global-executor = { version = "2" }
 async-io = { version = "1", default-features = false }
 async-process = { version = "1", default-features = false }
 async-task = { version = "4" }
 atomic-waker = { version = "1", default-features = false }
 blocking = { version = "1", default-features = false }
-foreign-types = { version = "0.3", default-features = false }
-foreign-types-shared = { version = "0.1", default-features = false }
+errno = { version = "0.3", default-features = false }
 futures-lite = { version = "1" }
-iana-time-zone = { version = "0.1", default-features = false, features = ["fallback"] }
-libc = { version = "0.2", default-features = false, features = ["use_std"] }
-linux-raw-sys = { version = "0.3", default-features = false, features = ["errno", "general", "ioctl", "no_std"] }
 lock_api = { version = "0.4" }
-memoffset-3b31131e45eafb45 = { package = "memoffset", version = "0.6" }
-nix-2b5c6dc72f624058 = { package = "nix", version = "0.23", default-features = false }
-nix-2f80eeee3b1b6c7e = { package = "nix", version = "0.26", default-features = false, features = ["fs", "ioctl", "poll", "signal", "term"] }
-openssl = { version = "0.10" }
-openssl-probe = { version = "0.1", default-features = false }
-openssl-sys = { version = "0.9", default-features = false }
 parking = { version = "2", default-features = false }
 polling = { version = "2" }
-rustix = { version = "0.37", features = ["fs", "termios"] }
-signal-hook = { version = "0.3", default-features = false, features = ["iterator"] }
-signal-hook-registry = { version = "1", default-features = false }
+rustix = { version = "0.37", default-features = false, features = ["fs", "std"] }
+schannel = { version = "0.1", default-features = false }
 spin-274715c4dabd11b0 = { package = "spin", version = "0.9" }
-static_assertions = { version = "1", default-features = false }
 waker-fn = { version = "1", default-features = false }
+winapi = { version = "0.3", default-features = false, features = ["basetsd", "cguid", "commapi", "consoleapi", "errhandlingapi", "fileapi", "guiddef", "handleapi", "jobapi2", "knownfolders", "minwinbase", "minwindef", "ntdef", "ntsecapi", "objbase", "processenv", "processthreadsapi", "profileapi", "psapi", "setupapi", "shlobj", "std", "synchapi", "sysinfoapi", "timezoneapi", "winbase", "wincon", "winerror", "winnt", "ws2ipdef", "ws2tcpip", "wtypesbase"] }
+winapi-util = { version = "0.1", default-features = false }
+windows-sys-c8eced492e86ede7 = { package = "windows-sys", version = "0.48", features = ["Win32_Foundation", "Win32_NetworkManagement_IpHelper", "Win32_Networking_WinSock", "Win32_Security_Authentication_Identity", "Win32_Security_Credentials", "Win32_Security_Cryptography", "Win32_Storage_FileSystem", "Win32_System_Console", "Win32_System_Diagnostics_Debug", "Win32_System_IO", "Win32_System_LibraryLoader", "Win32_System_Memory", "Win32_System_Pipes", "Win32_System_Registry", "Win32_System_SystemServices", "Win32_System_Threading", "Win32_System_Time", "Win32_System_WindowsProgramming", "Win32_UI_Shell"] }
+windows-targets-c8eced492e86ede7 = { package = "windows-targets", version = "0.48", default-features = false }
+windows_x86_64_msvc-c8eced492e86ede7 = { package = "windows_x86_64_msvc", version = "0.48", default-features = false }
 
-[target.x86_64-unikraft-linux-musl.build-dependencies]
+[target.x86_64-pc-windows-msvc.build-dependencies]
+anstyle-wincon = { version = "2", default-features = false }
 async-global-executor = { version = "2" }
 async-io = { version = "1", default-features = false }
 async-task = { version = "4" }
 atomic-waker = { version = "1", default-features = false }
 blocking = { version = "1", default-features = false }
 cpufeatures = { version = "0.2", default-features = false }
+dunce = { version = "1", default-features = false }
+encode_unicode = { version = "0.3" }
 encoding_rs = { version = "0.8" }
-foreign-types = { version = "0.3", default-features = false }
-foreign-types-shared = { version = "0.1", default-features = false }
+errno = { version = "0.3", default-features = false }
 hyper-rustls = { version = "0.24", default-features = false }
 hyper-tls = { version = "0.5", default-features = false }
-iana-time-zone = { version = "0.1", default-features = false, features = ["fallback"] }
 ipnet = { version = "2" }
-libc = { version = "0.2", default-features = false, features = ["use_std"] }
-linux-raw-sys = { version = "0.3", default-features = false, features = ["errno", "general", "ioctl", "no_std"] }
 lock_api = { version = "0.4" }
-memoffset-3b31131e45eafb45 = { package = "memoffset", version = "0.6" }
-nix-2b5c6dc72f624058 = { package = "nix", version = "0.23", default-features = false }
-nix-2f80eeee3b1b6c7e = { package = "nix", version = "0.26", default-features = false, features = ["fs", "ioctl", "poll", "signal", "term"] }
-openssl = { version = "0.10" }
-openssl-macros = { version = "0.1", default-features = false }
-openssl-probe = { version = "0.1", default-features = false }
-openssl-sys = { version = "0.9", default-features = false }
 polling = { version = "2" }
 ring = { version = "0.16" }
-rustix = { version = "0.37", features = ["fs", "termios"] }
+rustix = { version = "0.37", default-features = false, features = ["fs", "std"] }
 rustls = { version = "0.21", features = ["dangerous_configuration"] }
 rustls-pemfile = { version = "1", default-features = false }
 rustls-webpki = { version = "0.101" }
+schannel = { version = "0.1", default-features = false }
 sct = { version = "0.7", default-features = false }
-signal-hook = { version = "0.3", default-features = false, features = ["iterator"] }
-signal-hook-registry = { version = "1", default-features = false }
 spin-d8f496e17d97b5cb = { package = "spin", version = "0.5", default-features = false }
 spin-274715c4dabd11b0 = { package = "spin", version = "0.9" }
 tokio-rustls = { version = "0.24" }
 untrusted = { version = "0.7", default-features = false }
 webpki-roots = { version = "0.25", default-features = false }
-xattr = { version = "1" }
+win32job = { version = "1", default-features = false }
+winapi = { version = "0.3", default-features = false, features = ["basetsd", "cguid", "commapi", "consoleapi", "errhandlingapi", "fileapi", "guiddef", "handleapi", "jobapi2", "knownfolders", "minwinbase", "minwindef", "ntdef", "ntsecapi", "objbase", "processenv", "processthreadsapi", "profileapi", "psapi", "setupapi", "shlobj", "std", "synchapi", "sysinfoapi", "timezoneapi", "winbase", "wincon", "winerror", "winnt", "ws2ipdef", "ws2tcpip", "wtypesbase"] }
+winapi-util = { version = "0.1", default-features = false }
+windows = { version = "0.48", features = ["Globalization", "Win32_Foundation", "Win32_Globalization", "Win32_System_Console", "Win32_System_JobObjects"] }
+windows-sys-b32c9ddb6d93a9d2 = { package = "windows-sys", version = "0.42", features = ["Win32_Foundation", "Win32_Security", "Win32_Storage_FileSystem", "Win32_System_Console"] }
+windows-sys-53888c27b7ba5cf4 = { package = "windows-sys", version = "0.45", features = ["Win32_Foundation", "Win32_Storage_FileSystem", "Win32_System_Console", "Win32_UI_Input_KeyboardAndMouse"] }
+windows-sys-c8eced492e86ede7 = { package = "windows-sys", version = "0.48", features = ["Win32_Foundation", "Win32_NetworkManagement_IpHelper", "Win32_Networking_WinSock", "Win32_Security_Authentication_Identity", "Win32_Security_Credentials", "Win32_Security_Cryptography", "Win32_Storage_FileSystem", "Win32_System_Console", "Win32_System_Diagnostics_Debug", "Win32_System_IO", "Win32_System_LibraryLoader", "Win32_System_Memory", "Win32_System_Pipes", "Win32_System_Registry", "Win32_System_SystemServices", "Win32_System_Threading", "Win32_System_Time", "Win32_System_WindowsProgramming", "Win32_UI_Shell"] }
+windows-targets-b32c9ddb6d93a9d2 = { package = "windows-targets", version = "0.42", default-features = false }
+windows-targets-c8eced492e86ede7 = { package = "windows-targets", version = "0.48", default-features = false }
+windows_x86_64_msvc-b32c9ddb6d93a9d2 = { package = "windows_x86_64_msvc", version = "0.42", default-features = false }
+windows_x86_64_msvc-c8eced492e86ede7 = { package = "windows_x86_64_msvc", version = "0.48", default-features = false }
+winreg = { version = "0.50", default-features = false }
 
-[target.riscv64gc-unknown-openbsd.dependencies]
+[target.s390x-unknown-linux-gnu.dependencies]
 async-global-executor = { version = "2" }
 async-io = { version = "1", default-features = false }
 async-process = { version = "1", default-features = false }
@@ -928,6 +925,10 @@ foreign-types-shared = { version = "0.1", default-features = false }
 futures-lite = { version = "1" }
 iana-time-zone = { version = "0.1", default-features = false, features = ["fallback"] }
 libc = { version = "0.2", default-features = false, features = ["use_std"] }
+libudev-6f8ce4dd05d13bba = { package = "libudev", version = "0.2", default-features = false }
+libudev-468e82937335b1c9 = { package = "libudev", version = "0.3", default-features = false }
+libudev-sys = { version = "0.1", default-features = false }
+linux-raw-sys = { version = "0.3", default-features = false, features = ["errno", "general", "ioctl", "no_std"] }
 memoffset-3b31131e45eafb45 = { package = "memoffset", version = "0.6" }
 nix-2b5c6dc72f624058 = { package = "nix", version = "0.23", default-features = false }
 nix-2f80eeee3b1b6c7e = { package = "nix", version = "0.26", default-features = false, features = ["fs", "ioctl", "poll", "signal", "term"] }
@@ -942,7 +943,7 @@ signal-hook-registry = { version = "1", default-features = false }
 static_assertions = { version = "1", default-features = false }
 waker-fn = { version = "1", default-features = false }
 
-[target.riscv64gc-unknown-openbsd.build-dependencies]
+[target.s390x-unknown-linux-gnu.build-dependencies]
 async-global-executor = { version = "2" }
 async-io = { version = "1", default-features = false }
 async-task = { version = "4" }
@@ -957,6 +958,10 @@ hyper-tls = { version = "0.5", default-features = false }
 iana-time-zone = { version = "0.1", default-features = false, features = ["fallback"] }
 ipnet = { version = "2" }
 libc = { version = "0.2", default-features = false, features = ["use_std"] }
+libudev-6f8ce4dd05d13bba = { package = "libudev", version = "0.2", default-features = false }
+libudev-468e82937335b1c9 = { package = "libudev", version = "0.3", default-features = false }
+libudev-sys = { version = "0.1", default-features = false }
+linux-raw-sys = { version = "0.3", default-features = false, features = ["errno", "general", "ioctl", "no_std"] }
 memoffset-3b31131e45eafb45 = { package = "memoffset", version = "0.6" }
 nix-2b5c6dc72f624058 = { package = "nix", version = "0.23", default-features = false }
 nix-2f80eeee3b1b6c7e = { package = "nix", version = "0.26", default-features = false, features = ["fs", "ioctl", "poll", "signal", "term"] }

@@ -10,7 +10,7 @@ initials-platform = 'host'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'aarch64-unknown-netbsd'
+triple = 'aarch64-unknown-none'
 target-features = ['avx2', 'rdrand', 'xsavec']
 [[metadata.omitted-packages.ids]]
 name = 'lazy_static'

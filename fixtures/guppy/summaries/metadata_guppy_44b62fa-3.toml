@@ -10,7 +10,7 @@ initials-platform = 'host'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'aarch64-unknown-redox'
+triple = 'aarch64-unknown-openbsd'
 target-features = 'all'
 flags = ['flag-test']
 [[metadata.omitted-packages.ids]]

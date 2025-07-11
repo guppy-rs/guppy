@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'riscv64gc-unknown-hermit'
+triple = 'riscv64gc-unknown-netbsd'
 target-features = 'all'
 flags = ['cargo_web']
 

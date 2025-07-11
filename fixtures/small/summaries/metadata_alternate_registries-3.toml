@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'riscv32imafc-unknown-none-elf'
+triple = 'riscv32imc-esp-espidf'
 target-features = 'all'
 flags = ['cargo_web']
 

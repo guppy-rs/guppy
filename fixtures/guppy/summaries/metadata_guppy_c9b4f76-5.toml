@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'x86_64-unknown-l4re-uclibc'
+triple = 'x86_64-unknown-illumos'
 target-features = ['sse4.1', 'sse4.2', 'xsavec']
 
 [metadata.target-platform]

@@ -11,7 +11,7 @@ triple = 'armv7-wrs-vxworks-eabihf'
 target-features = 'unknown'
 
 [metadata.target-platform]
-triple = 'thumbv7neon-unknown-linux-gnueabihf'
+triple = 'thumbv8m.base-none-eabi'
 target-features = 'all'
 flags = ['bar']
 [[metadata.omitted-packages.ids]]
@@ -1489,13 +1489,6 @@ status = 'transitive'
 features = ['default', 'with-deprecated']
 
 [[target-package]]
-name = 'mio-uds'
-version = '0.6.7'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
 name = 'net2'
 version = '0.2.33'
 crates-io = true
@@ -1505,13 +1498,6 @@ features = ['default', 'duration']
 [[target-package]]
 name = 'nibble_vec'
 version = '0.0.4'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'nix'
-version = '0.14.1'
 crates-io = true
 status = 'transitive'
 features = []
@@ -2252,13 +2238,6 @@ status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'utf8parse'
-version = '0.1.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
 name = 'uuid'
 version = '0.7.4'
 crates-io = true
@@ -2272,13 +2251,6 @@ version = '0.8.1'
 crates-io = true
 status = 'transitive'
 features = []
-
-[[target-package]]
-name = 'void'
-version = '1.0.2'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
 
 [[target-package]]
 name = 'wait-timeout'

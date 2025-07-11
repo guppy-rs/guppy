@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '2'
 # workspace-hack-line-style = 'full'
-# platforms = ['armv7-wrs-vxworks-eabihf']
+# platforms = ['armv7a-kmc-solid_asp3-eabi']
 # [[traversal-excludes.ids]]
 # name = 'namespaced-weak'
 # version = '0.1.0'

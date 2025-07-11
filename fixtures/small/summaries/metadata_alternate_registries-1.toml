@@ -7,12 +7,12 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'x86_64-apple-watchos-sim'
+triple = 'x86_64-lynx-lynxos178'
 target-features = []
 flags = ['bar']
 
 [metadata.target-platform]
-triple = 'armv7a-none-eabi'
+triple = 'armv7a-none-eabihf'
 target-features = ['rdrand', 'sse4.1', 'xsavec', 'xsaves']
 [[metadata.omitted-packages.ids]]
 name = 'unicode-xid'

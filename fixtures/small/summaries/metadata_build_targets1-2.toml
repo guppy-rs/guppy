@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'aarch64-wrs-vxworks'
+triple = 'aarch64-uwp-windows-msvc'
 target-features = 'all'
 flags = ['bar']
 

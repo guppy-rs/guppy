@@ -7,11 +7,11 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'thumbv7m-none-eabi'
+triple = 'thumbv7neon-unknown-linux-gnueabihf'
 target-features = ['avx2', 'bmi1', 'sha', 'sse3', 'xsave', 'xsaves']
 
 [metadata.target-platform]
-triple = 'sparcv9-sun-solaris'
+triple = 'thumbv6m-none-eabi'
 target-features = 'unknown'
 [[metadata.omitted-packages.ids]]
 name = 'libra-node'
@@ -1250,13 +1250,6 @@ status = 'transitive'
 features = ['default', 'with-deprecated']
 
 [[target-package]]
-name = 'mio-uds'
-version = '0.6.7'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
 name = 'net2'
 version = '0.2.33'
 crates-io = true
@@ -1554,13 +1547,6 @@ version = '0.8.2'
 crates-io = true
 status = 'transitive'
 features = ['default', 'std']
-
-[[target-package]]
-name = 'signal-hook-registry'
-version = '1.2.0'
-crates-io = true
-status = 'transitive'
-features = []
 
 [[target-package]]
 name = 'slab'

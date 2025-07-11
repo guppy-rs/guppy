@@ -7,12 +7,12 @@ include-dev = true
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'armv7a-none-eabi'
+triple = 'armv7a-none-eabihf'
 target-features = []
 flags = ['foo', 'test-flag']
 
 [metadata.target-platform]
-triple = 'arm-unknown-linux-gnueabi'
+triple = 'arm-linux-androideabi'
 target-features = []
 [[metadata.omitted-packages.ids]]
 name = 'ed25519-dalek'
@@ -1849,6 +1849,13 @@ optional-deps = ['futures-channel-preview', 'futures-io-preview', 'futures-join-
 [[target-package]]
 name = 'generic-array'
 version = '0.12.3'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'get_if_addrs-sys'
+version = '0.1.1'
 crates-io = true
 status = 'transitive'
 features = []

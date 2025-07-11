@@ -7,12 +7,12 @@ include-dev = false
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'riscv32emc-unknown-none-elf'
+triple = 'riscv32gc-unknown-linux-gnu'
 target-features = 'all'
 flags = ['bar', 'foo']
 
 [metadata.target-platform]
-triple = 'wasm64-unknown-unknown'
+triple = 'x86_64-apple-ios'
 target-features = 'all'
 flags = ['test-flag']
 

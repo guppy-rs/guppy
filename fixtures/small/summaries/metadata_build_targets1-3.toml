@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'thumbv7a-uwp-windows-msvc'
+triple = 'thumbv7em-none-eabi'
 target-features = ['rdrand', 'sse', 'xsavec', 'xsaveopt']
 flags = ['bar', 'cargo_web']
 [[metadata.omitted-packages.ids]]

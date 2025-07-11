@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '4'
 # workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['x86_64-unknown-illumos']
+# platforms = ['x86_64-unknown-hurd-gnu']
 # [[traversal-excludes.ids]]
 # name = 'pathdiff'
 # version = '0.2.1'

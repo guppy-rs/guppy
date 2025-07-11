@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'riscv64imac-unknown-nuttx-elf'
+triple = 'sparc-unknown-linux-gnu'
 target-features = ['aes', 'avx2', 'sha', 'sse4.2', 'ssse3']
 flags = ['abc', 'foo']
 
