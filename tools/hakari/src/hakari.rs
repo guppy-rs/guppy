@@ -897,7 +897,7 @@ struct TraversalExcludes<'g, 'b> {
 }
 
 impl<'g, 'b> TraversalExcludes<'g, 'b> {
-    fn iter(&self) -> impl Iterator<Item = &'g PackageId> + 'b {
+    fn iter(&self) -> impl Iterator<Item = &'g PackageId> + 'b + use<'g, 'b> {
         self.excludes.iter().copied().chain(self.hakari_package)
     }
 

@@ -166,8 +166,7 @@ impl MvOptions {
                 let abs_dest = workspace_root.join(&package_move.new_path);
                 assert!(
                     !abs_dest.exists(),
-                    "expected destination {} not to exist",
-                    abs_dest
+                    "expected destination {abs_dest} not to exist"
                 );
                 // fs::rename behaves differently on Unix and Windows if the destination exists.
                 // But we don't expect it to, as the assertion above checks.

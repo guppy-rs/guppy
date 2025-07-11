@@ -51,7 +51,7 @@ impl<'g> Cycles<'g> {
     ///
     /// Within a cycle, nodes are returned in non-dev order: if feature Foo has a dependency on Bar,
     /// and Bar has a dev-dependency on Foo, then Foo is returned before Bar.
-    pub fn all_cycles(&self) -> impl Iterator<Item = Vec<FeatureId<'g>>> + 'g {
+    pub fn all_cycles(&self) -> impl Iterator<Item = Vec<FeatureId<'g>>> + 'g + use<'g> {
         let dep_graph = self.feature_graph.dep_graph();
         let package_graph = self.feature_graph.package_graph;
         self.sccs.multi_sccs().map(move |class| {

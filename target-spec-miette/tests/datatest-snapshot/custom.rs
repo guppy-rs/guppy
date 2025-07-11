@@ -12,7 +12,11 @@ use target_spec::TargetFeatures;
 use target_spec_miette::IntoMietteDiagnostic;
 
 pub(crate) fn custom_invalid(path: &Utf8Path, contents: String) -> datatest_stable::Result<()> {
-    std::env::set_var("CLICOLOR_FORCE", "1");
+    // SAFETY: Tests run under nextest where it is safe to alter the
+    // environment.
+    unsafe {
+        std::env::set_var("CLICOLOR_FORCE", "1");
+    }
 
     let error = target_spec::Platform::new_custom("my-target", &contents, TargetFeatures::none())
         .expect_err("expected input to fail");

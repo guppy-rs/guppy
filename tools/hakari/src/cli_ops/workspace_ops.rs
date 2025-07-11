@@ -254,7 +254,7 @@ impl<'g> WorkspaceOp<'g, '_> {
         };
 
         let members = match workspace_table.get_mut("members") {
-            Some(Item::Value(ref mut members)) => match members.as_array_mut() {
+            Some(Item::Value(members)) => match members.as_array_mut() {
                 Some(members) => members,
                 None => {
                     return Err(ApplyError::misc(

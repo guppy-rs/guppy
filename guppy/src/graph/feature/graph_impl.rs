@@ -328,7 +328,7 @@ impl<'g> FeatureGraph<'g> {
     pub(super) fn feature_ixs_for_package_ix(
         &self,
         package_ix: NodeIndex<PackageIx>,
-    ) -> impl Iterator<Item = NodeIndex<FeatureIx>> {
+    ) -> impl Iterator<Item = NodeIndex<FeatureIx>> + use<> {
         let package_ix = package_ix.index();
         let base_ix = self.inner.base_ixs[package_ix].index();
         // base_ixs has (package count + 1) elements so this access is valid.
@@ -337,10 +337,13 @@ impl<'g> FeatureGraph<'g> {
         (base_ix..next_base_ix).map(NodeIndex::new)
     }
 
-    pub(super) fn feature_ixs_for_package_ixs(
+    pub(super) fn feature_ixs_for_package_ixs<I>(
         &self,
-        package_ixs: impl IntoIterator<Item = NodeIndex<PackageIx>> + 'g,
-    ) -> impl Iterator<Item = NodeIndex<FeatureIx>> + 'g {
+        package_ixs: I,
+    ) -> impl Iterator<Item = NodeIndex<FeatureIx>> + 'g + use<'g, I>
+    where
+        I: IntoIterator<Item = NodeIndex<PackageIx>> + 'g,
+    {
         // Create a copy of FeatureGraph that will be moved into the closure below.
         let this = *self;
 

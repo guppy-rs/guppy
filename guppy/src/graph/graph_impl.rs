@@ -512,7 +512,7 @@ impl<'g> Workspace<'g> {
     }
 
     /// Returns an iterator over package metadatas, sorted by the path they're in.
-    pub fn iter(&self) -> impl ExactSizeIterator<Item = PackageMetadata<'g>> {
+    pub fn iter(&self) -> impl ExactSizeIterator<Item = PackageMetadata<'g>> + use<'g> {
         self.iter_by_path().map(|(_, package)| package)
     }
 
@@ -520,7 +520,7 @@ impl<'g> Workspace<'g> {
     /// they're in.
     pub fn iter_by_path(
         &self,
-    ) -> impl ExactSizeIterator<Item = (&'g Utf8Path, PackageMetadata<'g>)> {
+    ) -> impl ExactSizeIterator<Item = (&'g Utf8Path, PackageMetadata<'g>)> + use<'g> {
         let graph = self.graph;
         self.inner.members_by_path.iter().map(move |(path, id)| {
             (
@@ -531,7 +531,9 @@ impl<'g> Workspace<'g> {
     }
 
     /// Returns an iterator over workspace names and package metadatas, sorted by names.
-    pub fn iter_by_name(&self) -> impl ExactSizeIterator<Item = (&'g str, PackageMetadata<'g>)> {
+    pub fn iter_by_name(
+        &self,
+    ) -> impl ExactSizeIterator<Item = (&'g str, PackageMetadata<'g>)> + use<'g> {
         let graph = self.graph;
         self.inner
             .members_by_name
@@ -541,7 +543,7 @@ impl<'g> Workspace<'g> {
 
     /// Returns an iterator over package IDs for workspace members. The package IDs will be returned
     /// in the same order as `members`, sorted by the path they're in.
-    pub fn member_ids(&self) -> impl ExactSizeIterator<Item = &'g PackageId> {
+    pub fn member_ids(&self) -> impl ExactSizeIterator<Item = &'g PackageId> + use<'g> {
         self.inner.members_by_path.values()
     }
 
@@ -624,7 +626,7 @@ mod workspace_rayon {
         /// Returns a parallel iterator over package metadatas, sorted by workspace path.
         ///
         /// Requires the `rayon1` feature to be enabled.
-        pub fn par_iter(&self) -> impl ParallelIterator<Item = PackageMetadata<'g>> {
+        pub fn par_iter(&self) -> impl ParallelIterator<Item = PackageMetadata<'g>> + use<'g> {
             self.par_iter_by_path().map(|(_, package)| package)
         }
 
@@ -634,7 +636,7 @@ mod workspace_rayon {
         /// Requires the `rayon1` feature to be enabled.
         pub fn par_iter_by_path(
             &self,
-        ) -> impl ParallelIterator<Item = (&'g Utf8Path, PackageMetadata<'g>)> {
+        ) -> impl ParallelIterator<Item = (&'g Utf8Path, PackageMetadata<'g>)> + use<'g> {
             let graph = self.graph;
             self.inner
                 .members_by_path
@@ -653,7 +655,7 @@ mod workspace_rayon {
         /// Requires the `rayon1` feature to be enabled.
         pub fn par_iter_by_name(
             &self,
-        ) -> impl ParallelIterator<Item = (&'g str, PackageMetadata<'g>)> {
+        ) -> impl ParallelIterator<Item = (&'g str, PackageMetadata<'g>)> + use<'g> {
             let graph = self.graph;
             self.inner
                 .members_by_name
@@ -744,18 +746,18 @@ impl<'g> PackageMetadata<'g> {
     pub fn direct_links_directed(
         &self,
         direction: DependencyDirection,
-    ) -> impl Iterator<Item = PackageLink<'g>> + 'g {
+    ) -> impl Iterator<Item = PackageLink<'g>> + 'g + use<'g> {
         self.direct_links_impl(direction.into())
     }
 
     /// Returns `PackageLink` instances corresponding to the direct dependencies for this package.
-    pub fn direct_links(&self) -> impl Iterator<Item = PackageLink<'g>> + 'g {
+    pub fn direct_links(&self) -> impl Iterator<Item = PackageLink<'g>> + 'g + use<'g> {
         self.direct_links_impl(Outgoing)
     }
 
     /// Returns `PackageLink` instances corresponding to the packages that directly depend on this
     /// one.
-    pub fn reverse_direct_links(&self) -> impl Iterator<Item = PackageLink<'g>> + 'g {
+    pub fn reverse_direct_links(&self) -> impl Iterator<Item = PackageLink<'g>> + 'g + use<'g> {
         self.direct_links_impl(Incoming)
     }
 
@@ -977,7 +979,7 @@ impl<'g> PackageMetadata<'g> {
     /// For more, see [Cargo
     /// Targets](https://doc.rust-lang.org/nightly/cargo/reference/cargo-targets.html#cargo-targets)
     /// in the Cargo reference.
-    pub fn build_targets(&self) -> impl Iterator<Item = BuildTarget<'g>> {
+    pub fn build_targets(&self) -> impl Iterator<Item = BuildTarget<'g>> + use<'g> {
         self.inner.build_targets.iter().map(BuildTarget::new)
     }
 
@@ -1034,7 +1036,7 @@ impl<'g> PackageMetadata<'g> {
     ///
     /// A named feature is listed in the `[features]` section of `Cargo.toml`. For more, see
     /// [the reference](https://doc.rust-lang.org/cargo/reference/manifest.html#the-features-section).
-    pub fn named_features(&self) -> impl Iterator<Item = &'g str> + 'g {
+    pub fn named_features(&self) -> impl Iterator<Item = &'g str> + 'g + use<'g> {
         self.named_features_full()
             .map(|(_, named_feature, _)| named_feature)
     }
@@ -1060,7 +1062,10 @@ impl<'g> PackageMetadata<'g> {
         }
     }
 
-    fn direct_links_impl(&self, dir: Direction) -> impl Iterator<Item = PackageLink<'g>> + 'g {
+    fn direct_links_impl(
+        &self,
+        dir: Direction,
+    ) -> impl Iterator<Item = PackageLink<'g>> + 'g + use<'g> {
         self.graph.dep_links_ixs_directed(self.package_ix(), dir)
     }
 
@@ -1102,7 +1107,7 @@ impl<'g> PackageMetadata<'g> {
     }
 
     #[allow(dead_code)]
-    pub(super) fn all_feature_nodes(&self) -> impl Iterator<Item = FeatureNode> + 'g {
+    pub(super) fn all_feature_nodes(&self) -> impl Iterator<Item = FeatureNode> + 'g + use<'g> {
         let package_ix = self.package_ix();
         iter::once(FeatureNode::new(
             self.package_ix(),
@@ -1120,7 +1125,8 @@ impl<'g> PackageMetadata<'g> {
 
     pub(super) fn named_features_full(
         &self,
-    ) -> impl Iterator<Item = (FeatureIndexInPackage, &'g str, &'g [NamedFeatureDep])> + 'g {
+    ) -> impl Iterator<Item = (FeatureIndexInPackage, &'g str, &'g [NamedFeatureDep])> + 'g + use<'g>
+    {
         self.inner
             .named_features
             .iter()
@@ -1138,7 +1144,7 @@ impl<'g> PackageMetadata<'g> {
 
     pub(super) fn optional_deps_full(
         &self,
-    ) -> impl Iterator<Item = (FeatureIndexInPackage, &'g str)> + 'g {
+    ) -> impl Iterator<Item = (FeatureIndexInPackage, &'g str)> + 'g + use<'g> {
         self.inner
             .optional_deps
             .iter()
@@ -1974,7 +1980,7 @@ impl<'g> DependencyReq<'g> {
     /// Returns a list of all features possibly enabled by this dependency. This includes features
     /// that are only turned on if the dependency is optional, or features enabled by inactive
     /// platforms.
-    pub fn features(&self) -> impl Iterator<Item = &'g str> {
+    pub fn features(&self) -> impl Iterator<Item = &'g str> + use<'g> {
         self.inner.all_features()
     }
 

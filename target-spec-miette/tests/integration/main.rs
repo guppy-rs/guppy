@@ -7,7 +7,9 @@ use target_spec_miette::IntoMietteDiagnostic;
 
 #[test]
 fn unavailable_snapshot() {
-    std::env::set_var("CLICOLOR_FORCE", "1");
+    // SAFETY: Tests are run under nextest where it's safe to alter the
+    // environment.
+    unsafe { std::env::set_var("CLICOLOR_FORCE", "1") };
 
     // Test that the unavailable diagnostic shows properly as a report.
     let report = miette::Report::new(CustomTripleCreateError::Unavailable.into_diagnostic());
