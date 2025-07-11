@@ -4372,7 +4372,7 @@ checksum = "e502f78cdbb8ba4718f566c418c52bc729126ffd16baee5baa718cf25dd5a69a"
 
 [[package]]
 name = "target-spec"
-version = "3.4.2"
+version = "3.5.0"
 dependencies = [
  "cfg-expr",
  "guppy-workspace-hack",
