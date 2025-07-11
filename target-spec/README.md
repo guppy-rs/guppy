@@ -60,7 +60,7 @@ The minimum supported Rust version (MSRV) is **Rust 1.82**. The MSRV history is:
 * For target-spec 3.1.x: **Rust 1.73**.
 * For target-spec 3.2.x: **Rust 1.75**.
 * For target-spec 3.3.x and 3.4.x: **Rust 1.82**.
-* Unreleased: **Rust 1.81**.
+* For target-spec 3.5.x: **Rust 1.86**.
 
 Within the 3.x series, MSRV bumps will be accompanied by a minor version
 update. The last 6 months of stable Rust releases will be supported.

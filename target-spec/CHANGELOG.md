@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.5.0] - 2025-07-11
+
+### Changed
+
+- Internal dependency `cfg-expr` updated to 0.21.0, updating builtin targets to Rust 1.88.
+- MSRV updated to Rust 1.86, as required by dependencies. (Apologies for not fulfilling the 6 month support promise for this version series.)
+
 ## [3.4.2] - 2025-02-20
 
 ### Changed
@@ -359,6 +366,7 @@ This was mistakenly published and was yanked.
 
 - Initial release.
 
+[3.5.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.5.0
 [3.4.2]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.4.2
 [3.4.1]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.4.1
 [3.4.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.4.0
