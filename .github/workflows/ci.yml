@@ -47,7 +47,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-14, windows-latest]
-        rust-version: ["1.82", stable]
+        rust-version: ["1.86", stable]
       fail-fast: false
     env:
       RUSTFLAGS: -D warnings
@@ -86,7 +86,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-14, windows-latest]
-        rust-version: ["1.82", stable]
+        rust-version: ["1.86", stable]
       fail-fast: false
     env:
       RUSTFLAGS: -D warnings
@@ -140,7 +140,7 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       # This matches the cfg-expr version.
-      - uses: dtolnay/rust-toolchain@1.85.0
+      - uses: dtolnay/rust-toolchain@1.88.0
       - uses: Swatinem/rust-cache@98c8021b550208e191a6a3145459bfc9fb29c4c0 # v2
       - name: Build and test
         run: cargo test --package cargo-compare --release
