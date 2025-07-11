@@ -7,12 +7,12 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'armv7r-none-eabi'
+triple = 'armv7k-apple-watchos'
 target-features = 'all'
 flags = ['bar']
 
 [metadata.target-platform]
-triple = 'riscv32imac-unknown-none-elf'
+triple = 'riscv32imac-unknown-xous-elf'
 target-features = ['avx', 'avx2', 'fma', 'rdrand', 'sse3', 'ssse3', 'xsaves']
 flags = ['flag-test']
 [[metadata.omitted-packages.ids]]

@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'arm64_32-apple-watchos'
+triple = 'arm-unknown-linux-musleabihf'
 target-features = 'all'
 flags = ['test-flag']
 [[metadata.omitted-packages.ids]]
@@ -2039,6 +2039,7 @@ version = '0.16.11'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'dev_urandom_fallback', 'lazy_static', 'std']
+optional-deps = ['lazy_static']
 
 [[target-package]]
 name = 'rusoto_credential'

@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'riscv32imafc-unknown-nuttx-elf'
+triple = 'riscv32imc-unknown-none-elf'
 target-features = ['bmi2', 'rdrand', 'sse2', 'xsave', 'xsaves']
 flags = ['test-flag']
 

@@ -7,11 +7,11 @@ include-dev = false
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'aarch64-uwp-windows-msvc'
+triple = 'aarch64-unknown-uefi'
 target-features = 'unknown'
 
 [metadata.target-platform]
-triple = 'aarch64-pc-windows-gnullvm'
+triple = 'aarch64-pc-windows-msvc'
 target-features = []
 flags = ['test-flag']
 [[metadata.omitted-packages.ids]]
@@ -166,20 +166,6 @@ features = ['default']
 [[host-package]]
 name = 'version_check'
 version = '0.9.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'winapi'
-version = '0.3.8'
-crates-io = true
-status = 'transitive'
-features = ['consoleapi', 'errhandlingapi', 'fileapi', 'minwindef', 'processenv', 'std', 'winbase', 'wincon', 'winerror', 'winnt']
-
-[[host-package]]
-name = 'winapi-util'
-version = '0.1.2'
 crates-io = true
 status = 'transitive'
 features = []

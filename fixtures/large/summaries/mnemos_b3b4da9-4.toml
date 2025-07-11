@@ -12,7 +12,7 @@ target-features = ['aes', 'rdrand']
 flags = ['cargo_web']
 
 [metadata.target-platform]
-triple = 'powerpc64-wrs-vxworks'
+triple = 'powerpc64le-unknown-freebsd'
 target-features = 'all'
 flags = ['cargo_web']
 

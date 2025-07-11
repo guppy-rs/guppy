@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'aarch64-nintendo-switch-freestanding'
+triple = 'aarch64-pc-windows-gnullvm'
 target-features = 'unknown'
 flags = ['cargo_web']
 [[metadata.omitted-packages.ids]]
@@ -124,7 +124,7 @@ version = '2.33.3'
 crates-io = true
 status = 'direct'
 features = ['ansi_term', 'atty', 'color', 'default', 'strsim', 'suggestions', 'vec_map']
-optional-deps = ['ansi_term', 'atty', 'strsim', 'vec_map']
+optional-deps = ['atty', 'strsim', 'vec_map']
 
 [[target-package]]
 name = 'criterion'
@@ -476,6 +476,13 @@ status = 'transitive'
 features = []
 
 [[target-package]]
+name = 'output_vt100'
+version = '0.1.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
 name = 'plotters'
 version = '0.2.15'
 crates-io = true
@@ -674,6 +681,20 @@ crates-io = true
 status = 'transitive'
 features = []
 
+[[target-package]]
+name = 'winapi'
+version = '0.3.9'
+crates-io = true
+status = 'transitive'
+features = ['consoleapi', 'errhandlingapi', 'fileapi', 'handleapi', 'minwinbase', 'minwindef', 'ntdef', 'processenv', 'profileapi', 'std', 'sysinfoapi', 'timezoneapi', 'winbase', 'wincon', 'winerror', 'winnt', 'winuser']
+
+[[target-package]]
+name = 'winapi-util'
+version = '0.1.5'
+crates-io = true
+status = 'transitive'
+features = []
+
 [[host-package]]
 name = 'proptest-derive'
 version = '0.2.0'
@@ -684,6 +705,13 @@ features = []
 [[host-package]]
 name = 'autocfg'
 version = '1.0.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'ctor'
+version = '0.1.16'
 crates-io = true
 status = 'transitive'
 features = []

@@ -10,7 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'x86_64-unknown-haiku'
+triple = 'x86_64-unknown-fuchsia'
 target-features = ['avx', 'sse2', 'ssse3']
 flags = ['foo', 'test-flag']
 [[metadata.omitted-packages.ids]]

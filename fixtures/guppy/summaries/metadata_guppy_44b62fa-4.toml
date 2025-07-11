@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'powerpc64le-unknown-linux-musl'
+triple = 'riscv32-wrs-vxworks'
 target-features = ['aes', 'avx', 'avx2', 'bmi2', 'xsaves']
 flags = ['test-flag']
 

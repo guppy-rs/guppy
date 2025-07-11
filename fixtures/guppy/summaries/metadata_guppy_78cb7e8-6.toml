@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'thumbv7a-pc-windows-msvc'
+triple = 'thumbv7a-uwp-windows-msvc'
 target-features = ['avx2', 'fma', 'sse4.1', 'ssse3']
 flags = ['foo']
 

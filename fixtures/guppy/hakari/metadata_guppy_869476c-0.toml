@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '3'
 # workspace-hack-line-style = 'full'
-# platforms = ['x86_64-unknown-redox', 'riscv64gc-unknown-nuttx-elf']
+# platforms = ['x86_64-unknown-redox', 'riscv64imac-unknown-nuttx-elf']
 # [[traversal-excludes.ids]]
 # name = 'commoncrypto-sys'
 # version = '0.2.0'
@@ -61,10 +61,10 @@ libc = { version = "0.2" }
 [target.x86_64-unknown-redox.build-dependencies]
 libc = { version = "0.2" }
 
-[target.riscv64gc-unknown-nuttx-elf.dependencies]
+[target.riscv64imac-unknown-nuttx-elf.dependencies]
 libc = { version = "0.2" }
 
-[target.riscv64gc-unknown-nuttx-elf.build-dependencies]
+[target.riscv64imac-unknown-nuttx-elf.build-dependencies]
 libc = { version = "0.2" }
 
 ### END HAKARI SECTION

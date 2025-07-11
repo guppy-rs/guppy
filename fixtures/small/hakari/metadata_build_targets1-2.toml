@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '4'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['wasm32-wasip1', 'armv7-unknown-linux-uclibceabi']
+# platforms = ['wasm32-wasip2', 'armv7-unknown-linux-uclibceabihf']
 #
 # [traversal-excludes]
 # [[final-excludes.ids]]

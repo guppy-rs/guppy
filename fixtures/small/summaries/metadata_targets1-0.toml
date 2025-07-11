@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'aarch64-apple-watchos-sim'
+triple = 'aarch64-kmc-solid_asp3'
 target-features = ['bmi1']
 flags = ['flag-test', 'test-flag']
 

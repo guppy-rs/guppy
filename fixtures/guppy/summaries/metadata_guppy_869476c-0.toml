@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'armebv7r-none-eabihf'
+triple = 'armebv7r-none-eabi'
 target-features = 'unknown'
 
 [metadata.target-platform]

@@ -10,7 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'riscv32imac-esp-espidf'
+triple = 'riscv32imac-unknown-nuttx-elf'
 target-features = 'unknown'
 flags = ['abc', 'foo']
 [[metadata.omitted-packages.ids]]

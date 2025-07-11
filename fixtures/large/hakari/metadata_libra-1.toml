@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '2'
 # workspace-hack-line-style = 'full'
-# platforms = ['aarch64_be-unknown-netbsd', 'armv7a-none-eabihf', 'armv7r-none-eabihf']
+# platforms = ['aarch64_be-unknown-linux-gnu_ilp32', 'armv7a-nuttx-eabi', 'armv7r-none-eabi']
 # [[traversal-excludes.ids]]
 # name = 'benchmark'
 # version = '0.1.0'
@@ -481,7 +481,7 @@ version_check = { version = "0.1", default-features = false }
 walkdir = { version = "2", default-features = false }
 which = { version = "2", default-features = false }
 
-[target.aarch64_be-unknown-netbsd.dependencies]
+[target.aarch64_be-unknown-linux-gnu_ilp32.dependencies]
 ansi_term = { version = "0.11", default-features = false }
 c2-chacha = { version = "0.2", default-features = false, features = ["lazy_static", "simd", "std"] }
 lazy_static = { version = "1", default-features = false, features = ["spin", "spin_no_std"] }
@@ -493,33 +493,38 @@ tokio-uds = { version = "0.2", default-features = false }
 utf8parse = { version = "0.1", default-features = false }
 void = { version = "1", features = ["std"] }
 
-[target.aarch64_be-unknown-netbsd.build-dependencies]
+[target.aarch64_be-unknown-linux-gnu_ilp32.build-dependencies]
 c2-chacha = { version = "0.2", default-features = false, features = ["lazy_static", "simd", "std"] }
 lazy_static = { version = "1", default-features = false, features = ["spin", "spin_no_std"] }
 ppv-lite86 = { version = "0.2", features = ["simd", "std"] }
 rand_chacha-6f8ce4dd05d13bba = { package = "rand_chacha", version = "0.2", features = ["simd", "std"] }
 
-[target.armv7a-none-eabihf.dependencies]
+[target.armv7a-nuttx-eabi.dependencies]
+ansi_term = { version = "0.11", default-features = false }
+c2-chacha = { version = "0.2", default-features = false, features = ["lazy_static", "simd", "std"] }
+lazy_static = { version = "1", default-features = false, features = ["spin", "spin_no_std"] }
+nix = { version = "0.14", default-features = false }
+ppv-lite86 = { version = "0.2", features = ["simd", "std"] }
+rand_chacha-6f8ce4dd05d13bba = { package = "rand_chacha", version = "0.2", features = ["simd", "std"] }
+tokio-signal = { version = "0.2", default-features = false }
+tokio-uds = { version = "0.2", default-features = false }
+utf8parse = { version = "0.1", default-features = false }
+void = { version = "1", features = ["std"] }
+
+[target.armv7a-nuttx-eabi.build-dependencies]
+c2-chacha = { version = "0.2", default-features = false, features = ["lazy_static", "simd", "std"] }
+lazy_static = { version = "1", default-features = false, features = ["spin", "spin_no_std"] }
+ppv-lite86 = { version = "0.2", features = ["simd", "std"] }
+rand_chacha-6f8ce4dd05d13bba = { package = "rand_chacha", version = "0.2", features = ["simd", "std"] }
+
+[target.armv7r-none-eabi.dependencies]
 ansi_term = { version = "0.11", default-features = false }
 c2-chacha = { version = "0.2", default-features = false, features = ["lazy_static", "simd", "std"] }
 lazy_static = { version = "1", default-features = false, features = ["spin", "spin_no_std"] }
 ppv-lite86 = { version = "0.2", features = ["simd", "std"] }
 rand_chacha-6f8ce4dd05d13bba = { package = "rand_chacha", version = "0.2", features = ["simd", "std"] }
 
-[target.armv7a-none-eabihf.build-dependencies]
-c2-chacha = { version = "0.2", default-features = false, features = ["lazy_static", "simd", "std"] }
-lazy_static = { version = "1", default-features = false, features = ["spin", "spin_no_std"] }
-ppv-lite86 = { version = "0.2", features = ["simd", "std"] }
-rand_chacha-6f8ce4dd05d13bba = { package = "rand_chacha", version = "0.2", features = ["simd", "std"] }
-
-[target.armv7r-none-eabihf.dependencies]
-ansi_term = { version = "0.11", default-features = false }
-c2-chacha = { version = "0.2", default-features = false, features = ["lazy_static", "simd", "std"] }
-lazy_static = { version = "1", default-features = false, features = ["spin", "spin_no_std"] }
-ppv-lite86 = { version = "0.2", features = ["simd", "std"] }
-rand_chacha-6f8ce4dd05d13bba = { package = "rand_chacha", version = "0.2", features = ["simd", "std"] }
-
-[target.armv7r-none-eabihf.build-dependencies]
+[target.armv7r-none-eabi.build-dependencies]
 c2-chacha = { version = "0.2", default-features = false, features = ["lazy_static", "simd", "std"] }
 lazy_static = { version = "1", default-features = false, features = ["spin", "spin_no_std"] }
 ppv-lite86 = { version = "0.2", features = ["simd", "std"] }

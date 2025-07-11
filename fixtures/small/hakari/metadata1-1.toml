@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '2'
 # workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['powerpc64-unknown-linux-musl', 'riscv32ima-unknown-none-elf']
+# platforms = ['powerpc64-unknown-openbsd', 'riscv32imac-esp-espidf']
 # [[traversal-excludes.ids]]
 # name = 'dtoa'
 # version = '0.4.4'

@@ -10,7 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'armv5te-none-eabi'
+triple = 'armv4t-unknown-linux-gnueabi'
 target-features = []
 flags = ['abc', 'test-flag']
 
@@ -1186,6 +1186,13 @@ status = 'transitive'
 features = ['default', 'with-deprecated']
 
 [[target-package]]
+name = 'mio-uds'
+version = '0.6.7'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
 name = 'net2'
 version = '0.2.33'
 crates-io = true
@@ -1465,6 +1472,13 @@ features = []
 [[target-package]]
 name = 'sha3'
 version = '0.8.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'signal-hook-registry'
+version = '1.2.0'
 crates-io = true
 status = 'transitive'
 features = []

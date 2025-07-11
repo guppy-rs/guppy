@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '1'
 # workspace-hack-line-style = 'full'
-# platforms = ['mips-unknown-linux-gnu', 'i686-unknown-openbsd']
+# platforms = ['mips-unknown-linux-gnu', 'i686-unknown-uefi']
 # [[traversal-excludes.ids]]
 # name = 'cc'
 # version = '1.0.61'
@@ -54,9 +54,6 @@ quote = { version = "1", features = ["proc-macro"] }
 syn = { version = "1", features = ["clone-impls", "derive", "full", "parsing", "printing", "proc-macro", "quote", "visit"] }
 
 [target.mips-unknown-linux-gnu.dependencies]
-libc = { version = "0.2", features = ["std"] }
-
-[target.i686-unknown-openbsd.dependencies]
 libc = { version = "0.2", features = ["std"] }
 
 ### END HAKARI SECTION

@@ -10,7 +10,7 @@ initials-platform = 'host'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'x86_64-pc-windows-msvc'
+triple = 'x86_64-pc-windows-gnullvm'
 target-features = ['bmi1', 'fma', 'sse', 'ssse3', 'xsavec']
 [[metadata.omitted-packages.ids]]
 name = 'arrayvec'

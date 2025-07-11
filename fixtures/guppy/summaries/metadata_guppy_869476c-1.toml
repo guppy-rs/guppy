@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'riscv64imac-unknown-none-elf'
+triple = 's390x-unknown-linux-musl'
 target-features = ['xsaveopt']
 flags = ['test-flag']
 

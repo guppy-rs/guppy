@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '1'
 # workspace-hack-line-style = 'full'
-# platforms = ['armv8r-none-eabihf']
+# platforms = ['armv7s-apple-ios']
 # [[traversal-excludes.ids]]
 # name = 'testcycles-base'
 # version = '0.1.0'

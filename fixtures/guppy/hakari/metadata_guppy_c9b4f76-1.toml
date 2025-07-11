@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '1'
 # workspace-hack-line-style = 'full'
-# platforms = ['mipsel-unknown-netbsd']
+# platforms = ['mipsel-unknown-linux-uclibc']
 # [[traversal-excludes.ids]]
 # name = 'crossbeam-epoch'
 # version = '0.8.2'
@@ -227,7 +227,7 @@ unicode-segmentation = { version = "1", default-features = false }
 unicode-xid-c65f7effa3be6d31 = { package = "unicode-xid", version = "0.1" }
 unicode-xid-6f8ce4dd05d13bba = { package = "unicode-xid", version = "0.2" }
 
-[target.mipsel-unknown-netbsd.dependencies]
+[target.mipsel-unknown-linux-uclibc.dependencies]
 foreign-types = { version = "0.3", default-features = false }
 foreign-types-shared = { version = "0.1", default-features = false }
 openssl = { version = "0.10", default-features = false }
@@ -237,7 +237,7 @@ ppv-lite86 = { version = "0.2", default-features = false, features = ["std"] }
 rand_chacha = { version = "0.2", default-features = false, features = ["std"] }
 termios = { version = "0.3", default-features = false }
 
-[target.mipsel-unknown-netbsd.build-dependencies]
+[target.mipsel-unknown-linux-uclibc.build-dependencies]
 libc = { version = "0.2", features = ["std"] }
 
 ### END HAKARI SECTION

@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '4'
 # workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['loongarch64-unknown-linux-musl', 'aarch64-apple-tvos']
+# platforms = ['loongarch64-unknown-none', 'aarch64-apple-tvos']
 # [[traversal-excludes.ids]]
 # name = 'async-stream'
 # version = '0.3.5'
