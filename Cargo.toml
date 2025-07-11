@@ -21,7 +21,7 @@ members = [
 [workspace.dependencies]
 ahash = "0.8.12"
 cargo-util-schemas = "0.2.0"
-cfg-expr = "0.18.0"
+cfg-expr = "0.20.1"
 datatest-stable = { version = "0.3.2", features = ["include-dir"] }
 guppy-workspace-hack = "0.1.0"
 iddqd = "0.3.8"
@@ -32,8 +32,8 @@ twox-hash = { version = "2.1.1", default-features = false, features = ["xxhash64
 
 [workspace.package]
 # Note: we commit to supporting the last 6 months of Rust releases. This
-# typically means N-4 to 5.
-rust-version = "1.82"
+# typically means N-4 to 5, unless a dependency requires a newer version.
+rust-version = "1.86"
 
 [workspace.lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = [
