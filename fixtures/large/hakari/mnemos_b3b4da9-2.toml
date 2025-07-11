@@ -53,13 +53,21 @@
 # crates-io = true
 
 [dependencies]
+addr2line = { version = "0.20", features = ["cpp_demangle", "fallible-iterator", "memmap2", "object", "rustc-demangle", "smallvec", "std", "std-object"] }
+axum = { version = "0.6", features = ["form", "http1", "json", "matched-path", "original-uri", "query", "tokio", "tower-log", "ws"] }
 backtrace = { version = "0.3", features = ["gimli-symbolize", "std"] }
+bitflags = { version = "2", default-features = false, features = ["std"] }
+bytemuck = { version = "1", default-features = false, features = ["bytemuck_derive", "derive"] }
 byteorder = { version = "1", features = ["std"] }
+clap = { version = "4", features = ["color", "derive", "env", "error-context", "help", "std", "suggestions", "usage", "wrap_help"] }
+clap_builder = { version = "4", default-features = false, features = ["color", "env", "error-context", "help", "std", "suggestions", "usage", "wrap_help"] }
 cobs = { version = "0.2", features = ["use_std"] }
 cordyceps = { git = "https://github.com/hawkw/mycelium.git", rev = "101a4abaa19afdd131b334a16d92c9fb4909c064", features = ["alloc"] }
 critical-section = { version = "1", default-features = false, features = ["restore-state-bool"] }
+digest = { version = "0.10", features = ["alloc", "block-buffer", "const-oid", "core-api", "mac", "oid", "std", "subtle"] }
 either = { version = "1", features = ["use_std"] }
 embedded-hal = { version = "0.2", default-features = false, features = ["unproven"] }
+flate2 = { version = "1", features = ["any_zlib", "libz-sys", "miniz_oxide", "rust_backend", "zlib"] }
 futures = { version = "0.3", features = ["alloc", "async-await", "executor", "futures-executor", "std"] }
 futures-channel = { version = "0.3", features = ["alloc", "futures-sink", "sink", "std"] }
 futures-core = { version = "0.3", features = ["alloc", "std"] }
@@ -67,48 +75,73 @@ futures-io = { version = "0.3", features = ["std"] }
 futures-sink = { version = "0.3", features = ["alloc", "std"] }
 futures-task = { version = "0.3", default-features = false, features = ["alloc", "std"] }
 futures-util = { version = "0.3", features = ["alloc", "async-await", "async-await-macro", "channel", "futures-channel", "futures-io", "futures-macro", "futures-sink", "io", "memchr", "sink", "slab", "std"] }
-getrandom = { version = "0.2", default-features = false, features = ["std"] }
+generic-array = { version = "0.14", default-features = false, features = ["more_lengths", "zeroize"] }
+getrandom = { version = "0.2", default-features = false, features = ["js", "js-sys", "std", "wasm-bindgen"] }
+gimli = { version = "0.27", default-features = false, features = ["endian-reader", "fallible-iterator", "read", "read-core", "stable_deref_trait", "std"] }
+hashbrown-5ef9efb8ec2df382 = { package = "hashbrown", version = "0.12", default-features = false, features = ["inline-more", "raw"] }
+hashbrown-582f2526e08bb6a0 = { package = "hashbrown", version = "0.14", default-features = false, features = ["inline-more", "raw"] }
 heapless = { version = "0.7", features = ["atomic-polyfill", "cas", "defmt", "defmt-impl", "serde"] }
+hex = { version = "0.4", features = ["alloc", "serde", "std"] }
 hyper = { version = "0.14", features = ["client", "full", "h2", "http1", "http2", "runtime", "server", "socket2", "stream", "tcp"] }
-libc = { version = "0.2", features = ["extra_traits", "std"] }
+libz-sys = { version = "1", default-features = false, features = ["libc"] }
 linked_list_allocator = { version = "0.10", default-features = false, features = ["const_mut_refs"] }
 log = { version = "0.4", default-features = false, features = ["kv_unstable", "std", "value-bag"] }
 maitake = { git = "https://github.com/hawkw/mycelium.git", rev = "101a4abaa19afdd131b334a16d92c9fb4909c064", features = ["alloc", "tracing-01"] }
 memchr = { version = "2", features = ["std", "use_std"] }
 miniz_oxide = { version = "0.7", default-features = false, features = ["with-alloc"] }
+mio = { version = "0.8", features = ["log", "net", "os-ext", "os-poll"] }
 nb = { version = "0.1", default-features = false, features = ["unstable"] }
 num-traits = { version = "0.2", features = ["i128", "libm", "std"] }
+object = { version = "0.31", default-features = false, features = ["archive", "coff", "compression", "elf", "flate2", "macho", "pe", "read", "read_core", "ruzstd", "std", "unaligned", "xcoff"] }
+once_cell = { version = "1", features = ["alloc", "race", "std", "unstable"] }
 owo-colors = { version = "3", default-features = false, features = ["supports-color", "supports-colors"] }
 percent-encoding = { version = "2", features = ["alloc", "std"] }
 portable-atomic = { version = "1", features = ["critical-section", "fallback", "require-cas"] }
 postcard = { version = "1", features = ["alloc", "const_format", "experimental-derive", "heapless", "heapless-cas", "postcard-derive", "use-std"] }
 rand = { version = "0.8", features = ["alloc", "getrandom", "libc", "rand_chacha", "small_rng", "std", "std_rng"] }
 regex = { version = "1", features = ["perf", "perf-backtrack", "perf-cache", "perf-dfa", "perf-inline", "perf-literal", "perf-onepass", "std", "unicode", "unicode-age", "unicode-bool", "unicode-case", "unicode-gencat", "unicode-perl", "unicode-script", "unicode-segment"] }
-regex-automata-c65f7effa3be6d31 = { package = "regex-automata", version = "0.1", features = ["regex-syntax", "std"] }
-regex-automata-468e82937335b1c9 = { package = "regex-automata", version = "0.3", default-features = false, features = ["alloc", "dfa-onepass", "hybrid", "meta", "nfa-backtrack", "nfa-pikevm", "nfa-thompson", "perf-inline", "perf-literal", "perf-literal-multisubstring", "perf-literal-substring", "std", "syntax", "unicode", "unicode-age", "unicode-bool", "unicode-case", "unicode-gencat", "unicode-perl", "unicode-script", "unicode-segment", "unicode-word-boundary"] }
+regex-automata = { version = "0.3", default-features = false, features = ["alloc", "dfa-onepass", "dfa-search", "hybrid", "meta", "nfa-backtrack", "nfa-pikevm", "nfa-thompson", "perf-inline", "perf-literal", "perf-literal-multisubstring", "perf-literal-substring", "std", "syntax", "unicode", "unicode-age", "unicode-bool", "unicode-case", "unicode-gencat", "unicode-perl", "unicode-script", "unicode-segment", "unicode-word-boundary"] }
 regex-syntax = { version = "0.7", features = ["std", "unicode", "unicode-age", "unicode-bool", "unicode-case", "unicode-gencat", "unicode-perl", "unicode-script", "unicode-segment"] }
 riscv = { version = "0.10", default-features = false, features = ["critical-section-single-hart"] }
 scopeguard = { version = "1", features = ["use_std"] }
 serde = { version = "1", features = ["alloc", "derive", "rc", "serde_derive", "std"] }
-serde_json = { version = "1", features = ["std", "unbounded_depth"] }
-tokio = { version = "1", features = ["bytes", "io-std", "io-util", "libc", "macros", "mio", "net", "num_cpus", "process", "rt", "rt-multi-thread", "signal", "signal-hook-registry", "socket2", "sync", "time", "tokio-macros", "tracing", "windows-sys"] }
+serde_json = { version = "1", features = ["raw_value", "std", "unbounded_depth"] }
+smallvec = { version = "1", default-features = false, features = ["write"] }
+stable_deref_trait = { version = "1", features = ["alloc", "std"] }
+strum = { version = "0.25", features = ["derive", "std", "strum_macros"] }
+subtle = { version = "2", default-features = false, features = ["i128"] }
+tokio = { version = "1", features = ["bytes", "fs", "full", "io-std", "io-util", "libc", "macros", "mio", "net", "num_cpus", "parking_lot", "process", "rt", "rt-multi-thread", "signal", "signal-hook-registry", "socket2", "sync", "time", "tokio-macros", "tracing", "windows-sys"] }
+tokio-stream = { version = "0.1", features = ["fs", "net", "sync", "time", "tokio-util"] }
+tokio-util = { version = "0.7", features = ["codec", "io", "tracing"] }
 toml_datetime = { version = "0.6", default-features = false, features = ["serde"] }
 toml_edit = { version = "0.19", features = ["serde"] }
-tracing = { version = "0.1", features = ["attributes", "std", "tracing-attributes"] }
+tower = { version = "0.4", default-features = false, features = ["__common", "balance", "buffer", "discover", "futures-core", "futures-util", "indexmap", "limit", "load", "log", "make", "pin-project", "pin-project-lite", "rand", "ready-cache", "slab", "timeout", "tokio", "tokio-util", "tracing", "util"] }
+tracing = { version = "0.1", features = ["attributes", "log", "std", "tracing-attributes"] }
 tracing-core = { version = "0.1", features = ["once_cell", "std", "valuable"] }
 tracing-serde-structured = { git = "https://github.com/hawkw/tracing-serde-structured", branch = "eliza/span-fields", features = ["std"] }
 tracing-subscriber = { version = "0.3", features = ["alloc", "ansi", "env-filter", "fmt", "matchers", "nu-ansi-term", "once_cell", "regex", "registry", "sharded-slab", "smallvec", "std", "thread_local", "tracing", "tracing-log"] }
+unicode-bidi = { version = "0.3", features = ["hardcoded-data", "std"] }
 unicode-normalization = { version = "0.1", features = ["std"] }
 uuid = { version = "1", features = ["getrandom", "rng", "serde", "std", "v4"] }
+zeroize = { version = "1", features = ["alloc"] }
 
 [build-dependencies]
+addr2line = { version = "0.20", features = ["cpp_demangle", "fallible-iterator", "memmap2", "object", "rustc-demangle", "smallvec", "std", "std-object"] }
+axum = { version = "0.6", features = ["form", "http1", "json", "matched-path", "original-uri", "query", "tokio", "tower-log", "ws"] }
 backtrace = { version = "0.3", features = ["gimli-symbolize", "std"] }
+bitflags = { version = "2", default-features = false, features = ["std"] }
+bitvec = { version = "1", features = ["alloc", "atomic", "std"] }
+bytemuck = { version = "1", default-features = false, features = ["bytemuck_derive", "derive"] }
 byteorder = { version = "1", features = ["std"] }
 cc = { version = "1", default-features = false, features = ["jobserver", "parallel"] }
+clap = { version = "4", features = ["color", "derive", "env", "error-context", "help", "std", "suggestions", "usage", "wrap_help"] }
+clap_builder = { version = "4", default-features = false, features = ["color", "env", "error-context", "help", "std", "suggestions", "usage", "wrap_help"] }
 cobs = { version = "0.2", features = ["use_std"] }
 cordyceps = { git = "https://github.com/hawkw/mycelium.git", rev = "101a4abaa19afdd131b334a16d92c9fb4909c064", features = ["alloc"] }
 critical-section = { version = "1", default-features = false, features = ["restore-state-bool"] }
+digest = { version = "0.10", features = ["alloc", "block-buffer", "const-oid", "core-api", "mac", "oid", "std", "subtle"] }
 either = { version = "1", features = ["use_std"] }
+flate2 = { version = "1", features = ["any_zlib", "libz-sys", "miniz_oxide", "rust_backend", "zlib"] }
 futures = { version = "0.3", features = ["alloc", "async-await", "executor", "futures-executor", "std"] }
 futures-channel = { version = "0.3", features = ["alloc", "futures-sink", "sink", "std"] }
 futures-core = { version = "0.3", features = ["alloc", "std"] }
@@ -116,39 +149,57 @@ futures-io = { version = "0.3", features = ["std"] }
 futures-sink = { version = "0.3", features = ["alloc", "std"] }
 futures-task = { version = "0.3", default-features = false, features = ["alloc", "std"] }
 futures-util = { version = "0.3", features = ["alloc", "async-await", "async-await-macro", "channel", "futures-channel", "futures-io", "futures-macro", "futures-sink", "io", "memchr", "sink", "slab", "std"] }
-getrandom = { version = "0.2", default-features = false, features = ["std"] }
+generic-array = { version = "0.14", default-features = false, features = ["more_lengths", "zeroize"] }
+getrandom = { version = "0.2", default-features = false, features = ["js", "js-sys", "std", "wasm-bindgen"] }
+gimli = { version = "0.27", default-features = false, features = ["endian-reader", "fallible-iterator", "read", "read-core", "stable_deref_trait", "std"] }
+hashbrown-5ef9efb8ec2df382 = { package = "hashbrown", version = "0.12", default-features = false, features = ["inline-more", "raw"] }
+hashbrown-582f2526e08bb6a0 = { package = "hashbrown", version = "0.14", default-features = false, features = ["inline-more", "raw"] }
 heapless = { version = "0.7", features = ["atomic-polyfill", "cas", "defmt", "defmt-impl", "serde"] }
+hex = { version = "0.4", features = ["alloc", "serde", "std"] }
 hyper = { version = "0.14", features = ["client", "full", "h2", "http1", "http2", "runtime", "server", "socket2", "stream", "tcp"] }
-libc = { version = "0.2", features = ["extra_traits", "std"] }
+libz-sys = { version = "1", default-features = false, features = ["libc"] }
 linked_list_allocator = { version = "0.10", default-features = false, features = ["const_mut_refs"] }
 log = { version = "0.4", default-features = false, features = ["kv_unstable", "std", "value-bag"] }
 maitake = { git = "https://github.com/hawkw/mycelium.git", rev = "101a4abaa19afdd131b334a16d92c9fb4909c064", features = ["alloc", "tracing-01"] }
 memchr = { version = "2", features = ["std", "use_std"] }
 miniz_oxide = { version = "0.7", default-features = false, features = ["with-alloc"] }
+mio = { version = "0.8", features = ["log", "net", "os-ext", "os-poll"] }
 num-traits = { version = "0.2", features = ["i128", "libm", "std"] }
+object = { version = "0.31", default-features = false, features = ["archive", "coff", "compression", "elf", "flate2", "macho", "pe", "read", "read_core", "ruzstd", "std", "unaligned", "xcoff"] }
+once_cell = { version = "1", features = ["alloc", "race", "std", "unstable"] }
 owo-colors = { version = "3", default-features = false, features = ["supports-color", "supports-colors"] }
 percent-encoding = { version = "2", features = ["alloc", "std"] }
 portable-atomic = { version = "1", features = ["critical-section", "fallback", "require-cas"] }
 postcard = { version = "1", features = ["alloc", "const_format", "experimental-derive", "heapless", "heapless-cas", "postcard-derive", "use-std"] }
 rand = { version = "0.8", features = ["alloc", "getrandom", "libc", "rand_chacha", "small_rng", "std", "std_rng"] }
 regex = { version = "1", features = ["perf", "perf-backtrack", "perf-cache", "perf-dfa", "perf-inline", "perf-literal", "perf-onepass", "std", "unicode", "unicode-age", "unicode-bool", "unicode-case", "unicode-gencat", "unicode-perl", "unicode-script", "unicode-segment"] }
-regex-automata-c65f7effa3be6d31 = { package = "regex-automata", version = "0.1", features = ["regex-syntax", "std"] }
-regex-automata-468e82937335b1c9 = { package = "regex-automata", version = "0.3", default-features = false, features = ["alloc", "dfa-onepass", "hybrid", "meta", "nfa-backtrack", "nfa-pikevm", "nfa-thompson", "perf-inline", "perf-literal", "perf-literal-multisubstring", "perf-literal-substring", "std", "syntax", "unicode", "unicode-age", "unicode-bool", "unicode-case", "unicode-gencat", "unicode-perl", "unicode-script", "unicode-segment", "unicode-word-boundary"] }
+regex-automata = { version = "0.3", default-features = false, features = ["alloc", "dfa-onepass", "dfa-search", "hybrid", "meta", "nfa-backtrack", "nfa-pikevm", "nfa-thompson", "perf-inline", "perf-literal", "perf-literal-multisubstring", "perf-literal-substring", "std", "syntax", "unicode", "unicode-age", "unicode-bool", "unicode-case", "unicode-gencat", "unicode-perl", "unicode-script", "unicode-segment", "unicode-word-boundary"] }
 regex-syntax = { version = "0.7", features = ["std", "unicode", "unicode-age", "unicode-bool", "unicode-case", "unicode-gencat", "unicode-perl", "unicode-script", "unicode-segment"] }
+scopeguard = { version = "1", features = ["use_std"] }
 semver = { version = "1", features = ["serde", "std"] }
 serde = { version = "1", features = ["alloc", "derive", "rc", "serde_derive", "std"] }
-serde_json = { version = "1", features = ["std", "unbounded_depth"] }
-syn-dff4ba8e3ae991db = { package = "syn", version = "1", features = ["clone-impls", "derive", "extra-traits", "fold", "full", "parsing", "printing", "proc-macro", "quote", "visit"] }
+serde_json = { version = "1", features = ["raw_value", "std", "unbounded_depth"] }
+smallvec = { version = "1", default-features = false, features = ["write"] }
+stable_deref_trait = { version = "1", features = ["alloc", "std"] }
+strum = { version = "0.25", features = ["derive", "std", "strum_macros"] }
+subtle = { version = "2", default-features = false, features = ["i128"] }
+syn-dff4ba8e3ae991db = { package = "syn", version = "1", features = ["clone-impls", "derive", "extra-traits", "fold", "full", "parsing", "printing", "proc-macro", "quote", "visit", "visit-mut"] }
 syn-f595c2ba2a3f28df = { package = "syn", version = "2", features = ["clone-impls", "derive", "extra-traits", "full", "parsing", "printing", "proc-macro", "quote", "visit", "visit-mut"] }
-tokio = { version = "1", features = ["bytes", "io-std", "io-util", "libc", "macros", "mio", "net", "num_cpus", "process", "rt", "rt-multi-thread", "signal", "signal-hook-registry", "socket2", "sync", "time", "tokio-macros", "tracing", "windows-sys"] }
+time = { version = "0.3", features = ["alloc", "formatting", "local-offset", "macros", "parsing", "std"] }
+tokio = { version = "1", features = ["bytes", "fs", "full", "io-std", "io-util", "libc", "macros", "mio", "net", "num_cpus", "parking_lot", "process", "rt", "rt-multi-thread", "signal", "signal-hook-registry", "socket2", "sync", "time", "tokio-macros", "tracing", "windows-sys"] }
+tokio-stream = { version = "0.1", features = ["fs", "net", "sync", "time", "tokio-util"] }
+tokio-util = { version = "0.7", features = ["codec", "io", "tracing"] }
 toml_datetime = { version = "0.6", default-features = false, features = ["serde"] }
 toml_edit = { version = "0.19", features = ["serde"] }
-tracing = { version = "0.1", features = ["attributes", "std", "tracing-attributes"] }
+tower = { version = "0.4", default-features = false, features = ["__common", "balance", "buffer", "discover", "futures-core", "futures-util", "indexmap", "limit", "load", "log", "make", "pin-project", "pin-project-lite", "rand", "ready-cache", "slab", "timeout", "tokio", "tokio-util", "tracing", "util"] }
+tracing = { version = "0.1", features = ["attributes", "log", "std", "tracing-attributes"] }
 tracing-core = { version = "0.1", features = ["once_cell", "std", "valuable"] }
 tracing-serde-structured = { git = "https://github.com/hawkw/tracing-serde-structured", branch = "eliza/span-fields", features = ["std"] }
 tracing-subscriber = { version = "0.3", features = ["alloc", "ansi", "env-filter", "fmt", "matchers", "nu-ansi-term", "once_cell", "regex", "registry", "sharded-slab", "smallvec", "std", "thread_local", "tracing", "tracing-log"] }
+unicode-bidi = { version = "0.3", features = ["hardcoded-data", "std"] }
 unicode-normalization = { version = "0.1", features = ["std"] }
 uuid = { version = "1", features = ["getrandom", "rng", "serde", "std", "v4"] }
+zeroize = { version = "1", features = ["alloc"] }
 
 ### END HAKARI SECTION
 

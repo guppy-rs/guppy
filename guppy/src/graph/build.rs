@@ -516,16 +516,18 @@ impl<'g> ReqResolvedName<'g> {
             ResolvedName::LibNameSpecified(resolved_name) => *resolved_name == name,
             ResolvedName::LibNameNotSpecified(resolved_name) => *resolved_name == name,
             ResolvedName::NoLibTarget => {
-                // Prior versions of Rust produced no lib target when the
-                // unstable bindeps feature (Rust RFC 3028) was enabled. See
-                // https://github.com/rust-lang/cargo/issues/9096. In the past,
-                // we'd return true here if `name.is_empty()` was true.
+                // This code path is only hit with nightly Rust as of 2023-11. It depends on Rust
+                // RFC 3028. at https://github.com/rust-lang/cargo/issues/9096.
                 //
-                // Versions of Rust from at least 2024-07 do not produce this
-                // no-lib-target case, instead omitting bindeps from the
-                // resolved map altogether. Also, cargo_metadata 0.20.0 and
-                // above reject empty package names. So we always return false.
-                false
+                // This isn't quite right -- if we have two or more non-lib dependencies, we'll
+                // return true for both of them over here. What we need to do instead is use the
+                // extern_name and bin_name fields that are present in nightly DepKindInfo, but that
+                // aren't in stable yet. For now, this is the best we can do.
+                //
+                // (If we're going to be relying on heuristics, it is also possible to use the
+                // package ID over here, but that's documented to be an opaque string. It also
+                // wouldn't be resilient to patch and replace.)
+                name.is_empty()
             }
         }
     }
