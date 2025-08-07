@@ -225,7 +225,7 @@ impl PackageGraph {
     }
 
     /// Returns information about the workspace.
-    pub fn workspace(&self) -> Workspace {
+    pub fn workspace(&self) -> Workspace<'_> {
         Workspace {
             graph: self,
             inner: &self.data.workspace,
@@ -238,7 +238,7 @@ impl PackageGraph {
     }
 
     /// Returns an iterator over all the packages in this graph.
-    pub fn packages(&self) -> impl ExactSizeIterator<Item = PackageMetadata> {
+    pub fn packages(&self) -> impl ExactSizeIterator<Item = PackageMetadata<'_>> {
         self.data
             .packages
             .values()
@@ -246,7 +246,7 @@ impl PackageGraph {
     }
 
     /// Returns the metadata for the given package ID.
-    pub fn metadata(&self, package_id: &PackageId) -> Result<PackageMetadata, Error> {
+    pub fn metadata(&self, package_id: &PackageId) -> Result<PackageMetadata<'_>, Error> {
         let inner = self
             .data
             .metadata_impl(package_id)
@@ -272,7 +272,7 @@ impl PackageGraph {
     /// Creates a new cache for `depends_on` queries.
     ///
     /// The cache is optional but can speed up some queries.
-    pub fn new_depends_cache(&self) -> DependsCache {
+    pub fn new_depends_cache(&self) -> DependsCache<'_> {
         DependsCache::new(self)
     }
 
@@ -307,7 +307,7 @@ impl PackageGraph {
     /// Returns information about dependency cycles in this graph.
     ///
     /// For more information, see the documentation for `Cycles`.
-    pub fn cycles(&self) -> Cycles {
+    pub fn cycles(&self) -> Cycles<'_> {
         Cycles::new(self)
     }
 
@@ -382,7 +382,7 @@ impl PackageGraph {
     }
 
     /// Maps an edge index to a dependency link.
-    pub(super) fn edge_ix_to_link(&self, edge_ix: EdgeIndex<PackageIx>) -> PackageLink {
+    pub(super) fn edge_ix_to_link(&self, edge_ix: EdgeIndex<PackageIx>) -> PackageLink<'_> {
         let (source_ix, target_ix) = self
             .dep_graph
             .edge_endpoints(edge_ix)
@@ -2161,19 +2161,19 @@ impl DependencyReqImpl {
             .chain(self.optional.all_features())
     }
 
-    pub(super) fn enabled(&self) -> EnabledStatus {
+    pub(super) fn enabled(&self) -> EnabledStatus<'_> {
         self.make_status(|req_impl| &req_impl.build_if)
     }
 
-    pub(super) fn default_features(&self) -> EnabledStatus {
+    pub(super) fn default_features(&self) -> EnabledStatus<'_> {
         self.make_status(|req_impl| &req_impl.default_features_if)
     }
 
-    pub(super) fn no_default_features(&self) -> EnabledStatus {
+    pub(super) fn no_default_features(&self) -> EnabledStatus<'_> {
         self.make_status(|req_impl| &req_impl.no_default_features_if)
     }
 
-    pub(super) fn feature_status(&self, feature: &str) -> EnabledStatus {
+    pub(super) fn feature_status(&self, feature: &str) -> EnabledStatus<'_> {
         // This PlatformStatusImpl in static memory is so that the lifetimes work out.
         static DEFAULT_STATUS: PlatformStatusImpl = PlatformStatusImpl::Specs(Vec::new());
 
@@ -2188,7 +2188,7 @@ impl DependencyReqImpl {
     fn make_status(
         &self,
         pred_fn: impl Fn(&DepRequiredOrOptional) -> &PlatformStatusImpl,
-    ) -> EnabledStatus {
+    ) -> EnabledStatus<'_> {
         EnabledStatus::new(pred_fn(&self.required), pred_fn(&self.optional))
     }
 }

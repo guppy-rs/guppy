@@ -36,7 +36,7 @@ impl PackageGraph {
     ///
     /// `query_workspace` will select all workspace packages and their transitive dependencies. To
     /// create a `PackageSet` with just workspace packages, use `resolve_workspace`.
-    pub fn query_workspace(&self) -> PackageQuery {
+    pub fn query_workspace(&self) -> PackageQuery<'_> {
         self.query_forward(self.workspace().member_ids())
             .expect("workspace packages should all be known")
     }
@@ -47,7 +47,7 @@ impl PackageGraph {
     pub fn query_workspace_paths(
         &self,
         paths: impl IntoIterator<Item = impl AsRef<Utf8Path>>,
-    ) -> Result<PackageQuery, Error> {
+    ) -> Result<PackageQuery<'_>, Error> {
         let workspace = self.workspace();
         let package_ixs = paths
             .into_iter()
@@ -69,7 +69,7 @@ impl PackageGraph {
     pub fn query_workspace_names(
         &self,
         names: impl IntoIterator<Item = impl AsRef<str>>,
-    ) -> Result<PackageQuery, Error> {
+    ) -> Result<PackageQuery<'_>, Error> {
         let workspace = self.workspace();
         let package_ixs = names
             .into_iter()
@@ -128,7 +128,7 @@ impl PackageGraph {
         &self,
         package_ixs: SortedSet<NodeIndex<PackageIx>>,
         direction: DependencyDirection,
-    ) -> PackageQuery {
+    ) -> PackageQuery<'_> {
         let params = match direction {
             DependencyDirection::Forward => QueryParams::Forward(package_ixs),
             DependencyDirection::Reverse => QueryParams::Reverse(package_ixs),

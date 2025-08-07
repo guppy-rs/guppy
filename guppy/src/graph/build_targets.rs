@@ -257,7 +257,7 @@ pub(super) enum OwnedBuildTargetId {
 }
 
 impl OwnedBuildTargetId {
-    fn as_borrowed(&self) -> BuildTargetId {
+    fn as_borrowed(&self) -> BuildTargetId<'_> {
         match self {
             OwnedBuildTargetId::Library => BuildTargetId::Library,
             OwnedBuildTargetId::BuildScript => BuildTargetId::BuildScript,
@@ -279,17 +279,17 @@ pub(super) enum BuildTargetKindImpl {
 
 // Borrow for complex keys. See https://github.com/sunshowers/borrow-complex-key-example.
 pub(super) trait BuildTargetKey {
-    fn key(&self) -> BuildTargetId;
+    fn key(&self) -> BuildTargetId<'_>;
 }
 
 impl BuildTargetKey for BuildTargetId<'_> {
-    fn key(&self) -> BuildTargetId {
+    fn key(&self) -> BuildTargetId<'_> {
         *self
     }
 }
 
 impl BuildTargetKey for OwnedBuildTargetId {
-    fn key(&self) -> BuildTargetId {
+    fn key(&self) -> BuildTargetId<'_> {
         self.as_borrowed()
     }
 }

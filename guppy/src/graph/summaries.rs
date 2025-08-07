@@ -88,7 +88,10 @@ impl PackageGraph {
     /// Returns an error if the summary ID could not be matched.
     ///
     /// Requires the `summaries` feature to be enabled.
-    pub fn metadata_by_summary_id(&self, summary_id: &SummaryId) -> Result<PackageMetadata, Error> {
+    pub fn metadata_by_summary_id(
+        &self,
+        summary_id: &SummaryId,
+    ) -> Result<PackageMetadata<'_>, Error> {
         match &summary_id.source {
             SummarySource::Workspace { workspace_path } => {
                 self.workspace().member_by_path(workspace_path)
