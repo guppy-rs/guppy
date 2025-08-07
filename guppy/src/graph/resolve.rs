@@ -33,7 +33,7 @@ impl PackageGraph {
     ///
     /// In most situations, `query_workspace` is preferred. Use `resolve_all` if you know you need
     /// parts of the graph that aren't accessible from the workspace.
-    pub fn resolve_all(&self) -> PackageSet {
+    pub fn resolve_all(&self) -> PackageSet<'_> {
         PackageSet {
             graph: DebugIgnore(self),
             core: ResolveCore::all_nodes(&self.dep_graph),
@@ -41,7 +41,7 @@ impl PackageGraph {
     }
 
     /// Creates a new, empty `PackageSet` associated with this package graph.
-    pub fn resolve_none(&self) -> PackageSet {
+    pub fn resolve_none(&self) -> PackageSet<'_> {
         PackageSet {
             graph: DebugIgnore(self),
             core: ResolveCore::empty(),
@@ -56,7 +56,7 @@ impl PackageGraph {
     pub fn resolve_ids<'a>(
         &self,
         package_ids: impl IntoIterator<Item = &'a PackageId>,
-    ) -> Result<PackageSet, Error> {
+    ) -> Result<PackageSet<'_>, Error> {
         Ok(PackageSet {
             graph: DebugIgnore(self),
             core: ResolveCore::from_included::<IxBitSet>(self.package_ixs(package_ids)?),
@@ -66,7 +66,7 @@ impl PackageGraph {
     /// Creates a new `PackageSet` consisting of all packages in this workspace.
     ///
     /// This does not include transitive dependencies. To do so, use `query_workspace`.
-    pub fn resolve_workspace(&self) -> PackageSet {
+    pub fn resolve_workspace(&self) -> PackageSet<'_> {
         let included: IxBitSet = self
             .workspace()
             .iter_by_path()
@@ -82,11 +82,11 @@ impl PackageGraph {
     ///
     /// This does not include transitive dependencies. To do so, use `query_workspace_paths`.
     ///
-    /// Returns an error if any workspace paths are unknown.
+    /// Returns an error if any workspace paths were unknown.
     pub fn resolve_workspace_paths(
         &self,
         paths: impl IntoIterator<Item = impl AsRef<Utf8Path>>,
-    ) -> Result<PackageSet, Error> {
+    ) -> Result<PackageSet<'_>, Error> {
         let workspace = self.workspace();
         let included: IxBitSet = paths
             .into_iter()
@@ -106,11 +106,11 @@ impl PackageGraph {
     ///
     /// This does not include transitive dependencies. To do so, use `query_workspace_names`.
     ///
-    /// Returns an error if any workspace names are unknown.
+    /// Returns an error if any package names were unknown.
     pub fn resolve_workspace_names(
         &self,
         names: impl IntoIterator<Item = impl AsRef<str>>,
-    ) -> Result<PackageSet, Error> {
+    ) -> Result<PackageSet<'_>, Error> {
         let workspace = self.workspace();
         let included: IxBitSet = names
             .into_iter()
@@ -129,7 +129,7 @@ impl PackageGraph {
     /// Creates a new `PackageSet` consisting of packages with the given name.
     ///
     /// The result is empty if there are no packages with the given name.
-    pub fn resolve_package_name(&self, name: impl AsRef<str>) -> PackageSet {
+    pub fn resolve_package_name(&self, name: impl AsRef<str>) -> PackageSet<'_> {
         // Turns out that for reasonably-sized graphs, a linear search across package names is
         // extremely fast: much faster than trying to do something fancy like use an FST or trie.
         //

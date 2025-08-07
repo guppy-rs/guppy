@@ -7,6 +7,7 @@
 macro_rules! assert_covariant {
     ($i:ident) => {
         const _: () = {
+            #[allow(dead_code)]
             fn assert_covariant<'a, 'b: 'a>(x: $i<'b>) -> $i<'a> {
                 x
             }

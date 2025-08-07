@@ -4,6 +4,7 @@ version = "0.1.0"
 authors = ["Rain <rain1@fb.com>", "Brandon Williams <bmwill@fb.com>"]
 license = "MIT OR Apache-2.0"
 edition = "2024"
+rust-version.workspace = true
 
 [dependencies]
 ahash.workspace = true

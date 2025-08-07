@@ -120,7 +120,7 @@ impl<Ix: IndexType> Sccs<Ix> {
     }
 
     /// Iterate over all nodes in the direction specified.
-    pub fn node_iter(&self, direction: Direction) -> NodeIter<Ix> {
+    pub fn node_iter(&self, direction: Direction) -> NodeIter<'_, Ix> {
         NodeIter {
             node_ixs: self.sccs.data().iter(),
             direction,

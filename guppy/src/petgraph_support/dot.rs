@@ -27,6 +27,7 @@ pub trait DotVisitor<NR, ER> {
 ///
 /// This visitor will escape backslashes.
 #[derive(Copy, Clone, Debug)]
+#[allow(dead_code)]
 pub struct DisplayVisitor;
 
 impl<NR, ER> DotVisitor<NR, ER> for DisplayVisitor
