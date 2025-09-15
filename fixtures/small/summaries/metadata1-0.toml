@@ -10,7 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'arm64e-apple-tvos'
+triple = 'arm64ec-pc-windows-msvc'
 target-features = 'unknown'
 flags = ['test-flag']
 
@@ -140,6 +140,20 @@ features = []
 name = 'walkdir'
 version = '2.2.9'
 source = 'git+https://github.com/BurntSushi/walkdir?tag=2.2.9#7c7013259eb9db400b3e5c7bc60330ca08068826'
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'winapi'
+version = '0.3.8'
+crates-io = true
+status = 'transitive'
+features = ['basetsd', 'consoleapi', 'errhandlingapi', 'fileapi', 'memoryapi', 'minwindef', 'processenv', 'std', 'sysinfoapi', 'winbase', 'wincon', 'winerror', 'winnt']
+
+[[target-package]]
+name = 'winapi-util'
+version = '0.1.2'
+crates-io = true
 status = 'transitive'
 features = []
 

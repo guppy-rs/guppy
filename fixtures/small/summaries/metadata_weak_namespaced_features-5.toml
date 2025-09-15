@@ -10,7 +10,7 @@ initials-platform = 'host'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'armv6-unknown-freebsd'
+triple = 'armv6-unknown-netbsd-eabihf'
 target-features = 'unknown'
 flags = ['flag-test', 'test-flag']
 [[metadata.omitted-packages.ids]]

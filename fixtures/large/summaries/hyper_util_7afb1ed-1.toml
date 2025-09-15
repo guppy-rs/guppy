@@ -10,7 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'riscv32i-unknown-none-elf'
+triple = 'riscv32gc-unknown-linux-musl'
 target-features = 'all'
 flags = ['test-flag']
 [[metadata.omitted-packages.ids]]
@@ -74,6 +74,13 @@ version = '0.2.14'
 crates-io = true
 status = 'direct'
 features = []
+
+[[target-package]]
+name = 'pnet_datalink'
+version = '0.35.0'
+crates-io = true
+status = 'direct'
+features = ['default', 'std']
 
 [[target-package]]
 name = 'pretty_env_logger'
@@ -212,6 +219,14 @@ status = 'transitive'
 features = ['default', 'std']
 
 [[target-package]]
+name = 'ipnetwork'
+version = '0.20.0'
+crates-io = true
+status = 'transitive'
+features = ['default', 'serde']
+optional-deps = ['serde']
+
+[[target-package]]
 name = 'is-terminal'
 version = '0.4.12'
 crates-io = true
@@ -224,6 +239,13 @@ version = '1.0.11'
 crates-io = true
 status = 'transitive'
 features = []
+
+[[target-package]]
+name = 'libc'
+version = '0.2.155'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
 
 [[target-package]]
 name = 'log'
@@ -247,6 +269,13 @@ status = 'transitive'
 features = ['net', 'os-ext', 'os-poll']
 
 [[target-package]]
+name = 'no-std-net'
+version = '0.6.0'
+crates-io = true
+status = 'transitive'
+features = ['std']
+
+[[target-package]]
 name = 'once_cell'
 version = '1.19.0'
 crates-io = true
@@ -256,6 +285,20 @@ features = ['alloc', 'default', 'race', 'std']
 [[target-package]]
 name = 'pin-utils'
 version = '0.1.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'pnet_base'
+version = '0.35.0'
+crates-io = true
+status = 'transitive'
+features = ['std']
+
+[[target-package]]
+name = 'pnet_sys'
+version = '0.35.0'
 crates-io = true
 status = 'transitive'
 features = []
@@ -282,6 +325,13 @@ version = '0.8.4'
 crates-io = true
 status = 'transitive'
 features = ['std']
+
+[[target-package]]
+name = 'signal-hook-registry'
+version = '1.4.2'
+crates-io = true
+status = 'transitive'
+features = []
 
 [[target-package]]
 name = 'slab'

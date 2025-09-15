@@ -12,7 +12,7 @@ target-features = ['aes', 'avx']
 flags = ['bar', 'cargo_web']
 
 [metadata.target-platform]
-triple = 'i686-unknown-linux-musl'
+triple = 'i686-unknown-netbsd'
 target-features = ['sha', 'sse2']
 [[metadata.omitted-packages.ids]]
 name = 'winapi-i686-pc-windows-gnu'

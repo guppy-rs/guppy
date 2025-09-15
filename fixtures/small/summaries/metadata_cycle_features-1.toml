@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'mips64el-unknown-linux-gnuabi64'
+triple = 'mips64-unknown-linux-muslabi64'
 target-features = 'unknown'
 [[metadata.omitted-packages.ids]]
 name = 'testcycles-base'

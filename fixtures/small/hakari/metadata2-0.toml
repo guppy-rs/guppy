@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '2'
 # workspace-hack-line-style = 'full'
-# platforms = ['wasm32v1-none', 'mipsisa32r6el-unknown-linux-gnu', 'aarch64-unknown-nuttx']
+# platforms = ['wasm32v1-none', 'mipsisa32r6-unknown-linux-gnu', 'aarch64-unknown-nuttx']
 # [[traversal-excludes.ids]]
 # name = 'ctor'
 # version = '0.1.10'

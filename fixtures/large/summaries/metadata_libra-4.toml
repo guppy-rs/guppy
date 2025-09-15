@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'armv7-wrs-vxworks-eabihf'
+triple = 'armv7a-kmc-solid_asp3-eabi'
 target-features = 'unknown'
 
 [metadata.target-platform]

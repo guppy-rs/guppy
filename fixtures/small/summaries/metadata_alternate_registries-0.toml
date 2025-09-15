@@ -12,7 +12,7 @@ target-features = 'unknown'
 flags = ['abc']
 
 [metadata.target-platform]
-triple = 'arm-unknown-linux-gnueabihf'
+triple = 'arm-unknown-linux-musleabi'
 target-features = 'unknown'
 [[metadata.omitted-packages.ids]]
 name = 'serde'

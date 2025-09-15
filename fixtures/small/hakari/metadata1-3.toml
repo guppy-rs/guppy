@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '3'
 # workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['powerpc64le-unknown-freebsd']
+# platforms = ['powerpc64-wrs-vxworks']
 # [[traversal-excludes.ids]]
 # name = 'same-file'
 # version = '1.0.5'

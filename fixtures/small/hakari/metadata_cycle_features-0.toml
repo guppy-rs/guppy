@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '1'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['loongarch64-unknown-linux-gnu', 'riscv32im-unknown-none-elf', 'aarch64-unknown-openbsd']
+# platforms = ['loongarch32-unknown-none', 'riscv32im-risc0-zkvm-elf', 'aarch64-unknown-openbsd']
 # [[traversal-excludes.ids]]
 # name = 'testcycles-base'
 # version = '0.1.0'

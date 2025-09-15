@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '3'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['armv7a-none-eabihf', 'powerpc64-ibm-aix']
+# platforms = ['armv7a-nuttx-eabi', 'powerpc64-ibm-aix']
 # [[traversal-excludes.ids]]
 # name = 'build-user'
 # version = '0.1.0'

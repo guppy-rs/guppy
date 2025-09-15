@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'thumbv6m-nuttx-eabi'
+triple = 'thumbv6m-none-eabi'
 target-features = 'all'
 flags = ['test-flag']
 
@@ -1128,7 +1128,7 @@ version = '0.7.3'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'getrandom', 'getrandom_package', 'libc', 'std']
-optional-deps = ['getrandom_package', 'libc']
+optional-deps = ['getrandom_package']
 
 [[host-package]]
 name = 'rand_chacha'

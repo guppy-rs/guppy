@@ -12,7 +12,7 @@ target-features = 'all'
 flags = ['abc']
 
 [metadata.target-platform]
-triple = 'thumbv8m.base-nuttx-eabi'
+triple = 'thumbv8m.base-none-eabi'
 target-features = 'all'
 flags = ['cargo_web']
 [[metadata.omitted-packages.ids]]

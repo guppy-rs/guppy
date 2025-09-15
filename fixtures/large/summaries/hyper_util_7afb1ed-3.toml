@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'bpfel-unknown-none'
+triple = 'csky-unknown-linux-gnuabiv2'
 target-features = ['avx', 'avx2', 'bmi1', 'bmi2']
 flags = ['cargo_web']
 

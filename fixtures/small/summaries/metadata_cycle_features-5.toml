@@ -7,11 +7,11 @@ include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'bpfel-unknown-none'
+triple = 'csky-unknown-linux-gnuabiv2'
 target-features = ['xsave', 'xsaveopt']
 
 [metadata.target-platform]
-triple = 'riscv32imc-unknown-none-elf'
+triple = 'riscv32imc-esp-espidf'
 target-features = 'all'
 flags = ['bar']
 [[metadata.omitted-packages.ids]]

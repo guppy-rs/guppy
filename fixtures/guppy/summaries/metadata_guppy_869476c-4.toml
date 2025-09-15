@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'thumbv4t-none-eabi'
+triple = 'sparcv9-sun-solaris'
 target-features = ['aes', 'bmi1', 'sse4.2', 'xsavec']
 flags = ['foo']
 [[metadata.omitted-packages.ids]]
@@ -402,7 +402,7 @@ version = '0.7.3'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'getrandom', 'getrandom_package', 'libc', 'std']
-optional-deps = ['getrandom_package']
+optional-deps = ['getrandom_package', 'libc']
 
 [[target-package]]
 name = 'rand_chacha'
@@ -493,6 +493,13 @@ features = []
 [[target-package]]
 name = 'terminal_size'
 version = '0.1.13'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'termios'
+version = '0.3.2'
 crates-io = true
 status = 'transitive'
 features = []
