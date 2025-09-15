@@ -46,7 +46,7 @@ petgraph = { version = "0.8.2", default-features = false }
 proptest = { version = "1.7.0", optional = true }
 proptest-derive = { version = "0.5.1", optional = true }
 rayon = { version = "1.10.0", optional = true }
-semver = "1.0.26"
+semver = "1.0.27"
 serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.140"
 smallvec = "1.15.1"
