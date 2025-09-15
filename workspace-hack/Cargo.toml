@@ -23,7 +23,6 @@ bit-vec = { version = "0.8.0" }
 camino = { version = "1.2.0", default-features = false, features = ["serde1"] }
 clap = { version = "4.5.30", features = ["derive"] }
 clap_builder = { version = "4.5.30", default-features = false, features = ["color", "help", "std", "suggestions", "usage"] }
-foldhash = { version = "0.1.5" }
 getrandom = { version = "0.3.3", default-features = false, features = ["std"] }
 include_dir = { version = "0.7.4", features = ["glob"] }
 indexmap = { version = "1.9.3", default-features = false, features = ["std"] }

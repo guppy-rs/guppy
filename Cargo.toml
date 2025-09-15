@@ -25,7 +25,7 @@ cargo-util-schemas = "0.9.0"
 cfg-expr = "0.20.2"
 datatest-stable = { version = "0.3.2", features = ["include-dir"] }
 guppy-workspace-hack = "0.1.0"
-iddqd = "0.3.8"
+iddqd = "0.3.13"
 include_dir = "0.7.4"
 miette = "7.6.0"
 snapbox = { version = "0.6.21", features = ["term-svg"] }
