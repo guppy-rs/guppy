@@ -18,7 +18,7 @@ categories = ["development-tools::cargo-plugins"]
 rust-version.workspace = true
 
 [dependencies]
-camino = "1.1.10"
+camino = "1.2.0"
 cfg-if = "1.0.1"
 clap = { version = "4.5.30", features = ["derive"] }
 # disable tracing integration since we don't use it
