@@ -27,7 +27,7 @@ all-features = true
 [dependencies]
 ahash = "0.8.12"
 camino = { version = "1.2.0", features = ["serde1"] }
-cfg-if = "1.0.1"
+cfg-if = "1.0.3"
 diffus = "0.10.0"
 toml = { version = "0.5.11", features = ["preserve_order"] }
 semver = { version = "1.0.26", features = ["serde"] }
