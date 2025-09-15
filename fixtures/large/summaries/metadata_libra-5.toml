@@ -7,12 +7,12 @@ include-dev = false
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'aarch64-unknown-nto-qnx800'
+triple = 'aarch64-unknown-nuttx'
 target-features = ['avx2', 'sse4.1', 'ssse3', 'xsaves']
 flags = ['abc']
 
 [metadata.target-platform]
-triple = 'sparc64-unknown-linux-gnu'
+triple = 'sparc-unknown-none-elf'
 target-features = ['sha', 'sse4.1', 'ssse3']
 flags = ['abc']
 [[metadata.omitted-packages.ids]]

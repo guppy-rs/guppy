@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '3'
 # workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['bpfeb-unknown-none']
+# platforms = ['bpfel-unknown-none']
 # [[traversal-excludes.ids]]
 # name = 'autocfg'
 # version = '1.0.1'

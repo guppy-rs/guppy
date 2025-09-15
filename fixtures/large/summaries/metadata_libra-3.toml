@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'powerpc-unknown-freebsd'
+triple = 'nvptx64-nvidia-cuda'
 target-features = ['bmi2', 'fma', 'sse2', 'sse4.2', 'xsaves']
 flags = ['cargo_web', 'flag-test']
 

@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'riscv32imac-esp-espidf'
+triple = 'riscv32ima-unknown-none-elf'
 target-features = 'all'
 
 [[metadata.features-only]]
@@ -596,13 +596,6 @@ features = []
 [[target-package]]
 name = 'openssl'
 version = '0.10.30'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'openssl-probe'
-version = '0.1.2'
 crates-io = true
 status = 'transitive'
 features = []

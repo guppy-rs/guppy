@@ -7,12 +7,12 @@ include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'armv7a-kmc-solid_asp3-eabi'
+triple = 'armv7a-kmc-solid_asp3-eabihf'
 target-features = ['aes', 'rdrand']
 flags = ['cargo_web']
 
 [metadata.target-platform]
-triple = 'powerpc64le-unknown-freebsd'
+triple = 'powerpc64-wrs-vxworks'
 target-features = 'all'
 flags = ['cargo_web']
 

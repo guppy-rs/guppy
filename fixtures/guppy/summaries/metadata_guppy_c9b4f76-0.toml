@@ -10,7 +10,7 @@ initials-platform = 'host'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'x86_64-unknown-netbsd'
+triple = 'x86_64-unknown-linux-ohos'
 target-features = 'unknown'
 [[metadata.omitted-packages.ids]]
 name = 'assert_matches'

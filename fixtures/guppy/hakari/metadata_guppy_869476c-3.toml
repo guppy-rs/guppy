@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '1'
 # workspace-hack-line-style = 'full'
-# platforms = ['mips-unknown-linux-gnu', 'i686-unknown-uefi']
+# platforms = ['mips-mti-none-elf', 'i686-uwp-windows-gnu']
 # [[traversal-excludes.ids]]
 # name = 'cc'
 # version = '1.0.61'
@@ -53,8 +53,8 @@ proc-macro2 = { version = "1", features = ["proc-macro"] }
 quote = { version = "1", features = ["proc-macro"] }
 syn = { version = "1", features = ["clone-impls", "derive", "full", "parsing", "printing", "proc-macro", "quote", "visit"] }
 
-[target.mips-unknown-linux-gnu.dependencies]
-libc = { version = "0.2", features = ["std"] }
+[target.i686-uwp-windows-gnu.dependencies]
+winapi = { version = "0.3", default-features = false, features = ["basetsd", "consoleapi", "errhandlingapi", "fileapi", "handleapi", "ioapiset", "jobapi", "jobapi2", "libloaderapi", "lmcons", "memoryapi", "minschannel", "minwinbase", "minwindef", "namedpipeapi", "ntdef", "ntstatus", "processenv", "processthreadsapi", "profileapi", "psapi", "schannel", "securitybaseapi", "shellapi", "shlobj", "sspi", "std", "synchapi", "sysinfoapi", "timezoneapi", "winbase", "wincon", "wincrypt", "winerror", "winnt", "winsock2", "winuser", "ws2def", "ws2ipdef", "ws2tcpip"] }
 
 ### END HAKARI SECTION
 

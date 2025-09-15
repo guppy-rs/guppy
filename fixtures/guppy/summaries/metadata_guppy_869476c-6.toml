@@ -10,7 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'mips-mti-none-elf'
+triple = 'm68k-unknown-none-elf'
 target-features = 'unknown'
 flags = ['flag-test']
 

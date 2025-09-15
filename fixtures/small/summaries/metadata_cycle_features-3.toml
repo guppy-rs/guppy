@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'thumbv8m.main-none-eabihf'
+triple = 'thumbv8m.main-none-eabi'
 target-features = 'all'
 flags = ['bar', 'test-flag']
 

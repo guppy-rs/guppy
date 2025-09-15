@@ -10,7 +10,7 @@ initials-platform = 'host'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'i586-unknown-redox'
+triple = 'i686-apple-darwin'
 target-features = 'unknown'
 flags = ['foo']
 [[metadata.omitted-packages.ids]]

@@ -11,7 +11,7 @@ triple = 'thumbv7em-nuttx-eabihf'
 target-features = 'all'
 
 [metadata.target-platform]
-triple = 'riscv32imc-esp-espidf'
+triple = 'riscv32imafc-unknown-nuttx-elf'
 target-features = 'all'
 flags = ['abc']
 [[metadata.omitted-packages.ids]]

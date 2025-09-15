@@ -7,12 +7,12 @@ include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'arm-unknown-linux-gnueabi'
+triple = 'arm-unknown-linux-gnueabihf'
 target-features = 'unknown'
 flags = ['bar', 'test-flag']
 
 [metadata.target-platform]
-triple = 'thumbv8m.main-nuttx-eabi'
+triple = 'thumbv8m.main-none-eabihf'
 target-features = 'unknown'
 [[metadata.omitted-packages.ids]]
 name = 'lower-a'

@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '2'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['thumbv7neon-linux-androideabi', 'i686-wrs-vxworks', 'i686-unknown-openbsd']
+# platforms = ['thumbv7neon-linux-androideabi', 'loongarch32-unknown-none', 'i686-unknown-openbsd']
 # [[traversal-excludes.ids]]
 # name = 'regex'
 # version = '1.3.1'

@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'armv7-rtems-eabihf'
+triple = 'armv7-sony-vita-newlibeabihf'
 target-features = 'unknown'
 flags = ['foo']
 

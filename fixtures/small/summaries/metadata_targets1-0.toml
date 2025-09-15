@@ -12,7 +12,7 @@ target-features = ['bmi1']
 flags = ['flag-test', 'test-flag']
 
 [metadata.target-platform]
-triple = 'armv7-unknown-trusty'
+triple = 'armv7-wrs-vxworks-eabihf'
 target-features = 'all'
 [[metadata.omitted-packages.ids]]
 name = 'bytes'

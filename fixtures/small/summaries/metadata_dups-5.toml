@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'powerpc64-unknown-freebsd'
+triple = 'powerpc64-ibm-aix'
 target-features = 'all'
 flags = ['foo']
 

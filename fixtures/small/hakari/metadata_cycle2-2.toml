@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '4'
 # workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['aarch64-unknown-nuttx', 'i686-unknown-linux-musl', 'thumbv7m-none-eabi']
+# platforms = ['aarch64-unknown-nuttx', 'i686-unknown-netbsd', 'thumbv7m-none-eabi']
 # [[traversal-excludes.ids]]
 # name = 'lower-a'
 # version = '0.1.0'
