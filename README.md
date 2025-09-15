@@ -51,36 +51,12 @@ Still to come:
 
 The core `guppy` code in this repository is considered **mostly complete** and the API is mostly stable.
 
-We're building a number of tools on top of guppy, and those are still are under **active development**. Tool requirements may cause further changes in the API, but the goal will be to avoid extensive overhauls.
-
 `guppy`'s simulation of Cargo builds is [extensively tested](https://github.com/guppy-rs/guppy/blob/main/internal-tools/cargo-compare/src/lib.rs) against upstream Cargo, and there are no known differences.
 Comparison testing has found a number of bugs in upstream Cargo, for example:
 
 - [v2 resolver: different handling for inactive, optional dependencies based on how they're specified](https://github.com/rust-lang/cargo/issues/8316)
 - [v2 resolver: a proc macro being specified with the key "proc_macro" vs "proc-macro" causes different results](https://github.com/rust-lang/cargo/issues/8315)
 - [specifying different versions in unconditional and target-specific dependency sections causes "multiple rmeta candidates" error](https://github.com/rust-lang/cargo/issues/8032)
-
-## Production users
-
-`cargo-guppy` is extensively used by the [Diem Core](https://github.com/diem/diem) project.
-
-`guppy` is used for [several lint checks](https://github.com/diem/diem/blob/main/devtools/x/src/lint/guppy.rs). This includes basic rules that look at every workspace package separately:
-
-- every package has fields like `author` and `license` specified
-- crate names and paths should use `-` instead of `_`
-
-to more complex rules about the overall dependency graph, such as:
-
-- some third-party dependencies are banned from the workspace entirely, or only from default builds
-- every workspace package depends on a `workspace-hack` crate (similar to [rustc-workspace-hack](https://github.com/rust-lang/rust/tree/master/src/tools/rustc-workspace-hack))
-- for any given third-party dependency, the workspace only depends on one version of it directly (transitive dependencies to other versions are still allowed)
-- every workspace package is categorized as either _production_ or _test-only_, and the linter checks that test-only crates are not included in production builds
-- support for _overlay features_, which allow test-only code to be:
-  - included in crates (similar to [the `#[cfg(test)]` annotation](https://doc.rust-lang.org/book/ch11-03-test-organization.html#the-tests-module-and-cfgtest))
-  - depended on by test-only code in other crates (`#[cfg(test)]` does not allow this)
-  - but guaranteed to be excluded from production builds
-
-In addition, `guppy-summaries` is used to generate build summaries of packages and features (particularly for [high-security subsets](https://en.wikipedia.org/wiki/Trusted_computing_base) of the codebase), and changes to these sets are flagged by Diem's CI ([example](https://github.com/diem/diem/pull/5799#issuecomment-682221102)).
 
 ## Design
 

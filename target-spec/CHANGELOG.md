@@ -1,5 +1,11 @@
 # Changelog
 
+## [3.5.1] - 2025-09-14
+
+### Changed
+
+- Updated `cfg-expr` to version 0.22.0, updating builtin targets to Rust 1.89.
+
 ## [3.5.0] - 2025-07-11
 
 ### Changed
@@ -366,6 +372,7 @@ This was mistakenly published and was yanked.
 
 - Initial release.
 
+[3.5.1]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.5.1
 [3.5.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.5.0
 [3.4.2]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.4.2
 [3.4.1]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.4.1

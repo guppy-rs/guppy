@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.17.21] - 2025-09-14
+
+### Changed
+
+- Internal dependency update: `cargo_metadata` updated to 0.22.0.
+
 ## [0.17.20] - 2025-07-11
 
 ### Changed
@@ -786,6 +792,7 @@ lazy_static = "0.2"
 
 - Initial release.
 
+[0.17.21]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.21
 [0.17.20]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.20
 [0.17.19]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.19
 [0.17.18]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.18
