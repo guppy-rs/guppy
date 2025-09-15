@@ -37,7 +37,7 @@ petgraph = { version = "0.8.2", default-features = false, features = [
     "graphmap", "std",
 ] }
 rayon = "1.10.0"
-serde = { version = "1.0.219", features = ["derive"] }
+serde = { version = "1.0.223", features = ["derive"] }
 toml = "0.5.11"
 guppy-workspace-hack.workspace = true
 
