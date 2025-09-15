@@ -44,7 +44,7 @@ once_cell = "1.21.3"
 pathdiff = { version = "0.2.3", features = ["camino"] }
 petgraph = { version = "0.8.2", default-features = false }
 proptest = { version = "1.7.0", optional = true }
-proptest-derive = { version = "0.5.1", optional = true }
+proptest-derive = { version = "0.6.0", optional = true }
 rayon = { version = "1.10.0", optional = true }
 semver = "1.0.27"
 serde = { version = "1.0.223", features = ["derive"] }
