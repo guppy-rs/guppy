@@ -300,23 +300,23 @@ impl<'g> Borrow<dyn BuildTargetKey + 'g> for OwnedBuildTargetId {
     }
 }
 
-impl PartialEq for (dyn BuildTargetKey + '_) {
+impl PartialEq for dyn BuildTargetKey + '_ {
     fn eq(&self, other: &Self) -> bool {
         self.key() == other.key()
     }
 }
 
-impl Eq for (dyn BuildTargetKey + '_) {}
+impl Eq for dyn BuildTargetKey + '_ {}
 
 // For Borrow to be upheld, PartialOrd and Ord should be consistent. This is checked by the proptest
 // below.
-impl PartialOrd for (dyn BuildTargetKey + '_) {
+impl PartialOrd for dyn BuildTargetKey + '_ {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
     }
 }
 
-impl Ord for (dyn BuildTargetKey + '_) {
+impl Ord for dyn BuildTargetKey + '_ {
     fn cmp(&self, other: &Self) -> Ordering {
         self.key().cmp(&other.key())
     }
