@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.4.5] - 2025-09-29
+
+### Fixed
+
+Replaced obsolete `doc_auto_cfg` with `doc_cfg`, to fix Rust nightly builds with the `doc_cfg` flag enabled.
+
+### Changed
+
+- MSRV updated to Rust 1.86.
+
 ## [0.4.4] - 2024-12-25
 
 Fixed path to fixtures.
@@ -56,6 +66,7 @@ want to check in `Cargo.lock`.)
 
 Initial release with support for miette 5.
 
+[0.4.5]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-miette-0.4.5
 [0.4.4]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-miette-0.4.4
 [0.4.3]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-miette-0.4.3
 [0.4.2]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-miette-0.4.2

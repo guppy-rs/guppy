@@ -1,16 +1,22 @@
 # Changelog
 
+## [3.5.2] - 2025-09-29
+
+### Fixed
+
+Replaced obsolete `doc_auto_cfg` with `doc_cfg`, to fix Rust nightly builds with the `doc_cfg` flag enabled.
+
 ## [3.5.1] - 2025-09-14
 
 ### Changed
 
-- Updated `cfg-expr` to version 0.22.0, updating builtin targets to Rust 1.89.
+- Updated `cfg-expr` to version 0.20.2, updating builtin targets to Rust 1.89.
 
 ## [3.5.0] - 2025-07-11
 
 ### Changed
 
-- Internal dependency `cfg-expr` updated to 0.21.0, updating builtin targets to Rust 1.88.
+- Internal dependency `cfg-expr` updated to 0.20.2, updating builtin targets to Rust 1.88.
 - MSRV updated to Rust 1.86, as required by dependencies. (Apologies for not fulfilling the 6 month support promise for this version series.)
 
 ## [3.4.2] - 2025-02-20
@@ -372,6 +378,7 @@ This was mistakenly published and was yanked.
 
 - Initial release.
 
+[3.5.2]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.5.2
 [3.5.1]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.5.1
 [3.5.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.5.0
 [3.4.2]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.4.2

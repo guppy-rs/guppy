@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.17.22] - 2025-09-29
+
+### Fixed
+
+Replaced obsolete `doc_auto_cfg` with `doc_cfg`, to fix Rust nightly builds with the `doc_cfg` flag enabled.
+
 ## [0.17.21] - 2025-09-14
 
 ### Changed
@@ -792,6 +798,7 @@ lazy_static = "0.2"
 
 - Initial release.
 
+[0.17.22]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.22
 [0.17.21]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.21
 [0.17.20]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.20
 [0.17.19]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.19
