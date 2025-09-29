@@ -31,7 +31,7 @@ maintenance = { status = "actively-developed" }
 [dependencies]
 ahash.workspace = true
 guppy-workspace-hack.workspace = true
-camino = "1.2.0"
+camino = "1.2.1"
 cargo_metadata.workspace = true
 cfg-if = "1.0.3"
 debug-ignore = "1.0.5"

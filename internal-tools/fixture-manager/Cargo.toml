@@ -9,7 +9,7 @@ publish = false
 
 [dependencies]
 anyhow = "1.0.99"
-camino = "1.2.0"
+camino = "1.2.1"
 clap = "2.34.0"
 guppy = { path = "../../guppy", features = ["proptest1", "summaries"] }
 guppy-cmdlib = { path = "../../guppy-cmdlib", features = ["proptest1"] }
