@@ -20,7 +20,7 @@
 
 #![warn(missing_docs)]
 #![forbid(unsafe_code)]
-#![cfg_attr(doc_cfg, feature(doc_cfg, doc_auto_cfg))]
+#![cfg_attr(doc_cfg, feature(doc_cfg))]
 
 #[cfg(feature = "fixtures")]
 pub mod fixtures;
