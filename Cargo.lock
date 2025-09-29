@@ -2348,7 +2348,7 @@ dependencies = [
 
 [[package]]
 name = "guppy"
-version = "0.17.21"
+version = "0.17.22"
 dependencies = [
  "ahash",
  "camino",
