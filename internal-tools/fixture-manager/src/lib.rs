@@ -1,9 +1,6 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-// This is fired by the arg_enum macro. We really need to upgrade to clap v4 at some point.
-#![allow(clippy::useless_vec)]
-
 pub mod context;
 pub mod hakari_toml;
 pub mod summaries;
@@ -14,14 +11,13 @@ use crate::{
     summaries::*,
 };
 use anyhow::{Result, anyhow, bail};
-use clap::arg_enum;
+use clap::{Parser, ValueEnum};
 use fixtures::json::JsonFixture;
-use structopt::StructOpt;
 
-#[derive(Debug, StructOpt)]
+#[derive(Debug, Parser)]
 pub struct FixtureManager {
     // TODO: add global options
-    #[structopt(subcommand)]
+    #[clap(subcommand)]
     cmd: Command,
 }
 
@@ -35,9 +31,9 @@ impl FixtureManager {
     }
 }
 
-#[derive(Debug, StructOpt)]
+#[derive(Debug, Parser)]
 enum Command {
-    #[structopt(name = "list")]
+    #[clap(name = "list")]
     /// List fixtures
     List,
     /// Generate summaries
@@ -54,13 +50,13 @@ pub fn list() -> Result<()> {
     Ok(())
 }
 
-#[derive(Debug, StructOpt)]
+#[derive(Debug, Parser)]
 pub struct GenerateSummariesOpts {
     /// Number of summaries to generate
-    #[structopt(long, default_value = Self::DEFAULT_COUNT_STR)]
+    #[clap(long, default_value = Self::DEFAULT_COUNT_STR)]
     pub count: usize,
 
-    #[structopt(flatten)]
+    #[clap(flatten)]
     pub generate_opts: GenerateOpts,
 }
 
@@ -76,13 +72,13 @@ impl GenerateSummariesOpts {
     }
 }
 
-#[derive(Debug, StructOpt)]
+#[derive(Debug, Parser)]
 pub struct GenerateHakariOpts {
     /// Number of options to generate
-    #[structopt(long, default_value = Self::DEFAULT_COUNT_STR)]
+    #[clap(long, default_value = Self::DEFAULT_COUNT_STR)]
     pub count: usize,
 
-    #[structopt(flatten)]
+    #[clap(flatten)]
     pub generate_opts: GenerateOpts,
 }
 
@@ -98,24 +94,28 @@ impl GenerateHakariOpts {
     }
 }
 
-#[derive(Debug, StructOpt)]
+#[derive(Debug, Parser)]
 pub struct GenerateOpts {
     /// Execution mode (check, force or generate)
-    #[structopt(long, short, possible_values = &GenerateMode::variants(), case_insensitive = true, default_value = "generate")]
+    #[clap(
+        long,
+        short,
+        value_enum,
+        ignore_case = true,
+        default_value = "generate"
+    )]
     pub mode: GenerateMode,
 
     /// Only generate outputs for these fixtures
-    #[structopt(long)]
+    #[clap(long)]
     pub fixtures: Vec<String>,
 }
 
-arg_enum! {
-    #[derive(Copy, Clone, Debug, Eq, Hash, PartialEq)]
-    pub enum GenerateMode {
-        Generate,
-        Check,
-        Force,
-    }
+#[derive(Copy, Clone, Debug, Eq, Hash, PartialEq, ValueEnum)]
+pub enum GenerateMode {
+    Generate,
+    Check,
+    Force,
 }
 
 impl GenerateSummariesOpts {

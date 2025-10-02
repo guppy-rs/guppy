@@ -3,7 +3,7 @@
 
 //! Implementations for options shared by commands.
 
-use clap::{ArgEnum, Parser};
+use clap::{Parser, ValueEnum};
 use color_eyre::eyre::{Result, WrapErr, ensure, eyre};
 use guppy::{
     PackageId,
@@ -13,7 +13,7 @@ use guppy::{
 use guppy_cmdlib::string_to_platform_spec;
 use std::collections::HashSet;
 
-#[derive(ArgEnum, Copy, Clone, Debug)]
+#[derive(ValueEnum, Copy, Clone, Debug)]
 pub enum Kind {
     All,
     Workspace,
@@ -37,8 +37,8 @@ impl Kind {
 #[derive(Debug, Parser)]
 pub struct QueryOptions {
     /// Query reverse transitive dependencies (default: forward)
-    #[clap(long = "query-reverse", parse(from_flag = parse_direction))]
-    direction: DependencyDirection,
+    #[clap(long = "query-reverse", action = clap::ArgAction::SetTrue)]
+    reverse: bool,
 
     #[clap(rename_all = "screaming_snake_case")]
     /// The root packages to start the query from
@@ -46,6 +46,14 @@ pub struct QueryOptions {
 }
 
 impl QueryOptions {
+    fn direction(&self) -> DependencyDirection {
+        if self.reverse {
+            DependencyDirection::Reverse
+        } else {
+            DependencyDirection::Forward
+        }
+    }
+
     /// Constructs a `PackageQuery` based on these options.
     pub fn apply<'g>(&self, pkg_graph: &'g PackageGraph) -> Result<PackageQuery<'g>> {
         if !self.roots.is_empty() {
@@ -54,10 +62,10 @@ impl QueryOptions {
             // cases are passing workspace members as the root set, which won't be
             // duplicated.
             let root_set = self.roots.iter().map(|s| s.as_str()).collect();
-            Ok(pkg_graph.query_directed(names_to_ids(pkg_graph, root_set), self.direction)?)
+            Ok(pkg_graph.query_directed(names_to_ids(pkg_graph, root_set), self.direction())?)
         } else {
             ensure!(
-                self.direction == DependencyDirection::Forward,
+                self.direction() == DependencyDirection::Forward,
                 eyre!("--query-reverse requires roots to be specified")
             );
             Ok(pkg_graph.query_workspace())
@@ -72,7 +80,7 @@ pub struct BaseFilterOptions {
     /// removing a dependency affects the graph
     pub omit_edges_into: Vec<String>,
 
-    #[clap(long, short, arg_enum, default_value = "all")]
+    #[clap(long, short, value_enum, default_value = "all")]
     /// Kind of crates to select
     pub kind: Kind,
 }
@@ -144,14 +152,6 @@ impl FilterOptions {
         pred_fn(link.normal())
             || self.include_dev && pred_fn(link.dev())
             || self.include_build && pred_fn(link.build())
-    }
-}
-
-pub(crate) fn parse_direction(reverse: bool) -> DependencyDirection {
-    if reverse {
-        DependencyDirection::Reverse
-    } else {
-        DependencyDirection::Forward
     }
 }
 

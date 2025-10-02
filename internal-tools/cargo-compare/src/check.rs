@@ -28,11 +28,11 @@ pub struct CheckOpts {
     #[clap(flatten)]
     pub metadata: CargoMetadataOptions,
     /// Print out unchanged packages and features as well
-    #[structopt(long)]
+    #[clap(long)]
     pub verbose: bool,
     // TODO: add resolver to cargo metadata
     /// Use v2 resolver (must match resolver in workspace Cargo.toml)
-    #[structopt(long)]
+    #[clap(long)]
     pub v2_resolver: bool,
 }
 

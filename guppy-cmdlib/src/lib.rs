@@ -8,7 +8,7 @@
 #[cfg(feature = "proptest1")]
 pub mod proptest;
 
-use clap::{ArgEnum, Parser};
+use clap::{Parser, ValueEnum};
 use color_eyre::eyre::Result;
 use guppy::{
     MetadataCommand,
@@ -85,7 +85,7 @@ impl PackagesAndFeatures {
 
 // Identical to guppy's CargoResolverVersion, except with additional string metadata generated
 // for matching.
-#[derive(ArgEnum, Clone, Copy, Debug)]
+#[derive(ValueEnum, Clone, Copy, Debug)]
 pub enum CargoResolverVersionCmd {
     V1,
     V1Install,
@@ -93,7 +93,7 @@ pub enum CargoResolverVersionCmd {
     V3,
 }
 
-#[derive(ArgEnum, Clone, Copy, Debug)]
+#[derive(ValueEnum, Clone, Copy, Debug)]
 pub enum InitialsPlatformCmd {
     Host,
     Standard,
@@ -108,12 +108,12 @@ pub struct CargoResolverOpts {
     pub include_dev: bool,
 
     #[clap(long = "initials-platform")]
-    #[clap(arg_enum, default_value_t = InitialsPlatformCmd::Standard)]
+    #[clap(value_enum, default_value_t = InitialsPlatformCmd::Standard)]
     /// Include initial proc-macros on target platform (default: false)
     pub initials_platform: InitialsPlatformCmd,
 
     #[clap(long = "resolver-version")]
-    #[clap(arg_enum, default_value_t = CargoResolverVersionCmd::V1)]
+    #[clap(value_enum, default_value_t = CargoResolverVersionCmd::V1)]
     /// Cargo resolver version to use
     pub resolver_version: CargoResolverVersionCmd,
 }

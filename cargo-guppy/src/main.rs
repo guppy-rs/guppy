@@ -10,7 +10,7 @@ use color_eyre::Result;
 use guppy_cmdlib::CargoMetadataOptions;
 
 #[derive(Debug, Parser)]
-#[structopt(about = "Cargo.lock file analysis")]
+#[clap(about = "Cargo.lock file analysis")]
 struct Args {
     #[clap(subcommand)]
     cmd: Command,
@@ -19,40 +19,40 @@ struct Args {
 // Ensure this list is kept up to date with the doc comment in lib.rs.
 #[derive(Debug, Parser)]
 enum Command {
-    #[structopt(name = "cycles")]
+    #[clap(name = "cycles")]
     /// Print cycles in the dependency graph
     Cycles {
-        #[structopt(flatten)]
+        #[clap(flatten)]
         metadata_opts: CargoMetadataOptions,
 
-        #[structopt(long)]
+        #[clap(long)]
         /// Print cycles in the feature graph
         features: bool,
     },
-    #[structopt(name = "diff")]
+    #[clap(name = "diff")]
     /// Perform a diff of two cargo metadata JSON files
     Diff {
-        #[structopt(long)]
+        #[clap(long)]
         json: bool,
         old: String,
         new: String,
     },
-    #[structopt(name = "diff-summaries")]
+    #[clap(name = "diff-summaries")]
     /// Diff two guppy summaries
     DiffSummaries(DiffSummariesOptions),
-    #[structopt(name = "dups")]
+    #[clap(name = "dups")]
     /// Print the number of duplicate packages
     Duplicates(DupsOptions),
-    #[structopt(name = "resolve-cargo")]
+    #[clap(name = "resolve-cargo")]
     /// Return packages and features that would be built by Cargo
     ResolveCargo(ResolveCargoOptions),
-    #[structopt(name = "select")]
+    #[clap(name = "select")]
     /// Select packages and their transitive dependencies
     Select(CmdSelectOptions),
-    #[structopt(name = "subtree-size")]
+    #[clap(name = "subtree-size")]
     /// Print a list of dependencies along with their unique subtree size
     SubtreeSize(SubtreeSizeOptions),
-    #[structopt(name = "mv")]
+    #[clap(name = "mv")]
     /// Move packages to another location, fixing up workspace paths
     ///
     /// The source directories must be crates, and the destination must be within the same
