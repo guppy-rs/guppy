@@ -25,7 +25,6 @@ clap = { version = "4.5.30", features = ["derive"] }
 clap_builder = { version = "4.5.30", default-features = false, features = ["color", "help", "std", "suggestions", "usage"] }
 getrandom = { version = "0.3.3", default-features = false, features = ["std"] }
 include_dir = { version = "0.7.4", features = ["glob"] }
-indexmap = { version = "1.9.3", default-features = false, features = ["std"] }
 log = { version = "0.4.28", default-features = false, features = ["std"] }
 miette = { version = "7.6.0", features = ["fancy"] }
 num-traits = { version = "0.2.19" }
@@ -39,7 +38,6 @@ serde = { version = "1.0.223", features = ["alloc", "derive"] }
 serde_core = { version = "1.0.223", features = ["alloc"] }
 serde_json = { version = "1.0.145", features = ["unbounded_depth"] }
 smallvec = { version = "1.15.1", default-features = false, features = ["const_generics"] }
-textwrap = { version = "0.16.1", default-features = false, features = ["unicode-linebreak", "unicode-width"] }
 toml = { version = "0.5.11", features = ["preserve_order"] }
 toml_edit = { version = "0.22.26", features = ["serde"] }
 

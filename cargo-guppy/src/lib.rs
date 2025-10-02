@@ -44,7 +44,7 @@ pub use crate::{core::*, mv::*};
 
 use ahash::AHashMap;
 use camino::Utf8PathBuf;
-use clap::{ArgEnum, Parser};
+use clap::{Parser, ValueEnum};
 use color_eyre::eyre::{Result, WrapErr, bail};
 use guppy::{
     PackageId,
@@ -201,7 +201,7 @@ pub fn cmd_dups(opts: &DupsOptions) -> Result<()> {
     Ok(())
 }
 
-#[derive(ArgEnum, Copy, Clone, Debug)]
+#[derive(ValueEnum, Copy, Clone, Debug)]
 pub enum BuildKind {
     All,
     Target,
@@ -229,11 +229,11 @@ pub struct ResolveCargoOptions {
     /// Evaluate against host platform, "current" or "any" (default: any)
     host_platform: Option<String>,
 
-    #[clap(long, arg_enum, default_value = "all")]
+    #[clap(long, value_enum, default_value = "all")]
     /// Print packages built on target, host or both
     build_kind: BuildKind,
 
-    #[clap(long, parse(from_os_str))]
+    #[clap(long, value_parser)]
     /// Write summary file
     summary: Option<PathBuf>,
 
@@ -341,9 +341,9 @@ pub struct CmdSelectOptions {
     #[clap(flatten)]
     filter_opts: FilterOptions,
 
-    #[clap(long = "output-reverse", parse(from_flag = parse_direction))]
+    #[clap(long = "output-reverse", action = clap::ArgAction::SetTrue)]
     /// Output results in reverse topological order (default: forward)
-    output_direction: DependencyDirection,
+    output_reverse: bool,
 
     #[clap(long, rename_all = "kebab-case")]
     /// Save selection graph in .dot format
@@ -356,6 +356,16 @@ pub struct CmdSelectOptions {
     metadata_opts: CargoMetadataOptions,
 }
 
+impl CmdSelectOptions {
+    fn output_direction(&self) -> DependencyDirection {
+        if self.output_reverse {
+            DependencyDirection::Reverse
+        } else {
+            DependencyDirection::Forward
+        }
+    }
+}
+
 pub fn cmd_select(options: &CmdSelectOptions) -> Result<()> {
     let command = options.metadata_opts.make_command();
     let pkg_graph = command.build_graph()?;
@@ -364,7 +374,7 @@ pub fn cmd_select(options: &CmdSelectOptions) -> Result<()> {
     let resolver = options.filter_opts.make_resolver(&pkg_graph)?;
     let package_set = query.resolve_with_fn(resolver);
 
-    for package_id in package_set.package_ids(options.output_direction) {
+    for package_id in package_set.package_ids(options.output_direction()) {
         let package = pkg_graph.metadata(package_id).unwrap();
         let in_workspace = package.in_workspace();
         let direct_dep = package

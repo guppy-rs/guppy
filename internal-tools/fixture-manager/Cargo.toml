@@ -10,7 +10,7 @@ publish = false
 [dependencies]
 anyhow = "1.0.99"
 camino = "1.2.1"
-clap = "2.34.0"
+clap = { version = "4.5.30", features = ["derive"] }
 guppy = { path = "../../guppy", features = ["proptest1", "summaries"] }
 guppy-cmdlib = { path = "../../guppy-cmdlib", features = ["proptest1"] }
 fixtures = { path = "../../fixtures" }
@@ -18,5 +18,4 @@ hakari = { path = "../../tools/hakari", features = ["cli-support", "proptest1"] 
 once_cell = "1.21.3"
 proptest = "1.7.0"
 proptest-ext = { path = "../proptest-ext" }
-structopt = "0.3.26"
 guppy-workspace-hack.workspace = true

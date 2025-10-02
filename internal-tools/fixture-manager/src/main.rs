@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use anyhow::Result;
+use clap::Parser;
 use fixture_manager::FixtureManager;
-use structopt::StructOpt;
 
 fn main() -> Result<()> {
-    let args = FixtureManager::from_args();
+    let args = FixtureManager::parse();
     args.exec()
 }
