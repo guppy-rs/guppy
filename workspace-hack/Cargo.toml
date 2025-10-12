@@ -25,6 +25,7 @@ clap = { version = "4.5.30", features = ["derive"] }
 clap_builder = { version = "4.5.30", default-features = false, features = ["color", "help", "std", "suggestions", "usage"] }
 getrandom = { version = "0.3.3", default-features = false, features = ["std"] }
 include_dir = { version = "0.7.4", features = ["glob"] }
+indexmap = { version = "2.11.1" }
 log = { version = "0.4.28", default-features = false, features = ["std"] }
 miette = { version = "7.6.0", features = ["fancy"] }
 num-traits = { version = "0.2.19" }
@@ -34,17 +35,15 @@ petgraph = { version = "0.8.2", default-features = false, features = ["graphmap"
 regex = { version = "1.11.1", default-features = false, features = ["perf", "std"] }
 regex-automata = { version = "0.4.9", default-features = false, features = ["dfa", "hybrid", "meta", "nfa", "perf", "unicode"] }
 regex-syntax = { version = "0.8.5" }
-serde = { version = "1.0.223", features = ["alloc", "derive"] }
-serde_core = { version = "1.0.223", features = ["alloc"] }
+serde = { version = "1.0.228", features = ["alloc", "derive"] }
+serde_core = { version = "1.0.228", features = ["alloc"] }
 serde_json = { version = "1.0.145", features = ["unbounded_depth"] }
-smallvec = { version = "1.15.1", default-features = false, features = ["const_generics"] }
 toml = { version = "0.5.11", features = ["preserve_order"] }
-toml_edit = { version = "0.22.26", features = ["serde"] }
 
 [build-dependencies]
 proc-macro2 = { version = "1.0.101" }
-quote = { version = "1.0.40" }
-syn = { version = "2.0.106", features = ["extra-traits", "fold", "full", "visit"] }
+quote = { version = "1.0.41" }
+syn = { version = "2.0.106", features = ["extra-traits", "full", "visit"] }
 
 [target.x86_64-unknown-linux-gnu.dependencies]
 libc = { version = "0.2.174" }
