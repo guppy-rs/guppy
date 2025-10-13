@@ -16,7 +16,8 @@ pub(crate) struct TargetDefinition {
     // TODO: it would be nice to use target-spec-json for this, but that has a
     // few limitations as of v0.1:
     //
-    // * target-pointer-width is a string, not an integer.
+    // * target-pointer-width is a string before roughly nightly-2025-10-12 (it
+    //   was changed to an integer after that).
     // * Os and Env deserialized to enums, but we would really like them to be strings.
     //
     // ---
@@ -93,23 +94,50 @@ impl TargetDefinition {
 }
 
 mod target_pointer_width {
-    use serde::{Deserialize, Deserializer, Serializer, de::Error};
+    use serde::{Deserializer, Serializer};
 
     pub(super) fn deserialize<'de, D>(deserializer: D) -> Result<u8, D::Error>
     where
         D: Deserializer<'de>,
     {
-        // Pointer width is specified as a string.
-        let string = String::deserialize(deserializer)?;
-        string
-            .parse::<u8>()
-            .map_err(|error| D::Error::custom(format!("error parsing as integer: {error}")))
+        use std::fmt;
+
+        struct PointerWidthVisitor;
+
+        impl<'de> serde::de::Visitor<'de> for PointerWidthVisitor {
+            type Value = u8;
+
+            fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+                formatter.write_str("a string or integer representing pointer width")
+            }
+
+            fn visit_u64<E>(self, value: u64) -> Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                value
+                    .try_into()
+                    .map_err(|_| E::custom(format!("pointer width {value} out of range for u8")))
+            }
+
+            fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                value
+                    .parse::<u8>()
+                    .map_err(|error| E::custom(format!("error parsing as integer: {error}")))
+            }
+        }
+
+        deserializer.deserialize_any(PointerWidthVisitor)
     }
 
     pub(super) fn serialize<S>(value: &u8, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
     {
+        // Should change this in the future to serialize as an integer?
         serializer.serialize_str(&value.to_string())
     }
 }
