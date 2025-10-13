@@ -22,7 +22,7 @@ members = [
 ahash = "0.8.12"
 cargo_metadata = "0.23.0"
 cfg-expr = "0.20.3"
-datatest-stable = { version = "0.3.2", features = ["include-dir"] }
+datatest-stable = { version = "0.3.3", features = ["include-dir"] }
 guppy-workspace-hack = "0.1.0"
 iddqd = "0.3.13"
 include_dir = "0.7.4"
