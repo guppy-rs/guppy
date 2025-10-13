@@ -1,5 +1,11 @@
 # Changelog
 
+## [3.5.4] - 2025-10-13
+
+### Fixed
+
+- For custom targets, updated the deserializer to handle [`target-pointer-width` becoming an integer](https://github.com/rust-lang/rust/pull/144443) in the newest Rust nightlies.
+
 ## [3.5.3] - 2025-10-12
 
 ### Changed
@@ -384,6 +390,7 @@ This was mistakenly published and was yanked.
 
 - Initial release.
 
+[3.5.4]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.5.4
 [3.5.3]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.5.3
 [3.5.2]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.5.2
 [3.5.1]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.5.1
