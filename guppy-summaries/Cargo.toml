@@ -31,7 +31,7 @@ cfg-if = "1.0.3"
 diffus = "0.10.0"
 toml = { version = "0.5.11", features = ["preserve_order"] }
 semver = { version = "1.0.27", features = ["serde"] }
-serde = { version = "1.0.223", features = ["derive"] }
+serde = { version = "1.0.228", features = ["derive"] }
 guppy-workspace-hack.workspace = true
 
 [dev-dependencies]
