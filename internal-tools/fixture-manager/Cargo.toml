@@ -10,7 +10,7 @@ publish = false
 [dependencies]
 anyhow = "1.0.100"
 camino = "1.2.1"
-clap = { version = "4.5.48", features = ["derive"] }
+clap = { version = "4.5.49", features = ["derive"] }
 guppy = { path = "../../guppy", features = ["proptest1", "summaries"] }
 guppy-cmdlib = { path = "../../guppy-cmdlib", features = ["proptest1"] }
 fixtures = { path = "../../fixtures" }
