@@ -24,8 +24,9 @@ camino = { version = "1.2.1", default-features = false, features = ["serde1"] }
 clap = { version = "4.5.49", features = ["derive"] }
 clap_builder = { version = "4.5.49", default-features = false, features = ["color", "help", "std", "suggestions", "usage"] }
 getrandom = { version = "0.3.3", default-features = false, features = ["std"] }
+hashbrown = { version = "0.16.0", default-features = false, features = ["allocator-api2", "inline-more"] }
 include_dir = { version = "0.7.4", features = ["glob"] }
-indexmap = { version = "2.11.1" }
+indexmap = { version = "2.11.4" }
 log = { version = "0.4.28", default-features = false, features = ["std"] }
 miette = { version = "7.6.0", features = ["fancy"] }
 num-traits = { version = "0.2.19" }
