@@ -20,7 +20,7 @@ rust-version.workspace = true
 [dependencies]
 camino = "1.2.1"
 cfg-if = "1.0.3"
-clap = { version = "4.5.48", features = ["derive"] }
+clap = { version = "4.5.49", features = ["derive"] }
 # disable tracing integration since we don't use it
 color-eyre = { version = "0.6.5", default-features = false }
 dialoguer = "0.11.0"
