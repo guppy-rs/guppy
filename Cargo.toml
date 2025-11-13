@@ -20,7 +20,7 @@ members = [
 
 [workspace.dependencies]
 ahash = "0.8.12"
-cargo_metadata = "0.23.0"
+cargo_metadata = "0.23.1"
 cfg-expr = "0.20.3"
 datatest-stable = { version = "0.3.3", features = ["include-dir"] }
 guppy-workspace-hack = "0.1.0"
