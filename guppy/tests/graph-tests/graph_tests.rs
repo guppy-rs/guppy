@@ -16,7 +16,35 @@ mod small {
     use super::*;
     use crate::feature_helpers::assert_features_for_package;
     use fixtures::json::METADATA_CYCLE_FEATURES_BASE;
+    use guppy::graph::PackageGraph;
     use pretty_assertions::assert_eq;
+
+    // Test workspace_default_members field.
+    #[test]
+    fn metadata_default_members() {
+        let graph = PackageGraph::from_json(include_str!(
+            "../../../fixtures/small/metadata_default_members.json"
+        ))
+        .expect("valid metadata");
+
+        let workspace = graph.workspace();
+        let default_members: Vec<_> = workspace.default_members().collect();
+
+        assert_eq!(default_members.len(), 1, "workspace has one default member");
+        assert_eq!(
+            default_members[0].name(),
+            "testcrate",
+            "default member is testcrate"
+        );
+
+        // Test that default_member_ids also works.
+        let default_member_ids: Vec<_> = workspace.default_member_ids().collect();
+        assert_eq!(
+            default_member_ids.len(),
+            1,
+            "workspace has one default member ID"
+        );
+    }
 
     // Test specific details extracted from metadata1.json.
     #[test]

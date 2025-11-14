@@ -43,6 +43,16 @@ impl PackageGraph {
             .collect();
 
         let workspace_root = metadata.workspace_root;
+        let workspace_default_members: Vec<_> = if metadata.workspace_default_members.is_available()
+        {
+            metadata
+                .workspace_default_members
+                .iter()
+                .map(|id| PackageId::from_metadata(id.clone()))
+                .collect()
+        } else {
+            Vec::new()
+        };
 
         let mut build_state = GraphBuildState::new(
             &mut metadata.packages,
@@ -62,9 +72,11 @@ impl PackageGraph {
         let workspace = WorkspaceImpl::new(
             workspace_root,
             metadata.target_directory,
+            metadata.build_directory,
             metadata.workspace_metadata,
             &packages,
             workspace_members,
+            workspace_default_members,
         )?;
 
         Ok(Self {
@@ -84,9 +96,11 @@ impl WorkspaceImpl {
     fn new(
         workspace_root: impl Into<Utf8PathBuf>,
         target_directory: impl Into<Utf8PathBuf>,
+        build_directory: Option<Utf8PathBuf>,
         metadata_table: serde_json::Value,
         packages: &AHashMap<PackageId, PackageMetadataImpl>,
         members: impl IntoIterator<Item = PackageId>,
+        default_members: Vec<PackageId>,
     ) -> Result<Self, Box<Error>> {
         use std::collections::btree_map::Entry;
 
@@ -129,12 +143,24 @@ impl WorkspaceImpl {
             }
         }
 
+        // Validate that all default members are valid workspace members.
+        for id in &default_members {
+            if !members_by_path.values().any(|member_id| member_id == id) {
+                return Err(Error::PackageGraphConstructError(format!(
+                    "workspace default member '{id}' not found in workspace members"
+                ))
+                .into());
+            }
+        }
+
         Ok(Self {
             root: workspace_root,
             target_directory: target_directory.into(),
+            build_directory,
             metadata_table,
             members_by_path,
             members_by_name,
+            default_members,
             #[cfg(feature = "proptest1")]
             name_list: OnceCell::new(),
         })
@@ -837,6 +863,8 @@ impl PackageLinkImpl {
         deps: impl IntoIterator<Item = &'a Dependency>,
     ) -> Result<Self, Box<Error>> {
         let mut version_req = None;
+        let mut registry = None;
+        let mut path = None;
         let mut normal = DependencyReqImpl::default();
         let mut build = DependencyReqImpl::default();
         let mut dev = DependencyReqImpl::default();
@@ -866,9 +894,16 @@ impl PackageLinkImpl {
                 .into());
             }
 
-            // Pick the first version req that this come across.
+            // Pick the first version req, registry, and path that we come
+            // across.
             if version_req.is_none() {
                 version_req = Some(dep.req.clone());
+            }
+            if registry.is_none() {
+                registry = dep.registry.clone();
+            }
+            if path.is_none() {
+                path = dep.path.clone();
             }
 
             match dep.kind {
@@ -898,6 +933,8 @@ impl PackageLinkImpl {
             dep_name,
             resolved_name: resolved_name.into(),
             version_req,
+            registry,
+            path,
             normal,
             build,
             dev,
