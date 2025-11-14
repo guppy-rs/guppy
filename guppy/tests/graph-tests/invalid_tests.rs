@@ -19,6 +19,14 @@ fn duplicate_workspace_names() {
 }
 
 #[test]
+fn invalid_default_member() {
+    assert_invalid(
+        include_str!("../../../fixtures/invalid/invalid_default_member.json"),
+        "workspace default member 'fake-package 1.0.0 (path+file:///fakepath/fake-package)' not found in workspace members",
+    );
+}
+
+#[test]
 fn build_targets_empty_kinds() {
     assert_invalid(
         include_str!("../../../fixtures/invalid/build_targets_empty_kinds.json"),
