@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.17.24] - 2025-12-26
+
+### Added
+
+ - `Workspace::build_directory()` returns the build directory for intermediate build artifacts (requires Cargo 1.91+).
+ - `Workspace::default_members()` and `Workspace::default_member_ids()` iterate over workspace default members (requires Cargo 1.71+; returns empty iterator for older Cargo versions).
+ - `PackageLink::registry()` returns the registry URL for a dependency, if it uses a non-default registry.
+ - `PackageLink::path()` returns the file system path for path dependencies.
+ 
 ## [0.17.23] - 2025-10-12
 
 ### Changed
@@ -804,6 +813,7 @@ lazy_static = "0.2"
 
 - Initial release.
 
+[0.17.24]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.24
 [0.17.23]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.23
 [0.17.22]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.22
 [0.17.21]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.21
