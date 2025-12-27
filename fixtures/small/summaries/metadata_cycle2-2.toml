@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'riscv64gc-unknown-freebsd'
+triple = 'riscv64gc-unknown-fuchsia'
 target-features = 'unknown'
 flags = ['bar', 'foo']
 

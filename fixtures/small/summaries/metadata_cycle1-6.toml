@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'thumbv5te-none-eabi'
+triple = 'thumbv6m-none-eabi'
 target-features = 'unknown'
 [[metadata.omitted-packages.ids]]
 name = 'testcycles-base'

@@ -11,7 +11,7 @@ triple = 'thumbv7em-nuttx-eabihf'
 target-features = 'all'
 
 [metadata.target-platform]
-triple = 'riscv32imafc-unknown-nuttx-elf'
+triple = 'riscv32imc-unknown-none-elf'
 target-features = 'all'
 flags = ['abc']
 [[metadata.omitted-packages.ids]]
@@ -478,7 +478,6 @@ version = '0.4.33'
 crates-io = true
 status = 'transitive'
 features = ['default', 'http2', 'openssl-probe', 'openssl-sys', 'ssl']
-optional-deps = ['openssl-probe', 'openssl-sys']
 
 [[target-package]]
 name = 'curl-sys'
@@ -486,7 +485,7 @@ version = '0.4.36+curl-7.71.1'
 crates-io = true
 status = 'transitive'
 features = ['default', 'http2', 'libnghttp2-sys', 'openssl-sys', 'ssl']
-optional-deps = ['libnghttp2-sys', 'openssl-sys']
+optional-deps = ['libnghttp2-sys']
 
 [[target-package]]
 name = 'difference'
@@ -552,7 +551,6 @@ version = '0.13.11'
 crates-io = true
 status = 'transitive'
 features = ['default', 'https', 'openssl-probe', 'openssl-sys', 'ssh', 'ssh_key_from_memory']
-optional-deps = ['openssl-probe', 'openssl-sys']
 
 [[target-package]]
 name = 'git2-curl'
@@ -693,7 +691,7 @@ version = '0.12.13+1.0.1'
 crates-io = true
 status = 'transitive'
 features = ['https', 'libssh2-sys', 'openssl-sys', 'ssh', 'ssh_key_from_memory']
-optional-deps = ['libssh2-sys', 'openssl-sys']
+optional-deps = ['libssh2-sys']
 
 [[target-package]]
 name = 'libnghttp2-sys'
@@ -802,13 +800,6 @@ status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'openssl-probe'
-version = '0.1.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
 name = 'openssl-sys'
 version = '0.9.58'
 crates-io = true
@@ -849,7 +840,7 @@ version = '0.7.3'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'getrandom', 'getrandom_package', 'libc', 'std']
-optional-deps = ['getrandom_package', 'libc']
+optional-deps = ['getrandom_package']
 
 [[target-package]]
 name = 'rand_chacha'
@@ -1046,13 +1037,6 @@ features = []
 [[target-package]]
 name = 'terminal_size'
 version = '0.1.13'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'termios'
-version = '0.3.2'
 crates-io = true
 status = 'transitive'
 features = []

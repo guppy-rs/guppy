@@ -12,7 +12,7 @@ target-features = 'unknown'
 flags = ['bar', 'foo']
 
 [metadata.target-platform]
-triple = 'riscv64-linux-android'
+triple = 'riscv64-wrs-vxworks'
 target-features = 'unknown'
 flags = ['abc', 'test-flag']
 

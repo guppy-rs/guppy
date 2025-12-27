@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'i586-unknown-redox'
+triple = 'i586-unknown-netbsd'
 target-features = 'all'
 flags = ['bar', 'test-flag']
 

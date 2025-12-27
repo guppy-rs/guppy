@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '1'
 # workspace-hack-line-style = 'full'
-# platforms = ['mips-mti-none-elf', 'i686-uwp-windows-gnu']
+# platforms = ['m68k-unknown-none-elf', 'i686-unknown-uefi']
 # [[traversal-excludes.ids]]
 # name = 'cc'
 # version = '1.0.61'
@@ -52,9 +52,6 @@ serde_json = { version = "1", features = ["raw_value", "std"] }
 proc-macro2 = { version = "1", features = ["proc-macro"] }
 quote = { version = "1", features = ["proc-macro"] }
 syn = { version = "1", features = ["clone-impls", "derive", "full", "parsing", "printing", "proc-macro", "quote", "visit"] }
-
-[target.i686-uwp-windows-gnu.dependencies]
-winapi = { version = "0.3", default-features = false, features = ["basetsd", "consoleapi", "errhandlingapi", "fileapi", "handleapi", "ioapiset", "jobapi", "jobapi2", "libloaderapi", "lmcons", "memoryapi", "minschannel", "minwinbase", "minwindef", "namedpipeapi", "ntdef", "ntstatus", "processenv", "processthreadsapi", "profileapi", "psapi", "schannel", "securitybaseapi", "shellapi", "shlobj", "sspi", "std", "synchapi", "sysinfoapi", "timezoneapi", "winbase", "wincon", "wincrypt", "winerror", "winnt", "winsock2", "winuser", "ws2def", "ws2ipdef", "ws2tcpip"] }
 
 ### END HAKARI SECTION
 

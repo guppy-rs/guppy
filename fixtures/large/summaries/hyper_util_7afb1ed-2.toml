@@ -7,12 +7,12 @@ include-dev = true
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'armv7-linux-androideabi'
+triple = 'armv6-unknown-netbsd-eabihf'
 target-features = 'unknown'
 flags = ['bar', 'foo']
 
 [metadata.target-platform]
-triple = 'armv7-unknown-linux-musleabi'
+triple = 'armv7-unknown-linux-gnueabihf'
 target-features = 'unknown'
 
 [[metadata.features-only]]

@@ -10,7 +10,7 @@ initials-platform = 'host'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'riscv32gc-unknown-linux-gnu'
+triple = 'riscv32i-unknown-none-elf'
 target-features = 'all'
 flags = ['cargo_web', 'foo']
 [[metadata.omitted-packages.ids]]

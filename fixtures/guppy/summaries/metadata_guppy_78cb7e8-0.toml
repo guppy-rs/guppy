@@ -10,7 +10,7 @@ initials-platform = 'host'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'hexagon-unknown-linux-musl'
+triple = 'csky-unknown-linux-gnuabiv2hf'
 target-features = ['bmi1', 'fma', 'rdrand', 'sse3', 'sse4.1', 'xsaveopt']
 flags = ['bar', 'test-flag']
 [[metadata.omitted-packages.ids]]

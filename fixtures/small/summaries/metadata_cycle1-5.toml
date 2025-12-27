@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'i686-unknown-netbsd'
+triple = 'i686-unknown-linux-musl'
 target-features = 'all'
 flags = ['foo']
 

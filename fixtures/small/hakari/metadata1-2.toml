@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '3'
 # workspace-hack-line-style = 'full'
-# platforms = ['armv7a-kmc-solid_asp3-eabi', 'aarch64-unknown-nuttx', 'loongarch64-unknown-none']
+# platforms = ['armv7-wrs-vxworks-eabihf', 'aarch64-unknown-nuttx', 'loongarch64-unknown-linux-ohos']
 # [[traversal-excludes.ids]]
 # name = 'mach'
 # version = '0.2.3'

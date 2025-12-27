@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'x86_64-unknown-linux-ohos'
+triple = 'x86_64-unknown-managarm-mlibc'
 target-features = ['sha', 'sse2', 'sse4.2', 'ssse3', 'xsave', 'xsaves']
 flags = ['flag-test']
 

@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '4'
 # workspace-hack-line-style = 'full'
-# platforms = ['x86_64-unknown-trusty', 'x86_64-uwp-windows-msvc', 'riscv32i-unknown-none-elf']
+# platforms = ['x86_64-unknown-redox', 'x86_64-uwp-windows-gnu', 'riscv32im-risc0-zkvm-elf']
 # [[traversal-excludes.ids]]
 # name = 'arrayvec'
 # version = '0.7.2'

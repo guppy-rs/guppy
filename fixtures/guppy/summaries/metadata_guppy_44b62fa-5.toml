@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'x86_64-lynx-lynxos178'
+triple = 'x86_64-pc-cygwin'
 target-features = 'all'
 
 [[metadata.features-only]]

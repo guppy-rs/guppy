@@ -12,7 +12,7 @@ target-features = 'all'
 flags = ['abc']
 
 [metadata.target-platform]
-triple = 'powerpc64le-unknown-linux-musl'
+triple = 'riscv32-wrs-vxworks'
 target-features = 'unknown'
 [[metadata.omitted-packages.ids]]
 name = 'no-std-net'

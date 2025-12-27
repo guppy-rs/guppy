@@ -12,7 +12,7 @@ target-features = 'unknown'
 flags = ['flag-test']
 
 [metadata.target-platform]
-triple = 'loongarch64-unknown-linux-musl'
+triple = 'loongarch64-unknown-linux-gnu'
 target-features = 'all'
 flags = ['abc', 'flag-test']
 [[metadata.omitted-packages.ids]]

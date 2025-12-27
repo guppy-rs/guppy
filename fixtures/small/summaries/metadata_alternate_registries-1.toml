@@ -12,7 +12,7 @@ target-features = []
 flags = ['bar']
 
 [metadata.target-platform]
-triple = 'armv7a-none-eabihf'
+triple = 'armv7a-none-eabi'
 target-features = ['rdrand', 'sse4.1', 'xsavec', 'xsaves']
 [[metadata.omitted-packages.ids]]
 name = 'unicode-xid'

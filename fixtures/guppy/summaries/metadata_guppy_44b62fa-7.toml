@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'riscv32-wrs-vxworks'
+triple = 'riscv32e-unknown-none-elf'
 target-features = 'unknown'
 flags = ['foo']
 

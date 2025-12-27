@@ -7,12 +7,12 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'x86_64-unknown-none'
+triple = 'x86_64-unknown-netbsd'
 target-features = 'all'
 flags = ['cargo_web', 'flag-test']
 
 [metadata.target-platform]
-triple = 'mips-unknown-linux-gnu'
+triple = 'mips-mti-none-elf'
 target-features = 'unknown'
 flags = ['cargo_web', 'test-flag']
 [[metadata.omitted-packages.ids]]

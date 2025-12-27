@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '4'
 # workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['loongarch64-unknown-linux-ohos']
+# platforms = ['loongarch64-unknown-linux-musl']
 # [[traversal-excludes.ids]]
 # name = 'rand_hc'
 # version = '0.1.0'
@@ -127,13 +127,13 @@ ureq = { version = "0.11", features = ["json"] }
 x25519-dalek = { git = "https://github.com/calibra/x25519-dalek.git", branch = "fiat", default-features = false, features = ["fiat_u64_backend", "std", "u64_backend"] }
 zeroize = { version = "1", default-features = false, features = ["alloc", "zeroize_derive"] }
 
-[target.loongarch64-unknown-linux-ohos.dependencies]
+[target.loongarch64-unknown-linux-musl.dependencies]
 futures-util = { version = "0.3" }
 hyper = { version = "0.13" }
 libc = { version = "0.2", default-features = false, features = ["extra_traits"] }
 rustls = { version = "0.16", features = ["dangerous_configuration"] }
 
-[target.loongarch64-unknown-linux-ohos.build-dependencies]
+[target.loongarch64-unknown-linux-musl.build-dependencies]
 futures-util = { version = "0.3" }
 hyper = { version = "0.13" }
 libc = { version = "0.2", default-features = false, features = ["extra_traits"] }
