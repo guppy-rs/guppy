@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '4'
 # workspace-hack-line-style = 'full'
-# platforms = ['armv6-unknown-freebsd']
+# platforms = ['armv5te-unknown-linux-musleabi']
 # [[traversal-excludes.ids]]
 # name = 'arc-swap'
 # version = '0.4.4'
@@ -774,7 +774,7 @@ zeroize = { version = "1", default-features = false, features = ["alloc", "zeroi
 zeroize_derive = { version = "1", default-features = false }
 zstd-sys = { git = "https://github.com/gyscos/zstd-rs.git" }
 
-[target.armv6-unknown-freebsd.dependencies]
+[target.armv5te-unknown-linux-musleabi.dependencies]
 ansi_term-a6292c17cd707f01 = { package = "ansi_term", version = "0.11", default-features = false }
 c2-chacha = { version = "0.2", default-features = false, features = ["simd", "std"] }
 crossbeam-queue-c65f7effa3be6d31 = { package = "crossbeam-queue", version = "0.1", default-features = false }
@@ -787,6 +787,7 @@ mime_guess = { version = "2" }
 mio-uds = { version = "0.6", default-features = false }
 nix-582f2526e08bb6a0 = { package = "nix", version = "0.14", default-features = false }
 nix-9067fe90e8c1f593 = { package = "nix", version = "0.17", default-features = false }
+openssl-probe = { version = "0.1", default-features = false }
 ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }
 rand_chacha-6f8ce4dd05d13bba = { package = "rand_chacha", version = "0.2", default-features = false, features = ["std"] }
 rustls = { version = "0.16", default-features = false, features = ["dangerous_configuration"] }
@@ -799,7 +800,7 @@ unicase = { version = "2", default-features = false }
 utf8parse = { version = "0.1", default-features = false }
 void = { version = "1" }
 
-[target.armv6-unknown-freebsd.build-dependencies]
+[target.armv5te-unknown-linux-musleabi.build-dependencies]
 ansi_term-a6292c17cd707f01 = { package = "ansi_term", version = "0.11", default-features = false }
 c2-chacha = { version = "0.2", default-features = false, features = ["simd", "std"] }
 crossbeam-queue-c65f7effa3be6d31 = { package = "crossbeam-queue", version = "0.1", default-features = false }
@@ -812,6 +813,7 @@ mime_guess = { version = "2" }
 mio-uds = { version = "0.6", default-features = false }
 nix-582f2526e08bb6a0 = { package = "nix", version = "0.14", default-features = false }
 nix-9067fe90e8c1f593 = { package = "nix", version = "0.17", default-features = false }
+openssl-probe = { version = "0.1", default-features = false }
 ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }
 rand_chacha-6f8ce4dd05d13bba = { package = "rand_chacha", version = "0.2", default-features = false, features = ["std"] }
 rustls = { version = "0.16", default-features = false, features = ["dangerous_configuration"] }

@@ -599,9 +599,9 @@ dependencies = [
 
 [[package]]
 name = "cfg-expr"
-version = "0.20.3"
+version = "0.20.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1a2c5f3bf25ec225351aa1c8e230d04d880d3bd89dea133537dafad4ae291e5c"
+checksum = "21be0e1ce6cdb2ee7fff840f922fb04ead349e5cfb1e750b769132d44ce04720"
 dependencies = [
  "smallvec",
  "target-lexicon",
@@ -4247,9 +4247,9 @@ dependencies = [
 
 [[package]]
 name = "target-lexicon"
-version = "0.13.2"
+version = "0.13.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e502f78cdbb8ba4718f566c418c52bc729126ffd16baee5baa718cf25dd5a69a"
+checksum = "df7f62577c25e07834649fc3b39fafdc597c0a3527dc1c60129201ccfcbaa50c"
 
 [[package]]
 name = "target-spec"

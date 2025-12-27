@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'armebv7r-none-eabi'
+triple = 'arm64ec-pc-windows-msvc'
 target-features = 'unknown'
 
 [metadata.target-platform]
@@ -1135,6 +1135,13 @@ version = '0.2.1'
 crates-io = true
 status = 'transitive'
 features = ['default']
+
+[[host-package]]
+name = 'vcpkg'
+version = '0.2.10'
+crates-io = true
+status = 'transitive'
+features = []
 
 [[host-package]]
 name = 'version_check'

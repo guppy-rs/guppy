@@ -11,7 +11,7 @@ triple = 'xtensa-esp32s2-none-elf'
 target-features = 'all'
 
 [metadata.target-platform]
-triple = 'hexagon-unknown-none-elf'
+triple = 'hexagon-unknown-linux-musl'
 target-features = ['avx2', 'sha', 'sse4.1', 'xsaves']
 flags = ['abc']
 [[metadata.omitted-packages.ids]]

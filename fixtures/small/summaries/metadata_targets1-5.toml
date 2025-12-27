@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'avr-none'
+triple = 'armv8r-none-eabihf'
 target-features = ['avx2', 'sse3', 'xsavec', 'xsaveopt']
 flags = ['foo']
 

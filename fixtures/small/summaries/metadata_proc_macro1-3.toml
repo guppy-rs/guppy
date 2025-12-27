@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'x86_64-pc-solaris'
+triple = 'x86_64-pc-windows-gnu'
 target-features = ['aes', 'bmi2', 'sha']
 
 [metadata.target-platform]

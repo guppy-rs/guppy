@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'x86_64-pc-windows-gnullvm'
+triple = 'x86_64-pc-windows-msvc'
 target-features = 'all'
 [[metadata.omitted-packages.ids]]
 name = 'builddep'

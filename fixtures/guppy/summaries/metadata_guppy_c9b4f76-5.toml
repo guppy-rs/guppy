@@ -7,11 +7,11 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'x86_64-unknown-illumos'
+triple = 'x86_64-unknown-l4re-uclibc'
 target-features = ['sse4.1', 'sse4.2', 'xsavec']
 
 [metadata.target-platform]
-triple = 'csky-unknown-linux-gnuabiv2'
+triple = 'bpfel-unknown-none'
 target-features = 'all'
 
 [[target-package]]
@@ -357,7 +357,6 @@ version = '0.4.33'
 crates-io = true
 status = 'transitive'
 features = ['default', 'http2', 'openssl-probe', 'openssl-sys', 'ssl']
-optional-deps = ['openssl-probe', 'openssl-sys']
 
 [[target-package]]
 name = 'curl-sys'
@@ -365,7 +364,7 @@ version = '0.4.36+curl-7.71.1'
 crates-io = true
 status = 'transitive'
 features = ['default', 'http2', 'libnghttp2-sys', 'openssl-sys', 'ssl']
-optional-deps = ['libnghttp2-sys', 'openssl-sys']
+optional-deps = ['libnghttp2-sys']
 
 [[target-package]]
 name = 'difference'
@@ -431,7 +430,6 @@ version = '0.13.11'
 crates-io = true
 status = 'transitive'
 features = ['default', 'https', 'openssl-probe', 'openssl-sys', 'ssh', 'ssh_key_from_memory']
-optional-deps = ['openssl-probe', 'openssl-sys']
 
 [[target-package]]
 name = 'git2-curl'
@@ -565,7 +563,7 @@ version = '0.12.13+1.0.1'
 crates-io = true
 status = 'transitive'
 features = ['https', 'libssh2-sys', 'openssl-sys', 'ssh', 'ssh_key_from_memory']
-optional-deps = ['libssh2-sys', 'openssl-sys']
+optional-deps = ['libssh2-sys']
 
 [[target-package]]
 name = 'libnghttp2-sys'
@@ -639,13 +637,6 @@ status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'openssl-probe'
-version = '0.1.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
 name = 'openssl-sys'
 version = '0.9.58'
 crates-io = true
@@ -679,7 +670,7 @@ version = '0.7.3'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'getrandom', 'getrandom_package', 'libc', 'std']
-optional-deps = ['getrandom_package', 'libc']
+optional-deps = ['getrandom_package']
 
 [[target-package]]
 name = 'rand_chacha'

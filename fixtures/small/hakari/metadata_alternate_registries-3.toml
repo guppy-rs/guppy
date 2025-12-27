@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '4'
 # workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['armebv7r-none-eabi', 'powerpc64le-unknown-linux-musl', 'aarch64-uwp-windows-msvc']
+# platforms = ['arm64ec-pc-windows-msvc', 'riscv32-wrs-vxworks', 'aarch64-wrs-vxworks']
 # [[traversal-excludes.ids]]
 # name = 'debug-ignore'
 # version = '1.0.1'

@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'armv7k-apple-watchos'
+triple = 'armv7a-nuttx-eabihf'
 target-features = ['avx', 'rdrand', 'sse2', 'xsaves']
 flags = ['abc']
 

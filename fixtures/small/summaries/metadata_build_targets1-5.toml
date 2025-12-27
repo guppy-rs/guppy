@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'riscv32emc-unknown-none-elf'
+triple = 'riscv32gc-unknown-linux-gnu'
 target-features = 'all'
 flags = ['bar', 'foo']
 

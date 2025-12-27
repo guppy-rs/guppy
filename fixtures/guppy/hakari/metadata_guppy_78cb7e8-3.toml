@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '2'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['riscv64gc-unknown-freebsd']
+# platforms = ['riscv64gc-unknown-fuchsia']
 # [[traversal-excludes.ids]]
 # name = 'fnv'
 # version = '1.0.7'
@@ -61,10 +61,10 @@ proc-macro2 = { version = "1", features = ["proc-macro"] }
 quote = { version = "1", features = ["proc-macro"] }
 syn = { version = "1", features = ["clone-impls", "derive", "full", "parsing", "printing", "proc-macro", "quote", "visit"] }
 
-[target.riscv64gc-unknown-freebsd.dependencies]
+[target.riscv64gc-unknown-fuchsia.dependencies]
 libc = { version = "0.2", features = ["std"] }
 
-[target.riscv64gc-unknown-freebsd.build-dependencies]
+[target.riscv64gc-unknown-fuchsia.build-dependencies]
 libc = { version = "0.2", features = ["std"] }
 
 ### END HAKARI SECTION

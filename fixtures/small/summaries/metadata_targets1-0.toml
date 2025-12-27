@@ -12,7 +12,7 @@ target-features = ['bmi1']
 flags = ['flag-test', 'test-flag']
 
 [metadata.target-platform]
-triple = 'armv7-wrs-vxworks-eabihf'
+triple = 'armv7-unknown-netbsd-eabihf'
 target-features = 'all'
 [[metadata.omitted-packages.ids]]
 name = 'bytes'

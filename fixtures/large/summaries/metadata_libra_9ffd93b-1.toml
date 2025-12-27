@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'thumbv7neon-linux-androideabi'
+triple = 'thumbv7neon-unknown-linux-gnueabihf'
 target-features = ['avx2', 'bmi1', 'sha', 'sse3', 'xsave', 'xsaves']
 
 [metadata.target-platform]

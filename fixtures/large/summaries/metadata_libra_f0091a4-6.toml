@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'armv7-rtems-eabihf'
+triple = 'armv7-linux-androideabi'
 target-features = 'unknown'
 
 [metadata.target-platform]
@@ -1039,8 +1039,22 @@ features = ['alloc', 'async-await', 'async-await-macro', 'channel', 'futures-cha
 optional-deps = ['futures-channel', 'futures-io', 'futures-macro', 'futures-sink', 'memchr', 'proc-macro-hack', 'proc-macro-nested', 'slab']
 
 [[host-package]]
+name = 'gcc'
+version = '0.3.55'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'generic-array'
 version = '0.12.3'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'get_if_addrs-sys'
+version = '0.1.1'
 crates-io = true
 status = 'transitive'
 features = []

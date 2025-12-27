@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'thumbv7a-pc-windows-msvc'
+triple = 'thumbv7a-uwp-windows-msvc'
 target-features = 'unknown'
 flags = ['bar']
 

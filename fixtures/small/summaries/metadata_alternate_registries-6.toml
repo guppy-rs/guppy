@@ -10,7 +10,7 @@ initials-platform = 'host'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'i686-apple-darwin'
+triple = 'i586-unknown-netbsd'
 target-features = 'unknown'
 flags = ['foo']
 [[metadata.omitted-packages.ids]]

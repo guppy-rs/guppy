@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '3'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['aarch64-unknown-linux-ohos']
+# platforms = ['aarch64-unknown-managarm-mlibc']
 # [[traversal-excludes.ids]]
 # name = 'http-body-util'
 # version = '0.1.2'
@@ -119,24 +119,12 @@ try-lock = { version = "0.2", default-features = false }
 unicode-ident = { version = "1", default-features = false }
 want = { version = "0.3", default-features = false }
 
-[target.aarch64-unknown-linux-ohos.dependencies]
-ipnetwork = { version = "0.20" }
+[target.aarch64-unknown-managarm-mlibc.dependencies]
 libc = { version = "0.2" }
-no-std-net = { version = "0.6", default-features = false, features = ["std"] }
-pnet_base = { version = "0.35", default-features = false, features = ["std"] }
-pnet_datalink = { version = "0.35" }
-pnet_sys = { version = "0.35", default-features = false }
-serde = { version = "1" }
 signal-hook-registry = { version = "1", default-features = false }
 
-[target.aarch64-unknown-linux-ohos.build-dependencies]
-ipnetwork = { version = "0.20" }
+[target.aarch64-unknown-managarm-mlibc.build-dependencies]
 libc = { version = "0.2" }
-no-std-net = { version = "0.6", default-features = false, features = ["std"] }
-pnet_base = { version = "0.35", default-features = false, features = ["std"] }
-pnet_datalink = { version = "0.35" }
-pnet_sys = { version = "0.35", default-features = false }
-serde = { version = "1" }
 signal-hook-registry = { version = "1", default-features = false }
 
 ### END HAKARI SECTION
