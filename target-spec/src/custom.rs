@@ -50,7 +50,7 @@ pub(crate) struct TargetDefinition {
     #[serde(default)]
     max_atomic_width: Option<u16>,
     #[serde(default)]
-    panic_strategy: PanicStrategy,
+    panic_strategy: Option<String>,
 }
 
 impl TargetDefinition {
@@ -77,6 +77,11 @@ impl TargetDefinition {
             atomic_width *= 2;
         }
 
+        let panic_strategy = match self.panic_strategy {
+            None => cfg_expr::targets::Panic::unwind,
+            Some(s) => cfg_expr::targets::Panic::new(s),
+        };
+
         TargetInfo {
             triple: Triple::new(triple),
             os: self.os.map(Os::new),
@@ -88,7 +93,7 @@ impl TargetDefinition {
             pointer_width: self.pointer_width,
             endian: self.target_endian.to_cfg_expr(),
             has_atomics: HasAtomics::new(has_atomics),
-            panic: self.panic_strategy.to_cfg_expr(),
+            panic: panic_strategy,
         }
     }
 }
@@ -157,25 +162,6 @@ impl Endian {
         match self {
             Self::Little => cfg_expr::targets::Endian::little,
             Self::Big => cfg_expr::targets::Endian::big,
-        }
-    }
-}
-
-#[derive(
-    Copy, Clone, Debug, Deserialize, Serialize, Default, Eq, Hash, Ord, PartialEq, PartialOrd,
-)]
-#[serde(rename_all = "kebab-case")]
-enum PanicStrategy {
-    #[default]
-    Unwind,
-    Abort,
-}
-
-impl PanicStrategy {
-    fn to_cfg_expr(self) -> cfg_expr::targets::Panic {
-        match self {
-            Self::Unwind => cfg_expr::targets::Panic::unwind,
-            Self::Abort => cfg_expr::targets::Panic::abort,
         }
     }
 }
