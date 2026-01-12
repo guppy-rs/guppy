@@ -33,8 +33,8 @@ num-traits = { version = "0.2.19" }
 once_cell = { version = "1.21.3" }
 owo-colors = { version = "3.5.0", default-features = false, features = ["supports-colors"] }
 petgraph = { version = "0.8.3", default-features = false, features = ["graphmap", "std"] }
-regex = { version = "1.11.1", default-features = false, features = ["perf", "std"] }
-regex-automata = { version = "0.4.9", default-features = false, features = ["dfa", "hybrid", "meta", "nfa", "perf", "unicode"] }
+regex = { version = "1.12.2", default-features = false, features = ["perf", "std"] }
+regex-automata = { version = "0.4.13", default-features = false, features = ["dfa", "hybrid", "meta", "nfa", "perf", "std", "unicode"] }
 regex-syntax = { version = "0.8.5" }
 serde = { version = "1.0.228", features = ["alloc", "derive"] }
 serde_core = { version = "1.0.228", features = ["alloc"] }
@@ -59,6 +59,7 @@ libc = { version = "0.2.174", features = ["extra_traits"] }
 rustix = { version = "0.38.44", features = ["fs", "termios"] }
 
 [target.x86_64-pc-windows-msvc.dependencies]
-windows-sys = { version = "0.59.0", features = ["Win32_Security", "Win32_Storage_FileSystem", "Win32_System_Console", "Win32_System_Pipes", "Win32_System_SystemInformation", "Win32_System_Threading", "Win32_UI_Input_KeyboardAndMouse"] }
+windows-sys-73dcd821b1037cfd = { package = "windows-sys", version = "0.59.0", features = ["Win32_Security", "Win32_Storage_FileSystem", "Win32_System_Console", "Win32_System_Pipes", "Win32_System_SystemInformation", "Win32_System_Threading", "Win32_UI_Input_KeyboardAndMouse"] }
+windows-sys-d4189bed749088b6 = { package = "windows-sys", version = "0.61.2", features = ["Win32_Security", "Win32_Storage_FileSystem", "Win32_System_Console"] }
 
 ### END HAKARI SECTION
