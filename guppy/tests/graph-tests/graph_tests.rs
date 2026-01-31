@@ -256,6 +256,64 @@ mod small {
 
     proptest_suite!(metadata_cycle_features);
 
+    // Test Windows path handling in fixtures with path dependencies.
+    #[test]
+    fn metadata_cycle1_windows() {
+        // Same drive: workspace on C:, path dep also on C:.
+        // The path dependency should be stored as a relative path.
+        let graph = PackageGraph::from_json(include_str!(
+            "../../../fixtures/small/metadata_cycle1_windows.json"
+        ))
+        .expect("valid metadata");
+
+        let helper = graph
+            .metadata(&guppy::PackageId::new(
+                "testcycles-helper 0.1.0 (path+file:///C:/Users/fakeuser/local/testcrates/testcycles/testcycles-helper)",
+            ))
+            .expect("helper package exists");
+
+        let source = helper.source();
+        assert!(source.is_path(), "helper should be a path dependency");
+        let path = source.local_path().expect("path dependency has local path");
+        // Same drive should produce a relative path.
+        assert_eq!(
+            path.as_str(),
+            "../testcycles-helper",
+            "same-drive path dependency should be relative"
+        );
+    }
+
+    #[test]
+    fn metadata_cycle1_windows_different_drives() {
+        // Different drives: workspace on C:, path dep on D:.
+        // The path dependency should fall back to the absolute path.
+        let graph = PackageGraph::from_json(include_str!(
+            "../../../fixtures/small/metadata_cycle1_windows_different_drives.json"
+        ))
+        .expect("valid metadata");
+
+        let helper = graph
+            .metadata(&guppy::PackageId::new(
+                "testcycles-helper 0.1.0 (path+file:///D:/libs/testcycles-helper)",
+            ))
+            .expect("helper package exists");
+
+        let source = helper.source();
+        assert!(source.is_path(), "helper should be a path dependency");
+        let path = source.local_path().expect("path dependency has local path");
+        // Different drives cannot be relative, so the absolute path is stored.
+        // The path is normalized to forward slashes on Unix but not on Windows.
+        #[cfg(windows)]
+        let expected = r"D:\libs\testcycles-helper";
+        #[cfg(not(windows))]
+        let expected = "D:/libs/testcycles-helper";
+        assert_eq!(
+            path.as_str(),
+            expected,
+            "different-drive path dependency should be absolute"
+        );
+    }
+
     #[test]
     fn metadata_targets1() {
         let metadata_targets1 = JsonFixture::metadata_targets1();

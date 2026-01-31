@@ -55,7 +55,7 @@ use std::{error, fmt, io};
 /// 3. Add an empty `build.rs` file (the exact contents don't matter, but the presence of this file
 ///    makes build dependencies work properly).
 ///
-///     ```
+///     ```rust,ignore
 ///     fn main() {}
 ///     ```
 #[derive(Clone, Debug)]
