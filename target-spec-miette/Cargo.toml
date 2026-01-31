@@ -19,13 +19,13 @@ rustdoc-args = ["--cfg=doc_cfg"]
 guppy-workspace-hack.workspace = true
 include_dir = { workspace = true, optional = true }
 miette.workspace = true
-target-spec = { version = "3.5.6", path = "../target-spec" }
+target-spec = { version = "3.5.7", path = "../target-spec" }
 
 [dev-dependencies]
 datatest-stable.workspace = true
 miette = { workspace = true, features = ["fancy"] }
 snapbox.workspace = true
-target-spec = { version = "3.5.6", path = "../target-spec", features = [
+target-spec = { version = "3.5.7", path = "../target-spec", features = [
     "custom",
 ] }
 
