@@ -7,12 +7,12 @@ include-dev = false
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'aarch64-unknown-none'
+triple = 'aarch64-unknown-netbsd'
 target-features = 'unknown'
 flags = ['abc']
 
 [metadata.target-platform]
-triple = 'thumbv8m.main-nuttx-eabi'
+triple = 'thumbv8m.main-none-eabihf'
 target-features = ['bmi2', 'sha', 'sse4.1']
 flags = ['bar', 'test-flag']
 [[metadata.omitted-packages.ids]]
@@ -340,13 +340,6 @@ status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'libc'
-version = '0.2.79'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
-
-[[target-package]]
 name = 'num-traits'
 version = '0.2.12'
 crates-io = true
@@ -373,7 +366,7 @@ version = '0.7.3'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'getrandom', 'getrandom_package', 'libc', 'std']
-optional-deps = ['getrandom_package', 'libc']
+optional-deps = ['getrandom_package']
 
 [[target-package]]
 name = 'rand_chacha'

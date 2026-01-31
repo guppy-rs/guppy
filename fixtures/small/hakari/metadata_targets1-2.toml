@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '1'
 # workspace-hack-line-style = 'full'
-# platforms = ['i686-unknown-linux-musl', 'x86_64-unknown-fuchsia']
+# platforms = ['i686-unknown-linux-musl', 'x86_64-unknown-haiku']
 # [[traversal-excludes.ids]]
 # name = 'bytes'
 # version = '0.5.3'
@@ -25,7 +25,7 @@ lazy_static-dff4ba8e3ae991db = { package = "lazy_static", version = "1", default
 dep-a = { path = "/Users/fakeuser/local/testcrates/testcrate-targets/../dep-a", default-features = false, features = ["bar", "baz", "foo", "quux"] }
 lazy_static-6f8ce4dd05d13bba = { package = "lazy_static", version = "0.2", default-features = false }
 
-[target.x86_64-unknown-fuchsia.dependencies]
+[target.x86_64-unknown-haiku.dependencies]
 dep-a = { path = "/Users/fakeuser/local/testcrates/testcrate-targets/../dep-a", default-features = false, features = ["baz", "foo", "quux"] }
 lazy_static-6f8ce4dd05d13bba = { package = "lazy_static", version = "0.2", default-features = false }
 

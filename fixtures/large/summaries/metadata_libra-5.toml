@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'aarch64-unknown-nuttx'
+triple = 'aarch64-unknown-nto-qnx800'
 target-features = ['avx2', 'sse4.1', 'ssse3', 'xsaves']
 flags = ['abc']
 

@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '1'
 # workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['riscv32imac-unknown-xous-elf', 'i686-pc-windows-gnu']
+# platforms = ['riscv32imac-unknown-xous-elf', 'i686-pc-windows-gnullvm']
 #
 # [traversal-excludes]
 # [[final-excludes.ids]]
@@ -117,11 +117,11 @@ lazy_static = { version = "1", default-features = false, features = ["spin", "sp
 [target.riscv32imac-unknown-xous-elf.build-dependencies]
 lazy_static = { version = "1", default-features = false, features = ["spin", "spin_no_std"] }
 
-[target.i686-pc-windows-gnu.dependencies]
+[target.i686-pc-windows-gnullvm.dependencies]
 lazy_static = { version = "1", default-features = false, features = ["spin", "spin_no_std"] }
 winapi = { version = "0.3", default-features = false, features = ["consoleapi", "errhandlingapi", "fileapi", "handleapi", "impl-debug", "impl-default", "ioapiset", "knownfolders", "libloaderapi", "memoryapi", "minwinbase", "minwindef", "namedpipeapi", "ntdef", "ntsecapi", "ntstatus", "objbase", "processenv", "processthreadsapi", "profileapi", "shlobj", "std", "synchapi", "sysinfoapi", "threadpoollegacyapiset", "timezoneapi", "winbase", "wincon", "winerror", "winnt", "winreg", "winsock2", "winuser", "ws2def", "ws2ipdef", "ws2tcpip", "wtypesbase"] }
 
-[target.i686-pc-windows-gnu.build-dependencies]
+[target.i686-pc-windows-gnullvm.build-dependencies]
 lazy_static = { version = "1", default-features = false, features = ["spin", "spin_no_std"] }
 winapi = { version = "0.3", default-features = false, features = ["consoleapi", "errhandlingapi", "fileapi", "handleapi", "impl-debug", "impl-default", "ioapiset", "knownfolders", "libloaderapi", "memoryapi", "minwinbase", "minwindef", "namedpipeapi", "ntdef", "ntsecapi", "ntstatus", "objbase", "processenv", "processthreadsapi", "profileapi", "shlobj", "std", "synchapi", "sysinfoapi", "threadpoollegacyapiset", "timezoneapi", "winbase", "wincon", "winerror", "winnt", "winreg", "winsock2", "winuser", "ws2def", "ws2ipdef", "ws2tcpip", "wtypesbase"] }
 

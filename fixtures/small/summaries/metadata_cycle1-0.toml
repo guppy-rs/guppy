@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'armv7-linux-androideabi'
+triple = 'armv7-rtems-eabihf'
 target-features = 'unknown'
 flags = ['foo']
 

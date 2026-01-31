@@ -10,7 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'm68k-unknown-linux-gnu'
+triple = 'm68k-unknown-none-elf'
 target-features = 'unknown'
 flags = ['flag-test']
 
@@ -327,13 +327,6 @@ status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'libc'
-version = '0.2.79'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
-
-[[target-package]]
 name = 'num-traits'
 version = '0.2.12'
 crates-io = true
@@ -360,7 +353,7 @@ version = '0.7.3'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'getrandom', 'getrandom_package', 'libc', 'std']
-optional-deps = ['getrandom_package', 'libc']
+optional-deps = ['getrandom_package']
 
 [[target-package]]
 name = 'rand_chacha'

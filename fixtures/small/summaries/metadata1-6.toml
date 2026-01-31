@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'i686-unknown-freebsd'
+triple = 'i686-unknown-haiku'
 target-features = 'all'
 flags = ['flag-test']
 

@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'mips-unknown-linux-uclibc'
+triple = 'mips64-openwrt-linux-musl'
 target-features = 'unknown'
 
 [metadata.target-platform]

@@ -10,7 +10,7 @@ initials-platform = 'host'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'armv7-sony-vita-newlibeabihf'
+triple = 'armv7-unknown-freebsd'
 target-features = 'unknown'
 flags = ['abc']
 

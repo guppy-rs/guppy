@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'armv7a-nuttx-eabihf'
+triple = 'armv7a-vex-v5'
 target-features = ['avx', 'rdrand', 'sse2', 'xsaves']
 flags = ['abc']
 

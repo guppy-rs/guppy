@@ -11,7 +11,7 @@ triple = 'arm64ec-pc-windows-msvc'
 target-features = 'unknown'
 
 [metadata.target-platform]
-triple = 'x86_64-unknown-trusty'
+triple = 'x86_64-unknown-redox'
 target-features = ['rdrand', 'sse', 'ssse3', 'xsavec']
 flags = ['bar', 'flag-test']
 [[metadata.omitted-packages.ids]]
@@ -409,6 +409,7 @@ version = '0.4.33'
 crates-io = true
 status = 'transitive'
 features = ['default', 'http2', 'openssl-probe', 'openssl-sys', 'ssl']
+optional-deps = ['openssl-probe', 'openssl-sys']
 
 [[target-package]]
 name = 'curl-sys'
@@ -416,7 +417,7 @@ version = '0.4.36+curl-7.71.1'
 crates-io = true
 status = 'transitive'
 features = ['default', 'http2', 'libnghttp2-sys', 'openssl-sys', 'ssl']
-optional-deps = ['libnghttp2-sys']
+optional-deps = ['libnghttp2-sys', 'openssl-sys']
 
 [[target-package]]
 name = 'difference'
@@ -688,6 +689,13 @@ status = 'transitive'
 features = []
 
 [[target-package]]
+name = 'openssl-probe'
+version = '0.1.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
 name = 'openssl-sys'
 version = '0.9.58'
 crates-io = true
@@ -721,7 +729,7 @@ version = '0.7.3'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'getrandom', 'getrandom_package', 'libc', 'std']
-optional-deps = ['getrandom_package']
+optional-deps = ['getrandom_package', 'libc']
 
 [[target-package]]
 name = 'rand_chacha'
@@ -748,6 +756,13 @@ features = []
 [[target-package]]
 name = 'rand_xoshiro'
 version = '0.4.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'redox_syscall'
+version = '0.1.57'
 crates-io = true
 status = 'transitive'
 features = []
@@ -876,6 +891,13 @@ features = []
 [[target-package]]
 name = 'terminal_size'
 version = '0.1.13'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'termios'
+version = '0.3.2'
 crates-io = true
 status = 'transitive'
 features = []

@@ -10,7 +10,7 @@ initials-platform = 'host'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'x86_64-win7-windows-gnu'
+triple = 'x86_64-uwp-windows-msvc'
 target-features = 'all'
 flags = ['bar']
 [[metadata.omitted-packages.ids]]

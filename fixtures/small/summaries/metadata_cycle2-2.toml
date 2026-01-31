@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'riscv64gc-unknown-fuchsia'
+triple = 'riscv64gc-unknown-hermit'
 target-features = 'unknown'
 flags = ['bar', 'foo']
 

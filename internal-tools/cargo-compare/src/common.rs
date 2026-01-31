@@ -86,7 +86,7 @@ impl GuppyCargoCommon {
                 .collect::<Result<_, _>>()?
         };
 
-        let ws_resolve = resolve_ws_with_opts(
+        let mut ws_resolve = resolve_ws_with_opts(
             &workspace,
             &mut target_data,
             &[compile_kind],
@@ -103,7 +103,7 @@ impl GuppyCargoCommon {
         )?;
 
         let targeted_resolve = ws_resolve.targeted_resolve;
-        let resolved_features = ws_resolve.resolved_features;
+        let resolved_features = ws_resolve.specs_and_features.remove(0).resolved_features;
 
         let mut target_map = BTreeMap::new();
         let mut host_map = BTreeMap::new();

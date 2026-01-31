@@ -10,7 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'aarch64-unknown-nto-qnx800'
+triple = 'aarch64-unknown-nto-qnx710_iosock'
 target-features = 'all'
 flags = ['foo', 'test-flag']
 

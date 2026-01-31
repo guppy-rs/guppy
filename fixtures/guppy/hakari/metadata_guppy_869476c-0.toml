@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '3'
 # workspace-hack-line-style = 'full'
-# platforms = ['x86_64-unknown-redox', 'riscv64imac-unknown-none-elf']
+# platforms = ['x86_64-unknown-openbsd', 'riscv64imac-unknown-none-elf']
 # [[traversal-excludes.ids]]
 # name = 'commoncrypto-sys'
 # version = '0.2.0'
@@ -55,10 +55,10 @@ proc-macro2 = { version = "1" }
 quote = { version = "1" }
 syn = { version = "1", features = ["full", "visit"] }
 
-[target.x86_64-unknown-redox.dependencies]
+[target.x86_64-unknown-openbsd.dependencies]
 libc = { version = "0.2" }
 
-[target.x86_64-unknown-redox.build-dependencies]
+[target.x86_64-unknown-openbsd.build-dependencies]
 libc = { version = "0.2" }
 
 ### END HAKARI SECTION
