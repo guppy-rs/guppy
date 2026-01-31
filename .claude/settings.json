@@ -1,15 +1,19 @@
 {
   "permissions": {
     "allow": [
+      "Bash(cargo build:*)",
       "Bash(cargo check:*)",
+      "Bash(cargo doc:*)",
+      "Bash(cargo hakari:*)",
+      "Bash(cargo metadata:*)",
       "Bash(cargo nextest:*)",
       "Bash(cargo xfmt:*)",
-      "Bash(cargo build:*)",
-      "WebFetch(domain:docs.rs)",
-      "WebFetch(domain:github.com)",
       "Bash(git show:*)",
       "Bash(jj diff:*)",
-      "Bash(jj show:*)"
+      "Bash(jj show:*)",
+      "Bash(ls:*)",
+      "WebFetch(domain:docs.rs)",
+      "WebFetch(domain:github.com)"
     ],
     "deny": [],
     "ask": []

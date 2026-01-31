@@ -261,15 +261,12 @@ mod small {
     fn metadata_cycle1_windows() {
         // Same drive: workspace on C:, path dep also on C:.
         // The path dependency should be stored as a relative path.
-        let graph = PackageGraph::from_json(include_str!(
-            "../../../fixtures/small/metadata_cycle1_windows.json"
-        ))
-        .expect("valid metadata");
+        let fixture = JsonFixture::metadata_cycle1_windows();
+        fixture.verify();
 
+        let graph = fixture.graph();
         let helper = graph
-            .metadata(&guppy::PackageId::new(
-                "testcycles-helper 0.1.0 (path+file:///C:/Users/fakeuser/local/testcrates/testcycles/testcycles-helper)",
-            ))
+            .metadata(&package_id(json::METADATA_CYCLE1_WINDOWS_HELPER))
             .expect("helper package exists");
 
         let source = helper.source();
@@ -283,18 +280,19 @@ mod small {
         );
     }
 
+    proptest_suite!(metadata_cycle1_windows);
+
     #[test]
     fn metadata_cycle1_windows_different_drives() {
         // Different drives: workspace on C:, path dep on D:.
         // The path dependency should fall back to the absolute path.
-        let graph = PackageGraph::from_json(include_str!(
-            "../../../fixtures/small/metadata_cycle1_windows_different_drives.json"
-        ))
-        .expect("valid metadata");
+        let fixture = JsonFixture::metadata_cycle1_windows_different_drives();
+        fixture.verify();
 
+        let graph = fixture.graph();
         let helper = graph
-            .metadata(&guppy::PackageId::new(
-                "testcycles-helper 0.1.0 (path+file:///D:/libs/testcycles-helper)",
+            .metadata(&package_id(
+                json::METADATA_CYCLE1_WINDOWS_DIFFERENT_DRIVES_HELPER,
             ))
             .expect("helper package exists");
 
@@ -312,6 +310,63 @@ mod small {
             expected,
             "different-drive path dependency should be absolute"
         );
+    }
+
+    proptest_suite!(metadata_cycle1_windows_different_drives);
+
+    // Test that Windows metadata with backslash paths is normalized to forward
+    // slashes on Unix, so all path operations work correctly. On Windows, the
+    // paths should remain with backslashes.
+    #[test]
+    fn windows_metadata_path_normalization() {
+        // Use the different drives fixture since it's more interesting: it has
+        // paths on different drives which cannot be made relative.
+        let fixture = JsonFixture::metadata_cycle1_windows_different_drives();
+        let graph = fixture.graph();
+
+        // On Unix: backslashes should be normalized to forward slashes.
+        // On Windows: forward slashes should not appear in absolute paths.
+        #[cfg(not(windows))]
+        let bad_sep = '\\';
+        #[cfg(windows)]
+        let bad_sep = '/';
+
+        let root = graph.workspace().root();
+        assert!(
+            !root.as_str().contains(bad_sep),
+            "workspace root should not contain '{}': {}",
+            bad_sep,
+            root
+        );
+        assert!(root.parent().is_some(), "workspace root should have parent");
+
+        let target_dir = graph.workspace().target_directory();
+        assert!(
+            !target_dir.as_str().contains(bad_sep),
+            "target directory should not contain '{}': {}",
+            bad_sep,
+            target_dir
+        );
+
+        for package in graph.packages() {
+            let manifest = package.manifest_path();
+            assert!(
+                !manifest.as_str().contains(bad_sep),
+                "manifest_path should not contain '{}': {}",
+                bad_sep,
+                manifest
+            );
+
+            for target in package.build_targets() {
+                let path = target.path();
+                assert!(
+                    !path.as_str().contains(bad_sep),
+                    "build target path should not contain '{}': {}",
+                    bad_sep,
+                    path
+                );
+            }
+        }
     }
 
     #[test]

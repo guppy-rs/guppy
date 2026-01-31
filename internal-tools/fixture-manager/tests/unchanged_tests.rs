@@ -13,7 +13,8 @@ use fixtures::json::JsonFixture;
 fn summaries_unchanged() -> Result<()> {
     let mut num_changed = 0;
 
-    for (name, fixture) in JsonFixture::all_fixtures() {
+    for fixture in JsonFixture::fixture_manager_fixtures() {
+        let name = fixture.name();
         let count = GenerateSummariesOpts::default_count();
 
         println!("generating {count} summaries for {name}...");
@@ -43,7 +44,8 @@ fn summaries_unchanged() -> Result<()> {
 fn hakari_unchanged() -> Result<()> {
     let mut num_changed = 0;
 
-    for (name, fixture) in JsonFixture::all_fixtures() {
+    for fixture in JsonFixture::fixture_manager_fixtures() {
+        let name = fixture.name();
         let count = GenerateHakariOpts::default_count();
 
         println!("generating {count} outputs for {name}...");

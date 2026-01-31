@@ -23,7 +23,6 @@ use petgraph::prelude::*;
 use semver::{Version, VersionReq};
 use smallvec::SmallVec;
 use std::{
-    borrow::Cow,
     cell::RefCell,
     collections::{BTreeMap, HashSet},
     rc::Rc,
@@ -42,7 +41,8 @@ impl PackageGraph {
             .map(PackageId::from_metadata)
             .collect();
 
-        let workspace_root = metadata.workspace_root;
+        // Normalize Windows paths early so all downstream code works correctly.
+        let workspace_root = normalize_windows_path_on_unix(metadata.workspace_root);
         let workspace_default_members: Vec<_> = if metadata.workspace_default_members.is_available()
         {
             metadata
@@ -71,8 +71,8 @@ impl PackageGraph {
 
         let workspace = WorkspaceImpl::new(
             workspace_root,
-            metadata.target_directory,
-            metadata.build_directory,
+            normalize_windows_path_on_unix(metadata.target_directory),
+            metadata.build_directory.map(normalize_windows_path_on_unix),
             metadata.workspace_metadata,
             &packages,
             workspace_members,
@@ -236,9 +236,15 @@ impl<'a> GraphBuildState<'a> {
 
     fn process_package(
         &mut self,
-        package: Package,
+        mut package: Package,
     ) -> Result<(PackageId, PackageMetadataImpl), Box<Error>> {
         let package_id = PackageId::from_metadata(package.id);
+
+        // Normalize Windows paths early so all downstream code works correctly.
+        package.manifest_path = normalize_windows_path_on_unix(package.manifest_path);
+        package.license_file = package.license_file.map(normalize_windows_path_on_unix);
+        package.readme = package.readme.map(normalize_windows_path_on_unix);
+
         let (package_data, build_targets) =
             self.package_data_and_remove_build_targets(&package_id)?;
 
@@ -252,11 +258,7 @@ impl<'a> GraphBuildState<'a> {
             }
         } else {
             // Path dependency: get the directory from the manifest path.
-            //
-            // On Unix, if this looks like a Windows path (contains backslashes),
-            // normalize to forward slashes so that parent() works correctly.
-            let manifest_path = normalize_windows_path_on_unix(&package.manifest_path);
-            let dirname = match manifest_path.parent() {
+            let dirname = match package.manifest_path.parent() {
                 Some(dirname) => dirname,
                 None => {
                     return Err(Error::PackageGraphConstructError(format!(
@@ -713,7 +715,7 @@ impl<'a> BuildTargets<'a> {
                     kind,
                     lib_name,
                     required_features: target.required_features,
-                    path: target.src_path.into_boxed_path(),
+                    path: normalize_windows_path_on_unix(target.src_path).into_boxed_path(),
                     edition: target.edition.to_string().into_boxed_str(),
                     doc_by_default: target.doc,
                     doctest_by_default: target.doctest,
@@ -909,7 +911,7 @@ impl PackageLinkImpl {
                 registry = dep.registry.clone();
             }
             if path.is_none() {
-                path = dep.path.clone();
+                path = dep.path.clone().map(normalize_windows_path_on_unix);
             }
 
             match dep.kind {
@@ -1112,20 +1114,20 @@ impl<'a> WindowsPathPrefix<'a> {
 /// This is needed because cargo metadata generated on Windows contains paths like
 /// `C:\Users\foo\Cargo.toml`, and on Unix `Utf8Path::parent()` doesn't recognize
 /// backslashes as path separators.
-fn normalize_windows_path_on_unix(path: &Utf8Path) -> Cow<'_, Utf8Path> {
+fn normalize_windows_path_on_unix(path: Utf8PathBuf) -> Utf8PathBuf {
     #[cfg(windows)]
     {
         // On Windows, paths work natively.
-        Cow::Borrowed(path)
+        path
     }
     #[cfg(not(windows))]
     {
         let s = path.as_str();
         if WindowsPathPrefix::parse(s).is_some() {
             // This looks like a Windows path; normalize backslashes to forward slashes.
-            Cow::Owned(Utf8PathBuf::from(s.replace('\\', "/")))
+            Utf8PathBuf::from(s.replace('\\', "/"))
         } else {
-            Cow::Borrowed(path)
+            path
         }
     }
 }
@@ -1204,19 +1206,18 @@ fn diff_utf8_paths_cross_platform(path: &Utf8Path, base: &Utf8Path) -> Option<Ut
 
 /// Replace backslashes in a relative path with forward slashes on Windows.
 #[track_caller]
-fn convert_relative_forward_slashes<'a>(rel_path: impl Into<Cow<'a, Utf8Path>>) -> Utf8PathBuf {
-    let rel_path = rel_path.into();
+fn convert_relative_forward_slashes(rel_path: Utf8PathBuf) -> Utf8PathBuf {
     cfg_if::cfg_if! { if #[cfg(windows)] {
 
         if rel_path.is_relative() {
             rel_path.as_str().replace("\\", "/").into()
         } else {
-            rel_path.into_owned()
+            rel_path
         }
 
     } else {
 
-        rel_path.into_owned()
+        rel_path
 
     }}
 }
@@ -1264,6 +1265,34 @@ mod tests {
         let path = convert_relative_forward_slashes(path);
         // This should have forward-slashes, even on Windows.
         assert_eq!(path.as_str(), "../../foo/bar/baz.txt");
+    }
+
+    #[test]
+    fn test_normalize_windows_path_on_unix() {
+        #[cfg(not(windows))]
+        {
+            assert_eq!(
+                normalize_windows_path_on_unix(r"C:\Users\foo\project".into()),
+                Utf8PathBuf::from("C:/Users/foo/project")
+            );
+            assert_eq!(
+                normalize_windows_path_on_unix(r"\\server\share\path".into()),
+                Utf8PathBuf::from("//server/share/path")
+            );
+            // Unix paths unchanged.
+            assert_eq!(
+                normalize_windows_path_on_unix("/home/user/project".into()),
+                Utf8PathBuf::from("/home/user/project")
+            );
+        }
+        #[cfg(windows)]
+        {
+            // Windows paths unchanged on Windows.
+            assert_eq!(
+                normalize_windows_path_on_unix(r"C:\Users\foo\project".into()),
+                Utf8PathBuf::from(r"C:\Users\foo\project")
+            );
+        }
     }
 
     #[track_caller]
