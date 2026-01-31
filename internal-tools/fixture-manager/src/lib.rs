@@ -134,9 +134,7 @@ impl GenerateOpts {
     pub fn exec<'g, T: ContextImpl<'g>>(self, args: T::IterArgs) -> Result<()> {
         let fixtures: Box<dyn Iterator<Item = (&str, &JsonFixture)>> = if self.fixtures.is_empty() {
             Box::new(
-                JsonFixture::all_fixtures()
-                    .iter()
-                    .map(|(name, fixture)| (*name, fixture)),
+                JsonFixture::fixture_manager_fixtures().map(|fixture| (fixture.name(), fixture)),
             )
         } else {
             let fixtures = self

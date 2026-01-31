@@ -51,6 +51,16 @@ pub static METADATA_CYCLE1_PATH: &str = "../small/metadata_cycle1.json";
 pub static METADATA_CYCLE1_BASE: &str = "testcycles-base 0.1.0 (path+file:///Users/fakeuser/local/testcrates/testcycles/testcycles-base)";
 pub static METADATA_CYCLE1_HELPER: &str = "testcycles-helper 0.1.0 (path+file:///Users/fakeuser/local/testcrates/testcycles/testcycles-helper)";
 
+pub static METADATA_CYCLE1_WINDOWS_PATH: &str = "../small/metadata_cycle1_windows.json";
+pub static METADATA_CYCLE1_WINDOWS_BASE: &str = "testcycles-base 0.1.0 (path+file:///C:/Users/fakeuser/local/testcrates/testcycles/testcycles-base)";
+pub static METADATA_CYCLE1_WINDOWS_HELPER: &str = "testcycles-helper 0.1.0 (path+file:///C:/Users/fakeuser/local/testcrates/testcycles/testcycles-helper)";
+
+pub static METADATA_CYCLE1_WINDOWS_DIFFERENT_DRIVES_PATH: &str =
+    "../small/metadata_cycle1_windows_different_drives.json";
+pub static METADATA_CYCLE1_WINDOWS_DIFFERENT_DRIVES_BASE: &str = "testcycles-base 0.1.0 (path+file:///C:/Users/fakeuser/local/testcrates/testcycles/testcycles-base)";
+pub static METADATA_CYCLE1_WINDOWS_DIFFERENT_DRIVES_HELPER: &str =
+    "testcycles-helper 0.1.0 (path+file:///D:/libs/testcycles-helper)";
+
 pub static METADATA_CYCLE2_PATH: &str = "../small/metadata_cycle2.json";
 pub static METADATA_CYCLE2_UPPER_A: &str =
     "upper-a 0.1.0 (path+file:///Users/fakeuser/local/testcrates/cycle2/upper-a)";
@@ -168,6 +178,13 @@ pub static METADATA_GUPPY_CARGO_GUPPY: &str =
 
 pub static FAKE_AUTHOR: &str = "Fake Author <fakeauthor@example.com>";
 
+/// Fixtures that should be excluded from fixture-manager output generation.
+/// These are Windows-specific fixtures that don't need summary/hakari outputs.
+const FIXTURE_MANAGER_EXCLUDES: &[&str] = &[
+    "metadata_cycle1_windows",
+    "metadata_cycle1_windows_different_drives",
+];
+
 macro_rules! define_fixtures {
     ($($name: ident => $json_path: ident,)*) => {
         impl JsonFixture {
@@ -188,6 +205,16 @@ macro_rules! define_fixtures {
                 &*ALL_FIXTURES
             }
 
+            /// Returns fixtures used by fixture-manager for output generation.
+            /// Excludes Windows-specific fixtures that don't need summary/hakari
+            /// outputs.
+            pub fn fixture_manager_fixtures() -> impl Iterator<Item = &'static JsonFixture> {
+                Self::all_fixtures()
+                    .iter()
+                    .filter(|(name, _)| !FIXTURE_MANAGER_EXCLUDES.contains(name))
+                    .map(|(_, fixture)| fixture)
+            }
+
             // Access individual fixtures if the name is known.
             $(pub fn $name() -> &'static Self {
                 &JsonFixture::all_fixtures()[stringify!($name)]
@@ -202,6 +229,8 @@ define_fixtures! {
     metadata_builddep => METADATA_BUILDDEP_PATH,
     metadata_dups => METADATA_DUPS_PATH,
     metadata_cycle1 => METADATA_CYCLE1_PATH,
+    metadata_cycle1_windows => METADATA_CYCLE1_WINDOWS_PATH,
+    metadata_cycle1_windows_different_drives => METADATA_CYCLE1_WINDOWS_DIFFERENT_DRIVES_PATH,
     metadata_cycle2 => METADATA_CYCLE2_PATH,
     metadata_cycle_features => METADATA_CYCLE_FEATURES_PATH,
     metadata_targets1 => METADATA_TARGETS1_PATH,
@@ -640,6 +669,120 @@ impl FixtureDetails {
         Self::new(details)
             .with_workspace_members(vec![("", METADATA_CYCLE1_BASE)])
             .with_cycles(vec![vec![METADATA_CYCLE1_HELPER, METADATA_CYCLE1_BASE]])
+    }
+
+    pub(crate) fn metadata_cycle1_windows() -> Self {
+        let mut details = AHashMap::new();
+
+        PackageDetails::new(
+            METADATA_CYCLE1_WINDOWS_BASE,
+            "testcycles-base",
+            "0.1.0",
+            vec![FAKE_AUTHOR],
+            None,
+            None,
+        )
+        .with_workspace_path("")
+        .with_deps(vec![("testcycles-helper", METADATA_CYCLE1_WINDOWS_HELPER)])
+        .with_transitive_deps(vec![
+            METADATA_CYCLE1_WINDOWS_BASE,
+            METADATA_CYCLE1_WINDOWS_HELPER,
+        ])
+        .with_transitive_reverse_deps(vec![
+            METADATA_CYCLE1_WINDOWS_BASE,
+            METADATA_CYCLE1_WINDOWS_HELPER,
+        ])
+        .insert_into(&mut details);
+
+        PackageDetails::new(
+            METADATA_CYCLE1_WINDOWS_HELPER,
+            "testcycles-helper",
+            "0.1.0",
+            vec![FAKE_AUTHOR],
+            None,
+            None,
+        )
+        .with_local_path("../testcycles-helper")
+        .with_deps(vec![("testcycles-base", METADATA_CYCLE1_WINDOWS_BASE)])
+        .with_transitive_deps(vec![
+            METADATA_CYCLE1_WINDOWS_BASE,
+            METADATA_CYCLE1_WINDOWS_HELPER,
+        ])
+        .with_transitive_reverse_deps(vec![
+            METADATA_CYCLE1_WINDOWS_BASE,
+            METADATA_CYCLE1_WINDOWS_HELPER,
+        ])
+        .insert_into(&mut details);
+
+        Self::new(details)
+            .with_workspace_members(vec![("", METADATA_CYCLE1_WINDOWS_BASE)])
+            .with_cycles(vec![vec![
+                METADATA_CYCLE1_WINDOWS_HELPER,
+                METADATA_CYCLE1_WINDOWS_BASE,
+            ]])
+    }
+
+    pub(crate) fn metadata_cycle1_windows_different_drives() -> Self {
+        let mut details = AHashMap::new();
+
+        PackageDetails::new(
+            METADATA_CYCLE1_WINDOWS_DIFFERENT_DRIVES_BASE,
+            "testcycles-base",
+            "0.1.0",
+            vec![FAKE_AUTHOR],
+            None,
+            None,
+        )
+        .with_workspace_path("")
+        .with_deps(vec![(
+            "testcycles-helper",
+            METADATA_CYCLE1_WINDOWS_DIFFERENT_DRIVES_HELPER,
+        )])
+        .with_transitive_deps(vec![
+            METADATA_CYCLE1_WINDOWS_DIFFERENT_DRIVES_BASE,
+            METADATA_CYCLE1_WINDOWS_DIFFERENT_DRIVES_HELPER,
+        ])
+        .with_transitive_reverse_deps(vec![
+            METADATA_CYCLE1_WINDOWS_DIFFERENT_DRIVES_BASE,
+            METADATA_CYCLE1_WINDOWS_DIFFERENT_DRIVES_HELPER,
+        ])
+        .insert_into(&mut details);
+
+        // The path is normalized to forward slashes on Unix but not on Windows.
+        #[cfg(windows)]
+        let helper_path = r"D:\libs\testcycles-helper";
+        #[cfg(not(windows))]
+        let helper_path = "D:/libs/testcycles-helper";
+
+        PackageDetails::new(
+            METADATA_CYCLE1_WINDOWS_DIFFERENT_DRIVES_HELPER,
+            "testcycles-helper",
+            "0.1.0",
+            vec![FAKE_AUTHOR],
+            None,
+            None,
+        )
+        .with_local_path(helper_path)
+        .with_deps(vec![(
+            "testcycles-base",
+            METADATA_CYCLE1_WINDOWS_DIFFERENT_DRIVES_BASE,
+        )])
+        .with_transitive_deps(vec![
+            METADATA_CYCLE1_WINDOWS_DIFFERENT_DRIVES_BASE,
+            METADATA_CYCLE1_WINDOWS_DIFFERENT_DRIVES_HELPER,
+        ])
+        .with_transitive_reverse_deps(vec![
+            METADATA_CYCLE1_WINDOWS_DIFFERENT_DRIVES_BASE,
+            METADATA_CYCLE1_WINDOWS_DIFFERENT_DRIVES_HELPER,
+        ])
+        .insert_into(&mut details);
+
+        Self::new(details)
+            .with_workspace_members(vec![("", METADATA_CYCLE1_WINDOWS_DIFFERENT_DRIVES_BASE)])
+            .with_cycles(vec![vec![
+                METADATA_CYCLE1_WINDOWS_DIFFERENT_DRIVES_HELPER,
+                METADATA_CYCLE1_WINDOWS_DIFFERENT_DRIVES_BASE,
+            ]])
     }
 
     pub(crate) fn metadata_cycle2() -> Self {
