@@ -10,7 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'armebv7r-none-eabihf'
+triple = 'armv4t-none-eabi'
 target-features = []
 flags = ['abc', 'test-flag']
 

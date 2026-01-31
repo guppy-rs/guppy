@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '2'
 # workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['armv6k-nintendo-3ds']
+# platforms = ['armv7-linux-androideabi']
 # [[traversal-excludes.ids]]
 # name = 'slab'
 # version = '0.4.9'
@@ -135,11 +135,11 @@ tracing-core = { version = "0.1", default-features = false, features = ["once_ce
 tracing = { version = "0.1", default-features = false, features = ["std"] }
 want = { version = "0.3", default-features = false }
 
-[target.armv6k-nintendo-3ds.dependencies]
+[target.armv7-linux-androideabi.dependencies]
 libc = { version = "0.2", features = ["std"] }
 signal-hook-registry = { version = "1", default-features = false }
 
-[target.armv6k-nintendo-3ds.build-dependencies]
+[target.armv7-linux-androideabi.build-dependencies]
 libc = { version = "0.2", features = ["std"] }
 signal-hook-registry = { version = "1", default-features = false }
 

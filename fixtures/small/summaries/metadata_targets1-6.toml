@@ -7,12 +7,12 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'riscv64gc-unknown-linux-musl'
+triple = 'riscv64gc-unknown-managarm-mlibc'
 target-features = ['aes', 'bmi1', 'sha', 'sse4.1', 'xsavec']
 flags = ['abc', 'cargo_web']
 
 [metadata.target-platform]
-triple = 'mips64el-unknown-linux-muslabi64'
+triple = 'mipsel-mti-none-elf'
 target-features = []
 flags = ['bar']
 [[metadata.omitted-packages.ids]]

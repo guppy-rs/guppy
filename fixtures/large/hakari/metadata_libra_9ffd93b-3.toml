@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '1'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['mipsel-sony-psx', 'aarch64-unknown-trusty', 'riscv32gc-unknown-linux-gnu']
+# platforms = ['mipsel-unknown-linux-gnu', 'aarch64-unknown-trusty', 'riscv32gc-unknown-linux-gnu']
 # [[traversal-excludes.ids]]
 # name = 'libra-crypto-derive'
 # version = '0.1.0'
@@ -536,23 +536,33 @@ version_check-274715c4dabd11b0 = { package = "version_check", version = "0.9", d
 which = { version = "3", default-features = false }
 zeroize_derive = { version = "1", default-features = false }
 
-[target.mipsel-sony-psx.dependencies]
+[target.mipsel-unknown-linux-gnu.dependencies]
 ansi_term-a6292c17cd707f01 = { package = "ansi_term", version = "0.11", default-features = false }
 async-compression = { version = "0.3", default-features = false, features = ["bytes", "flate2", "gzip", "stream"] }
 c2-chacha = { version = "0.2", default-features = false, features = ["simd", "std"] }
+crossbeam-queue-c65f7effa3be6d31 = { package = "crossbeam-queue", version = "0.1", default-features = false }
+crossbeam-utils = { version = "0.6", features = ["lazy_static", "std"] }
 encoding_rs = { version = "0.8", default-features = false }
 hyper-rustls-56bd22fc3884b12 = { package = "hyper-rustls", version = "0.20", features = ["ct-logs", "native-tokio", "rustls-native-certs", "tokio-runtime"] }
 hyper-tls = { version = "0.4", default-features = false }
+mio-uds = { version = "0.6", default-features = false }
 native-tls = { version = "0.2", default-features = false }
+nix-582f2526e08bb6a0 = { package = "nix", version = "0.14", default-features = false }
+nix-9067fe90e8c1f593 = { package = "nix", version = "0.17", default-features = false }
 openssl-probe = { version = "0.1", default-features = false }
 ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }
 rand_chacha-6f8ce4dd05d13bba = { package = "rand_chacha", version = "0.2", default-features = false, features = ["std"] }
 rustls-9067fe90e8c1f593 = { package = "rustls", version = "0.17", features = ["dangerous_configuration", "log", "logging"] }
 rustls-native-certs = { version = "0.3", default-features = false }
+signal-hook-registry = { version = "1", default-features = false }
 tokio-rustls-594e8ee84c453af0 = { package = "tokio-rustls", version = "0.13", default-features = false }
+tokio-signal = { version = "0.2", default-features = false }
 tokio-tls = { version = "0.3", default-features = false }
+tokio-uds = { version = "0.2", default-features = false }
+utf8parse = { version = "0.1", default-features = false }
+void = { version = "1", features = ["std"] }
 
-[target.mipsel-sony-psx.build-dependencies]
+[target.mipsel-unknown-linux-gnu.build-dependencies]
 ansi_term-a6292c17cd707f01 = { package = "ansi_term", version = "0.11", default-features = false }
 c2-chacha = { version = "0.2", default-features = false, features = ["simd", "std"] }
 ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }

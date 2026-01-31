@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'armv7a-none-eabi'
+triple = 'armv7a-none-eabihf'
 target-features = []
 flags = ['foo', 'test-flag']
 

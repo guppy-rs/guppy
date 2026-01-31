@@ -7,11 +7,11 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'thumbv7neon-unknown-linux-gnueabihf'
+triple = 'thumbv7neon-linux-androideabi'
 target-features = ['avx2', 'bmi1', 'sha', 'sse3', 'xsave', 'xsaves']
 
 [metadata.target-platform]
-triple = 'thumbv6m-none-eabi'
+triple = 'thumbv5te-none-eabi'
 target-features = 'unknown'
 [[metadata.omitted-packages.ids]]
 name = 'libra-node'

@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '2'
 # workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['armv7-sony-vita-newlibeabihf']
+# platforms = ['armv7-unknown-freebsd']
 # [[traversal-excludes.ids]]
 # name = 'lower-b'
 # version = '0.1.0'

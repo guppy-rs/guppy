@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'armv7-unknown-linux-uclibceabi'
+triple = 'armv7-unknown-linux-uclibceabihf'
 target-features = 'unknown'
 
 [metadata.target-platform]

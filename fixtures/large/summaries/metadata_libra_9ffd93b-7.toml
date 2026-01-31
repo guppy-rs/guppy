@@ -10,7 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'armv7a-none-eabi'
+triple = 'armv7a-none-eabihf'
 target-features = 'all'
 flags = ['test-flag']
 [[metadata.omitted-packages.ids]]

@@ -11,7 +11,7 @@ triple = 'aarch64-uwp-windows-msvc'
 target-features = 'unknown'
 
 [metadata.target-platform]
-triple = 'aarch64-pc-windows-msvc'
+triple = 'aarch64-unknown-freebsd'
 target-features = []
 flags = ['test-flag']
 [[metadata.omitted-packages.ids]]

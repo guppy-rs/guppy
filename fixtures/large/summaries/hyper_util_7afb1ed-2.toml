@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'armv6-unknown-netbsd-eabihf'
+triple = 'armv6k-nintendo-3ds'
 target-features = 'unknown'
 flags = ['bar', 'foo']
 

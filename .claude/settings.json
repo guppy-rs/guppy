@@ -8,7 +8,8 @@
       "WebFetch(domain:docs.rs)",
       "WebFetch(domain:github.com)",
       "Bash(git show:*)",
-      "Bash(jj diff:*)"
+      "Bash(jj diff:*)",
+      "Bash(jj show:*)"
     ],
     "deny": [],
     "ask": []

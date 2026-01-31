@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'armv7a-vex-v5'
+triple = 'armv7k-apple-watchos'
 target-features = 'all'
 flags = ['bar']
 

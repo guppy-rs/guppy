@@ -1,6 +1,12 @@
 # Changelog
 
-## [3.5.6] - 2025-01-12
+## [3.5.7] - 2026-01-30
+
+### Changed
+
+- Updated `cfg-expr` to version 0.20.6, updating builtin targets to Rust 1.93.
+
+## [3.5.6] - 2026-01-12
 
 ### Fixed
 

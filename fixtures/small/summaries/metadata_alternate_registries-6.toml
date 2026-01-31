@@ -10,7 +10,7 @@ initials-platform = 'host'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'i586-unknown-netbsd'
+triple = 'i586-unknown-redox'
 target-features = 'unknown'
 flags = ['foo']
 [[metadata.omitted-packages.ids]]
