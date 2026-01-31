@@ -252,7 +252,11 @@ impl<'a> GraphBuildState<'a> {
             }
         } else {
             // Path dependency: get the directory from the manifest path.
-            let dirname = match package.manifest_path.parent() {
+            //
+            // On Unix, if this looks like a Windows path (contains backslashes),
+            // normalize to forward slashes so that parent() works correctly.
+            let manifest_path = normalize_windows_path_on_unix(&package.manifest_path);
+            let dirname = match manifest_path.parent() {
                 Some(dirname) => dirname,
                 None => {
                     return Err(Error::PackageGraphConstructError(format!(
@@ -415,17 +419,20 @@ impl<'a> GraphBuildState<'a> {
         Ok((package_data, build_targets))
     }
 
-    /// Computes the relative path from workspace root to this package, which might be out of root sub tree.
+    /// Computes the relative path from the workspace root to this package.
+    /// (This might be outside the root, but in valid Cargo metadata outputs
+    /// will never cross drives on Windows.)
     fn workspace_path(
         &self,
         id: &PackageId,
         manifest_path: &Utf8Path,
     ) -> Result<Box<Utf8Path>, Box<Error>> {
         // Get relative path from workspace root to manifest path.
-        let workspace_path = pathdiff::diff_utf8_paths(manifest_path, self.workspace_root)
+        let workspace_path = diff_utf8_paths_cross_platform(manifest_path, self.workspace_root)
             .ok_or_else(|| {
                 Error::PackageGraphConstructError(format!(
-                    "failed to find path from workspace (root: {}) to member '{id}' at path {manifest_path}",
+                    "workspace member '{id}' at {manifest_path} cannot be reached \
+                     from workspace root {}; paths may be on different drives or UNC shares",
                     self.workspace_root
                 ))
             })?;
@@ -434,7 +441,7 @@ impl<'a> GraphBuildState<'a> {
                 "workspace member '{id}' has invalid manifest path {manifest_path:?}"
             ))
         })?;
-        Ok(convert_relative_forward_slashes(workspace_path).into_boxed_path())
+        Ok(workspace_path.into())
     }
 
     fn finish(self) -> Graph<PackageId, PackageLinkImpl, Directed, PackageIx> {
@@ -561,12 +568,11 @@ impl<'g> ReqResolvedName<'g> {
 
 impl PackageSourceImpl {
     fn create_path(path: &Utf8Path, workspace_root: &Utf8Path) -> Self {
-        let path_diff =
-            pathdiff::diff_utf8_paths(path, workspace_root).expect("workspace root is absolute");
-        // convert_relative_forward_slashes() can handle both situations, i.e.,
-        // on windows and for relative path, convert forward slashes, otherwise,
-        // (absolute path, or not on windows) just clone.
-        Self::Path(convert_relative_forward_slashes(path_diff).into_boxed_path())
+        // If we can compute a relative path, use it. Otherwise (e.g., different
+        // drive letters on Windows), fall back to the absolute path.
+        let path_diff = diff_utf8_paths_cross_platform(path, workspace_root)
+            .unwrap_or_else(|| path.to_path_buf());
+        Self::Path(path_diff.into_boxed_path())
     }
 }
 
@@ -1023,6 +1029,179 @@ impl PackagePublishImpl {
     }
 }
 
+/// The prefix of a Windows absolute path.
+///
+/// This is similar to `std::path::Prefix` but works cross-platform.
+#[derive(Debug, Clone, PartialEq, Eq)]
+enum WindowsPathPrefix<'a> {
+    /// A drive letter prefix, e.g., `C:`.
+    Drive(char),
+    /// A UNC prefix, e.g., `\\server\share`.
+    Unc { server: &'a str, share: &'a str },
+}
+
+impl<'a> WindowsPathPrefix<'a> {
+    /// Parses a Windows path prefix from a string, returning the prefix and
+    /// the remaining path.
+    ///
+    /// Returns `None` if the path doesn't look like a Windows absolute path.
+    fn parse(s: &'a str) -> Option<(Self, &'a str)> {
+        // Handle extended-length prefix \\?\C:\ or \\?\UNC\server\share.
+        if s.starts_with(r"\\?\") || s.starts_with("//?/") {
+            let inner = &s[4..];
+            // Check for extended-length UNC: \\?\UNC\server\share.
+            if inner.starts_with(r"UNC\") || inner.starts_with("UNC/") {
+                return Self::parse_unc_components(&inner[4..]);
+            }
+            return Self::parse_inner(inner);
+        }
+        // Device prefix \\.\C:\ -- no UNC variant exists for device paths.
+        if s.starts_with(r"\\.\") || s.starts_with("//./") {
+            return Self::parse_inner(&s[4..]);
+        }
+
+        Self::parse_inner(s)
+    }
+
+    /// Inner parsing logic for Windows path prefixes.
+    fn parse_inner(s: &'a str) -> Option<(Self, &'a str)> {
+        let bytes = s.as_bytes();
+
+        // Drive letter: C:\ or C:/
+        if bytes.len() >= 3
+            && bytes[0].is_ascii_alphabetic()
+            && bytes[1] == b':'
+            && (bytes[2] == b'\\' || bytes[2] == b'/')
+        {
+            let drive = bytes[0].to_ascii_uppercase() as char;
+            return Some((Self::Drive(drive), &s[2..]));
+        }
+
+        // UNC-style paths: \\server\share or //server/share
+        if let Some(rest) = s.strip_prefix(r"\\").or_else(|| s.strip_prefix("//")) {
+            return Self::parse_unc_components(rest);
+        }
+
+        None
+    }
+
+    /// Parse UNC server and share from a path after the leading prefix has been
+    /// stripped. Expects format: `server\share\path` or `server/share/path`.
+    fn parse_unc_components(s: &'a str) -> Option<(Self, &'a str)> {
+        // Find the separator between server and share.
+        let sep1 = s.find(['\\', '/'])?;
+        let server = &s[..sep1];
+        let after_server = &s[sep1 + 1..];
+
+        // Find the end of share (next separator or end of string).
+        let sep2 = after_server.find(['\\', '/']).unwrap_or(after_server.len());
+        let share = &after_server[..sep2];
+
+        if server.is_empty() || share.is_empty() {
+            return None;
+        }
+
+        let remaining = &after_server[sep2..];
+        Some((Self::Unc { server, share }, remaining))
+    }
+}
+
+/// On Unix, if the path looks like a Windows absolute path, normalize backslashes
+/// to forward slashes so that `parent()` and other path operations work correctly.
+///
+/// This is needed because cargo metadata generated on Windows contains paths like
+/// `C:\Users\foo\Cargo.toml`, and on Unix `Utf8Path::parent()` doesn't recognize
+/// backslashes as path separators.
+fn normalize_windows_path_on_unix(path: &Utf8Path) -> Cow<'_, Utf8Path> {
+    #[cfg(windows)]
+    {
+        // On Windows, paths work natively.
+        Cow::Borrowed(path)
+    }
+    #[cfg(not(windows))]
+    {
+        let s = path.as_str();
+        if WindowsPathPrefix::parse(s).is_some() {
+            // This looks like a Windows path; normalize backslashes to forward slashes.
+            Cow::Owned(Utf8PathBuf::from(s.replace('\\', "/")))
+        } else {
+            Cow::Borrowed(path)
+        }
+    }
+}
+
+/// Computes a relative path from `base` to `path`, handling cross-platform paths.
+///
+/// This function checks whether both paths appear to be Windows-style paths,
+/// containing backslashes or drive letters like `C:`. If so, it normalizes them
+/// and computes the relative path manually. Otherwise, it uses native
+/// `pathdiff::diff_utf8_paths`.
+///
+/// Handles:
+///
+/// - Standard Windows paths: `C:\path\to\file`
+/// - UNC paths: `\\server\share\path`
+/// - Extended-length paths: `\\?\C:\path` or `\\.\C:\path`
+///
+/// Returns `None` if the paths have different prefixes (e.g., different drive
+/// letters or different UNC servers/shares) and thus cannot have a relative
+/// path computed between them.
+///
+/// We don't handle Windows case folding -- it's assumed that the paths have the
+/// same case. (pathdiff also makes this assumption.)
+///
+/// This allows parsing cargo metadata generated on Windows when running on
+/// Unix.
+fn diff_utf8_paths_cross_platform(path: &Utf8Path, base: &Utf8Path) -> Option<Utf8PathBuf> {
+    let path_str = path.as_str();
+    let base_str = base.as_str();
+
+    // Try to parse both as Windows paths.
+    let path_parsed = WindowsPathPrefix::parse(path_str);
+    let base_parsed = WindowsPathPrefix::parse(base_str);
+
+    match (path_parsed, base_parsed) {
+        (Some((path_prefix, path_rest)), Some((base_prefix, base_rest))) => {
+            // Both are Windows paths -- check that prefixes match.
+            if path_prefix != base_prefix {
+                return None;
+            }
+
+            // Compute relative path from the remaining portions.
+            let normalize = |s: &str| s.replace('\\', "/");
+            let norm_path = normalize(path_rest);
+            let norm_base = normalize(base_rest);
+
+            let path_parts: Vec<&str> = norm_path.split('/').filter(|s| !s.is_empty()).collect();
+            let base_parts: Vec<&str> = norm_base.split('/').filter(|s| !s.is_empty()).collect();
+
+            let common_len = path_parts
+                .iter()
+                .zip(base_parts.iter())
+                .take_while(|(a, b)| a == b)
+                .count();
+
+            let ups = base_parts.len() - common_len;
+            let mut result_parts: Vec<&str> = std::iter::repeat_n("..", ups).collect();
+            result_parts.extend(&path_parts[common_len..]);
+
+            if result_parts.is_empty() {
+                Some(Utf8PathBuf::from("."))
+            } else {
+                Some(Utf8PathBuf::from(result_parts.join("/")))
+            }
+        }
+        (None, None) => {
+            // Neither is a Windows path -- use native diffing.
+            pathdiff::diff_utf8_paths(path, base).map(convert_relative_forward_slashes)
+        }
+        _ => {
+            // Mixed (one Windows, one not) -- cannot compute relative path.
+            None
+        }
+    }
+}
+
 /// Replace backslashes in a relative path with forward slashes on Windows.
 #[track_caller]
 fn convert_relative_forward_slashes<'a>(rel_path: impl Into<Cow<'a, Utf8Path>>) -> Utf8PathBuf {
@@ -1088,26 +1267,293 @@ mod tests {
     }
 
     #[track_caller]
-    fn verify_result_of_diff_utf8_paths(
+    fn verify_diff_utf8_paths_cross_platform(
         path_manifest: &str,
         path_workspace_root: &str,
-        expected_relative_path: &str,
+        expected_relative_path: Option<&str>,
     ) {
-        let relative_path = pathdiff::diff_utf8_paths(
+        let relative_path = diff_utf8_paths_cross_platform(
             Utf8Path::new(path_manifest),
             Utf8Path::new(path_workspace_root),
-        )
-        .unwrap();
-        assert_eq!(relative_path, expected_relative_path);
+        );
+        assert_eq!(
+            relative_path.as_deref(),
+            expected_relative_path.map(Utf8Path::new)
+        );
     }
 
     #[test]
     fn test_workspace_path_out_of_pocket() {
-        verify_result_of_diff_utf8_paths(
+        verify_diff_utf8_paths_cross_platform(
             "/workspace/a/b/Crate/Cargo.toml",
             "/workspace/a/b/.cargo/workspace",
-            r"../../Crate/Cargo.toml",
+            Some("../../Crate/Cargo.toml"),
         );
+    }
+
+    #[test]
+    fn test_diff_utf8_paths_cross_platform_unix() {
+        // Unix paths should work normally.
+        assert_eq!(
+            diff_utf8_paths_cross_platform(
+                "/workspace/a/b/Crate/Cargo.toml".into(),
+                "/workspace/a/b".into()
+            ),
+            Some("Crate/Cargo.toml".into())
+        );
+        assert_eq!(
+            diff_utf8_paths_cross_platform(
+                "/workspace/a/b/Crate/Cargo.toml".into(),
+                "/workspace/a".into()
+            ),
+            Some("b/Crate/Cargo.toml".into())
+        );
+        assert_eq!(
+            diff_utf8_paths_cross_platform("/tmp/foo".into(), "/data/bar".into()),
+            Some("../../tmp/foo".into())
+        );
+    }
+
+    #[test]
+    fn test_diff_utf8_paths_cross_platform_windows() {
+        // Windows paths should work on any platform.
+        assert_eq!(
+            diff_utf8_paths_cross_platform(
+                r"D:\a\nextest\nextest\cargo-nextest\Cargo.toml".into(),
+                r"D:\a\nextest\nextest".into()
+            ),
+            Some("cargo-nextest/Cargo.toml".into())
+        );
+        assert_eq!(
+            diff_utf8_paths_cross_platform(
+                r"D:\a\nextest\nextest\internal-test\Cargo.toml".into(),
+                r"D:\a\nextest\nextest".into()
+            ),
+            Some("internal-test/Cargo.toml".into())
+        );
+        // Going up directories.
+        assert_eq!(
+            diff_utf8_paths_cross_platform(
+                r"D:\workspace\a\b\Crate\Cargo.toml".into(),
+                r"D:\workspace\a\b\.cargo\workspace".into()
+            ),
+            Some("../../Crate/Cargo.toml".into())
+        );
+        // Same path should give ".".
+        assert_eq!(
+            diff_utf8_paths_cross_platform(
+                r"D:\a\nextest\nextest".into(),
+                r"D:\a\nextest\nextest".into()
+            ),
+            Some(".".into())
+        );
+    }
+
+    #[test]
+    fn test_diff_utf8_paths_cross_platform_unc() {
+        // UNC paths: \\server\share\path
+        assert_eq!(
+            diff_utf8_paths_cross_platform(
+                r"\\server\share\workspace\crate\Cargo.toml".into(),
+                r"\\server\share\workspace".into()
+            ),
+            Some("crate/Cargo.toml".into())
+        );
+        // Going up in UNC paths.
+        assert_eq!(
+            diff_utf8_paths_cross_platform(
+                r"\\server\share\workspace\crate\Cargo.toml".into(),
+                r"\\server\share\workspace\other".into()
+            ),
+            Some("../crate/Cargo.toml".into())
+        );
+    }
+
+    #[test]
+    fn test_diff_utf8_paths_cross_platform_extended_length() {
+        // Extended-length paths: \\?\C:\path (used for paths > 260 chars on Windows).
+        assert_eq!(
+            diff_utf8_paths_cross_platform(
+                r"\\?\D:\a\nextest\nextest\cargo-nextest\Cargo.toml".into(),
+                r"\\?\D:\a\nextest\nextest".into()
+            ),
+            Some("cargo-nextest/Cargo.toml".into())
+        );
+        // Device paths: \\.\C:\path
+        assert_eq!(
+            diff_utf8_paths_cross_platform(
+                r"\\.\C:\workspace\crate\Cargo.toml".into(),
+                r"\\.\C:\workspace".into()
+            ),
+            Some("crate/Cargo.toml".into())
+        );
+        // Mixed: one with prefix, one without. Both still look like Windows
+        // paths due to backslashes.
+        assert_eq!(
+            diff_utf8_paths_cross_platform(
+                r"\\?\D:\a\nextest\cargo-nextest\Cargo.toml".into(),
+                r"D:\a\nextest".into()
+            ),
+            Some("cargo-nextest/Cargo.toml".into())
+        );
+        // Device path prefix mixed with non-prefixed.
+        assert_eq!(
+            diff_utf8_paths_cross_platform(
+                r"\\.\C:\workspace\crate\Cargo.toml".into(),
+                r"C:\workspace".into()
+            ),
+            Some("crate/Cargo.toml".into())
+        );
+        // Extended-length UNC paths: \\?\UNC\server\share\path.
+        assert_eq!(
+            diff_utf8_paths_cross_platform(
+                r"\\?\UNC\server\share\workspace\crate\Cargo.toml".into(),
+                r"\\?\UNC\server\share\workspace".into()
+            ),
+            Some("crate/Cargo.toml".into())
+        );
+    }
+
+    #[test]
+    fn test_diff_utf8_paths_cross_platform_different_drives() {
+        // Different drives should return None.
+        assert_eq!(
+            diff_utf8_paths_cross_platform(r"D:\foo\bar".into(), r"C:\baz".into()),
+            None
+        );
+        assert_eq!(
+            diff_utf8_paths_cross_platform(r"C:\foo".into(), r"D:\bar".into()),
+            None
+        );
+        // Case-insensitive drive letters.
+        assert_eq!(
+            diff_utf8_paths_cross_platform(r"c:\foo".into(), r"C:\bar".into()),
+            Some("../foo".into())
+        );
+    }
+
+    #[test]
+    fn test_diff_utf8_paths_cross_platform_different_unc_servers() {
+        // Different UNC servers should return None.
+        assert_eq!(
+            diff_utf8_paths_cross_platform(
+                r"\\server1\share\path".into(),
+                r"\\server2\share\path".into()
+            ),
+            None
+        );
+        // Different shares on same server should return None.
+        assert_eq!(
+            diff_utf8_paths_cross_platform(
+                r"\\server\share1\path".into(),
+                r"\\server\share2\path".into()
+            ),
+            None
+        );
+        // UNC server/share names are case-sensitive in this implementation
+        // (unlike actual Windows). This documents the limitation.
+        assert_eq!(
+            diff_utf8_paths_cross_platform(
+                r"\\SERVER\share\path".into(),
+                r"\\server\share\other".into()
+            ),
+            None,
+            "UNC server names are compared case-sensitively"
+        );
+    }
+
+    #[test]
+    fn test_diff_utf8_paths_cross_platform_mixed() {
+        // Mixed Windows and Unix paths should return None.
+        assert_eq!(
+            diff_utf8_paths_cross_platform(r"C:\foo".into(), "/bar".into()),
+            None
+        );
+        assert_eq!(
+            diff_utf8_paths_cross_platform("/foo".into(), r"D:\bar".into()),
+            None
+        );
+    }
+
+    #[test]
+    fn test_diff_utf8_paths_cross_platform_trailing_slashes() {
+        // Trailing slashes should be handled correctly.
+        assert_eq!(
+            diff_utf8_paths_cross_platform(r"C:\foo\".into(), r"C:\foo".into()),
+            Some(".".into())
+        );
+        assert_eq!(
+            diff_utf8_paths_cross_platform(r"C:\foo\bar\".into(), r"C:\foo\".into()),
+            Some("bar".into())
+        );
+        assert_eq!(
+            diff_utf8_paths_cross_platform(r"C:\foo".into(), r"C:\foo\".into()),
+            Some(".".into())
+        );
+    }
+
+    #[test]
+    fn test_diff_utf8_paths_cross_platform_root_only() {
+        // Root-only paths (just drive letter).
+        assert_eq!(
+            diff_utf8_paths_cross_platform(r"C:\foo".into(), r"C:\".into()),
+            Some("foo".into())
+        );
+        assert_eq!(
+            diff_utf8_paths_cross_platform(r"C:\".into(), r"C:\foo".into()),
+            Some("..".into())
+        );
+        assert_eq!(
+            diff_utf8_paths_cross_platform(r"C:\".into(), r"C:\".into()),
+            Some(".".into())
+        );
+    }
+
+    #[test]
+    fn test_windows_path_prefix_parse() {
+        // Drive letters.
+        assert_eq!(
+            WindowsPathPrefix::parse(r"C:\foo\bar"),
+            Some((WindowsPathPrefix::Drive('C'), r"\foo\bar"))
+        );
+        assert_eq!(
+            WindowsPathPrefix::parse("D:/foo/bar"),
+            Some((WindowsPathPrefix::Drive('D'), "/foo/bar"))
+        );
+
+        // UNC paths.
+        assert_eq!(
+            WindowsPathPrefix::parse(r"\\server\share\path"),
+            Some((
+                WindowsPathPrefix::Unc {
+                    server: "server",
+                    share: "share"
+                },
+                r"\path"
+            ))
+        );
+
+        // Extended-length paths strip to drive.
+        assert_eq!(
+            WindowsPathPrefix::parse(r"\\?\C:\foo"),
+            Some((WindowsPathPrefix::Drive('C'), r"\foo"))
+        );
+
+        // Extended-length UNC paths.
+        assert_eq!(
+            WindowsPathPrefix::parse(r"\\?\UNC\server\share\path"),
+            Some((
+                WindowsPathPrefix::Unc {
+                    server: "server",
+                    share: "share"
+                },
+                r"\path"
+            ))
+        );
+
+        // Unix paths return None.
+        assert_eq!(WindowsPathPrefix::parse("/foo/bar"), None);
+        assert_eq!(WindowsPathPrefix::parse("relative/path"), None);
     }
 
     #[cfg(windows)] // Test for '\\' and 'X:\' etc on windows
@@ -1121,7 +1567,8 @@ mod tests {
                 PackageSourceImpl::create_path("C:\\data\\foo".as_ref(), "C:\\data\\bar".as_ref()),
                 PackageSourceImpl::Path("../foo".into())
             );
-            // Paths that span drives cannot be stored as relative.
+            // Paths that span drives cannot be stored as relative, so the
+            // absolute path is used.
             assert_eq!(
                 PackageSourceImpl::create_path("D:\\tmp\\foo".as_ref(), "C:\\data\\bar".as_ref()),
                 PackageSourceImpl::Path("D:\\tmp\\foo".into())
@@ -1138,20 +1585,22 @@ mod tests {
         }
 
         #[test]
-        fn test_workspace_path_out_of_pocket_on_windows_same_driver() {
-            verify_result_of_diff_utf8_paths(
+        fn test_workspace_path_out_of_pocket_on_windows_same_drive() {
+            // Same drive: relative path with forward slashes.
+            verify_diff_utf8_paths_cross_platform(
                 r"C:\workspace\a\b\Crate\Cargo.toml",
                 r"C:\workspace\a\b\.cargo\workspace",
-                r"..\..\Crate\Cargo.toml",
+                Some("../../Crate/Cargo.toml"),
             );
         }
 
         #[test]
-        fn test_workspace_path_out_of_pocket_on_windows_different_driver() {
-            verify_result_of_diff_utf8_paths(
+        fn test_workspace_path_out_of_pocket_on_windows_different_drives() {
+            // Different drives: cannot compute relative path.
+            verify_diff_utf8_paths_cross_platform(
                 r"D:\workspace\a\b\Crate\Cargo.toml",
                 r"C:\workspace\a\b\.cargo\workspace",
-                r"D:\workspace\a\b\Crate\Cargo.toml",
+                None,
             );
         }
     }

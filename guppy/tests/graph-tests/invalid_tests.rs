@@ -115,6 +115,14 @@ fn proc_macro_mixed_kinds() {
     assert_invalid(&json, "proc-macro mixed with other crate types");
 }
 
+#[test]
+fn workspace_member_different_drive() {
+    assert_invalid(
+        include_str!("../../../fixtures/invalid/workspace_member_different_drive.json"),
+        "paths may be on different drives or UNC shares",
+    );
+}
+
 fn assert_invalid(json: &str, search_str: &str) {
     let err = PackageGraph::from_json(json).expect_err("expected error for invalid metadata");
     let Error::PackageGraphConstructError(s) = err else {

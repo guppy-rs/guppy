@@ -3,9 +3,11 @@
     "allow": [
       "Bash(cargo check:*)",
       "Bash(cargo nextest:*)",
+      "Bash(cargo xfmt:*)",
       "Bash(cargo build:*)",
       "WebFetch(domain:docs.rs)",
       "WebFetch(domain:github.com)",
+      "Bash(git show:*)",
       "Bash(jj diff:*)"
     ],
     "deny": [],
