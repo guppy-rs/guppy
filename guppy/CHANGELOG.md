@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.17.25] - 2026-01-30
+
+### Added
+
+Cargo metadata generated on Windows is now parseable on Unix. Windows paths are always normalized to forward slashes on Unix, which allows operations like `.parent()` to work. (Cross-platform parsing is not fully tested yet so you might run into issues. Please file a bug if you do.)
+
 ## [0.17.24] - 2025-12-26
 
 ### Added
@@ -813,6 +819,7 @@ lazy_static = "0.2"
 
 - Initial release.
 
+[0.17.25]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.25
 [0.17.24]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.24
 [0.17.23]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.23
 [0.17.22]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.22

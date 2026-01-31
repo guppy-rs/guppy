@@ -408,6 +408,7 @@ This was mistakenly published and was yanked.
 
 - Initial release.
 
+[3.5.7]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.5.7
 [3.5.6]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.5.6
 [3.5.5]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.5.5
 [3.5.4]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.5.4
