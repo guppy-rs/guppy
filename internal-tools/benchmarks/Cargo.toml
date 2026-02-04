@@ -12,7 +12,7 @@ proptest-ext = { path = "../proptest-ext" }
 guppy-workspace-hack.workspace = true
 
 [dev-dependencies]
-criterion = "0.5.1"
+criterion = "0.8.2"
 
 [[bench]]
 name = "package_graph"
