@@ -5,6 +5,8 @@ use std::fmt;
 
 /// An "opaque" identifier for a package.
 #[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
+#[cfg_attr(feature = "serde1", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde1", serde(transparent))]
 #[allow(clippy::derived_hash_with_manual_eq)] // safe because the same PartialEq impl is used everywhere
 pub struct PackageId {
     /// The underlying string representation of an ID.

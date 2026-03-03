@@ -39,12 +39,15 @@ use super::feature::{FeatureFilter, FeatureSet};
 /// [the `examples` directory](https://github.com/guppy-rs/guppy/tree/main/guppy/examples)
 /// in this crate.
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "serde1", derive(serde::Serialize, serde::Deserialize))]
 pub struct PackageGraph {
     // Source of truth data.
     pub(super) dep_graph: Graph<PackageId, PackageLinkImpl, Directed, PackageIx>,
     // The strongly connected components of the graph, computed on demand.
+    #[cfg_attr(feature = "serde1", serde(skip))]
     pub(super) sccs: OnceCell<Sccs<PackageIx>>,
     // Feature graph, computed on demand.
+    #[cfg_attr(feature = "serde1", serde(skip))]
     pub(super) feature_graph: OnceCell<FeatureGraphImpl>,
     // XXX Should this be in an Arc for quick cloning? Not clear how this would work with node
     // filters though.
@@ -53,6 +56,7 @@ pub struct PackageGraph {
 
 /// Per-package data for a PackageGraph instance.
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "serde1", derive(serde::Serialize, serde::Deserialize))]
 pub(super) struct PackageGraphData {
     pub(super) packages: AHashMap<PackageId, PackageMetadataImpl>,
     pub(super) workspace: WorkspaceImpl,
@@ -704,6 +708,7 @@ mod workspace_rayon {
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "serde1", derive(serde::Serialize, serde::Deserialize))]
 pub(super) struct WorkspaceImpl {
     pub(super) root: Utf8PathBuf,
     pub(super) target_directory: Utf8PathBuf,
@@ -715,6 +720,7 @@ pub(super) struct WorkspaceImpl {
     pub(super) default_members: Vec<PackageId>,
     // Cache for members by name (only used for proptests)
     #[cfg(feature = "proptest1")]
+    #[cfg_attr(feature = "serde1", serde(skip))]
     pub(super) name_list: OnceCell<Vec<Box<str>>>,
 }
 
@@ -1217,6 +1223,7 @@ impl PartialEq for PackageMetadata<'_> {
 impl Eq for PackageMetadata<'_> {}
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "serde1", derive(serde::Serialize, serde::Deserialize))]
 pub(crate) struct PackageMetadataImpl {
     // Implementation note: we use Box<str> and Box<Path> to save on memory use when possible.
 
@@ -1247,6 +1254,10 @@ pub(crate) struct PackageMetadataImpl {
     // Other information.
     pub(super) package_ix: NodeIndex<PackageIx>,
     pub(super) source: PackageSourceImpl,
+    #[cfg_attr(
+        feature = "serde1",
+        serde(with = "crate::graph::serde_helpers::btree_map_as_seq")
+    )]
     pub(super) build_targets: BTreeMap<OwnedBuildTargetId, BuildTargetImpl>,
     pub(super) has_default_feature: bool,
 }
@@ -1688,6 +1699,7 @@ pub enum GitReq<'g> {
 
 /// Internal representation of the source of a package.
 #[derive(Clone, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "serde1", derive(serde::Serialize, serde::Deserialize))]
 pub(super) enum PackageSourceImpl {
     Workspace(Box<Utf8Path>),
     Path(Box<Utf8Path>),
@@ -1798,6 +1810,7 @@ impl<'g> PackagePublish<'g> {
 
 /// Internal representation of PackagePublish.
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "serde1", derive(serde::Serialize, serde::Deserialize))]
 pub(super) enum PackagePublishImpl {
     Unrestricted,
     Registries(Box<[String]>),
@@ -1971,6 +1984,7 @@ pub struct PackageLinkPtrs {
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "serde1", derive(serde::Serialize, serde::Deserialize))]
 pub(crate) struct PackageLinkImpl {
     pub(super) dep_name: String,
     pub(super) resolved_name: String,
@@ -2146,6 +2160,7 @@ impl<'g> EnabledStatus<'g> {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[cfg_attr(feature = "serde1", derive(serde::Serialize, serde::Deserialize))]
 pub(super) enum NamedFeatureDep {
     NamedFeature(Box<str>),
     OptionalDependency(Box<str>),
@@ -2205,6 +2220,7 @@ impl fmt::Display for NamedFeatureDep {
 
 /// Information about dependency requirements.
 #[derive(Clone, Debug, Default)]
+#[cfg_attr(feature = "serde1", derive(serde::Serialize, serde::Deserialize))]
 pub(super) struct DependencyReqImpl {
     pub(super) required: DepRequiredOrOptional,
     pub(super) optional: DepRequiredOrOptional,
@@ -2252,6 +2268,7 @@ impl DependencyReqImpl {
 /// Information about dependency requirements, scoped to either the dependency being required or
 /// optional.
 #[derive(Clone, Debug, Default)]
+#[cfg_attr(feature = "serde1", derive(serde::Serialize, serde::Deserialize))]
 pub(super) struct DepRequiredOrOptional {
     pub(super) build_if: PlatformStatusImpl,
     pub(super) default_features_if: PlatformStatusImpl,

@@ -185,6 +185,7 @@ impl<'g> PlatformEval<'g> {
 }
 
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "serde1", derive(serde::Serialize, serde::Deserialize))]
 pub(crate) enum PlatformStatusImpl {
     Always,
     // Empty vector means never.

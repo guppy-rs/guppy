@@ -5,6 +5,7 @@ use std::{fmt, iter::FromIterator, ops::Deref};
 
 /// An immutable set stored as a sorted vector.
 #[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
+#[cfg_attr(feature = "serde1", derive(serde::Serialize, serde::Deserialize))]
 pub struct SortedSet<T> {
     inner: Box<[T]>,
 }

@@ -22,6 +22,8 @@ mod query;
 mod query_core;
 mod resolve;
 mod resolve_core;
+#[cfg(feature = "serde1")]
+pub(crate) mod serde_helpers;
 #[cfg(feature = "summaries")]
 pub mod summaries;
 
@@ -79,10 +81,12 @@ impl From<DependencyDirection> for Direction {
 
 /// Index for PackageGraph. Used for newtype wrapping.
 #[derive(Clone, Copy, Debug, Default, Eq, Hash, Ord, PartialEq, PartialOrd)]
+#[cfg_attr(feature = "serde1", derive(serde::Serialize, serde::Deserialize))]
 struct PackageIx(u32);
 
 /// Index for FeatureGraph. Used for newtype wrapping.
 #[derive(Clone, Copy, Debug, Default, Eq, Hash, Ord, PartialEq, PartialOrd)]
+#[cfg_attr(feature = "serde1", derive(serde::Serialize, serde::Deserialize))]
 struct FeatureIx(u32);
 
 macro_rules! graph_ix {
