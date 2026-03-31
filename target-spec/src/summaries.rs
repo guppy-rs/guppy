@@ -38,6 +38,10 @@ pub struct PlatformSummary {
     #[serde(skip_serializing_if = "Option::is_none", default)]
     pub custom_json: Option<String>,
 
+    /// `rustc --print=cfg` output for custom platforms.
+    #[serde(skip_serializing_if = "Option::is_none", default)]
+    pub custom_cfg: Option<String>,
+
     /// The target features used.
     pub target_features: TargetFeaturesSummary,
 
@@ -51,25 +55,44 @@ impl PlatformSummary {
     ///
     /// The default options are:
     ///
-    /// * `custom_json` is set to None.
+    /// * `custom_json` is set to `None`.
+    /// * `custom_cfg` is set to `None`.
     /// * `target_features` is set to [`TargetFeaturesSummary::Unknown`].
     /// * `flags` is empty.
     pub fn new(triple_str: impl Into<String>) -> Self {
         Self {
             triple: triple_str.into(),
             custom_json: None,
+            custom_cfg: None,
             target_features: TargetFeaturesSummary::Unknown,
             flags: BTreeSet::new(),
         }
     }
 
-    /// If this represents a custom platform, sets the target definition JSON for it.
+    /// If this represents a custom platform, sets the target
+    /// definition JSON for it.
     ///
-    /// For more about target definition JSON, see [Creating a custom
-    /// target](https://docs.rust-embedded.org/embedonomicon/custom-target.html) on the Rust
-    /// Embedonomicon.
+    /// This clears any previously set `custom_cfg`, since only
+    /// one custom platform source is allowed.
+    ///
+    /// For more about target definition JSON, see [Creating a
+    /// custom
+    /// target](https://docs.rust-embedded.org/embedonomicon/custom-target.html)
+    /// in the Rust Embedonomicon.
     pub fn with_custom_json(mut self, custom_json: impl Into<String>) -> Self {
         self.custom_json = Some(custom_json.into());
+        self.custom_cfg = None;
+        self
+    }
+
+    /// If this represents a custom platform created from
+    /// `rustc --print=cfg` output, sets that output.
+    ///
+    /// This clears any previously set `custom_json`, since only
+    /// one custom platform source is allowed.
+    pub fn with_custom_cfg(mut self, custom_cfg: impl Into<String>) -> Self {
+        self.custom_cfg = Some(custom_cfg.into());
+        self.custom_json = None;
         self
     }
 
@@ -90,6 +113,7 @@ impl PlatformSummary {
         Self {
             triple: platform.triple_str().to_string(),
             custom_json: platform.custom_json().map(|s| s.to_owned()),
+            custom_cfg: platform.custom_cfg_text().map(|s| s.to_owned()),
             target_features: TargetFeaturesSummary::new(platform.target_features()),
             flags: platform.flags().map(|flag| flag.to_string()).collect(),
         }
@@ -99,17 +123,37 @@ impl PlatformSummary {
     ///
     /// Returns an `Error` if the platform was unknown.
     pub fn to_platform(&self) -> Result<Platform, Error> {
-        #[allow(unused_variables)] // in some feature branches, json isn't used
+        if self.custom_json.is_some() && self.custom_cfg.is_some() {
+            return Err(Error::CustomPlatformCreate(
+                crate::errors::CustomTripleCreateError::ConflictingCustomPlatformSources {
+                    triple: self.triple.clone(),
+                },
+            ));
+        }
+
+        #[allow(unused_variables)] // in some feature branches, json/cfg aren't used
         let mut platform = if let Some(json) = &self.custom_json {
             #[cfg(not(feature = "custom"))]
             return Err(Error::CustomPlatformCreate(
-                crate::errors::CustomTripleCreateError::Unavailable,
+                crate::errors::CustomTripleCreateError::CustomJsonUnavailable,
             ));
 
             #[cfg(feature = "custom")]
             Platform::new_custom(
                 self.triple.to_owned(),
                 json,
+                self.target_features.to_target_features(),
+            )?
+        } else if let Some(cfg_text) = &self.custom_cfg {
+            #[cfg(not(feature = "custom-cfg"))]
+            return Err(Error::CustomPlatformCreate(
+                crate::errors::CustomTripleCreateError::CustomCfgUnavailable,
+            ));
+
+            #[cfg(feature = "custom-cfg")]
+            Platform::new_custom_cfg(
+                self.triple.to_owned(),
+                cfg_text,
                 self.target_features.to_target_features(),
             )?
         } else {
@@ -186,17 +230,20 @@ mod platform_impl {
                 PlatformSummaryDeserialize::String(triple) => Ok(PlatformSummary {
                     triple,
                     custom_json: None,
+                    custom_cfg: None,
                     target_features: TargetFeaturesSummary::default(),
                     flags: BTreeSet::default(),
                 }),
                 PlatformSummaryDeserialize::Full {
                     triple,
                     custom_json,
+                    custom_cfg,
                     target_features,
                     flags,
                 } => Ok(PlatformSummary {
                     triple,
                     custom_json,
+                    custom_cfg,
                     target_features,
                     flags,
                 }),
@@ -213,6 +260,8 @@ mod platform_impl {
             triple: String,
             #[serde(default)]
             custom_json: Option<String>,
+            #[serde(default)]
+            custom_cfg: Option<String>,
             /// The target features used.
             #[serde(default)]
             target_features: TargetFeaturesSummary,
@@ -291,6 +340,7 @@ mod tests {
             PlatformSummary {
                 triple: "x86_64-unknown-linux-gnu".into(),
                 custom_json: None,
+                custom_cfg: None,
                 target_features: TargetFeaturesSummary::Unknown,
                 flags: BTreeSet::new(),
             },
@@ -300,6 +350,7 @@ mod tests {
             PlatformSummary {
                 triple: "x86_64-unknown-linux-gnu".into(),
                 custom_json: None,
+                custom_cfg: None,
                 target_features: TargetFeaturesSummary::Unknown,
                 flags: BTreeSet::new(),
             },
@@ -309,6 +360,7 @@ mod tests {
             PlatformSummary {
                 triple: "x86_64-unknown-linux-gnu".into(),
                 custom_json: None,
+                custom_cfg: None,
                 target_features: TargetFeaturesSummary::Unknown,
                 flags: BTreeSet::new(),
             },
@@ -318,6 +370,7 @@ mod tests {
             PlatformSummary {
                 triple: "x86_64-unknown-linux-gnu".into(),
                 custom_json: None,
+                custom_cfg: None,
                 target_features: TargetFeaturesSummary::All,
                 flags: BTreeSet::new(),
             },
@@ -327,6 +380,7 @@ mod tests {
             PlatformSummary {
                 triple: "x86_64-unknown-linux-gnu".into(),
                 custom_json: None,
+                custom_cfg: None,
                 target_features: TargetFeaturesSummary::Features(BTreeSet::new()),
                 flags: BTreeSet::new(),
             },
@@ -342,6 +396,7 @@ mod tests {
             PlatformSummary {
                 triple: "x86_64-unknown-haiku".into(),
                 custom_json: Some(custom_json.to_owned()),
+                custom_cfg: None,
                 target_features: TargetFeaturesSummary::Unknown,
                 flags: BTreeSet::new(),
             },
@@ -354,8 +409,36 @@ mod tests {
             PlatformSummary {
                 triple: "x86_64-unknown-linux-gnu".into(),
                 custom_json: None,
+                custom_cfg: None,
                 target_features: TargetFeaturesSummary::Unknown,
                 flags,
+            },
+        ));
+
+        let custom_cfg = indoc::indoc! {r#"
+            panic="unwind"
+            target_arch="x86_64"
+            target_endian="little"
+            target_env="gnu"
+            target_family="unix"
+            target_os="linux"
+            target_pointer_width="64"
+            target_vendor="unknown"
+        "#};
+        let toml_cfg = format!(
+            "[platform]\n\
+             triple = \"my-custom-linux\"\n\
+             custom-cfg = '''\n\
+             {custom_cfg}'''"
+        );
+        valid.push((
+            &toml_cfg,
+            PlatformSummary {
+                triple: "my-custom-linux".into(),
+                custom_json: None,
+                custom_cfg: Some(custom_cfg.to_owned()),
+                target_features: TargetFeaturesSummary::Unknown,
+                flags: BTreeSet::new(),
             },
         ));
 
@@ -391,7 +474,33 @@ mod tests {
                         .expect_err("custom platforms are disabled");
                     assert!(matches!(
                         error,
-                        Error::CustomPlatformCreate(CustomTripleCreateError::Unavailable)
+                        Error::CustomPlatformCreate(CustomTripleCreateError::CustomJsonUnavailable)
+                    ));
+                }
+            }
+
+            // Check that custom cfg functionality works.
+            if actual.platform.custom_cfg.is_some() {
+                #[cfg(feature = "custom-cfg")]
+                {
+                    let platform = actual
+                        .platform
+                        .to_platform()
+                        .expect("custom cfg platform parsed successfully");
+                    assert!(platform.is_custom(), "this is a custom platform");
+                }
+
+                #[cfg(not(feature = "custom-cfg"))]
+                {
+                    use crate::errors::CustomTripleCreateError;
+
+                    let error = actual
+                        .platform
+                        .to_platform()
+                        .expect_err("custom cfg platforms are disabled");
+                    assert!(matches!(
+                        error,
+                        Error::CustomPlatformCreate(CustomTripleCreateError::CustomCfgUnavailable)
                     ));
                 }
             }

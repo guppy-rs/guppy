@@ -1,0 +1,8 @@
+  [31m×[0m error parsing `rustc --print=cfg` output for `my-target`
+   ╭─[3:1]
+ [2m2[0m │ target_arch="x86_64"
+ [2m3[0m │ target_endian="middle"
+   · [35;1m▲[0m
+   · [35;1m╰── [35;1munknown target_endian value `middle`[0m[0m
+ [2m4[0m │ target_os="linux"
+   ╰────

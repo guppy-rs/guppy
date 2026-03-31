@@ -341,10 +341,30 @@ pub enum CustomTripleCreateError {
         error: std::sync::Arc<serde_json::Error>,
     },
 
-    /// A custom platform was asked to be created, but the `custom` feature is currently disabled.
+    /// A custom JSON platform was asked to be created, but the
+    /// `custom` feature is currently disabled.
     ///
-    /// Currently, this can only happen if a custom platform is deserialized from a
-    /// [`PlatformSummary`](crate::summaries::PlatformSummary),
+    /// Currently, this can only happen if a custom platform is
+    /// deserialized from a
+    /// [`PlatformSummary`](crate::summaries::PlatformSummary).
+    CustomJsonUnavailable,
+
+    /// A custom cfg platform was asked to be created, but the
+    /// `custom-cfg` feature is currently disabled.
+    ///
+    /// Currently, this can only happen if a custom platform is
+    /// deserialized from a
+    /// [`PlatformSummary`](crate::summaries::PlatformSummary).
+    CustomCfgUnavailable,
+
+    /// Deprecated: use [`Self::CustomJsonUnavailable`] or
+    /// [`Self::CustomCfgUnavailable`] instead.
+    #[deprecated(
+        since = "3.6.0",
+        note = "this variant is no longer returned: instead, \
+                use CustomJsonUnavailable or CustomCfgUnavailable"
+    )]
+    #[doc(hidden)]
     Unavailable,
 
     #[cfg(feature = "custom")]
@@ -358,6 +378,29 @@ pub enum CustomTripleCreateError {
 
         /// The deserialization error that occurred.
         error: std::sync::Arc<serde_json::Error>,
+    },
+
+    #[cfg(feature = "custom-cfg")]
+    /// An error occurred while parsing `rustc --print=cfg` output.
+    ParseCfg {
+        /// The specified triple.
+        triple: String,
+
+        /// The input string that caused the error.
+        input: String,
+
+        /// A description of what went wrong.
+        message: String,
+
+        /// The 1-based line number where the error occurred.
+        line: usize,
+    },
+
+    /// Both `custom_json` and `custom_cfg` were specified for a
+    /// platform summary, but only one is allowed.
+    ConflictingCustomPlatformSources {
+        /// The specified triple.
+        triple: String,
     },
 }
 
@@ -380,6 +423,12 @@ impl CustomTripleCreateError {
             #[cfg(feature = "custom")]
             #[allow(deprecated)]
             Self::Deserialize { .. } => None,
+            #[cfg(feature = "custom-cfg")]
+            Self::ParseCfg { input, .. } => Some(input),
+            Self::CustomJsonUnavailable
+            | Self::CustomCfgUnavailable
+            | Self::ConflictingCustomPlatformSources { .. } => None,
+            #[allow(deprecated)]
             Self::Unavailable => None,
         }
     }
@@ -397,6 +446,12 @@ impl CustomTripleCreateError {
             #[cfg(feature = "custom")]
             #[allow(deprecated)]
             Self::Deserialize { .. } => None,
+            #[cfg(feature = "custom-cfg")]
+            Self::ParseCfg { line, .. } => Some((*line, 0)),
+            Self::CustomJsonUnavailable
+            | Self::CustomCfgUnavailable
+            | Self::ConflictingCustomPlatformSources { .. } => None,
+            #[allow(deprecated)]
             Self::Unavailable => None,
         }
     }
@@ -410,7 +465,8 @@ impl CustomTripleCreateError {
             #[cfg(feature = "custom")]
             Self::DeserializeJson { error, .. } => {
                 let label = error.to_string();
-                // serde_json appends " at line M column N" -- remove it.
+                // serde_json appends " at line M column N" -- remove
+                // it.
                 let trimmed = match label.rfind(" at line ") {
                     Some(idx) => label[..idx].to_string(),
                     None => label,
@@ -420,6 +476,12 @@ impl CustomTripleCreateError {
             #[cfg(feature = "custom")]
             #[allow(deprecated)]
             Self::Deserialize { .. } => None,
+            #[cfg(feature = "custom-cfg")]
+            Self::ParseCfg { message, .. } => Some(message.clone()),
+            Self::CustomJsonUnavailable
+            | Self::CustomCfgUnavailable
+            | Self::ConflictingCustomPlatformSources { .. } => None,
+            #[allow(deprecated)]
             Self::Unavailable => None,
         }
     }
@@ -433,6 +495,36 @@ impl fmt::Display for CustomTripleCreateError {
             Self::DeserializeJson { triple, .. } | Self::Deserialize { triple, .. } => {
                 write!(f, "error deserializing custom target JSON for `{triple}`")
             }
+            #[cfg(feature = "custom-cfg")]
+            Self::ParseCfg { triple, .. } => {
+                write!(f, "error parsing `rustc --print=cfg` output for `{triple}`")
+            }
+            Self::CustomJsonUnavailable => {
+                write!(
+                    f,
+                    "custom JSON platforms are currently unavailable: \
+                     to enable them, add the `custom` feature \
+                     to target-spec"
+                )
+            }
+            Self::CustomCfgUnavailable => {
+                write!(
+                    f,
+                    "custom cfg platforms are currently unavailable: \
+                     to enable them, add the `custom-cfg` \
+                     feature to target-spec"
+                )
+            }
+            Self::ConflictingCustomPlatformSources { triple } => {
+                write!(
+                    f,
+                    "conflicting custom platform sources for \
+                     `{triple}`: both `custom_json` and \
+                     `custom_cfg` are specified, but only one \
+                     is allowed"
+                )
+            }
+            #[allow(deprecated)]
             Self::Unavailable => {
                 write!(
                     f,
@@ -450,6 +542,12 @@ impl error::Error for CustomTripleCreateError {
             #[cfg(feature = "custom")]
             #[allow(deprecated)]
             Self::DeserializeJson { error, .. } | Self::Deserialize { error, .. } => Some(error),
+            #[cfg(feature = "custom-cfg")]
+            Self::ParseCfg { .. } => None,
+            Self::CustomJsonUnavailable
+            | Self::CustomCfgUnavailable
+            | Self::ConflictingCustomPlatformSources { .. } => None,
+            #[allow(deprecated)]
             Self::Unavailable => None,
         }
     }

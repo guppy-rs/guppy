@@ -24,9 +24,11 @@ include!(concat!(env!("OUT_DIR"), "/build_target.rs"));
 ///   characteristics of the platform based on the triple string. (Use the
 ///   [`new_strict`](Self::new_strict) constructor to disable this.)
 ///
-/// * **Custom platforms:** These platforms are specified via both a triple string and a JSON file
-///   in the format [defined by
-///   Rust](https://docs.rust-embedded.org/embedonomicon/custom-target.html). Custom platforms are
+/// * **Custom platforms:** These platforms are specified via a
+///   triple string and either a JSON file in the format
+///   [defined by
+///   Rust](https://docs.rust-embedded.org/embedonomicon/custom-target.html),
+///   or via `rustc --print=cfg` output. Custom platforms are
 ///   used for targets not recognized by Rust.
 #[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 #[must_use]
@@ -135,6 +137,23 @@ impl Platform {
         })
     }
 
+    /// Creates a new custom `Platform` from the given triple,
+    /// `rustc --print=cfg` output, and target features.
+    #[cfg(feature = "custom-cfg")]
+    pub fn new_custom_cfg(
+        triple_str: impl Into<Cow<'static, str>>,
+        cfg_text: &str,
+        target_features: TargetFeatures,
+    ) -> Result<Self, Error> {
+        let triple =
+            Triple::new_custom_cfg(triple_str, cfg_text).map_err(Error::CustomPlatformCreate)?;
+        Ok(Self {
+            triple,
+            target_features,
+            flags: BTreeSet::new(),
+        })
+    }
+
     /// Adds a set of flags to accept.
     ///
     /// A flag is a single token like the `foo` in `cfg(not(foo))`.
@@ -216,7 +235,8 @@ impl Platform {
 
     /// Returns true if this is a custom platform.
     ///
-    /// This is always available, but if the `custom` feature isn't turned on this always returns
+    /// This is always available, but if neither the `custom` nor
+    /// `custom-cfg` feature is turned on, this always returns
     /// false.
     pub fn is_custom(&self) -> bool {
         self.triple.is_custom()
@@ -235,6 +255,11 @@ impl Platform {
     #[cfg(feature = "summaries")]
     pub(crate) fn custom_json(&self) -> Option<&str> {
         self.triple.custom_json()
+    }
+
+    #[cfg(feature = "summaries")]
+    pub(crate) fn custom_cfg_text(&self) -> Option<&str> {
+        self.triple.custom_cfg_text()
     }
 }
 
@@ -269,5 +294,92 @@ impl TargetFeatures {
             TargetFeatures::Features(features) => Some(features.contains(feature)),
             TargetFeatures::All => Some(true),
         }
+    }
+}
+
+#[cfg(all(test, feature = "custom-cfg"))]
+mod custom_cfg_tests {
+    use crate::TargetSpecExpression;
+
+    use super::*;
+
+    const LINUX_CFG: &str = "\
+        panic=\"unwind\"\n\
+        target_arch=\"x86_64\"\n\
+        target_endian=\"little\"\n\
+        target_env=\"gnu\"\n\
+        target_family=\"unix\"\n\
+        target_feature=\"fxsr\"\n\
+        target_feature=\"sse\"\n\
+        target_feature=\"sse2\"\n\
+        target_os=\"linux\"\n\
+        target_pointer_width=\"64\"\n\
+        target_vendor=\"unknown\"\n";
+
+    #[test]
+    fn new_custom_cfg_basic() {
+        let platform =
+            Platform::new_custom_cfg("my-custom-linux", LINUX_CFG, TargetFeatures::Unknown)
+                .expect("parsed successfully");
+
+        assert!(platform.is_custom());
+        assert!(!platform.is_standard());
+        assert!(!platform.is_builtin());
+        assert_eq!(platform.triple_str(), "my-custom-linux");
+        assert_eq!(*platform.target_features(), TargetFeatures::Unknown);
+    }
+
+    #[test]
+    fn new_custom_cfg_evaluates_expressions() {
+        let platform =
+            Platform::new_custom_cfg("my-custom-linux", LINUX_CFG, TargetFeatures::Unknown)
+                .expect("parsed successfully");
+
+        // Evaluate cfg expressions against the custom
+        // platform.
+        let spec =
+            TargetSpecExpression::new("cfg(target_os = \"linux\")").expect("valid expression");
+        assert_eq!(
+            spec.eval(&platform),
+            Some(true),
+            "target_os = linux matches",
+        );
+
+        let spec =
+            TargetSpecExpression::new("cfg(target_os = \"windows\")").expect("valid expression");
+        assert_eq!(
+            spec.eval(&platform),
+            Some(false),
+            "target_os = windows does not match",
+        );
+
+        let spec = TargetSpecExpression::new("cfg(unix)").expect("valid expression");
+        assert_eq!(spec.eval(&platform), Some(true), "unix family matches",);
+    }
+
+    #[test]
+    fn new_custom_cfg_with_features() {
+        let platform = Platform::new_custom_cfg("my-custom-linux", LINUX_CFG, TargetFeatures::All)
+            .expect("parsed successfully");
+
+        assert_eq!(
+            platform.target_features().matches("avx512"),
+            Some(true),
+            "All matches any feature",
+        );
+        assert_eq!(*platform.target_features(), TargetFeatures::All);
+    }
+
+    #[test]
+    fn new_custom_cfg_with_no_features() {
+        let platform =
+            Platform::new_custom_cfg("my-custom-linux", LINUX_CFG, TargetFeatures::none())
+                .expect("parsed successfully");
+
+        assert_eq!(
+            platform.target_features().matches("sse2"),
+            Some(false),
+            "sse2 not matched with empty features",
+        );
     }
 }

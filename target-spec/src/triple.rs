@@ -34,10 +34,11 @@ use std::{borrow::Cow, cmp::Ordering, hash, str::FromStr};
 ///   characteristics of the platform based on the triple string. (Use the
 ///   [`new_strict`](Self::new_strict) constructor to disable this.)
 ///
-/// * **Custom platforms:** These platforms are specified via both a triple string and a JSON file
-///   in the format [defined by
-///   Rust](https://docs.rust-embedded.org/embedonomicon/custom-target.html). Custom platforms are
-///   used for targets not recognized by Rust.
+/// * **Custom platforms:** These platforms are specified via a
+///   triple string and either a JSON file in the format [defined by
+///   Rust](https://docs.rust-embedded.org/embedonomicon/custom-target.html),
+///   or via `rustc --print=cfg` output. Custom platforms are used
+///   for targets not recognized by Rust.
 ///
 /// # Examples
 ///
@@ -139,7 +140,30 @@ impl Triple {
             inner: TripleInner::Custom {
                 target_info,
                 #[cfg(feature = "summaries")]
-                json: minified_json,
+                custom_source: CustomSource::Json(minified_json),
+            },
+        })
+    }
+
+    /// Creates a new custom `Triple` from the given triple
+    /// string and `rustc --print=cfg` output.
+    ///
+    /// Target feature lines in the cfg output are parsed but
+    /// not stored in the `Triple` (they are the caller's
+    /// responsibility, just as with [`new_custom`](Self::new_custom)).
+    #[cfg(feature = "custom-cfg")]
+    pub fn new_custom_cfg(
+        triple_str: impl Into<Cow<'static, str>>,
+        cfg_text: &str,
+    ) -> Result<Self, crate::errors::CustomTripleCreateError> {
+        let triple_str = triple_str.into();
+        let (target_info, _features) =
+            crate::custom_cfg::parse_cfg_output(triple_str.clone(), cfg_text)?;
+        Ok(Self {
+            inner: TripleInner::Custom {
+                target_info: Box::new(target_info),
+                #[cfg(feature = "summaries")]
+                custom_source: CustomSource::Cfg(cfg_text.to_string()),
             },
         })
     }
@@ -204,7 +228,8 @@ impl Triple {
 
     /// Returns true if this is a custom platform.
     ///
-    /// This is always available, but if the `custom` feature isn't turned on this always returns
+    /// This is always available, but if neither the `custom` nor
+    /// `custom-cfg` feature is turned on, this always returns
     /// false.
     pub fn is_custom(&self) -> bool {
         self.inner.is_custom()
@@ -229,6 +254,11 @@ impl Triple {
     pub(crate) fn custom_json(&self) -> Option<&str> {
         self.inner.custom_json()
     }
+
+    #[cfg(feature = "summaries")]
+    pub(crate) fn custom_cfg_text(&self) -> Option<&str> {
+        self.inner.custom_cfg_text()
+    }
 }
 
 impl FromStr for Triple {
@@ -247,12 +277,13 @@ enum TripleInner {
     Builtin(&'static TargetInfo),
 
     /// A custom triple.
-    #[cfg(feature = "custom")]
+    #[cfg(feature = "custom-cfg")]
     Custom {
         target_info: Box<cfg_expr::targets::TargetInfo>,
-        // The JSON is only needed if summaries are enabled.
+        // The source representation is only needed if summaries
+        // are enabled.
         #[cfg(feature = "summaries")]
-        json: String,
+        custom_source: CustomSource,
     },
 
     /// Fall back to the lexicon representation.
@@ -260,6 +291,19 @@ enum TripleInner {
         triple_str: Cow<'static, str>,
         lexicon_triple: target_lexicon::Triple,
     },
+}
+
+/// The source representation of a custom platform, used for
+/// round-tripping through summaries.
+#[cfg(all(feature = "custom-cfg", feature = "summaries"))]
+#[derive(Clone, Debug)]
+pub(crate) enum CustomSource {
+    /// Created from target JSON (via `new_custom`).
+    #[cfg(feature = "custom")]
+    Json(String),
+    /// Created from `rustc --print=cfg` output (via
+    /// `new_custom_cfg`).
+    Cfg(String),
 }
 
 impl TripleInner {
@@ -308,7 +352,7 @@ impl TripleInner {
     fn is_standard(&self) -> bool {
         match self {
             TripleInner::Builtin(_) | TripleInner::Lexicon { .. } => true,
-            #[cfg(feature = "custom")]
+            #[cfg(feature = "custom-cfg")]
             TripleInner::Custom { .. } => false,
         }
     }
@@ -317,7 +361,7 @@ impl TripleInner {
         match self {
             TripleInner::Builtin(_) => true,
             TripleInner::Lexicon { .. } => false,
-            #[cfg(feature = "custom")]
+            #[cfg(feature = "custom-cfg")]
             TripleInner::Custom { .. } => false,
         }
     }
@@ -326,7 +370,7 @@ impl TripleInner {
         match self {
             TripleInner::Builtin(_) => false,
             TripleInner::Lexicon { .. } => true,
-            #[cfg(feature = "custom")]
+            #[cfg(feature = "custom-cfg")]
             TripleInner::Custom { .. } => false,
         }
     }
@@ -334,7 +378,7 @@ impl TripleInner {
     fn is_custom(&self) -> bool {
         match self {
             TripleInner::Builtin(_) | TripleInner::Lexicon { .. } => false,
-            #[cfg(feature = "custom")]
+            #[cfg(feature = "custom-cfg")]
             TripleInner::Custom { .. } => true,
         }
     }
@@ -342,7 +386,7 @@ impl TripleInner {
     fn as_str(&self) -> &str {
         match self {
             TripleInner::Builtin(target_info) => target_info.triple.as_str(),
-            #[cfg(feature = "custom")]
+            #[cfg(feature = "custom-cfg")]
             TripleInner::Custom { target_info, .. } => target_info.triple.as_str(),
             TripleInner::Lexicon { triple_str, .. } => triple_str,
         }
@@ -351,7 +395,7 @@ impl TripleInner {
     fn matches(&self, tp: &TargetPredicate) -> bool {
         match self {
             TripleInner::Builtin(target_info) => target_info.matches(tp),
-            #[cfg(feature = "custom")]
+            #[cfg(feature = "custom-cfg")]
             TripleInner::Custom { target_info, .. } => target_info.matches(tp),
             TripleInner::Lexicon { lexicon_triple, .. } => lexicon_triple.matches(tp),
         }
@@ -360,10 +404,26 @@ impl TripleInner {
     #[cfg(feature = "summaries")]
     pub(crate) fn custom_json(&self) -> Option<&str> {
         match self {
-            TripleInner::Builtin(_) => None,
-            #[cfg(feature = "custom")]
-            TripleInner::Custom { json, .. } => Some(json),
-            TripleInner::Lexicon { .. } => None,
+            TripleInner::Builtin(_) | TripleInner::Lexicon { .. } => None,
+            #[cfg(feature = "custom-cfg")]
+            TripleInner::Custom { custom_source, .. } => match custom_source {
+                #[cfg(feature = "custom")]
+                CustomSource::Json(json) => Some(json),
+                CustomSource::Cfg(_) => None,
+            },
+        }
+    }
+
+    #[cfg(feature = "summaries")]
+    pub(crate) fn custom_cfg_text(&self) -> Option<&str> {
+        match self {
+            TripleInner::Builtin(_) | TripleInner::Lexicon { .. } => None,
+            #[cfg(feature = "custom-cfg")]
+            TripleInner::Custom { custom_source, .. } => match custom_source {
+                #[cfg(feature = "custom")]
+                CustomSource::Json(_) => None,
+                CustomSource::Cfg(cfg_text) => Some(cfg_text),
+            },
         }
     }
 
@@ -372,7 +432,7 @@ impl TripleInner {
             TripleInner::Builtin(target_info) => {
                 TripleInnerProjected::Builtin(target_info.triple.as_str())
             }
-            #[cfg(feature = "custom")]
+            #[cfg(feature = "custom-cfg")]
             TripleInner::Custom { target_info, .. } => TripleInnerProjected::Custom(target_info),
             TripleInner::Lexicon { triple_str, .. } => TripleInnerProjected::Lexicon(triple_str),
         }
@@ -384,7 +444,7 @@ impl TripleInner {
 enum TripleInnerProjected<'a> {
     // Don't need anything else for builtin and lexicon since it's a pure function of the input.
     Builtin(&'a str),
-    #[cfg(feature = "custom")]
+    #[cfg(feature = "custom-cfg")]
     Custom(&'a TargetInfo),
     Lexicon(&'a str),
 }
@@ -440,7 +500,7 @@ mod tests {
             TripleInner::Builtin(_) => {
                 panic!("should not have been able to parse x86_64-pc-darwin as a builtin");
             }
-            #[cfg(feature = "custom")]
+            #[cfg(feature = "custom-cfg")]
             TripleInner::Custom { .. } => {
                 panic!("not a custom platform")
             }

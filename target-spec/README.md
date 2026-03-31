@@ -44,9 +44,13 @@ For more advanced usage, see `Platform` and `TargetSpec`.
 
 ### Optional features
 
+* **`custom-cfg`**: Adds support for custom targets via
+  `rustc --print=cfg` output, through
+  `Platform::new_custom_cfg`.
 * **`custom`**: Adds support for [custom
   targets](https://docs.rust-embedded.org/embedonomicon/custom-target.html) via
-  `Platform::new_custom`.
+  target JSON, through `Platform::new_custom`. Implies
+  `custom-cfg`.
 * **`summaries`**: Adds the `summaries` module to enable serialization of `Platform` and
   `TargetFeatures`.
 * **`proptest1`**: Enables support for property-based testing of `Platform` and
