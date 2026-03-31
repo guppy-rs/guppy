@@ -27,6 +27,7 @@ use proptest::prelude::*;
 use std::{
     collections::{BTreeMap, BTreeSet},
     path::{Path, PathBuf},
+    process::Command,
     rc::Rc,
 };
 
@@ -176,9 +177,16 @@ impl GuppyCargoCommon {
     }
 
     /// Returns a `Platform` corresponding to the target platform.
+    ///
+    /// This queries `rustc` for the actual target features rather
+    /// than using `TargetFeatures::Unknown`, so that guppy's
+    /// evaluation of `target_feature` predicates matches cargo's.
     pub fn make_target_platform(&self) -> Result<Platform> {
         match &self.target_platform {
-            Some(triple) => Ok(Platform::new(triple.to_owned(), TargetFeatures::Unknown)?),
+            Some(triple) => {
+                let target_features = query_target_features(triple)?;
+                Ok(Platform::new(triple.to_owned(), target_features)?)
+            }
             None => self.guppy_current_platform(),
         }
     }
@@ -296,4 +304,44 @@ pub(crate) fn anyhow_to_eyre<T>(x: anyhow::Result<T>) -> Result<T> {
         Ok(x) => Ok(x),
         Err(err) => bail!("{}", err),
     }
+}
+
+/// Queries `rustc` for the default target features of a given
+/// platform triple.
+///
+/// This ensures that guppy evaluates `target_feature` predicates
+/// the same way cargo does, rather than treating them as unknown.
+fn query_target_features(triple: &str) -> Result<TargetFeatures> {
+    let rustc = std::env::var("RUSTC").unwrap_or_else(|_| "rustc".into());
+    let output = Command::new(&rustc)
+        .args(["--print", "cfg", "--target", triple])
+        .output()
+        .map_err(|e| {
+            color_eyre::eyre::eyre!(
+                "failed to run \
+                 `{rustc} --print cfg --target {triple}`: {e}"
+            )
+        })?;
+    if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        bail!(
+            "`{rustc} --print cfg --target {triple}` \
+             failed: {stderr}"
+        );
+    }
+    let stdout = String::from_utf8(output.stdout).map_err(|e| {
+        color_eyre::eyre::eyre!(
+            "`{rustc} --print cfg --target {triple}` \
+             produced invalid UTF-8: {e}"
+        )
+    })?;
+    let features: BTreeSet<String> = stdout
+        .lines()
+        .filter_map(|line| {
+            line.strip_prefix("target_feature=\"")?
+                .strip_suffix('"')
+                .map(|s| s.to_owned())
+        })
+        .collect();
+    Ok(TargetFeatures::features(features))
 }
