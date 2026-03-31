@@ -59,6 +59,7 @@ libc = { version = "0.2.180", features = ["extra_traits"] }
 rustix = { version = "0.38.44", features = ["fs", "termios"] }
 
 [target.x86_64-pc-windows-msvc.dependencies]
+winapi = { version = "0.3.9", default-features = false, features = ["consoleapi", "minwinbase", "minwindef", "processenv", "sysinfoapi", "winbase"] }
 windows-sys-73dcd821b1037cfd = { package = "windows-sys", version = "0.59.0", features = ["Win32_Security", "Win32_Storage_FileSystem", "Win32_System_Console", "Win32_System_Pipes", "Win32_System_SystemInformation", "Win32_System_Threading", "Win32_UI_Input_KeyboardAndMouse"] }
 windows-sys-d4189bed749088b6 = { package = "windows-sys", version = "0.61.2", features = ["Win32_Security", "Win32_Storage_FileSystem", "Win32_System_Console"] }
 
