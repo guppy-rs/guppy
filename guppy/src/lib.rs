@@ -53,6 +53,7 @@
 //! * `rayon1`: Support for parallel iterators through [Rayon](docs.rs/rayon/1) (preliminary work
 //!   so far, more parallel iterators to be added in the future).
 //! * `summaries`: Support for writing out [build summaries](https://github.com/guppy-rs/guppy/tree/main/guppy-summaries).
+//! * `serde1`: Support for (de)serializing [`PackageGraph`](crate::graph::PackageGraph) via [`serde`](docs.rs/serde/1).
 //!
 //! # Examples
 //!

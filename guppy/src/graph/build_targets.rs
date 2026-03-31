@@ -232,6 +232,7 @@ impl<'g> BuildTargetKind<'g> {
 
 /// Stored data in a `BuildTarget`.
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "serde1", derive(serde::Serialize, serde::Deserialize))]
 pub(super) struct BuildTargetImpl {
     pub(super) kind: BuildTargetKindImpl,
     // This is only set if the id is BuildTargetId::Library.
@@ -247,6 +248,7 @@ pub(super) struct BuildTargetImpl {
 /// Owned version of `BuildTargetId`.
 #[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 #[cfg_attr(all(test, feature = "proptest1"), derive(proptest_derive::Arbitrary))]
+#[cfg_attr(feature = "serde1", derive(serde::Serialize, serde::Deserialize))]
 pub(super) enum OwnedBuildTargetId {
     Library,
     BuildScript,
@@ -270,6 +272,7 @@ impl OwnedBuildTargetId {
 }
 
 #[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
+#[cfg_attr(feature = "serde1", derive(serde::Serialize, serde::Deserialize))]
 #[non_exhaustive]
 pub(super) enum BuildTargetKindImpl {
     LibraryOrExample(SortedSet<String>),

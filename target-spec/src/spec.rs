@@ -68,6 +68,7 @@ use std::{borrow::Cow, fmt, str::FromStr, sync::Arc};
 /// assert_eq!(spec.eval(&i686_linux), Some(true), "i686 Linux matches some features");
 /// ```
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "serde1", derive(serde::Serialize, serde::Deserialize))]
 pub enum TargetSpec {
     /// A complex expression.
     ///
@@ -237,10 +238,27 @@ impl fmt::Display for TargetSpecExpression {
     }
 }
 
+#[cfg(feature = "serde1")]
+impl serde::Serialize for TargetSpecExpression {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        self.expression_str().serialize(serializer)
+    }
+}
+
+#[cfg(feature = "serde1")]
+impl<'de> serde::Deserialize<'de> for TargetSpecExpression {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        let s = <String as serde::Deserialize>::deserialize(deserializer)?;
+        TargetSpecExpression::new(&s).map_err(serde::de::Error::custom)
+    }
+}
+
 /// A plain string as contained within a [`TargetSpec::PlainString`].
 ///
 /// For more information, see [`TargetSpec`].
 #[derive(Clone, Debug)]
+#[cfg_attr(feature = "serde1", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde1", serde(transparent))]
 pub struct TargetSpecPlainString(Cow<'static, str>);
 
 impl TargetSpecPlainString {

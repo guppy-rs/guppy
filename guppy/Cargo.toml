@@ -61,6 +61,15 @@ pretty_assertions = "1.4.1"
 [features]
 proptest1 = ["proptest", "proptest-derive", "target-spec/proptest1"]
 rayon1 = ["rayon"]
+serde1 = [
+    "ahash/serde",
+    "petgraph/serde-1",
+    "indexmap/serde",
+    "smallvec/serde",
+    "camino/serde1",
+    "semver/serde",
+    "target-spec/serde1",
+]
 summaries = ["guppy-summaries", "target-spec/summaries", "toml"]
 
 [lints]

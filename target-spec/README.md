@@ -51,6 +51,7 @@ For more advanced usage, see `Platform` and `TargetSpec`.
   `TargetFeatures`.
 * **`proptest1`**: Enables support for property-based testing of `Platform` and
   `TargetFeatures` using `proptest`.
+* **`serde1`**: Support for (de)serializing `TargetSpec` via [`serde`](docs.rs/serde/1).
 
 ### Minimum supported Rust version
 

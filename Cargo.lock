@@ -32,6 +32,7 @@ dependencies = [
  "cfg-if",
  "getrandom 0.3.3",
  "once_cell",
+ "serde",
  "version_check",
  "zerocopy",
 ]
@@ -2403,6 +2404,7 @@ dependencies = [
 name = "guppy-workspace-hack"
 version = "0.1.0"
 dependencies = [
+ "ahash",
  "aho-corasick",
  "bit-set",
  "bit-vec",
@@ -2429,6 +2431,7 @@ dependencies = [
  "serde",
  "serde_core",
  "serde_json",
+ "smallvec",
  "syn",
  "toml 0.5.11",
  "windows-sys 0.59.0",
@@ -2842,6 +2845,8 @@ checksum = "7714e70437a7dc3ac8eb7e6f8df75fd8eb422675fc7678aff7364301092b1017"
 dependencies = [
  "equivalent",
  "hashbrown 0.16.1",
+ "serde",
+ "serde_core",
 ]
 
 [[package]]
@@ -3653,6 +3658,8 @@ dependencies = [
  "fixedbitset",
  "hashbrown 0.15.4",
  "indexmap 2.13.0",
+ "serde",
+ "serde_derive",
 ]
 
 [[package]]
@@ -4312,6 +4319,9 @@ name = "smallvec"
 version = "1.15.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "67b1b7a3b5fe4f1376887184045fcf45c69e92af734b7aaddc05fb777b6fbd03"
+dependencies = [
+ "serde",
+]
 
 [[package]]
 name = "snapbox"

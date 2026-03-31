@@ -34,6 +34,7 @@ toml = "0.5.11"
 [features]
 custom = ["dep:serde", "dep:serde_json"]
 proptest1 = ["proptest"]
+serde1 = ["dep:serde"]
 summaries = ["dep:serde"]
 
 [lints]
