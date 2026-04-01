@@ -11,16 +11,22 @@ jobs:
     # There's no regex filtering in if conditionals, so we need to use the first component of the version number.
     if: github.repository_owner == 'guppy-rs' && startsWith(github.ref_name, 'target-spec-3')
     runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      id-token: write     # Required for OIDC token exchange
+      contents: write     # Required for creating releases
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           persist-credentials: false
+      - uses: rust-lang/crates-io-auth-action@v1
+        id: auth
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
       - name: Install cargo release
         uses: taiki-e/install-action@650c5ca14212efbbf3e580844b04bdccf68dac31 # v2
         with:
-          tool: cargo-release@0.25.0
+          tool: cargo-release@0.25.17,just
       - uses: taiki-e/create-gh-release-action@56a8b3f8449593aa02b91f7b84da564f476e94f0 # v1
         with:
           prefix: target-spec
@@ -29,23 +35,29 @@ jobs:
           branch: main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: ./scripts/cargo-release-publish.sh
+      - run: just ci-cargo-release target-spec
         env:
-          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+          CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
 
   target-spec-miette-release:
     if: github.repository_owner == 'guppy-rs' && startsWith(github.ref_name, 'target-spec-miette-')
     runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      id-token: write     # Required for OIDC token exchange
+      contents: write     # Required for creating releases
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           persist-credentials: false
+      - uses: rust-lang/crates-io-auth-action@v1
+        id: auth
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
       - name: Install cargo release
         uses: taiki-e/install-action@650c5ca14212efbbf3e580844b04bdccf68dac31 # v2
         with:
-          tool: cargo-release@0.25.0
+          tool: cargo-release@0.25.17,just
       - uses: taiki-e/create-gh-release-action@56a8b3f8449593aa02b91f7b84da564f476e94f0 # v1
         with:
           prefix: target-spec-miette
@@ -54,23 +66,29 @@ jobs:
           branch: main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: ./scripts/cargo-release-publish.sh
+      - run: just ci-cargo-release target-spec-miette
         env:
-          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+          CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
 
   guppy-summaries-release:
     if: github.repository_owner == 'guppy-rs' && startsWith(github.ref_name, 'guppy-summaries-')
     runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      id-token: write     # Required for OIDC token exchange
+      contents: write     # Required for creating releases
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           persist-credentials: false
+      - uses: rust-lang/crates-io-auth-action@v1
+        id: auth
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
       - name: Install cargo release
         uses: taiki-e/install-action@650c5ca14212efbbf3e580844b04bdccf68dac31 # v2
         with:
-          tool: cargo-release@0.25.0
+          tool: cargo-release@0.25.17,just
       - uses: taiki-e/create-gh-release-action@56a8b3f8449593aa02b91f7b84da564f476e94f0 # v1
         with:
           prefix: guppy-summaries
@@ -79,24 +97,30 @@ jobs:
           branch: main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: ./scripts/cargo-release-publish.sh
+      - run: just ci-cargo-release guppy-summaries
         env:
-          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+          CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
 
   guppy-release:
     # There's no regex filtering in if conditionals, so we need to use the first component of the version number.
     if: github.repository_owner == 'guppy-rs' && startsWith(github.ref_name, 'guppy-0')
     runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      id-token: write     # Required for OIDC token exchange
+      contents: write     # Required for creating releases
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           persist-credentials: false
+      - uses: rust-lang/crates-io-auth-action@v1
+        id: auth
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
       - name: Install cargo release
         uses: taiki-e/install-action@650c5ca14212efbbf3e580844b04bdccf68dac31 # v2
         with:
-          tool: cargo-release@0.25.0
+          tool: cargo-release@0.25.17,just
       - uses: taiki-e/create-gh-release-action@56a8b3f8449593aa02b91f7b84da564f476e94f0 # v1
         with:
           prefix: guppy
@@ -105,23 +129,29 @@ jobs:
           branch: main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: ./scripts/cargo-release-publish.sh
+      - run: just ci-cargo-release guppy
         env:
-          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+          CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
 
   determinator-release:
     if: github.repository_owner == 'guppy-rs' && startsWith(github.ref_name, 'determinator-')
     runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      id-token: write     # Required for OIDC token exchange
+      contents: write     # Required for creating releases
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           persist-credentials: false
+      - uses: rust-lang/crates-io-auth-action@v1
+        id: auth
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
       - name: Install cargo release
         uses: taiki-e/install-action@650c5ca14212efbbf3e580844b04bdccf68dac31 # v2
         with:
-          tool: cargo-release@0.25.0
+          tool: cargo-release@0.25.17,just
       - uses: taiki-e/create-gh-release-action@56a8b3f8449593aa02b91f7b84da564f476e94f0 # v1
         with:
           prefix: determinator
@@ -130,23 +160,29 @@ jobs:
           branch: main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: ./scripts/cargo-release-publish.sh
+      - run: just ci-cargo-release determinator
         env:
-          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+          CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
 
   hakari-release:
     if: github.repository_owner == 'guppy-rs' && startsWith(github.ref_name, 'hakari-')
     runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      id-token: write     # Required for OIDC token exchange
+      contents: write     # Required for creating releases
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           persist-credentials: false
+      - uses: rust-lang/crates-io-auth-action@v1
+        id: auth
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
       - name: Install cargo release
         uses: taiki-e/install-action@650c5ca14212efbbf3e580844b04bdccf68dac31 # v2
         with:
-          tool: cargo-release@0.25.0
+          tool: cargo-release@0.25.17,just
       - uses: taiki-e/create-gh-release-action@56a8b3f8449593aa02b91f7b84da564f476e94f0 # v1
         with:
           prefix: hakari
@@ -155,13 +191,15 @@ jobs:
           branch: main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: ./scripts/cargo-release-publish.sh
+      - run: just ci-cargo-release hakari
         env:
-          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+          CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
 
   cargo-hakari-release:
     if: github.repository_owner == 'guppy-rs' && startsWith(github.ref_name, 'cargo-hakari-')
     runs-on: ubuntu-latest
+    permissions:
+      contents: write     # Required for creating releases
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
@@ -185,6 +223,8 @@ jobs:
     if: github.repository_owner == 'guppy-rs' && startsWith(github.ref_name, 'cargo-hakari-')
     needs:
       - cargo-hakari-release
+    permissions:
+      contents: write     # Required for uploading release assets
     strategy:
       matrix:
         include:
@@ -279,14 +319,21 @@ jobs:
       - cargo-hakari-release
       - build-cargo-hakari-binaries
     runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      id-token: write     # Required for OIDC token exchange
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          persist-credentials: false
+      - uses: rust-lang/crates-io-auth-action@v1
+        id: auth
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
       - name: Install cargo release
         uses: taiki-e/install-action@650c5ca14212efbbf3e580844b04bdccf68dac31 # v2
         with:
-          tool: cargo-release@0.25.0
-      - run: ./scripts/cargo-release-publish.sh
+          tool: cargo-release@0.25.17,just
+      - run: just ci-cargo-release cargo-hakari
         env:
-          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+          CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}

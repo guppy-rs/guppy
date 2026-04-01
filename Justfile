@@ -29,6 +29,14 @@ rustdoc:
         | xargs printf -- '-p %s\n' \
         | RUSTC_BOOTSTRAP=1 RUSTDOCFLAGS='--cfg=doc_cfg' xargs cargo doc --no-deps --lib --all-features
 
+# Run cargo release in CI for a specific crate.
+ci-cargo-release crate:
+    # cargo-release requires a release off a branch.
+    git checkout -B to-release
+    cargo release publish --publish --execute --no-confirm -p {{crate}}
+    git checkout -
+    git branch -D to-release
+
 # Generate README.md files from README.tpl and lib.rs files
 generate-readmes:
     #!/usr/bin/env bash
