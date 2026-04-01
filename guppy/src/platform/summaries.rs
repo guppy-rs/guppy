@@ -182,11 +182,13 @@ mod serde_impl {
                 PlatformSpecSummaryDeserialize::PlatformFull {
                     triple,
                     custom_json,
+                    custom_cfg,
                     target_features,
                     flags,
                 } => {
                     let mut summary = PlatformSummary::new(triple);
                     summary.custom_json = custom_json;
+                    summary.custom_cfg = custom_cfg;
                     summary.target_features = target_features;
                     summary.flags = flags;
                     Ok(PlatformSpecSummary::Platform(summary))
@@ -209,6 +211,8 @@ mod serde_impl {
             triple: String,
             #[serde(skip_serializing_if = "Option::is_none", default)]
             custom_json: Option<String>,
+            #[serde(skip_serializing_if = "Option::is_none", default)]
+            custom_cfg: Option<String>,
             #[serde(default)]
             target_features: TargetFeaturesSummary,
             #[serde(skip_serializing_if = "BTreeSet::is_empty", default)]

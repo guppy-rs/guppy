@@ -1,0 +1,7 @@
+  [31m×[0m error parsing `rustc --print=cfg` output for `my-target`
+   ╭─[2:1]
+ [2m1[0m │ target_arch="x86_64"
+ [2m2[0m │ target_pointer_width="not_a_number"
+   · [35;1m▲[0m
+   · [35;1m╰── [35;1minvalid target_pointer_width `not_a_number`: invalid digit found in string[0m[0m
+   ╰────

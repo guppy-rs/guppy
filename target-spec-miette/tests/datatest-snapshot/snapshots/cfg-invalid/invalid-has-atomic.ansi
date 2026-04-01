@@ -1,0 +1,7 @@
+  [31m×[0m error parsing `rustc --print=cfg` output for `my-target`
+   ╭─[6:1]
+ [2m5[0m │ target_pointer_width="64"
+ [2m6[0m │ target_has_atomic="banana"
+   · [35;1m▲[0m
+   · [35;1m╰── [35;1minvalid target_has_atomic value `banana`: expected integer or "ptr", found banana[0m[0m
+   ╰────

@@ -1,0 +1,7 @@
+  [31m×[0m error parsing `rustc --print=cfg` output for `my-target`
+   ╭─[2:1]
+ [2m1[0m │ target_pointer_width="64"
+ [2m2[0m │ target_os="linux"
+   · [35;1m▲[0m
+   · [35;1m╰── [35;1mmissing required key `target_arch`[0m[0m
+   ╰────

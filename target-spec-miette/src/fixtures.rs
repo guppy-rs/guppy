@@ -25,3 +25,7 @@ pub static CUSTOM_INVALID: include_dir::Dir<'static> =
 /// A set of invalid `cfg` expressions.
 pub static EXPR_INVALID: include_dir::Dir<'static> =
     include_dir::include_dir!("$CARGO_MANIFEST_DIR/tests/fixtures/expr-invalid");
+
+/// A set of invalid `rustc --print=cfg` outputs.
+pub static CFG_INVALID: include_dir::Dir<'static> =
+    include_dir::include_dir!("$CARGO_MANIFEST_DIR/tests/fixtures/cfg-invalid");

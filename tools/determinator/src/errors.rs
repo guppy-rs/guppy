@@ -31,7 +31,7 @@ impl RulesError {
     pub(crate) fn resolve_ref(rule_index: RuleIndex, err: guppy::Error) -> Self {
         Self {
             rule_index,
-            kind: RulesErrorKind::ResolveRef(err),
+            kind: RulesErrorKind::ResolveRef(Box::new(err)),
         }
     }
 
@@ -68,7 +68,7 @@ impl error::Error for RulesError {
 #[non_exhaustive]
 pub enum RulesErrorKind {
     /// An error occurred while resolving a reference in guppy.
-    ResolveRef(guppy::Error),
+    ResolveRef(Box<guppy::Error>),
 
     /// An error occurred while parsing a glob.
     GlobParse {

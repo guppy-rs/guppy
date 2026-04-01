@@ -12,7 +12,8 @@ fn unavailable_snapshot() {
     unsafe { std::env::set_var("CLICOLOR_FORCE", "1") };
 
     // Test that the unavailable diagnostic shows properly as a report.
-    let report = miette::Report::new(CustomTripleCreateError::Unavailable.into_diagnostic());
+    let report =
+        miette::Report::new(CustomTripleCreateError::CustomJsonUnavailable.into_diagnostic());
     // Use the Debug format to get the report ace the fancy displayer would show
     // it.
     let actual = format!("{report:?}");
