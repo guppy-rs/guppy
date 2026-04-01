@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.4.6] - 2026-03-31
+
+### Added
+
+- Fixtures for invalid `rustc --print=cfg` inputs.
+
+### Changed
+
+- target-spec updated to 3.6.0.
+
 ## [0.4.5] - 2025-09-29
 
 ### Fixed
@@ -66,6 +76,7 @@ want to check in `Cargo.lock`.)
 
 Initial release with support for miette 5.
 
+[0.4.6]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-miette-0.4.6
 [0.4.5]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-miette-0.4.5
 [0.4.4]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-miette-0.4.4
 [0.4.3]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-miette-0.4.3

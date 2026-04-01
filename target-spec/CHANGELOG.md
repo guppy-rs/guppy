@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.6.0] - 2026-03-31
+
+### Added
+
+- Support for parsing `rustc --print=cfg` output, under a new `custom-cfg` feature. (The existing `custom` feature now implicitly includes `custom-cfg`.)
+
+### Changed
+
+- `CustomTripleCreateError::Unavailable` is now deprecated, and replaced with `CustomJsonUnavailable`/`CustomCfgUnavailable`.
+
+### Other improvements
+
+- The crates.io config for target-spec now enforces GitHub Trusted Publishing.
+
 ## [3.5.7] - 2026-01-30
 
 ### Changed
@@ -408,6 +422,7 @@ This was mistakenly published and was yanked.
 
 - Initial release.
 
+[3.6.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.6.0
 [3.5.7]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.5.7
 [3.5.6]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.5.6
 [3.5.5]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.5.5
