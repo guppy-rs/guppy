@@ -27,7 +27,7 @@ guppy-workspace-hack = "0.1.0"
 iddqd = "0.3.17"
 include_dir = "0.7.4"
 miette = "7.6.0"
-snapbox = { version = "0.6.21", features = ["term-svg"] }
+snapbox = { version = "0.6.24", features = ["term-svg"] }
 twox-hash = { version = "2.1.2", default-features = false, features = ["xxhash64"] }
 
 [workspace.package]
