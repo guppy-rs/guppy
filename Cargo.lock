@@ -4486,7 +4486,7 @@ dependencies = [
 
 [[package]]
 name = "target-spec-miette"
-version = "0.4.5"
+version = "0.4.6"
 dependencies = [
  "datatest-stable",
  "guppy-workspace-hack",
