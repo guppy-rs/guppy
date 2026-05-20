@@ -256,6 +256,72 @@ mod small {
 
     proptest_suite!(metadata_cycle_features);
 
+    /// Regression test for the `Sccs::externals` self-loop bug.
+    ///
+    /// `metadata_self_dev_cycle` is a two-crate workspace where
+    /// `self-dev-cycle-base` has a normal dep on `self-dev-cycle-helper`
+    /// plus a path-self dev-dependency that propagates a feature to the
+    /// helper. The self-edge puts `base` in a single-node SCC with a
+    /// self-loop. Before the fix, the self-loop was counted as an external
+    /// incoming edge, removing `base` from the set of forward roots, so
+    /// `query_forward([base]).resolve().links(Forward)` returned no
+    /// links — even though `direct_links()` and `links(Reverse)` were
+    /// fine. After the fix, the forward link from `base` to `helper`
+    /// (and the self-edge) are visible to forward iteration.
+    #[test]
+    fn metadata_self_dev_cycle() {
+        let fixture = JsonFixture::metadata_self_dev_cycle();
+        fixture.verify();
+
+        let graph = fixture.graph();
+        let base_id = package_id(json::METADATA_SELF_DEV_CYCLE_BASE);
+        let helper_id = package_id(json::METADATA_SELF_DEV_CYCLE_HELPER);
+
+        let resolved = graph
+            .query_forward([&base_id])
+            .expect("base is a known package id")
+            .resolve();
+
+        // Sanity check: the resolved set should contain both packages.
+        assert!(
+            resolved.contains(&base_id).expect("known id"),
+            "resolved forward set should contain base",
+        );
+        assert!(
+            resolved.contains(&helper_id).expect("known id"),
+            "resolved forward set should contain helper",
+        );
+
+        // The forward roots should contain `base`. Before the fix this was
+        // empty because the self-loop disqualified the single-node SCC.
+        let forward_roots: Vec<_> = resolved
+            .root_ids(DependencyDirection::Forward)
+            .cloned()
+            .collect();
+        assert_eq!(
+            forward_roots,
+            vec![base_id.clone()],
+            "forward roots should be [base]; before the fix this returned [] because the \
+             self-loop on `base` was wrongly counted as an external incoming edge",
+        );
+
+        // The forward link iteration should produce the `base -> base`
+        // self-edge and the `base -> helper` normal edge, in that order.
+        // Before the fix it produced no links at all.
+        let forward_links: Vec<(_, _)> = resolved
+            .links(DependencyDirection::Forward)
+            .map(|link| (link.from().id().clone(), link.to().id().clone()))
+            .collect();
+        assert_eq!(
+            forward_links,
+            vec![
+                (base_id.clone(), base_id.clone()),
+                (base_id.clone(), helper_id.clone()),
+            ],
+            "forward links from `base` should be the self-edge followed by the edge to `helper`",
+        );
+    }
+
     // Test Windows path handling in fixtures with path dependencies.
     #[test]
     fn metadata_cycle1_windows() {

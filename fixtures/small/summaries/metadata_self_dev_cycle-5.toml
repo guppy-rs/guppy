@@ -1,0 +1,28 @@
+# This summary was @generated. To regenerate, run:
+#   cargo run -p fixture-manager -- generate-summaries --fixture metadata_self_dev_cycle
+
+[metadata]
+resolver = '1'
+include-dev = false
+initials-platform = 'standard'
+
+[metadata.host-platform]
+triple = 'aarch64-unknown-netbsd'
+target-features = 'all'
+flags = ['flag-test']
+
+[metadata.target-platform]
+triple = 'xtensa-esp32-espidf'
+target-features = 'all'
+flags = ['abc']
+[[metadata.omitted-packages.ids]]
+name = 'self-dev-cycle-base'
+version = '0.1.0'
+workspace-path = 'base'
+
+[[target-package]]
+name = 'self-dev-cycle-helper'
+version = '0.1.0'
+workspace-path = 'helper'
+status = 'initial'
+features = []

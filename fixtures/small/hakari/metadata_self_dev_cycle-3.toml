@@ -1,0 +1,27 @@
+# This file is @generated. To regenerate, run:
+#    cargo run -p fixture-manager -- generate-hakari --fixture metadata_self_dev_cycle
+
+### BEGIN HAKARI SECTION
+# resolver = '3'
+# unify-target-host = 'replicate-target-on-host'
+# output-single-feature = true
+# dep-format-version = '3'
+# workspace-hack-line-style = 'full'
+# platforms = []
+# [[traversal-excludes.ids]]
+# name = 'self-dev-cycle-helper'
+# version = '0.1.0'
+# workspace-path = 'helper'
+# [[final-excludes.ids]]
+# name = 'self-dev-cycle-base'
+# version = '0.1.0'
+# workspace-path = 'base'
+#
+# [[final-excludes.ids]]
+# name = 'self-dev-cycle-helper'
+# version = '0.1.0'
+# workspace-path = 'helper'
+
+### END HAKARI SECTION
+
+# This part of the file should be preserved at the end.

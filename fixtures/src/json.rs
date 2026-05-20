@@ -77,6 +77,11 @@ pub static METADATA_CYCLE_FEATURES_BASE: &str =
 pub static METADATA_CYCLE_FEATURES_HELPER: &str =
     "testcycles-helper 0.1.0 (path+file:///fakepath/testcycles-features/testcycles-helper)";
 
+pub static METADATA_SELF_DEV_CYCLE_PATH: &str = "../small/metadata_self_dev_cycle.json";
+pub static METADATA_SELF_DEV_CYCLE_BASE: &str =
+    "self-dev-cycle-base 0.1.0 (path+file:///Users/fakeuser/local/testcrates/self-dev-cycle/base)";
+pub static METADATA_SELF_DEV_CYCLE_HELPER: &str = "self-dev-cycle-helper 0.1.0 (path+file:///Users/fakeuser/local/testcrates/self-dev-cycle/helper)";
+
 pub static METADATA_TARGETS1_PATH: &str = "../small/metadata_targets1.json";
 pub static METADATA_TARGETS1_TESTCRATE: &str =
     "testcrate-targets 0.1.0 (path+file:///Users/fakeuser/local/testcrates/testcrate-targets)";
@@ -233,6 +238,7 @@ define_fixtures! {
     metadata_cycle1_windows_different_drives => METADATA_CYCLE1_WINDOWS_DIFFERENT_DRIVES_PATH,
     metadata_cycle2 => METADATA_CYCLE2_PATH,
     metadata_cycle_features => METADATA_CYCLE_FEATURES_PATH,
+    metadata_self_dev_cycle => METADATA_SELF_DEV_CYCLE_PATH,
     metadata_targets1 => METADATA_TARGETS1_PATH,
     metadata_build_targets1 => METADATA_BUILD_TARGETS1_PATH,
     metadata_proc_macro1 => METADATA_PROC_MACRO1_PATH,
@@ -895,6 +901,72 @@ impl FixtureDetails {
                 // lower-b dev-depends on lower-a, and lower-a normal-depends on lower-b.
                 vec![METADATA_CYCLE2_LOWER_A, METADATA_CYCLE2_LOWER_B],
             ])
+    }
+
+    /// Two-crate workspace where `self-dev-cycle-base` declares a
+    /// path-self dev-dependency that enables a feature which in turn
+    /// activates a feature on `self-dev-cycle-helper`. The self-edge puts
+    /// `base` in a single-node SCC with a self-loop — the trigger for the
+    /// `Sccs::externals` bug where the self-loop was counted as an
+    /// external incoming edge and erased `base` from the forward roots,
+    /// leaving `query_forward(base).links(Forward)` empty.
+    pub(crate) fn metadata_self_dev_cycle() -> Self {
+        let mut details = AHashMap::new();
+
+        PackageDetails::new(
+            METADATA_SELF_DEV_CYCLE_BASE,
+            "self-dev-cycle-base",
+            "0.1.0",
+            vec![FAKE_AUTHOR],
+            None,
+            Some("MIT OR Apache-2.0"),
+        )
+        .with_workspace_path("base")
+        .with_deps(vec![
+            // The normal edge to `helper`, plus the self-dev edge.
+            ("self-dev-cycle-base", METADATA_SELF_DEV_CYCLE_BASE),
+            ("self-dev-cycle-helper", METADATA_SELF_DEV_CYCLE_HELPER),
+        ])
+        .with_reverse_deps(vec![("self-dev-cycle-base", METADATA_SELF_DEV_CYCLE_BASE)])
+        .with_transitive_deps(vec![
+            METADATA_SELF_DEV_CYCLE_BASE,
+            METADATA_SELF_DEV_CYCLE_HELPER,
+        ])
+        .with_transitive_reverse_deps(vec![METADATA_SELF_DEV_CYCLE_BASE])
+        .with_named_features(vec!["extra"])
+        .insert_into(&mut details);
+
+        PackageDetails::new(
+            METADATA_SELF_DEV_CYCLE_HELPER,
+            "self-dev-cycle-helper",
+            "0.1.0",
+            vec![FAKE_AUTHOR],
+            None,
+            Some("MIT OR Apache-2.0"),
+        )
+        .with_workspace_path("helper")
+        .with_reverse_deps(vec![(
+            "self-dev-cycle-helper",
+            METADATA_SELF_DEV_CYCLE_BASE,
+        )])
+        .with_named_features(vec!["extra"])
+        .insert_into(&mut details);
+
+        // Note: guppy's `cycles().all_cycles()` does not report self-loops
+        // as cycles — only cycles spanning multiple packages — so no
+        // `with_cycles` entry is needed even though `base` does have a
+        // path-self dev edge. The feature graph, however, does flag the
+        // path-self dev-dependency as a self-loop warning on the package's
+        // `[base]` (package-only) feature, which we record here.
+        Self::new(details)
+            .with_workspace_members(vec![
+                ("base", METADATA_SELF_DEV_CYCLE_BASE),
+                ("helper", METADATA_SELF_DEV_CYCLE_HELPER),
+            ])
+            .with_feature_graph_warnings(vec![FeatureGraphWarning::SelfLoop {
+                package_id: package_id(METADATA_SELF_DEV_CYCLE_BASE),
+                feature_name: "[base]".to_string(),
+            }])
     }
 
     pub(crate) fn metadata_cycle_features() -> Self {
