@@ -1,6 +1,7 @@
 # Changelog
 
-## Unreleased
+<!-- next-header -->
+## Unreleased - ReleaseDate
 
 ### Fixed
 
@@ -890,6 +891,7 @@ lazy_static = "0.2"
 
 - Initial release.
 
+<!-- next-url -->
 [0.17.25]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.25
 [0.17.24]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.24
 [0.17.23]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.23

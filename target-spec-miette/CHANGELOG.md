@@ -1,10 +1,15 @@
 # Changelog
 
-## Unreleased
+<!-- next-header -->
+## Unreleased - ReleaseDate
 
 ### Added
 
 - `IntoMietteDiagnostic` is now implemented for `RustcVersionVerboseParseError`.
+
+## [0.4.7] - 2026-05-21
+
+This version was not released due to a publishing issue.
 
 ## [0.4.6] - 2026-03-31
 
@@ -82,6 +87,8 @@ want to check in `Cargo.lock`.)
 
 Initial release with support for miette 5.
 
+<!-- next-url -->
+[0.4.7]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-miette-0.4.7
 [0.4.6]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-miette-0.4.6
 [0.4.5]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-miette-0.4.5
 [0.4.4]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-miette-0.4.4

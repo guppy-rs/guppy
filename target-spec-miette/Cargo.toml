@@ -15,6 +15,14 @@ rust-version.workspace = true
 all-features = true
 rustdoc-args = ["--cfg=doc_cfg"]
 
+[package.metadata.release]
+pre-release-replacements = [
+    { file="CHANGELOG.md", search="Unreleased", replace="[{{version}}]", min=1 },
+    { file="CHANGELOG.md", search="ReleaseDate", replace="{{date}}", min=1 },
+    { file="CHANGELOG.md", search="<!-- next-header -->", replace="<!-- next-header -->\n## Unreleased - ReleaseDate\n", exactly=1 },
+    { file="CHANGELOG.md", search="<!-- next-url -->", replace="<!-- next-url -->\n[{{version}}]: https://github.com/guppy-rs/guppy/releases/tag/{{crate_name}}-{{version}}", exactly=1 },
+]
+
 [dependencies]
 guppy-workspace-hack.workspace = true
 include_dir = { workspace = true, optional = true }

@@ -1,5 +1,8 @@
 # Changelog
 
+<!-- next-header -->
+## Unreleased - ReleaseDate
+
 ## [0.12.0] - 2023-06-25
 
 ### Changed
@@ -119,6 +122,7 @@ Initial release.
 * Path-based and package-based custom rules, including a default set of rules for files like `rust-toolchain` and `Cargo.lock`.
 * A `Paths0` wrapper to make it easier to retrieve changes from source control.
 
+<!-- next-url -->
 [0.12.0]: https://github.com/guppy-rs/guppy/releases/tag/determinator-0.12.0
 [0.11.0]: https://github.com/guppy-rs/guppy/releases/tag/determinator-0.11.0
 [0.10.0]: https://github.com/guppy-rs/guppy/releases/tag/determinator-0.10.0

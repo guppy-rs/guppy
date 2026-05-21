@@ -1,5 +1,8 @@
 # Changelog
 
+<!-- next-header -->
+## Unreleased - ReleaseDate
+
 ## [3.6.0] - 2026-03-31
 
 ### Added
@@ -422,6 +425,7 @@ This was mistakenly published and was yanked.
 
 - Initial release.
 
+<!-- next-url -->
 [3.6.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.6.0
 [3.5.7]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.5.7
 [3.5.6]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.5.6

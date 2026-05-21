@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+<!-- next-header -->
+## Unreleased - ReleaseDate
+
 ## [0.9.37] - 2025-12-26
 
 ### Changed
@@ -359,6 +362,7 @@ This was tagged, but never released due to
 
 Initial release.
 
+<!-- next-url -->
 [0.9.37]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.37
 [0.9.36]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.36
 [0.9.35]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.35

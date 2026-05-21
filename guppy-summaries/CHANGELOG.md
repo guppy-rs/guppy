@@ -1,6 +1,7 @@
 # Changelog
 
-## Unreleased
+<!-- next-header -->
+## Unreleased - ReleaseDate
 
 ### Changed
 
@@ -97,6 +98,7 @@ This is a minor breaking change that should not affect most consumers.
 
 Initial release.
 
+<!-- next-url -->
 [0.7.1]: https://github.com/guppy-rs/guppy/releases/tag/guppy-summaries-0.7.1
 [0.7.0]: https://github.com/guppy-rs/guppy/releases/tag/guppy-summaries-0.7.0
 [0.6.1]: https://github.com/guppy-rs/guppy/releases/tag/guppy-summaries-0.6.1
