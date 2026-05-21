@@ -12,8 +12,8 @@ jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
-    env:
-      RUSTFLAGS: -D warnings
+    # Note: RUSTFLAGS is intentionally not set here. See the comment in
+    # .cargo/nightly-config.toml for why.
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - uses: dtolnay/rust-toolchain@stable
@@ -39,6 +39,8 @@ jobs:
       # cargo hack might cause changes to Cargo.lock which can cause the git diff above to fail. Put
       # this at the end.
       - name: target-spec-powerset clippy
+        env:
+          RUSTFLAGS: -D warnings
         run: just target-spec-powerset clippy
 
   build:
