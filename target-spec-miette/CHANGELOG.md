@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- `IntoMietteDiagnostic` is now implemented for `RustcVersionVerboseParseError`.
+
 ## [0.4.6] - 2026-03-31
 
 ### Added

@@ -1,0 +1,10 @@
+  [31m×[0m output from `rustc -vV` did not contain a `host:` line
+   ╭─[1:1]
+ [2m1[0m │ [35;1m╭[0m[35;1m─[0m[35;1m▶[0m rustc 1.86.0 (05f9846f8 2025-03-31)
+ [2m2[0m │ [35;1m│[0m   binary: rustc
+ [2m3[0m │ [35;1m│[0m   commit-hash: 05f9846f893b09a1be1fc8560e11b1d4d2f085ef
+ [2m4[0m │ [35;1m│[0m   commit-date: 2025-03-31
+ [2m5[0m │ [35;1m│[0m   release: 1.86.0
+ [2m6[0m │ [35;1m├[0m[35;1m─[0m[35;1m▶[0m LLVM version: 19.1.7
+   · [35;1m╰[0m[35;1m───[0m[35;1m─[0m [35;1mexpected a `host: <triple>` line in this output[0m
+   ╰────

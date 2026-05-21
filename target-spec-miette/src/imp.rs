@@ -5,7 +5,7 @@ use miette::{Diagnostic, LabeledSpan, SourceCode, SourceOffset, SourceSpan};
 use std::{error::Error as StdError, fmt};
 use target_spec::errors::{
     CustomTripleCreateError, Error as TargetSpecError, ExpressionParseError, PlainStringParseError,
-    TripleParseError,
+    RustcVersionVerboseParseError, TripleParseError,
 };
 
 /// Extension trait that converts errors into a [`miette::Diagnostic`].
@@ -30,6 +30,7 @@ impl IntoMietteDiagnostic for TargetSpecError {
             #[allow(deprecated)]
             Self::CustomTripleCreate(error) => Box::new(error.into_diagnostic()),
             Self::CustomPlatformCreate(error) => Box::new(error.into_diagnostic()),
+            Self::RustcVersionVerboseParse(error) => Box::new(error.into_diagnostic()),
             other => Box::<dyn Diagnostic + Send + Sync + 'static>::from(other.to_string()),
         }
     }
@@ -199,6 +200,76 @@ impl IntoMietteDiagnostic for PlainStringParseError {
 
     fn into_diagnostic(self) -> Self::IntoDiagnostic {
         PlainStringParseDiagnostic::new(self)
+    }
+}
+
+/// A wrapper around [`RustcVersionVerboseParseError`] that implements
+/// [`Diagnostic`].
+#[derive(Clone, Debug)]
+pub struct RustcVersionVerboseParseDiagnostic(RustcVersionVerboseParseError);
+
+impl RustcVersionVerboseParseDiagnostic {
+    /// Creates a new `RustcVersionVerboseParseDiagnostic`.
+    pub fn new(error: RustcVersionVerboseParseError) -> Self {
+        Self(error)
+    }
+}
+
+impl fmt::Display for RustcVersionVerboseParseDiagnostic {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match &self.0 {
+            // The inner Display for `MissingHostLine` embeds the entire `rustc
+            // -vV` output, which duplicates the source code that miette already
+            // renders below. Here, we keep the headline message short, and let
+            // the labeled span display the `rustc -vV` output.
+            RustcVersionVerboseParseError::MissingHostLine { .. } => {
+                f.write_str("output from `rustc -vV` did not contain a `host:` line")
+            }
+            // The inner Display for `InvalidUtf8` is already short and
+            // self-contained.
+            RustcVersionVerboseParseError::InvalidUtf8(_) => fmt::Display::fmt(&self.0, f),
+            _ => fmt::Display::fmt(&self.0, f),
+        }
+    }
+}
+
+impl StdError for RustcVersionVerboseParseDiagnostic {
+    fn source(&self) -> Option<&(dyn StdError + 'static)> {
+        self.0.source()
+    }
+}
+
+impl Diagnostic for RustcVersionVerboseParseDiagnostic {
+    fn source_code(&self) -> Option<&dyn SourceCode> {
+        match &self.0 {
+            RustcVersionVerboseParseError::MissingHostLine { output } => {
+                Some(output as &dyn SourceCode)
+            }
+            RustcVersionVerboseParseError::InvalidUtf8(_) => None,
+            _ => None,
+        }
+    }
+
+    fn labels(&self) -> Option<Box<dyn Iterator<Item = LabeledSpan> + '_>> {
+        match &self.0 {
+            RustcVersionVerboseParseError::MissingHostLine { output } => {
+                let label = LabeledSpan::new_with_span(
+                    Some("expected a `host: <triple>` line in this output".to_owned()),
+                    (0, output.len()),
+                );
+                Some(Box::new(std::iter::once(label)))
+            }
+            RustcVersionVerboseParseError::InvalidUtf8(_) => None,
+            _ => None,
+        }
+    }
+}
+
+impl IntoMietteDiagnostic for RustcVersionVerboseParseError {
+    type IntoDiagnostic = RustcVersionVerboseParseDiagnostic;
+
+    fn into_diagnostic(self) -> Self::IntoDiagnostic {
+        RustcVersionVerboseParseDiagnostic::new(self)
     }
 }
 

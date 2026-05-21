@@ -9,7 +9,15 @@
 #
 # To allow this lint for some statements, use
 # `#[cfg_attr(guppy_nightly, expect(non_exhaustive_omitted_patterns))]`.
+#
+# `-D warnings` is included here because cargo's `build.rustflags` is not
+# additive with the `RUSTFLAGS` environment variable, so a job-level
+# `RUSTFLAGS=-D warnings` in CI would silently drop every flag below. The CI
+# job that runs `just bootstrap clippy` does not set `RUSTFLAGS` so that this
+# config takes effect.
 rustflags = [
+    "-D",
+    "warnings",
     "--warn",
     "non_exhaustive_omitted_patterns",
     "-Zcrate-attr=feature(non_exhaustive_omitted_patterns_lint)",
