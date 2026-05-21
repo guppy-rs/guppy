@@ -52,6 +52,13 @@ impl<Ix: IndexType> Sccs<Ix> {
     }
 
     /// Returns true if `a` and `b` are in the same scc.
+    ///
+    /// Every node is in its own (possibly single-element) SCC, so this is
+    /// reflexive: `is_same_scc(a, a)` is always `true`. This is the SCC
+    /// equivalence relation; it is *not* a cycle-membership predicate.
+    /// Callers that want to know whether two nodes lie on a common cycle
+    /// should additionally check [`Sccs::in_multi_scc`] and/or whether the
+    /// node has a self-loop edge.
     pub fn is_same_scc(&self, a: NodeIndex<Ix>, b: NodeIndex<Ix>) -> bool {
         if a == b {
             return true;
@@ -62,9 +69,24 @@ impl<Ix: IndexType> Sccs<Ix> {
         }
     }
 
-    /// Returns all the SCCs with more than one element.
-    pub fn multi_sccs(&self) -> impl DoubleEndedIterator<Item = &[NodeIndex<Ix>]> {
-        self.sccs.iter().filter(|scc| scc.len() > 1)
+    /// Returns true if `ix` belongs to an SCC with more than one element.
+    ///
+    /// A multi-node SCC is, by definition, non-trivial: every pair of its
+    /// members lies on a directed cycle. Combined with a self-loop check on
+    /// `ix`, this is enough to decide whether a node lies on any cycle.
+    pub fn in_multi_scc(&self, ix: NodeIndex<Ix>) -> bool {
+        self.multi_map.contains_key(&ix)
+    }
+
+    /// Returns all the SCCs of this graph in forward topological order,
+    /// including single-node SCCs.
+    ///
+    /// [`Sccs`] does not store edge information, so callers that care
+    /// about *cyclic* SCCs -- multi-node SCCs plus single-node SCCs with a
+    /// self-loop -- must consult the underlying graph for the self-loop
+    /// check themselves.
+    pub fn all_sccs(&self) -> impl DoubleEndedIterator<Item = &[NodeIndex<Ix>]> {
+        self.sccs.iter()
     }
 
     /// Returns all the nodes of this graph that have no incoming edges to them, and all the nodes

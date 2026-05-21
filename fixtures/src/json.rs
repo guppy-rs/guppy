@@ -945,15 +945,17 @@ impl FixtureDetails {
         .with_named_features(vec!["extra"])
         .insert_into(&mut details);
 
-        // `cycles().all_cycles()` only reports cycles spanning more than
-        // one package, so no `with_cycles` entry is needed. The feature
-        // graph does flag the path-self dev-dependency as a self-loop
-        // warning on the package's `[base]` (package-only) feature.
+        // `base`'s path-self dev-dependency is a single-node SCC with a
+        // self-loop, i.e., a cycle of length 1. `cycles().all_cycles()`
+        // reports it. The feature graph independently flags the
+        // dev-dependency as a self-loop warning on the package's `[base]`
+        // (package-only) feature.
         Self::new(details)
             .with_workspace_members(vec![
                 ("base", METADATA_SELF_DEV_CYCLE_BASE),
                 ("helper", METADATA_SELF_DEV_CYCLE_HELPER),
             ])
+            .with_cycles(vec![vec![METADATA_SELF_DEV_CYCLE_BASE]])
             .with_feature_graph_warnings(vec![FeatureGraphWarning::SelfLoop {
                 package_id: package_id(METADATA_SELF_DEV_CYCLE_BASE),
                 feature_name: "[base]".to_string(),
