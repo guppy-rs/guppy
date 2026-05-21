@@ -177,7 +177,7 @@ impl<'g> FeatureGraph<'g> {
 
     /// Returns true if `feature_a` directly depends on `feature_b`.
     ///
-    /// In other words, this returns true if `feature_a` is a direct dependency of `feature_b`.
+    /// In other words, this returns true if `feature_b` is a direct dependency of `feature_a`.
     ///
     /// If `feature_a` is the same as `feature_b`, this returns true only if
     /// the feature has a self-loop edge in the feature graph.
