@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+guppy now correctly distinguishes single-node SCCs from single-node *cycles*. Previously, several APIs conflated the two:
+
+- `PackageGraph::directly_depends_on(x, x)` always returned `false`, and the feature-graph equivalent did the same. They now return `true` when `x` has a self-loop edge (e.g., a `path` dev-dependency on the package's own crate).
+- `Cycles::is_cyclic(x, x)` and `feature::Cycles::is_cyclic(x, x)` were reflexively `true` for every package or feature, regardless of cycle membership. They now return `true` only when `x` lies on an actual cycle, either in a multi-node SCC or via a self-loop edge.
+- `Cycles::all_cycles()` and `feature::Cycles::all_cycles()` reported only SCCs of 2 or more elements. They now also yield single-node SCCs whose node has a self-loop edge, in topological order alongside multi-node SCCs.
+
+These changes make the four APIs internally consistent and align their behavior with their documented semantics.
+
 ## [0.17.25] - 2026-01-30
 
 ### Added

@@ -31,7 +31,19 @@ impl<'g> Cycles<'g> {
         }
     }
 
-    /// Returns true if these two IDs are in the same cycle.
+    /// Returns true if `a` and `b` lie on a common directed cycle in the
+    /// feature graph.
+    ///
+    /// "Lie on a common cycle" means: in the same Strongly Connected
+    /// Component *and* that SCC is non-trivial.
+    ///
+    /// * For distinct feature IDs, that's the same as being in a multi-node SCC.
+    /// * For the same feature ID, the node must either be in a multi-node SCC,
+    ///   or have a self-loop edge in the dependency graph (e.g., from a `path`
+    ///   dev-dependency on the package's own crate).
+    ///
+    /// In particular, `is_cyclic(a, a)` is *not* reflexively true: it
+    /// returns `false` for features that aren't on any cycle.
     pub fn is_cyclic<'a>(
         &self,
         a: impl Into<FeatureId<'a>>,
@@ -41,24 +53,48 @@ impl<'g> Cycles<'g> {
         let b = b.into();
         let a_ix = self.feature_graph.feature_ix(a)?;
         let b_ix = self.feature_graph.feature_ix(b)?;
-        Ok(self.sccs.is_same_scc(a_ix, b_ix))
+
+        if a_ix != b_ix {
+            // Different features lie on a common cycle iff they're in the
+            // same SCC -- which, for distinct features, can only be a
+            // multi-node SCC.
+            return Ok(self.sccs.is_same_scc(a_ix, b_ix));
+        }
+
+        // Same feature: on a cycle iff its SCC is non-trivial.
+        Ok(
+            self.sccs.in_multi_scc(a_ix)
+                || self.feature_graph.dep_graph().contains_edge(a_ix, a_ix),
+        )
     }
 
-    /// Returns all the cycles of 2 or more elements in this graph.
+    /// Returns all the cyclic Strongly Connected Components of this graph:
+    /// every multi-node SCC, plus every single-node SCC whose feature has
+    /// a self-loop edge.
     ///
-    /// Cycles are returned in topological order: if features in cycle B depend on features in cycle
-    /// A, A is returned before B.
+    /// Cycles are returned in topological order: if features in cycle B
+    /// depend on features in cycle A, A is returned before B.
     ///
-    /// Within a cycle, nodes are returned in non-dev order: if feature Foo has a dependency on Bar,
-    /// and Bar has a dev-dependency on Foo, then Foo is returned before Bar.
+    /// Within a cycle, nodes are returned in non-dev order: if feature Foo
+    /// has a dependency on Bar, and Bar has a dev-dependency on Foo, then
+    /// Foo is returned before Bar.
     pub fn all_cycles(&self) -> impl Iterator<Item = Vec<FeatureId<'g>>> + 'g + use<'g> {
         let dep_graph = self.feature_graph.dep_graph();
         let package_graph = self.feature_graph.package_graph;
-        self.sccs.multi_sccs().map(move |class| {
-            class
-                .iter()
-                .map(move |feature_ix| FeatureId::from_node(package_graph, &dep_graph[*feature_ix]))
-                .collect()
+        self.sccs.all_sccs().filter_map(move |class| {
+            let is_cyclic = match class {
+                [_, _, ..] => true,
+                &[ix] => dep_graph.contains_edge(ix, ix),
+                [] => false,
+            };
+            is_cyclic.then(|| {
+                class
+                    .iter()
+                    .map(move |feature_ix| {
+                        FeatureId::from_node(package_graph, &dep_graph[*feature_ix])
+                    })
+                    .collect()
+            })
         })
     }
 }

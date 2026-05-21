@@ -13,7 +13,10 @@ use crate::{
 
 /// Contains information about dependency cycles.
 ///
-/// More accurately, information about Strongly Connected Components with 2 or more elements.
+/// "Cycle" here means a non-trivial Strongly Connected Component: either a
+/// multi-node SCC (where every member is mutually reachable from every
+/// other), or a single-node SCC whose node has a self-loop edge (commonly
+/// produced by a path dev-dependency on the package's own crate).
 /// Constructed through `PackageGraph::cycles`.
 ///
 /// This page includes a bunch of detailed information on cycles, but here's the TLDR:
@@ -282,28 +285,59 @@ impl<'g> Cycles<'g> {
         }
     }
 
-    /// Returns true if these two IDs are in the same cycle.
+    /// Returns true if `a` and `b` lie on a common directed cycle in the
+    /// package graph.
     ///
-    /// This is equivalent to checking if they're in the same Strongly Connected Component.
+    /// "Lie on a common cycle" means: in the same Strongly Connected
+    /// Component *and* that SCC is non-trivial.
+    ///
+    /// * For distinct package IDs, that's the same as being in a multi-node SCC.
+    /// * For the same package ID, the node must either be in a multi-node SCC,
+    ///   or have a self-loop edge in the dependency graph (e.g., from a `path`
+    ///   dev-dependency on the package's own crate).
+    ///
+    /// In particular, `is_cyclic(a, a)` is *not* reflexively true: it
+    /// returns `false` for nodes that aren't on any cycle.
     pub fn is_cyclic(&self, a: &PackageId, b: &PackageId) -> Result<bool, Error> {
         let a_ix = self.package_graph.package_ix(a)?;
         let b_ix = self.package_graph.package_ix(b)?;
-        Ok(self.sccs.is_same_scc(a_ix, b_ix))
+
+        if a_ix != b_ix {
+            // Different nodes lie on a common cycle iff they're in the
+            // same SCC -- which, for distinct nodes, can only be a multi-
+            // node SCC.
+            return Ok(self.sccs.is_same_scc(a_ix, b_ix));
+        }
+
+        // Same node: on a cycle iff its SCC is non-trivial.
+        Ok(self.sccs.in_multi_scc(a_ix) || self.package_graph.dep_graph.contains_edge(a_ix, a_ix))
     }
 
-    /// Returns all the Strongly Connected Components (SCCs) of 2 or more elements in this graph.
+    /// Returns all the cyclic Strongly Connected Components (SCCs) of this
+    /// graph: every multi-node SCC, plus every single-node SCC whose node
+    /// has a self-loop edge.
     ///
-    /// SCCs are returned in topological order: if packages in SCC B depend on packages in SCC
-    /// A, A is returned before B.
+    /// SCCs are returned in topological order: if packages in SCC B depend
+    /// on packages in SCC A, A is returned before B.
     ///
-    /// Within an SCC, nodes are returned in non-dev order: if package Foo has a dependency on Bar,
-    /// and Bar has a cyclic dev-dependency on Foo, then Foo is returned before Bar.
+    /// Within an SCC, nodes are returned in non-dev order: if package Foo
+    /// has a dependency on Bar, and Bar has a cyclic dev-dependency on
+    /// Foo, then Foo is returned before Bar.
     ///
     /// See the type-level docs for details.
     pub fn all_cycles(&self) -> impl DoubleEndedIterator<Item = Vec<&'g PackageId>> + 'g + use<'g> {
         let dep_graph = &self.package_graph.dep_graph;
-        self.sccs
-            .multi_sccs()
-            .map(move |scc| scc.iter().map(move |ix| &dep_graph[*ix]).collect())
+        self.sccs.all_sccs().filter_map(move |scc| {
+            let is_cyclic = match scc {
+                // Multi-node SCCs are non-trivial by definition.
+                [_, _, ..] => true,
+                // Single-node SCC is cyclic iff there's a self-loop edge.
+                &[ix] => dep_graph.contains_edge(ix, ix),
+                // SCCs always have at least one element; the empty case is
+                // unreachable from `kosaraju_scc`.
+                [] => false,
+            };
+            is_cyclic.then(|| scc.iter().map(move |ix| &dep_graph[*ix]).collect())
+        })
     }
 }

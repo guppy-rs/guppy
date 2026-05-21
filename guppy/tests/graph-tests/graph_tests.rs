@@ -275,14 +275,25 @@ mod small {
         let base_id = package_id(json::METADATA_SELF_DEV_CYCLE_BASE);
         let helper_id = package_id(json::METADATA_SELF_DEV_CYCLE_HELPER);
 
-        // There aren't any multi-node SCCs in this graph, so `base` (with its
-        // self-loop) and `helper` are each in their own single-node SCCs.
-        assert_eq!(graph.cycles().all_cycles().count(), 0);
+        // There aren't any multi-node SCCs in this graph, but `base`'s
+        // single-node SCC has a self-loop, which is a cycle of length 1.
+        // `all_cycles()` reports it; `helper` has no self-loop and is not
+        // on any cycle.
+        let cycles: Vec<Vec<&PackageId>> = graph.cycles().all_cycles().collect();
+        assert_eq!(cycles, vec![vec![&base_id]]);
+
+        let cycles = graph.cycles();
         assert!(
-            !graph
-                .cycles()
-                .is_cyclic(&base_id, &helper_id)
-                .expect("known ids")
+            cycles.is_cyclic(&base_id, &base_id).expect("known id"),
+            "base is on a self-loop cycle",
+        );
+        assert!(
+            !cycles.is_cyclic(&helper_id, &helper_id).expect("known id"),
+            "helper has no self-loop and is not on any cycle",
+        );
+        assert!(
+            !cycles.is_cyclic(&base_id, &helper_id).expect("known ids"),
+            "base and helper are in different SCCs",
         );
 
         let direct: HashSet<(PackageId, PackageId)> = graph
@@ -410,6 +421,34 @@ mod small {
         assert!(
             feature_forward_roots.contains(&base_feature),
             "feature graph forward roots should contain base/[base], got {feature_forward_roots:?}",
+        );
+
+        // Feature-graph cycle membership mirrors the package graph: the
+        // self-loop on `base/[base]` makes it cyclic; `helper/[helper]`
+        // has no self-loop and is not on any cycle.
+        let feature_cycles = feature_graph.cycles();
+        assert!(
+            feature_cycles
+                .is_cyclic(base_feature, base_feature)
+                .expect("base/[base] is a valid feature id"),
+            "base/[base] is on a self-loop cycle in the feature graph",
+        );
+        assert!(
+            !feature_cycles
+                .is_cyclic(helper_feature, helper_feature)
+                .expect("helper/[helper] is a valid feature id"),
+            "helper/[helper] has no self-loop and is not on any cycle",
+        );
+        // Two feature nodes self-loop: `base/[base]` from the package-
+        // level dev-dep, and `base/extra` because the dev-dep declares
+        // `features = ["extra"]`, which makes `extra` reachable from
+        // itself via the dev-dep edge.
+        let base_extra_feature = FeatureId::new(&base_id, FeatureLabel::Named("extra"));
+        let feature_cycle_members: HashSet<FeatureId<'_>> =
+            feature_graph.cycles().all_cycles().flatten().collect();
+        assert_eq!(
+            feature_cycle_members,
+            HashSet::from([base_feature, base_extra_feature]),
         );
     }
 
