@@ -3,6 +3,8 @@
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+## [0.17.26] - 2026-05-21
+
 ### Fixed
 
 A node with a self-loop edge -- typically a package with a `path`
@@ -892,6 +894,7 @@ lazy_static = "0.2"
 - Initial release.
 
 <!-- next-url -->
+[0.17.26]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.26
 [0.17.25]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.25
 [0.17.24]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.24
 [0.17.23]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.23
