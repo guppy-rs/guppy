@@ -10,7 +10,11 @@ use guppy::{
     },
 };
 use pretty_assertions::assert_eq;
-use proptest::{collection::vec, prelude::*, sample::Index};
+use proptest::{
+    collection::{hash_set, vec},
+    prelude::*,
+    sample::Index,
+};
 use std::collections::HashSet;
 
 macro_rules! proptest_suite {
@@ -18,10 +22,6 @@ macro_rules! proptest_suite {
         mod $name {
             use crate::proptest_helpers::*;
             use fixtures::json::JsonFixture;
-            use guppy::graph::DependencyDirection;
-            use proptest::collection::{hash_set, vec};
-            use proptest::prelude::*;
-            use proptest::sample::Index;
 
             // `to_summary_id` and `metadata_by_summary_id` live behind
             // the `summaries` feature; gate the roundtrip test on that
@@ -29,292 +29,317 @@ macro_rules! proptest_suite {
             #[cfg(feature = "summaries")]
             #[test]
             fn proptest_summary_id_roundtrip() {
-                let fixture = JsonFixture::$name();
-                let graph = fixture.graph();
-
-                proptest!(|(package_id in graph.proptest1_id_strategy())| {
-                    let package = graph.metadata(package_id).expect("valid package ID");
-                    let summary_id = package.to_summary_id();
-                    let package2 = graph.metadata_by_summary_id(&summary_id).expect("summary ID is valid");
-                    prop_assert_eq!(package_id, package2.id(), "roundtrip successful");
-                })
+                run_summary_id_roundtrip(JsonFixture::$name().graph());
             }
 
             #[test]
             fn proptest_query_depends_on() {
-                let fixture = JsonFixture::$name();
-                let graph = fixture.graph();
-
-                proptest!(|(
-                    ids in vec(graph.proptest1_id_strategy(), 1..16),
-                    query_direction in any::<DependencyDirection>(),
-                    iter_direction in any::<DependencyDirection>(),
-                    query_indexes in vec(any::<Index>(), 0..16),
-                )| {
-                    depends_on(graph, &ids, query_direction, iter_direction, query_indexes, "query_depends_on");
-                });
+                run_query_depends_on(JsonFixture::$name().graph());
             }
 
             #[test]
             fn proptest_feature_query_depends_on() {
-                let fixture = JsonFixture::$name();
-                let package_graph = fixture.graph();
-                let feature_graph = package_graph.feature_graph();
-
-                proptest!(|(
-                    ids in vec(feature_graph.proptest1_id_strategy(), 1..16),
-                    query_direction in any::<DependencyDirection>(),
-                    iter_direction in any::<DependencyDirection>(),
-                    query_indexes in vec(any::<Index>(), 0..16),
-                )| {
-                    depends_on(feature_graph, &ids, query_direction, iter_direction, query_indexes, "feature_query_depends_on");
-                });
+                run_feature_query_depends_on(JsonFixture::$name().graph());
             }
 
             #[test]
             fn proptest_depends_on_same_package_id() {
-                let fixture = JsonFixture::$name();
-                let package_graph = fixture.graph();
-
-                proptest!(|(query_id in package_graph.proptest1_id_strategy())| {
-                    depends_on_same_id(package_graph, query_id);
-                });
+                run_depends_on_same_package_id(JsonFixture::$name().graph());
             }
 
             #[test]
             fn proptest_depends_on_same_feature_id() {
-                let fixture = JsonFixture::$name();
-                let package_graph = fixture.graph();
-                let feature_graph = package_graph.feature_graph();
-
-                proptest!(|(query_id in feature_graph.proptest1_id_strategy())| {
-                    depends_on_same_id(feature_graph, query_id);
-                });
+                run_depends_on_same_feature_id(JsonFixture::$name().graph());
             }
 
             #[test]
             fn proptest_package_cycle_consistency() {
-                let fixture = JsonFixture::$name();
-                let package_graph = fixture.graph();
-
-                proptest!(|(query_id in package_graph.proptest1_id_strategy())| {
-                    cycle_consistency(package_graph, query_id);
-                });
+                run_package_cycle_consistency(JsonFixture::$name().graph());
             }
 
             #[test]
             fn proptest_feature_cycle_consistency() {
-                let fixture = JsonFixture::$name();
-                let package_graph = fixture.graph();
-                let feature_graph = package_graph.feature_graph();
-
-                proptest!(|(query_id in feature_graph.proptest1_id_strategy())| {
-                    cycle_consistency(feature_graph, query_id);
-                });
+                run_feature_cycle_consistency(JsonFixture::$name().graph());
             }
 
             #[test]
             fn proptest_package_cycle_partition() {
-                let fixture = JsonFixture::$name();
-                let package_graph = fixture.graph();
-
-                proptest!(|(
-                    a_id in package_graph.proptest1_id_strategy(),
-                    b_id in package_graph.proptest1_id_strategy(),
-                )| {
-                    cycle_partition(package_graph, a_id, b_id);
-                });
+                run_package_cycle_partition(JsonFixture::$name().graph());
             }
 
             #[test]
             fn proptest_feature_cycle_partition() {
-                let fixture = JsonFixture::$name();
-                let package_graph = fixture.graph();
-                let feature_graph = package_graph.feature_graph();
-
-                proptest!(|(
-                    a_id in feature_graph.proptest1_id_strategy(),
-                    b_id in feature_graph.proptest1_id_strategy(),
-                )| {
-                    cycle_partition(feature_graph, a_id, b_id);
-                });
+                run_feature_cycle_partition(JsonFixture::$name().graph());
             }
 
             #[test]
             fn proptest_query_link_order() {
-                let fixture = JsonFixture::$name();
-                let graph = fixture.graph();
-
-                proptest!(|(
-                    ids in vec(graph.proptest1_id_strategy(), 1..16),
-                    query_direction in any::<DependencyDirection>(),
-                    iter_direction in any::<DependencyDirection>(),
-                )| {
-                    link_order(graph, &ids, query_direction, iter_direction, "query_link_order");
-                });
+                run_query_link_order(JsonFixture::$name().graph());
             }
 
             #[test]
             fn proptest_query_roots() {
-                let fixture = JsonFixture::$name();
-                let graph = fixture.graph();
-
-                proptest!(|(
-                    ids in vec(graph.proptest1_id_strategy(), 1..16),
-                    query_direction in any::<DependencyDirection>(),
-                    iter_direction in any::<DependencyDirection>(),
-                    query_indexes in vec((any::<Index>(), any::<Index>()), 0..128),
-                )| {
-                    roots(
-                        graph,
-                        &ids,
-                        query_direction,
-                        iter_direction,
-                        query_indexes,
-                        "query_roots",
-                    )?;
-                });
+                run_query_roots(JsonFixture::$name().graph());
             }
 
             #[test]
             fn proptest_feature_query_roots() {
-                let fixture = JsonFixture::$name();
-                let package_graph = fixture.graph();
-                let feature_graph = package_graph.feature_graph();
-
-                proptest!(|(
-                    ids in vec(feature_graph.proptest1_id_strategy(), 1..16),
-                    query_direction in any::<DependencyDirection>(),
-                    iter_direction in any::<DependencyDirection>(),
-                    query_indexes in vec((any::<Index>(), any::<Index>()), 0..128),
-                )| {
-                    roots(
-                        feature_graph,
-                        &ids,
-                        query_direction,
-                        iter_direction,
-                        query_indexes,
-                        "feature_query_roots",
-                    )?;
-                });
+                run_feature_query_roots(JsonFixture::$name().graph());
             }
 
             #[test]
             fn proptest_resolve_contains() {
-                let fixture = JsonFixture::$name();
-                let package_graph = fixture.graph();
-
-                proptest!(|(
-                    query_ids in vec(package_graph.proptest1_id_strategy(), 1..16),
-                    direction in any::<DependencyDirection>(),
-                    test_ids in vec(package_graph.proptest1_id_strategy(), 0..64),
-                )| {
-                    resolve_contains(package_graph, &query_ids, direction, &test_ids);
-                });
+                run_resolve_contains(JsonFixture::$name().graph());
             }
 
             #[test]
             fn proptest_feature_resolve_contains() {
-                let fixture = JsonFixture::$name();
-                let package_graph = fixture.graph();
-                let feature_graph = package_graph.feature_graph();
-
-                proptest!(|(
-                    query_ids in vec(feature_graph.proptest1_id_strategy(), 1..16),
-                    direction in any::<DependencyDirection>(),
-                    test_ids in vec(feature_graph.proptest1_id_strategy(), 0..64),
-                )| {
-                    resolve_contains(feature_graph, &query_ids, direction, &test_ids);
-                });
+                run_feature_resolve_contains(JsonFixture::$name().graph());
             }
 
             #[test]
             fn proptest_resolve_ops() {
-                let fixture = JsonFixture::$name();
-                let package_graph = fixture.graph();
-
-                proptest!(|(
-                    resolve_tree in ResolveTree::strategy(package_graph.proptest1_id_strategy())
-                )| {
-                    resolve_ops(package_graph, resolve_tree);
-                });
+                run_resolve_ops(JsonFixture::$name().graph());
             }
 
             #[test]
             fn proptest_feature_resolve_ops() {
-                let fixture = JsonFixture::$name();
-                let package_graph = fixture.graph();
-                let feature_graph = package_graph.feature_graph();
-
-                proptest!(|(
-                    resolve_tree in ResolveTree::strategy(feature_graph.proptest1_id_strategy())
-                )| {
-                    resolve_ops(feature_graph, resolve_tree);
-                });
+                run_feature_resolve_ops(JsonFixture::$name().graph());
             }
 
             #[test]
             fn proptest_package_feature_set_roundtrip() {
-                let fixture = JsonFixture::$name();
-                let package_graph = fixture.graph();
-                let feature_graph = package_graph.feature_graph();
-
-                proptest!(|(
-                    query_ids in vec(package_graph.proptest1_id_strategy(), 1..16),
-                    query_direction in any::<DependencyDirection>(),
-                    mut resolver in package_graph.proptest1_resolver_strategy(),
-                    test_ids in vec(feature_graph.proptest1_id_strategy(), 1..16),
-                    test_direction in any::<DependencyDirection>(),
-                )| {
-                    resolver.check_depends_on(true);
-                    package_feature_set_roundtrip(package_graph, query_ids, query_direction, resolver, test_ids, test_direction);
-                });
+                run_package_feature_set_roundtrip(JsonFixture::$name().graph());
             }
 
             #[test]
             fn proptest_feature_set_props() {
-                let fixture = JsonFixture::$name();
-                let package_graph = fixture.graph();
-                let feature_graph = package_graph.feature_graph();
-
-                proptest!(|(
-                    feature_set in feature_graph.proptest1_set_strategy(),
-                    direction in any::<DependencyDirection>(),
-                )| {
-                    feature_set_props(feature_set, direction);
-                });
+                run_feature_set_props(JsonFixture::$name().graph());
             }
 
             #[test]
             fn proptest_query_starts_from() {
-                let fixture = JsonFixture::$name();
-                let package_graph = fixture.graph();
-
-                proptest!(|(
-                    query_ids in hash_set(package_graph.proptest1_id_strategy(), 0..16),
-                    direction in any::<DependencyDirection>(),
-                    test_ids in vec(package_graph.proptest1_id_strategy(), 0..16)
-                )| {
-                    query_starts_from(package_graph, query_ids, direction, test_ids);
-                });
+                run_query_starts_from(JsonFixture::$name().graph());
             }
 
             #[test]
             fn proptest_feature_query_starts_from() {
-                let fixture = JsonFixture::$name();
-                let package_graph = fixture.graph();
-                let feature_graph = package_graph.feature_graph();
-
-                proptest!(|(
-                    query_ids in hash_set(feature_graph.proptest1_id_strategy(), 0..16),
-                    direction in any::<DependencyDirection>(),
-                    test_ids in vec(feature_graph.proptest1_id_strategy(), 0..16)
-                )| {
-                    query_starts_from(feature_graph, query_ids, direction, test_ids);
-                });
+                run_feature_query_starts_from(JsonFixture::$name().graph());
             }
         }
-    }
+    };
+}
+
+// ---
+// `run_*` proptest entry points.
+//
+// Each function owns one `proptest!` macro invocation; the per-fixture test
+// functions generated by `proptest_suite!` just call into here. This keeps
+// the heavy proptest macro expansion out of the per-fixture generated code
+// and shrinks the integration-test binary's compile time substantially.
+// ---
+
+#[cfg(feature = "summaries")]
+pub(super) fn run_summary_id_roundtrip(graph: &'static PackageGraph) {
+    proptest!(|(package_id in graph.proptest1_id_strategy())| {
+        let package = graph.metadata(package_id).expect("valid package ID");
+        let summary_id = package.to_summary_id();
+        let package2 = graph
+            .metadata_by_summary_id(&summary_id)
+            .expect("summary ID is valid");
+        prop_assert_eq!(package_id, package2.id(), "roundtrip successful");
+    })
+}
+
+pub(super) fn run_query_depends_on(graph: &'static PackageGraph) {
+    proptest!(|(
+        ids in vec(graph.proptest1_id_strategy(), 1..16),
+        query_direction in any::<DependencyDirection>(),
+        iter_direction in any::<DependencyDirection>(),
+        query_indexes in vec(any::<Index>(), 0..16),
+    )| {
+        depends_on(graph, &ids, query_direction, iter_direction, query_indexes, "query_depends_on");
+    });
+}
+
+pub(super) fn run_feature_query_depends_on(package_graph: &'static PackageGraph) {
+    let feature_graph = package_graph.feature_graph();
+    proptest!(|(
+        ids in vec(feature_graph.proptest1_id_strategy(), 1..16),
+        query_direction in any::<DependencyDirection>(),
+        iter_direction in any::<DependencyDirection>(),
+        query_indexes in vec(any::<Index>(), 0..16),
+    )| {
+        depends_on(feature_graph, &ids, query_direction, iter_direction, query_indexes, "feature_query_depends_on");
+    });
+}
+
+pub(super) fn run_depends_on_same_package_id(graph: &'static PackageGraph) {
+    proptest!(|(query_id in graph.proptest1_id_strategy())| {
+        depends_on_same_id(graph, query_id);
+    });
+}
+
+pub(super) fn run_depends_on_same_feature_id(package_graph: &'static PackageGraph) {
+    let feature_graph = package_graph.feature_graph();
+    proptest!(|(query_id in feature_graph.proptest1_id_strategy())| {
+        depends_on_same_id(feature_graph, query_id);
+    });
+}
+
+pub(super) fn run_package_cycle_consistency(graph: &'static PackageGraph) {
+    proptest!(|(query_id in graph.proptest1_id_strategy())| {
+        cycle_consistency(graph, query_id);
+    });
+}
+
+pub(super) fn run_feature_cycle_consistency(package_graph: &'static PackageGraph) {
+    let feature_graph = package_graph.feature_graph();
+    proptest!(|(query_id in feature_graph.proptest1_id_strategy())| {
+        cycle_consistency(feature_graph, query_id);
+    });
+}
+
+pub(super) fn run_package_cycle_partition(graph: &'static PackageGraph) {
+    proptest!(|(
+        a_id in graph.proptest1_id_strategy(),
+        b_id in graph.proptest1_id_strategy(),
+    )| {
+        cycle_partition(graph, a_id, b_id);
+    });
+}
+
+pub(super) fn run_feature_cycle_partition(package_graph: &'static PackageGraph) {
+    let feature_graph = package_graph.feature_graph();
+    proptest!(|(
+        a_id in feature_graph.proptest1_id_strategy(),
+        b_id in feature_graph.proptest1_id_strategy(),
+    )| {
+        cycle_partition(feature_graph, a_id, b_id);
+    });
+}
+
+pub(super) fn run_query_link_order(graph: &'static PackageGraph) {
+    proptest!(|(
+        ids in vec(graph.proptest1_id_strategy(), 1..16),
+        query_direction in any::<DependencyDirection>(),
+        iter_direction in any::<DependencyDirection>(),
+    )| {
+        link_order(graph, &ids, query_direction, iter_direction, "query_link_order");
+    });
+}
+
+pub(super) fn run_query_roots(graph: &'static PackageGraph) {
+    proptest!(|(
+        ids in vec(graph.proptest1_id_strategy(), 1..16),
+        query_direction in any::<DependencyDirection>(),
+        iter_direction in any::<DependencyDirection>(),
+        query_indexes in vec((any::<Index>(), any::<Index>()), 0..128),
+    )| {
+        roots(graph, &ids, query_direction, iter_direction, query_indexes, "query_roots")?;
+    });
+}
+
+pub(super) fn run_feature_query_roots(package_graph: &'static PackageGraph) {
+    let feature_graph = package_graph.feature_graph();
+    proptest!(|(
+        ids in vec(feature_graph.proptest1_id_strategy(), 1..16),
+        query_direction in any::<DependencyDirection>(),
+        iter_direction in any::<DependencyDirection>(),
+        query_indexes in vec((any::<Index>(), any::<Index>()), 0..128),
+    )| {
+        roots(feature_graph, &ids, query_direction, iter_direction, query_indexes, "feature_query_roots")?;
+    });
+}
+
+pub(super) fn run_resolve_contains(graph: &'static PackageGraph) {
+    proptest!(|(
+        query_ids in vec(graph.proptest1_id_strategy(), 1..16),
+        direction in any::<DependencyDirection>(),
+        test_ids in vec(graph.proptest1_id_strategy(), 0..64),
+    )| {
+        resolve_contains(graph, &query_ids, direction, &test_ids);
+    });
+}
+
+pub(super) fn run_feature_resolve_contains(package_graph: &'static PackageGraph) {
+    let feature_graph = package_graph.feature_graph();
+    proptest!(|(
+        query_ids in vec(feature_graph.proptest1_id_strategy(), 1..16),
+        direction in any::<DependencyDirection>(),
+        test_ids in vec(feature_graph.proptest1_id_strategy(), 0..64),
+    )| {
+        resolve_contains(feature_graph, &query_ids, direction, &test_ids);
+    });
+}
+
+pub(super) fn run_resolve_ops(graph: &'static PackageGraph) {
+    proptest!(|(
+        resolve_tree in ResolveTree::strategy(graph.proptest1_id_strategy()),
+    )| {
+        resolve_ops(graph, resolve_tree);
+    });
+}
+
+pub(super) fn run_feature_resolve_ops(package_graph: &'static PackageGraph) {
+    let feature_graph = package_graph.feature_graph();
+    proptest!(|(
+        resolve_tree in ResolveTree::strategy(feature_graph.proptest1_id_strategy()),
+    )| {
+        resolve_ops(feature_graph, resolve_tree);
+    });
+}
+
+pub(super) fn run_package_feature_set_roundtrip(package_graph: &'static PackageGraph) {
+    let feature_graph = package_graph.feature_graph();
+    proptest!(|(
+        query_ids in vec(package_graph.proptest1_id_strategy(), 1..16),
+        query_direction in any::<DependencyDirection>(),
+        mut resolver in package_graph.proptest1_resolver_strategy(),
+        test_ids in vec(feature_graph.proptest1_id_strategy(), 1..16),
+        test_direction in any::<DependencyDirection>(),
+    )| {
+        resolver.check_depends_on(true);
+        package_feature_set_roundtrip(
+            package_graph,
+            query_ids,
+            query_direction,
+            resolver,
+            test_ids,
+            test_direction,
+        );
+    });
+}
+
+pub(super) fn run_feature_set_props(package_graph: &'static PackageGraph) {
+    let feature_graph = package_graph.feature_graph();
+    proptest!(|(
+        feature_set in feature_graph.proptest1_set_strategy(),
+        direction in any::<DependencyDirection>(),
+    )| {
+        feature_set_props(feature_set, direction);
+    });
+}
+
+pub(super) fn run_query_starts_from(graph: &'static PackageGraph) {
+    proptest!(|(
+        query_ids in hash_set(graph.proptest1_id_strategy(), 0..16),
+        direction in any::<DependencyDirection>(),
+        test_ids in vec(graph.proptest1_id_strategy(), 0..16),
+    )| {
+        query_starts_from(graph, query_ids, direction, test_ids);
+    });
+}
+
+pub(super) fn run_feature_query_starts_from(package_graph: &'static PackageGraph) {
+    let feature_graph = package_graph.feature_graph();
+    proptest!(|(
+        query_ids in hash_set(feature_graph.proptest1_id_strategy(), 0..16),
+        direction in any::<DependencyDirection>(),
+        test_ids in vec(feature_graph.proptest1_id_strategy(), 0..16),
+    )| {
+        query_starts_from(feature_graph, query_ids, direction, test_ids);
+    });
 }
 
 /// Test that all results of an into_iter_ids query depend on at least one of the ids in the query
