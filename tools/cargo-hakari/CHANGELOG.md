@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+## [0.9.38] - 2026-05-21
+
 ### Fixed
 
 - Updated guppy to 0.17.26, picking up a number of self-loop fixes.
@@ -371,6 +373,7 @@ This was tagged, but never released due to
 Initial release.
 
 <!-- next-url -->
+[0.9.38]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.38
 [0.9.37]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.37
 [0.9.36]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.36
 [0.9.35]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.35
