@@ -12,7 +12,7 @@ target-features = 'unknown'
 flags = ['bar', 'foo']
 
 [metadata.target-platform]
-triple = 'armv7-unknown-linux-gnueabihf'
+triple = 'armv7-unknown-linux-musleabi'
 target-features = 'unknown'
 
 [[metadata.features-only]]

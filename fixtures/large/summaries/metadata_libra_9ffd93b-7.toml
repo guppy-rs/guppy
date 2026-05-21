@@ -10,7 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'armv7a-none-eabihf'
+triple = 'armv7a-nuttx-eabi'
 target-features = 'all'
 flags = ['test-flag']
 [[metadata.omitted-packages.ids]]
@@ -487,7 +487,7 @@ version = '0.2.13'
 crates-io = true
 status = 'direct'
 features = ['blocking', 'default', 'dns', 'fnv', 'fs', 'full', 'futures-core', 'io-driver', 'io-std', 'io-util', 'iovec', 'lazy_static', 'libc', 'macros', 'memchr', 'mio', 'mio-named-pipes', 'mio-uds', 'net', 'num_cpus', 'process', 'rt-core', 'rt-threaded', 'rt-util', 'signal', 'signal-hook-registry', 'slab', 'stream', 'sync', 'tcp', 'time', 'tokio-macros', 'udp', 'uds']
-optional-deps = ['fnv', 'futures-core', 'iovec', 'lazy_static', 'memchr', 'mio', 'num_cpus', 'slab', 'tokio-macros']
+optional-deps = ['fnv', 'futures-core', 'iovec', 'lazy_static', 'libc', 'memchr', 'mio', 'mio-uds', 'num_cpus', 'signal-hook-registry', 'slab', 'tokio-macros']
 
 [[target-package]]
 name = 'toml'
@@ -535,6 +535,13 @@ features = ['default', 'std']
 [[target-package]]
 name = 'ansi_term'
 version = '0.11.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'arc-swap'
+version = '0.4.4'
 crates-io = true
 status = 'transitive'
 features = []
@@ -965,7 +972,7 @@ version = '0.5.7'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'getrandom', 'libc', 'mach_o_sys', 'use_os', 'winapi']
-optional-deps = ['getrandom']
+optional-deps = ['getrandom', 'libc']
 
 [[target-package]]
 name = 'mio'
@@ -973,6 +980,13 @@ version = '0.6.21'
 crates-io = true
 status = 'transitive'
 features = ['default', 'with-deprecated']
+
+[[target-package]]
+name = 'mio-uds'
+version = '0.6.7'
+crates-io = true
+status = 'transitive'
+features = []
 
 [[target-package]]
 name = 'net2'
@@ -1085,6 +1099,7 @@ version = '0.4.6'
 crates-io = true
 status = 'transitive'
 features = ['default', 'libc', 'std']
+optional-deps = ['libc']
 
 [[target-package]]
 name = 'rand'
@@ -1092,7 +1107,7 @@ version = '0.7.3'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'getrandom', 'getrandom_package', 'libc', 'rand_pcg', 'small_rng', 'std']
-optional-deps = ['getrandom_package', 'rand_pcg']
+optional-deps = ['getrandom_package', 'libc', 'rand_pcg']
 
 [[target-package]]
 name = 'rand04'
@@ -1260,6 +1275,13 @@ features = []
 [[target-package]]
 name = 'sha3'
 version = '0.8.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'signal-hook-registry'
+version = '1.2.0'
 crates-io = true
 status = 'transitive'
 features = []

@@ -10,7 +10,7 @@ initials-platform = 'host'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'riscv32im-unknown-none-elf'
+triple = 'riscv32ima-unknown-none-elf'
 target-features = 'all'
 flags = ['abc']
 [[metadata.omitted-packages.ids]]

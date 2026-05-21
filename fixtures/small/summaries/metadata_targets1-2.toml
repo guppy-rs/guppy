@@ -12,7 +12,7 @@ target-features = 'unknown'
 flags = ['bar', 'foo']
 
 [metadata.target-platform]
-triple = 'riscv64a23-unknown-linux-gnu'
+triple = 'riscv64gc-unknown-freebsd'
 target-features = 'unknown'
 flags = ['abc', 'test-flag']
 

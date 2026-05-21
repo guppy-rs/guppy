@@ -7,11 +7,11 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'i686-unknown-hurd-gnu'
+triple = 'i686-unknown-linux-gnu'
 target-features = 'all'
 
 [metadata.target-platform]
-triple = 'i686-unknown-openbsd'
+triple = 'i686-unknown-uefi'
 target-features = ['avx2', 'bmi2', 'sse', 'sse3', 'ssse3', 'xsave']
 [[metadata.omitted-packages.ids]]
 name = 'self-dev-cycle-cycle-a'

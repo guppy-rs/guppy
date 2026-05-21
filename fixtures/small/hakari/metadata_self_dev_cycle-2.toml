@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '3'
 # workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['riscv64gc-unknown-netbsd', 'i586-unknown-linux-musl', 'riscv64-wrs-vxworks']
+# platforms = ['riscv64gc-unknown-none-elf', 'i586-unknown-netbsd', 'riscv64a23-unknown-linux-gnu']
 # [[traversal-excludes.ids]]
 # name = 'self-dev-cycle-cycle-a'
 # version = '0.1.0'

@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'thumbv6m-none-eabi'
+triple = 'thumbv5te-none-eabi'
 target-features = 'all'
 flags = ['test-flag']
 

@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'i686-pc-windows-msvc'
+triple = 'i686-unknown-freebsd'
 target-features = 'all'
 flags = ['cargo_web']
 
