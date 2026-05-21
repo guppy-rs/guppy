@@ -1,0 +1,32 @@
+# This summary was @generated. To regenerate, run:
+#   cargo run -p fixture-manager -- generate-summaries --fixture metadata_self_dev_cycle
+
+[metadata]
+resolver = 'install'
+include-dev = false
+initials-platform = 'host'
+
+[metadata.host-platform]
+spec = 'any'
+
+[metadata.target-platform]
+spec = 'any'
+
+[[metadata.features-only]]
+name = 'self-dev-cycle-base'
+version = '0.1.0'
+workspace-path = 'base'
+features = []
+
+[[metadata.features-only]]
+name = 'self-dev-cycle-helper'
+version = '0.1.0'
+workspace-path = 'helper'
+features = []
+
+[[host-package]]
+name = 'self-dev-cycle-helper'
+version = '0.1.0'
+workspace-path = 'helper'
+status = 'initial'
+features = []

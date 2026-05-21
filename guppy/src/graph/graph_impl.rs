@@ -293,7 +293,9 @@ impl PackageGraph {
     ///
     /// In other words, this returns true if `package_b` is a direct dependency of `package_a`.
     ///
-    /// This returns false if `package_a` is the same as `package_b`.
+    /// If `package_a` is the same as `package_b`, this returns true only if
+    /// the package has a self-loop edge in the dependency graph (for example,
+    /// from a `path` dev-dependency on the package's own crate).
     pub fn directly_depends_on(
         &self,
         package_a: &PackageId,

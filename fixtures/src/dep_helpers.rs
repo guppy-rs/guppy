@@ -383,6 +383,11 @@ pub trait GraphAssert<'g>: Copy + fmt::Debug {
 
     fn directly_depends_on(&self, a_id: Self::Id, b_id: Self::Id) -> Result<bool, Error>;
 
+    /// Returns true if there is a self-loop edge on `id` in the graph,
+    /// computed via a different code path than `directly_depends_on` so it
+    /// can be used as an independent oracle.
+    fn has_self_edge(&self, id: Self::Id) -> bool;
+
     fn is_cyclic(&self, a_id: Self::Id, b_id: Self::Id) -> Result<bool, Error>;
 
     fn query(
@@ -622,6 +627,15 @@ impl<'g> GraphAssert<'g> for &'g PackageGraph {
         PackageGraph::directly_depends_on(self, a_id, b_id)
     }
 
+    fn has_self_edge(&self, id: Self::Id) -> bool {
+        // Cross-check via `direct_links()` (which iterates outgoing edges)
+        // rather than `directly_depends_on` (which calls `contains_edge`).
+        self.metadata(id)
+            .expect("valid ID")
+            .direct_links()
+            .any(|link| link.to().id() == id)
+    }
+
     fn is_cyclic(&self, a_id: Self::Id, b_id: Self::Id) -> Result<bool, Error> {
         let cycles = self.cycles();
         cycles.is_cyclic(a_id, b_id)
@@ -719,6 +733,19 @@ impl<'g> GraphAssert<'g> for FeatureGraph<'g> {
 
     fn directly_depends_on(&self, a_id: Self::Id, b_id: Self::Id) -> Result<bool, Error> {
         FeatureGraph::directly_depends_on(self, a_id, b_id)
+    }
+
+    fn has_self_edge(&self, id: Self::Id) -> bool {
+        // Cross-check by iterating outgoing links from a forward query rooted
+        // at `id`. The only link with both endpoints equal to `id` is a
+        // self-loop edge; this is independent of `directly_depends_on`'s
+        // `contains_edge` path.
+        let set = self
+            .query_directed([id], DependencyDirection::Forward)
+            .expect("valid ID")
+            .resolve();
+        set.links(DependencyDirection::Forward)
+            .any(|(from, to, _edge)| from == id && to == id)
     }
 
     fn is_cyclic(&self, a_id: Self::Id, b_id: Self::Id) -> Result<bool, Error> {
