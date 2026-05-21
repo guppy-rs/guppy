@@ -395,9 +395,10 @@ mod small {
         let helper_feature = FeatureId::new(&helper_id, FeatureLabel::Base);
 
         // The same contract for `directly_depends_on` holds in the feature
-        // graph: `base/[base]` has a self-loop (recorded as a `SelfLoop`
-        // warning by the feature graph builder), while `helper/[helper]`
-        // does not.
+        // graph: `base/[base]` has a self-loop (from the path dev-dep),
+        // while `helper/[helper]` does not. No `SelfLoop` warning is
+        // emitted here, since the loop comes from a dependency
+        // declaration rather than a `[features]` entry.
         assert!(
             feature_graph
                 .directly_depends_on(base_feature, base_feature)

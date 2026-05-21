@@ -1,0 +1,27 @@
+[guppy] restrict FeatureGraphWarning::SelfLoop to named-feature edges
+
+The warning previously fired for *every* self-loop edge in the feature
+graph, including those introduced by legitimate Cargo constructs like a
+path dev-dependency on the package's own crate. Those aren't user
+errors -- Cargo accepts them -- and the warning was just noise.
+
+Restrict the warning to self-loops on edges like:
+
+```toml
+[features]
+a = ["a"]
+```
+
+where a self-reference really is a mistake worth surfacing.
+
+The existing `named_feature_self_loop` invalid-fixture test continues
+to pass unchanged; the `metadata_self_dev_cycle` fixture is updated to
+no longer expect a warning for its path-self dev-dep.
+
+JJ: Change ID: owuylxns
+JJ: This commit contains the following changes:
+JJ:     M fixtures/src/json.rs
+JJ:     M guppy/src/graph/feature/build.rs
+JJ:     M guppy/tests/graph-tests/graph_tests.rs
+JJ:
+JJ: Lines starting with "JJ:" (like this one) will be removed.

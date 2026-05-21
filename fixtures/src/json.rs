@@ -947,19 +947,16 @@ impl FixtureDetails {
 
         // `base`'s path-self dev-dependency is a single-node SCC with a
         // self-loop, i.e., a cycle of length 1. `cycles().all_cycles()`
-        // reports it. The feature graph independently flags the
-        // dev-dependency as a self-loop warning on the package's `[base]`
-        // (package-only) feature.
+        // reports it. The feature graph does *not* emit a self-loop
+        // warning here: the loop comes from `[dev-dependencies]`, not
+        // from a `[features]` declaration, and is a legitimate Cargo
+        // construct.
         Self::new(details)
             .with_workspace_members(vec![
                 ("base", METADATA_SELF_DEV_CYCLE_BASE),
                 ("helper", METADATA_SELF_DEV_CYCLE_HELPER),
             ])
             .with_cycles(vec![vec![METADATA_SELF_DEV_CYCLE_BASE]])
-            .with_feature_graph_warnings(vec![FeatureGraphWarning::SelfLoop {
-                package_id: package_id(METADATA_SELF_DEV_CYCLE_BASE),
-                feature_name: "[base]".to_string(),
-            }])
     }
 
     pub(crate) fn metadata_cycle_features() -> Self {
