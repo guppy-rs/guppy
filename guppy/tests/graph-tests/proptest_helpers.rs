@@ -93,6 +93,54 @@ macro_rules! proptest_suite {
             }
 
             #[test]
+            fn proptest_package_cycle_consistency() {
+                let fixture = JsonFixture::$name();
+                let package_graph = fixture.graph();
+
+                proptest!(|(query_id in package_graph.proptest1_id_strategy())| {
+                    cycle_consistency(package_graph, query_id);
+                });
+            }
+
+            #[test]
+            fn proptest_feature_cycle_consistency() {
+                let fixture = JsonFixture::$name();
+                let package_graph = fixture.graph();
+                let feature_graph = package_graph.feature_graph();
+
+                proptest!(|(query_id in feature_graph.proptest1_id_strategy())| {
+                    cycle_consistency(feature_graph, query_id);
+                });
+            }
+
+            #[test]
+            fn proptest_package_cycle_partition() {
+                let fixture = JsonFixture::$name();
+                let package_graph = fixture.graph();
+
+                proptest!(|(
+                    a_id in package_graph.proptest1_id_strategy(),
+                    b_id in package_graph.proptest1_id_strategy(),
+                )| {
+                    cycle_partition(package_graph, a_id, b_id);
+                });
+            }
+
+            #[test]
+            fn proptest_feature_cycle_partition() {
+                let fixture = JsonFixture::$name();
+                let package_graph = fixture.graph();
+                let feature_graph = package_graph.feature_graph();
+
+                proptest!(|(
+                    a_id in feature_graph.proptest1_id_strategy(),
+                    b_id in feature_graph.proptest1_id_strategy(),
+                )| {
+                    cycle_partition(feature_graph, a_id, b_id);
+                });
+            }
+
+            #[test]
             fn proptest_query_link_order() {
                 let fixture = JsonFixture::$name();
                 let graph = fixture.graph();
@@ -286,6 +334,77 @@ pub(super) fn depends_on<'g, G: GraphAssert<'g>>(
         let query_id = index.get(&reachable_ids);
         graph.assert_depends_on_any(ids, *query_id, query_direction, &msg);
     }
+}
+
+/// Cross-API consistency check for cycle reporting.
+///
+/// Asserts that `is_cyclic`, `all_cycles`, and `has_self_edge` all agree
+/// about which nodes lie on cycles. This is the exact class of invariant
+/// that #590 fixed: previously `is_cyclic(x, x)` was reflexively `true`
+/// and `all_cycles` only reported multi-node SCCs, so the two disagreed
+/// for single-node SCCs with self-loops. Sweeping every fixture for the
+/// same divergence prevents the bug from recurring elsewhere.
+pub(super) fn cycle_consistency<'g, G: GraphAssert<'g>>(graph: G, query_id: G::Id) {
+    let all_cycles = graph.all_cycles();
+    let cycle_members: HashSet<G::Id> = all_cycles.iter().flatten().copied().collect();
+
+    // Invariant 1: `is_cyclic(x, x)` agrees with `all_cycles()` membership.
+    let is_cyclic_self = graph.is_cyclic(query_id, query_id).expect("valid ID");
+    assert_eq!(
+        is_cyclic_self,
+        cycle_members.contains(&query_id),
+        "is_cyclic({query_id:?}, {query_id:?}) disagrees with all_cycles() membership",
+    );
+
+    // Invariant 2: a self-loop edge forces cycle membership.
+    if graph.has_self_edge(query_id) {
+        assert!(
+            is_cyclic_self,
+            "has_self_edge({query_id:?}) but is_cyclic({query_id:?}, {query_id:?}) is false",
+        );
+    }
+
+    // Invariants 3-4 only apply when `query_id` actually lies on a cycle.
+    let Some(cycle) = all_cycles.iter().find(|c| c.contains(&query_id)) else {
+        return;
+    };
+    for &other in cycle {
+        // 3. Every cycle member is individually cyclic.
+        assert!(
+            graph.is_cyclic(other, other).expect("valid ID"),
+            "{other:?} is a cycle member but is_cyclic({other:?}, {other:?}) is false",
+        );
+        // 4. Every pair within a cycle is mutually cyclic.
+        assert!(
+            graph.is_cyclic(query_id, other).expect("valid IDs"),
+            "{query_id:?} and {other:?} share a cycle but is_cyclic disagrees",
+        );
+    }
+}
+
+/// Cross-cycle disjointness check.
+///
+/// Cycles correspond to (non-trivial) SCCs, which partition the cyclic
+/// subset of nodes -- so two IDs in different cycles must not be mutually
+/// cyclic. The previous SCC-equivalence-based `is_cyclic` happened to
+/// satisfy this for distinct IDs, but a future "simplification" that
+/// reuses the SCC equivalence relation as the cycle predicate would
+/// silently break invariant 1 above. This check ensures that the
+/// partitioning side of the contract is preserved.
+pub(super) fn cycle_partition<'g, G: GraphAssert<'g>>(graph: G, a_id: G::Id, b_id: G::Id) {
+    let all_cycles = graph.all_cycles();
+    let a_cycle = all_cycles.iter().position(|c| c.contains(&a_id));
+    let b_cycle = all_cycles.iter().position(|c| c.contains(&b_id));
+
+    // `is_cyclic(a, b)` is true iff both `a` and `b` lie on the same cycle.
+    // For `a == b`, that's the same as "`a` is in any cycle" (covered by
+    // `cycle_consistency`); for `a != b`, that's "both in the same cycle."
+    let expected = matches!((a_cycle, b_cycle), (Some(a), Some(b)) if a == b);
+    let actual = graph.is_cyclic(a_id, b_id).expect("valid IDs");
+    assert_eq!(
+        actual, expected,
+        "is_cyclic({a_id:?}, {b_id:?}) disagrees with all_cycles() partition",
+    );
 }
 
 /// Test depends_on and directly_depends_on semantics with the same ID.

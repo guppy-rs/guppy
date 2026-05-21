@@ -2,15 +2,74 @@
 
 ## Unreleased
 
-### Changed
+### Fixed
 
-guppy now correctly distinguishes single-node SCCs from single-node *cycles*. Previously, several APIs conflated the two:
+A node with a self-loop edge -- typically a package with a `path`
+dev-dependency on its own crate, or a feature node like `base/[base]`
+arising from one -- was treated inconsistently by several APIs. The root
+cause was that self-edges were counted as incoming edges in the SCC and
+topological-sort machinery, which transitively confused everything built
+on top:
 
-- `PackageGraph::directly_depends_on(x, x)` always returned `false`, and the feature-graph equivalent did the same. They now return `true` when `x` has a self-loop edge (e.g., a `path` dev-dependency on the package's own crate).
-- `Cycles::is_cyclic(x, x)` and `feature::Cycles::is_cyclic(x, x)` were reflexively `true` for every package or feature, regardless of cycle membership. They now return `true` only when `x` lies on an actual cycle, either in a multi-node SCC or via a self-loop edge.
-- `Cycles::all_cycles()` and `feature::Cycles::all_cycles()` reported only SCCs of 2 or more elements. They now also yield single-node SCCs whose node has a self-loop edge, in topological order alongside multi-node SCCs.
+- **`Sccs::externals` / forward roots.** Previously, a package whose only
+  incoming edge was its own self-loop was excluded from the set of forward
+  roots, so callers iterating over
+  `query_workspace().resolve().root_ids(_)` did not see it, and forward
+  link enumeration on it was broken. Now, self-loop edges no longer
+  disqualify a node from being a forward root: a single-node SCC is
+  external iff it has no incoming edges *from outside its own SCC*.
+  ([#586])
+- **Topological sort.** Previously, `TopoWithCycles::new` filtered
+  self-looping nodes out of its root set for the same reason, dropping
+  them from the DFS and then placing them and their descendants at the
+  end of the topological order via a best-effort fallback. Now, the
+  root-set predicate accepts a node whose only incoming edge is its own
+  self-loop, so such nodes are visited in DFS order alongside other
+  roots. ([#589])
+- **`Cycles::is_cyclic` and `feature::Cycles::is_cyclic`.** Previously,
+  these were reflexively `true` for every package or feature, regardless
+  of actual cycle membership. Now, they return `true` only when the
+  argument lies on a directed cycle: either in a multi-node SCC, or in a
+  single-node SCC with a self-loop edge. This is a behavior change, but
+  in the context of the rest of this release is being treated as a
+  bugfix. ([#590])
+- **`Cycles::all_cycles` and `feature::Cycles::all_cycles`.** Previously,
+  these reported only SCCs of two or more elements. Now, they also yield
+  single-node SCCs whose node has a self-loop edge, in topological order
+  alongside multi-node SCCs. This makes `all_cycles()` and
+  `is_cyclic(x, x)` agree on what counts as a cycle. ([#590])
+- **`FeatureGraphWarning::SelfLoop`.** Previously, this warning was
+  emitted for *every* self-loop edge in the feature graph, including
+  legitimate ones such as a path dev-dependency on the package's own
+  crate. Now, it is restricted to named-feature self-loops like
+  `[features] a = ["a"]`, which really are user errors. ([#592])
 
-These changes make the four APIs internally consistent and align their behavior with their documented semantics.
+### Documentation
+
+- **`PackageGraph::directly_depends_on` and
+  `FeatureGraph::directly_depends_on`.** Previously, both documented
+  themselves as returning `false` when the two IDs were equal. The
+  implementation has always called `dep_graph.contains_edge(a, b)`,
+  which correctly returns `true` for self-loop edges, so the
+  documentation contradicted the behavior. The documentation has now
+  been corrected to match.
+- **`FeatureGraph::directly_depends_on`.** Previously, the docstring
+  read "returns true if `feature_a` is a direct dependency of
+  `feature_b`," with the operands inverted relative to the actual
+  implementation. Now the docstring reflects the implementation:
+  returns true if `feature_b` is a direct dependency of `feature_a`.
+  ([#591])
+- **[`Cycles`] type-level documentation.** Previously, the long-form
+  documentation talked exclusively about multi-node cycles (like
+  `serde` and `serde_derive`). It now also acknowledges single-node
+  self-loop cycles as a case.
+
+[`cheadergen`]: https://github.com/LukeMathWalker/cheadergen
+[#586]: https://github.com/guppy-rs/guppy/pull/586
+[#589]: https://github.com/guppy-rs/guppy/pull/589
+[#590]: https://github.com/guppy-rs/guppy/pull/590
+[#591]: https://github.com/guppy-rs/guppy/pull/591
+[#592]: https://github.com/guppy-rs/guppy/pull/592
 
 ## [0.17.25] - 2026-01-30
 

@@ -13,9 +13,9 @@ spec = 'any'
 spec = 'any'
 
 [[metadata.features-only]]
-name = 'self-dev-cycle-base'
+name = 'self-dev-cycle-cycle-a'
 version = '0.1.0'
-workspace-path = 'base'
+workspace-path = 'cycle-a'
 features = []
 
 [[metadata.features-only]]
@@ -25,8 +25,8 @@ workspace-path = 'helper'
 features = []
 
 [[host-package]]
-name = 'self-dev-cycle-helper'
+name = 'self-dev-cycle-cycle-b'
 version = '0.1.0'
-workspace-path = 'helper'
+workspace-path = 'cycle-b'
 status = 'initial'
 features = []

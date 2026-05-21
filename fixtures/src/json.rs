@@ -81,6 +81,8 @@ pub static METADATA_SELF_DEV_CYCLE_PATH: &str = "../small/metadata_self_dev_cycl
 pub static METADATA_SELF_DEV_CYCLE_BASE: &str =
     "self-dev-cycle-base 0.1.0 (path+file:///Users/fakeuser/local/testcrates/self-dev-cycle/base)";
 pub static METADATA_SELF_DEV_CYCLE_HELPER: &str = "self-dev-cycle-helper 0.1.0 (path+file:///Users/fakeuser/local/testcrates/self-dev-cycle/helper)";
+pub static METADATA_SELF_DEV_CYCLE_CYCLE_A: &str = "self-dev-cycle-cycle-a 0.1.0 (path+file:///Users/fakeuser/local/testcrates/self-dev-cycle/cycle-a)";
+pub static METADATA_SELF_DEV_CYCLE_CYCLE_B: &str = "self-dev-cycle-cycle-b 0.1.0 (path+file:///Users/fakeuser/local/testcrates/self-dev-cycle/cycle-b)";
 
 pub static METADATA_TARGETS1_PATH: &str = "../small/metadata_targets1.json";
 pub static METADATA_TARGETS1_TESTCRATE: &str =
@@ -945,18 +947,90 @@ impl FixtureDetails {
         .with_named_features(vec!["extra"])
         .insert_into(&mut details);
 
-        // `base`'s path-self dev-dependency is a single-node SCC with a
-        // self-loop, i.e., a cycle of length 1. `cycles().all_cycles()`
-        // reports it. The feature graph does *not* emit a self-loop
-        // warning here: the loop comes from `[dev-dependencies]`, not
-        // from a `[features]` declaration, and is a legitimate Cargo
-        // construct.
+        // `cycle-a` <-> `cycle-b` form a classic 2-node multi-SCC: a
+        // non-dev edge `cycle-a -> cycle-b` together with a dev edge
+        // `cycle-b -> cycle-a` closes the cycle. Disconnected from
+        // base/helper, so it's a second cycle alongside `base`'s
+        // self-loop.
+        PackageDetails::new(
+            METADATA_SELF_DEV_CYCLE_CYCLE_A,
+            "self-dev-cycle-cycle-a",
+            "0.1.0",
+            vec![FAKE_AUTHOR],
+            None,
+            Some("MIT OR Apache-2.0"),
+        )
+        .with_workspace_path("cycle-a")
+        .with_deps(vec![(
+            "self-dev-cycle-cycle-b",
+            METADATA_SELF_DEV_CYCLE_CYCLE_B,
+        )])
+        .with_reverse_deps(vec![(
+            "self-dev-cycle-cycle-a",
+            METADATA_SELF_DEV_CYCLE_CYCLE_B,
+        )])
+        .with_transitive_deps(vec![
+            METADATA_SELF_DEV_CYCLE_CYCLE_A,
+            METADATA_SELF_DEV_CYCLE_CYCLE_B,
+        ])
+        .with_transitive_reverse_deps(vec![
+            METADATA_SELF_DEV_CYCLE_CYCLE_A,
+            METADATA_SELF_DEV_CYCLE_CYCLE_B,
+        ])
+        .insert_into(&mut details);
+
+        PackageDetails::new(
+            METADATA_SELF_DEV_CYCLE_CYCLE_B,
+            "self-dev-cycle-cycle-b",
+            "0.1.0",
+            vec![FAKE_AUTHOR],
+            None,
+            Some("MIT OR Apache-2.0"),
+        )
+        .with_workspace_path("cycle-b")
+        .with_deps(vec![(
+            "self-dev-cycle-cycle-a",
+            METADATA_SELF_DEV_CYCLE_CYCLE_A,
+        )])
+        .with_reverse_deps(vec![(
+            "self-dev-cycle-cycle-b",
+            METADATA_SELF_DEV_CYCLE_CYCLE_A,
+        )])
+        .with_transitive_deps(vec![
+            METADATA_SELF_DEV_CYCLE_CYCLE_A,
+            METADATA_SELF_DEV_CYCLE_CYCLE_B,
+        ])
+        .with_transitive_reverse_deps(vec![
+            METADATA_SELF_DEV_CYCLE_CYCLE_A,
+            METADATA_SELF_DEV_CYCLE_CYCLE_B,
+        ])
+        .insert_into(&mut details);
+
+        // The fixture exercises both kinds of cycles at once:
+        //
+        // * `base`'s path-self dev-dependency is a single-node SCC with
+        //   a self-loop, i.e., a cycle of length 1. The feature graph
+        //   does *not* emit a self-loop warning here: the loop comes
+        //   from `[dev-dependencies]`, not from a `[features]`
+        //   declaration, and is a legitimate Cargo construct.
+        // * `cycle-a` <-> `cycle-b` form a 2-node SCC via a regular
+        //   forward edge and a dev back-edge.
+        //
+        // `cycles().all_cycles()` reports both, in topological order.
         Self::new(details)
             .with_workspace_members(vec![
                 ("base", METADATA_SELF_DEV_CYCLE_BASE),
                 ("helper", METADATA_SELF_DEV_CYCLE_HELPER),
+                ("cycle-a", METADATA_SELF_DEV_CYCLE_CYCLE_A),
+                ("cycle-b", METADATA_SELF_DEV_CYCLE_CYCLE_B),
             ])
-            .with_cycles(vec![vec![METADATA_SELF_DEV_CYCLE_BASE]])
+            .with_cycles(vec![
+                vec![METADATA_SELF_DEV_CYCLE_BASE],
+                vec![
+                    METADATA_SELF_DEV_CYCLE_CYCLE_A,
+                    METADATA_SELF_DEV_CYCLE_CYCLE_B,
+                ],
+            ])
     }
 
     pub(crate) fn metadata_cycle_features() -> Self {
