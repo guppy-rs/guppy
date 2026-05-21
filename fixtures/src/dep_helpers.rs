@@ -390,6 +390,10 @@ pub trait GraphAssert<'g>: Copy + fmt::Debug {
 
     fn is_cyclic(&self, a_id: Self::Id, b_id: Self::Id) -> Result<bool, Error>;
 
+    /// Returns every cycle in the graph as a list of node IDs. Used by
+    /// cycle-consistency proptests to cross-check against `is_cyclic`.
+    fn all_cycles(&self) -> Vec<Vec<Self::Id>>;
+
     fn query(
         &self,
         initials: impl IntoIterator<Item = Self::Id>,
@@ -641,6 +645,10 @@ impl<'g> GraphAssert<'g> for &'g PackageGraph {
         cycles.is_cyclic(a_id, b_id)
     }
 
+    fn all_cycles(&self) -> Vec<Vec<Self::Id>> {
+        self.cycles().all_cycles().map(|c| c.to_vec()).collect()
+    }
+
     fn query(
         &self,
         initials: impl IntoIterator<Item = Self::Id>,
@@ -751,6 +759,10 @@ impl<'g> GraphAssert<'g> for FeatureGraph<'g> {
     fn is_cyclic(&self, a_id: Self::Id, b_id: Self::Id) -> Result<bool, Error> {
         let cycles = self.cycles();
         cycles.is_cyclic(a_id, b_id)
+    }
+
+    fn all_cycles(&self) -> Vec<Vec<Self::Id>> {
+        self.cycles().all_cycles().collect()
     }
 
     fn query(

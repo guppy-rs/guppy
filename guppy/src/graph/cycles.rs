@@ -132,8 +132,21 @@ use crate::{
 /// depend on the same package's lib/bin target, and this creates apparent cycles
 /// in the package graph!** That's it!
 ///
+/// Concretely, this shows up in two shapes:
+///
+/// 1. **Single-node cycles (self-loops).** A package declares a path
+///    dev-dependency on its own crate -- usually to enable specific
+///    features under `cfg(test)` -- which becomes a self-edge in the
+///    package graph. The package's lone SCC is cyclic, with itself as
+///    the only member.
+/// 2. **Multi-node cycles.** Two or more packages depend on each other,
+///    with at least one dev-dependency edge somewhere around the cycle.
+///    The serde / serde_derive example below is the canonical case.
+///
 /// As we'll see, **simply ignoring all dev-dependency edges eliminates all cycles
-/// *and* preserves the ordering constraints of the dependency graph.**
+/// *and* preserves the ordering constraints of the dependency graph.** Both
+/// shapes of cycle vanish under that filter, since the dev-dependency edge
+/// is always involved.
 ///
 ///
 ///
@@ -258,7 +271,14 @@ use crate::{
 /// unsorted node). On the other hand, if the graph already *is* a DAG then each node
 /// is its own SCC, and so we lose nothing. In this way SCCs give us a way to preserve
 /// all the *nice* parts of our graph while also isolating the problematic parts
-/// (SCCs with more than 1 node) to something self-contained that we can handle specially.
+/// (the cyclic SCCs) to something self-contained that we can handle specially.
+///
+/// > [!NOTE]
+/// > A node's single-element SCC is "cyclic" iff that node has a self-loop
+/// > edge in the graph. The SCC machinery itself doesn't make this
+/// > distinction -- every node is its own SCC -- but [`Cycles::is_cyclic`]
+/// > and [`Cycles::all_cycles`] do, so callers consistently see only SCCs
+/// > that actually lie on a directed cycle.
 ///
 /// In the general case, nothing more can be done to order an SCC. By definition every
 /// node depends on every other node! But as we've seen in the previous section, there

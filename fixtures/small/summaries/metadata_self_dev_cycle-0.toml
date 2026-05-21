@@ -24,6 +24,20 @@ status = 'initial'
 features = []
 
 [[target-package]]
+name = 'self-dev-cycle-cycle-a'
+version = '0.1.0'
+workspace-path = 'cycle-a'
+status = 'initial'
+features = []
+
+[[target-package]]
+name = 'self-dev-cycle-cycle-b'
+version = '0.1.0'
+workspace-path = 'cycle-b'
+status = 'initial'
+features = []
+
+[[target-package]]
 name = 'self-dev-cycle-helper'
 version = '0.1.0'
 workspace-path = 'helper'

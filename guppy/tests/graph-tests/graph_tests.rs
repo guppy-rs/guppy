@@ -261,26 +261,40 @@ mod small {
 
     #[test]
     fn metadata_self_dev_cycle() {
-        // `base` declares a path dev-dependency on itself, which places
-        // it in a single-node SCC with a self-loop in both the package
-        // graph and the feature graph.
+        // This fixture exercises both kinds of cycle at once:
         //
-        // The SCC must still be treated as a forward root (and `helper` as a
-        // reverse root), and both directions of link iteration must surface the
-        // self-edge alongside the `base -> helper` edge.
+        // * `base` declares a path dev-dependency on itself, placing it
+        //   in a single-node SCC with a self-loop in both the package
+        //   graph and the feature graph.
+        // * `cycle-a` and `cycle-b` form a 2-node multi-SCC via a regular
+        //   forward edge and a dev back-edge -- a classic dev-cycle.
+        //
+        // The single-node SCC must still be treated as a forward root
+        // (and `helper` as a reverse root), and both directions of link
+        // iteration must surface the self-edge alongside the
+        // `base -> helper` edge. `all_cycles()` must report both kinds
+        // of cycle in topological order.
         let fixture = JsonFixture::metadata_self_dev_cycle();
         fixture.verify();
 
         let graph = fixture.graph();
         let base_id = package_id(json::METADATA_SELF_DEV_CYCLE_BASE);
         let helper_id = package_id(json::METADATA_SELF_DEV_CYCLE_HELPER);
+        let cycle_a_id = package_id(json::METADATA_SELF_DEV_CYCLE_CYCLE_A);
+        let cycle_b_id = package_id(json::METADATA_SELF_DEV_CYCLE_CYCLE_B);
 
-        // There aren't any multi-node SCCs in this graph, but `base`'s
-        // single-node SCC has a self-loop, which is a cycle of length 1.
-        // `all_cycles()` reports it; `helper` has no self-loop and is not
-        // on any cycle.
+        // `all_cycles()` reports both cycles:
+        //
+        // * `base`'s single-node SCC has a self-loop (cycle of length 1).
+        // * `{cycle-a, cycle-b}` is a 2-node multi-SCC.
+        //
+        // Within the multi-SCC, nodes are returned in non-dev order:
+        // `cycle-a -> cycle-b` is the regular edge, so `cycle-a`
+        // precedes `cycle-b`.
+        //
+        // `helper` has no self-loop and is not on any cycle.
         let cycles: Vec<Vec<&PackageId>> = graph.cycles().all_cycles().collect();
-        assert_eq!(cycles, vec![vec![&base_id]]);
+        assert_eq!(cycles, vec![vec![&base_id], vec![&cycle_a_id, &cycle_b_id]],);
 
         let cycles = graph.cycles();
         assert!(
@@ -294,6 +308,32 @@ mod small {
         assert!(
             !cycles.is_cyclic(&base_id, &helper_id).expect("known ids"),
             "base and helper are in different SCCs",
+        );
+        // Multi-SCC membership: both `cycle-a` and `cycle-b` are on a
+        // cycle individually, and they lie on a common cycle pairwise.
+        assert!(
+            cycles
+                .is_cyclic(&cycle_a_id, &cycle_a_id)
+                .expect("known id"),
+            "cycle-a is in a 2-node SCC",
+        );
+        assert!(
+            cycles
+                .is_cyclic(&cycle_b_id, &cycle_b_id)
+                .expect("known id"),
+            "cycle-b is in a 2-node SCC",
+        );
+        assert!(
+            cycles
+                .is_cyclic(&cycle_a_id, &cycle_b_id)
+                .expect("known ids"),
+            "cycle-a and cycle-b share a multi-node SCC",
+        );
+        // The base self-loop SCC and the cycle-a/cycle-b SCC are
+        // distinct, even though both are cyclic.
+        assert!(
+            !cycles.is_cyclic(&base_id, &cycle_a_id).expect("known ids"),
+            "base and cycle-a are in different SCCs",
         );
 
         let direct: HashSet<(PackageId, PackageId)> = graph
@@ -440,16 +480,28 @@ mod small {
                 .expect("helper/[helper] is a valid feature id"),
             "helper/[helper] has no self-loop and is not on any cycle",
         );
-        // Two feature nodes self-loop: `base/[base]` from the package-
-        // level dev-dep, and `base/extra` because the dev-dep declares
-        // `features = ["extra"]`, which makes `extra` reachable from
-        // itself via the dev-dep edge.
+        // The feature graph surfaces cycles from both kinds of cycle
+        // in the package graph:
+        //
+        // * `base/[base]` self-loops from the package-level dev-dep.
+        // * `base/extra` self-loops because the dev-dep declares
+        //   `features = ["extra"]`, making `extra` reachable from itself
+        //   via the dev-dep edge.
+        // * `cycle-a/[base]` and `cycle-b/[base]` lie on the package-level
+        //   2-node SCC, lifted into the feature graph.
         let base_extra_feature = FeatureId::new(&base_id, FeatureLabel::Named("extra"));
+        let cycle_a_feature = FeatureId::new(&cycle_a_id, FeatureLabel::Base);
+        let cycle_b_feature = FeatureId::new(&cycle_b_id, FeatureLabel::Base);
         let feature_cycle_members: HashSet<FeatureId<'_>> =
             feature_graph.cycles().all_cycles().flatten().collect();
         assert_eq!(
             feature_cycle_members,
-            HashSet::from([base_feature, base_extra_feature]),
+            HashSet::from([
+                base_feature,
+                base_extra_feature,
+                cycle_a_feature,
+                cycle_b_feature,
+            ]),
         );
     }
 
