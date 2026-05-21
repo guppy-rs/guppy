@@ -227,10 +227,8 @@ impl ParsedCfg {
                         .vendor
                         .set(value, line_number, || make_dup_err(key))?;
                 }
-                "target_family" => {
-                    if !value.is_empty() {
-                        parsed.families.push(value.to_owned());
-                    }
+                "target_family" if !value.is_empty() => {
+                    parsed.families.push(value.to_owned());
                 }
                 "target_endian" => {
                     parsed
@@ -243,10 +241,8 @@ impl ParsedCfg {
                 "panic" => {
                     parsed.panic.set(value, line_number, || make_dup_err(key))?;
                 }
-                "target_feature" => {
-                    if !value.is_empty() {
-                        parsed.target_features.push(value.to_owned());
-                    }
+                "target_feature" if !value.is_empty() => {
+                    parsed.target_features.push(value.to_owned());
                 }
                 // Unrecognized keys are ignored.
                 _ => {}

@@ -48,8 +48,8 @@ fn main() -> Result<(), Error> {
 
         // Compute the package IDs in the next level.
         let next: BTreeMap<_, _> = current
-            .into_iter()
-            .flat_map(|(id, _)| {
+            .into_keys()
+            .flat_map(|id| {
                 // This is a flat_map because each package in current has multiple dependencies, and
                 // we want to collect all of them together.
                 let links = package_graph.metadata(id).expect("valid ID").direct_links();
