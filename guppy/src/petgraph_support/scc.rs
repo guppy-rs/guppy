@@ -114,9 +114,10 @@ impl<Ix: IndexType> Sccs<Ix> {
                 None => {
                     // Not part of a multi-node SCC. Treat the node as its own
                     // (single-element) SCC: it's external iff it has no
-                    // incoming neighbors *other than itself*. A self-loop is
-                    // an edge within the node's own SCC and must not
-                    // disqualify it from being external, matching how the
+                    // incoming neighbors *other than itself*.
+                    //
+                    // A self-loop is an edge within the node's own SCC and must
+                    // not disqualify it from being external, matching how the
                     // multi-node branch above accepts in-SCC neighbors.
                     !graph
                         .neighbors_directed(*ix, Incoming)
@@ -168,68 +169,48 @@ mod tests {
     use petgraph::Graph;
     use std::collections::HashSet;
 
-    /// `Sccs::externals` should treat a single-node SCC with a self-loop as
-    /// having no incoming edges from outside its own SCC.
-    ///
-    /// Regression test for the bug where a self-loop edge (e.g. a cargo
-    /// path-self dev-dependency) was counted as an incoming edge in the
-    /// single-node branch, removing the node from the set of forward roots
-    /// even though no other node depended on it. The multi-node branch
-    /// already handled this correctly by accepting in-SCC neighbors.
+    /// Self-loops are internal to a node's own (single-element) SCC, so
+    /// they neither qualify a node for nor disqualify it from being a
+    /// forward root on their own.
     #[test]
-    fn externals_with_self_loop_on_single_node_scc() {
-        // Build a tiny graph:
-        //   a -> a (self-loop)
-        //   a -> b
-        // Forward roots should be {a}: a has no incoming edges from outside
-        // its own (single-node) SCC.
+    fn externals_with_self_loops_on_single_node_sccs() {
+        // a -> a (self-loop, no external incoming): `a` is external.
+        // a -> b (real incoming edge for `b`)
+        // b -> b (self-loop; the real incoming wins): `b` is not external.
         let mut graph = Graph::<(), (), Directed, u32>::new();
         let a = graph.add_node(());
         let b = graph.add_node(());
         graph.add_edge(a, a, ());
         graph.add_edge(a, b, ());
-
-        let sccs = Sccs::<u32>::new(&graph, |_| {});
-        let externals: HashSet<NodeIndex<u32>> = sccs.externals(&graph).collect();
-
-        assert!(
-            externals.contains(&a),
-            "node `a` (with self-loop but no external incoming edges) should be a forward root, \
-             got externals = {externals:?}"
-        );
-        assert!(
-            !externals.contains(&b),
-            "node `b` (incoming edge from `a`) should not be a forward root, \
-             got externals = {externals:?}"
-        );
-    }
-
-    /// A self-loop on a node that *also* has incoming edges from outside must
-    /// not make the node a forward root.
-    #[test]
-    fn externals_with_self_loop_and_external_incoming_edge() {
-        // Build a graph:
-        //   a -> b
-        //   b -> b (self-loop)
-        // `b` has a self-loop but also an incoming edge from `a`, so it must
-        // not be a forward root. Forward roots should be {a}.
-        let mut graph = Graph::<(), (), Directed, u32>::new();
-        let a = graph.add_node(());
-        let b = graph.add_node(());
-        graph.add_edge(a, b, ());
         graph.add_edge(b, b, ());
 
         let sccs = Sccs::<u32>::new(&graph, |_| {});
         let externals: HashSet<NodeIndex<u32>> = sccs.externals(&graph).collect();
+        assert_eq!(externals, HashSet::from([a]));
+    }
 
-        assert!(
-            externals.contains(&a),
-            "node `a` should be a forward root, got externals = {externals:?}"
-        );
-        assert!(
-            !externals.contains(&b),
-            "node `b` (incoming edge from `a` despite the self-loop) should not be a forward \
-             root, got externals = {externals:?}"
-        );
+    /// A self-loop on a node that belongs to a multi-node SCC must not
+    /// disqualify the SCC from being external.
+    #[test]
+    fn externals_with_self_loop_inside_multi_node_scc() {
+        // a -> b, b -> a (mutual edges form a 2-node SCC {a, b})
+        // a -> a (self-loop, still inside the SCC)
+        // a -> c
+        //
+        // * The SCC {a, b} has no incoming edge from outside, so both of
+        //   its members are externals.
+        // * `c` is reachable from the SCC and is not external.
+        let mut graph = Graph::<(), (), Directed, u32>::new();
+        let a = graph.add_node(());
+        let b = graph.add_node(());
+        let c = graph.add_node(());
+        graph.add_edge(a, b, ());
+        graph.add_edge(b, a, ());
+        graph.add_edge(a, a, ());
+        graph.add_edge(a, c, ());
+
+        let sccs = Sccs::<u32>::new(&graph, |_| {});
+        let externals: HashSet<NodeIndex<u32>> = sccs.externals(&graph).collect();
+        assert_eq!(externals, HashSet::from([a, b]));
     }
 }

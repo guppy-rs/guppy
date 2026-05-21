@@ -5,12 +5,15 @@ use fixtures::{
     json::{self, JsonFixture},
     package_id,
 };
-use guppy::graph::{
-    BuildTargetId, BuildTargetKind, DependencyDirection, DotWrite, PackageDotVisitor, PackageLink,
-    PackageMetadata,
-    feature::{FeatureId, FeatureLabel, StandardFeatures, named_feature_filter},
+use guppy::{
+    PackageId,
+    graph::{
+        BuildTargetId, BuildTargetKind, DependencyDirection, DotWrite, PackageDotVisitor,
+        PackageLink, PackageMetadata,
+        feature::{FeatureId, FeatureLabel, StandardFeatures, named_feature_filter},
+    },
 };
-use std::{fmt, iter};
+use std::{collections::HashSet, fmt, iter};
 
 mod small {
     use super::*;
@@ -256,20 +259,15 @@ mod small {
 
     proptest_suite!(metadata_cycle_features);
 
-    /// Regression test for the `Sccs::externals` self-loop bug.
-    ///
-    /// `metadata_self_dev_cycle` is a two-crate workspace where
-    /// `self-dev-cycle-base` has a normal dep on `self-dev-cycle-helper`
-    /// plus a path-self dev-dependency that propagates a feature to the
-    /// helper. The self-edge puts `base` in a single-node SCC with a
-    /// self-loop. Before the fix, the self-loop was counted as an external
-    /// incoming edge, removing `base` from the set of forward roots, so
-    /// `query_forward([base]).resolve().links(Forward)` returned no
-    /// links — even though `direct_links()` and `links(Reverse)` were
-    /// fine. After the fix, the forward link from `base` to `helper`
-    /// (and the self-edge) are visible to forward iteration.
     #[test]
     fn metadata_self_dev_cycle() {
+        // `base` declares a path dev-dependency on itself, which places
+        // it in a single-node SCC with a self-loop in both the package
+        // graph and the feature graph.
+        //
+        // The SCC must still be treated as a forward root (and `helper` as a
+        // reverse root), and both directions of link iteration must surface the
+        // self-edge alongside the `base -> helper` edge.
         let fixture = JsonFixture::metadata_self_dev_cycle();
         fixture.verify();
 
@@ -277,50 +275,145 @@ mod small {
         let base_id = package_id(json::METADATA_SELF_DEV_CYCLE_BASE);
         let helper_id = package_id(json::METADATA_SELF_DEV_CYCLE_HELPER);
 
-        let resolved = graph
+        // There aren't any multi-node SCCs in this graph, so `base` (with its
+        // self-loop) and `helper` are each in their own single-node SCCs.
+        assert_eq!(graph.cycles().all_cycles().count(), 0);
+        assert!(
+            !graph
+                .cycles()
+                .is_cyclic(&base_id, &helper_id)
+                .expect("known ids")
+        );
+
+        let direct: HashSet<(PackageId, PackageId)> = graph
+            .metadata(&base_id)
+            .expect("known id")
+            .direct_links()
+            .map(|link| (link.from().id().clone(), link.to().id().clone()))
+            .collect();
+        assert_eq!(
+            direct,
+            HashSet::from([
+                (base_id.clone(), base_id.clone()),
+                (base_id.clone(), helper_id.clone()),
+            ]),
+        );
+
+        // `directly_depends_on(x, x)` is true iff `x` has a self-loop edge.
+        // `base` has a path-self dev-dependency, so it does; `helper` does
+        // not.
+        assert!(
+            graph
+                .directly_depends_on(&base_id, &base_id)
+                .expect("known id"),
+            "base directly depends on itself via its path-self dev-dep",
+        );
+        assert!(
+            !graph
+                .directly_depends_on(&helper_id, &helper_id)
+                .expect("known id"),
+            "helper has no self-edge",
+        );
+
+        // Forward query from `base`.
+        let resolved_forward = graph
             .query_forward([&base_id])
             .expect("base is a known package id")
             .resolve();
-
-        // Sanity check: the resolved set should contain both packages.
-        assert!(
-            resolved.contains(&base_id).expect("known id"),
-            "resolved forward set should contain base",
-        );
-        assert!(
-            resolved.contains(&helper_id).expect("known id"),
-            "resolved forward set should contain helper",
-        );
-
-        // The forward roots should contain `base`. Before the fix this was
-        // empty because the self-loop disqualified the single-node SCC.
-        let forward_roots: Vec<_> = resolved
-            .root_ids(DependencyDirection::Forward)
+        let resolved_ids: HashSet<PackageId> = resolved_forward
+            .package_ids(DependencyDirection::Forward)
             .cloned()
             .collect();
         assert_eq!(
-            forward_roots,
-            vec![base_id.clone()],
-            "forward roots should be [base]; before the fix this returned [] because the \
-             self-loop on `base` was wrongly counted as an external incoming edge",
+            resolved_ids,
+            HashSet::from([base_id.clone(), helper_id.clone()])
         );
 
-        // The forward link iteration should produce the `base -> base`
-        // self-edge and the `base -> helper` normal edge, in that order.
-        // Before the fix it produced no links at all.
-        let forward_links: Vec<(_, _)> = resolved
+        let forward_roots: Vec<PackageId> = resolved_forward
+            .root_ids(DependencyDirection::Forward)
+            .cloned()
+            .collect();
+        assert_eq!(forward_roots, vec![base_id.clone()]);
+
+        let forward_links: HashSet<(PackageId, PackageId)> = resolved_forward
             .links(DependencyDirection::Forward)
             .map(|link| (link.from().id().clone(), link.to().id().clone()))
             .collect();
         assert_eq!(
             forward_links,
-            vec![
+            HashSet::from([
                 (base_id.clone(), base_id.clone()),
                 (base_id.clone(), helper_id.clone()),
-            ],
-            "forward links from `base` should be the self-edge followed by the edge to `helper`",
+            ]),
+        );
+
+        // Reverse query from `helper`.
+        let resolved_reverse = graph
+            .query_reverse([&helper_id])
+            .expect("helper is a known package id")
+            .resolve();
+        let resolved_reverse_ids: HashSet<PackageId> = resolved_reverse
+            .package_ids(DependencyDirection::Reverse)
+            .cloned()
+            .collect();
+        assert_eq!(
+            resolved_reverse_ids,
+            HashSet::from([base_id.clone(), helper_id.clone()]),
+        );
+
+        let reverse_roots: Vec<PackageId> = resolved_reverse
+            .root_ids(DependencyDirection::Reverse)
+            .cloned()
+            .collect();
+        assert_eq!(reverse_roots, vec![helper_id.clone()]);
+
+        let reverse_links: HashSet<(PackageId, PackageId)> = resolved_reverse
+            .links(DependencyDirection::Reverse)
+            .map(|link| (link.from().id().clone(), link.to().id().clone()))
+            .collect();
+        assert_eq!(
+            reverse_links,
+            HashSet::from([
+                (base_id.clone(), base_id.clone()),
+                (base_id.clone(), helper_id.clone()),
+            ]),
+        );
+
+        let feature_graph = graph.feature_graph();
+        let base_feature = FeatureId::new(&base_id, FeatureLabel::Base);
+        let helper_feature = FeatureId::new(&helper_id, FeatureLabel::Base);
+
+        // The same contract for `directly_depends_on` holds in the feature
+        // graph: `base/[base]` has a self-loop (recorded as a `SelfLoop`
+        // warning by the feature graph builder), while `helper/[helper]`
+        // does not.
+        assert!(
+            feature_graph
+                .directly_depends_on(base_feature, base_feature)
+                .expect("base/[base] is a valid feature id"),
+            "base/[base] directly depends on itself",
+        );
+        assert!(
+            !feature_graph
+                .directly_depends_on(helper_feature, helper_feature)
+                .expect("helper/[helper] is a valid feature id"),
+            "helper/[helper] has no self-edge",
+        );
+
+        let resolved_feature = feature_graph
+            .query_forward([base_feature])
+            .expect("base/[base] is a valid feature id")
+            .resolve();
+        let feature_forward_roots: HashSet<FeatureId<'_>> = resolved_feature
+            .root_ids(DependencyDirection::Forward)
+            .collect();
+        assert!(
+            feature_forward_roots.contains(&base_feature),
+            "feature graph forward roots should contain base/[base], got {feature_forward_roots:?}",
         );
     }
+
+    proptest_suite!(metadata_self_dev_cycle);
 
     // Test Windows path handling in fixtures with path dependencies.
     #[test]

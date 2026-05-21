@@ -179,7 +179,8 @@ impl<'g> FeatureGraph<'g> {
     ///
     /// In other words, this returns true if `feature_a` is a direct dependency of `feature_b`.
     ///
-    /// This returns false if `feature_a` is the same as `feature_b`.
+    /// If `feature_a` is the same as `feature_b`, this returns true only if
+    /// the feature has a self-loop edge in the feature graph.
     pub fn directly_depends_on<'a>(
         &self,
         feature_a: impl Into<FeatureId<'a>>,

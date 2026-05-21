@@ -903,13 +903,6 @@ impl FixtureDetails {
             ])
     }
 
-    /// Two-crate workspace where `self-dev-cycle-base` declares a
-    /// path-self dev-dependency that enables a feature which in turn
-    /// activates a feature on `self-dev-cycle-helper`. The self-edge puts
-    /// `base` in a single-node SCC with a self-loop — the trigger for the
-    /// `Sccs::externals` bug where the self-loop was counted as an
-    /// external incoming edge and erased `base` from the forward roots,
-    /// leaving `query_forward(base).links(Forward)` empty.
     pub(crate) fn metadata_self_dev_cycle() -> Self {
         let mut details = AHashMap::new();
 
@@ -952,12 +945,10 @@ impl FixtureDetails {
         .with_named_features(vec!["extra"])
         .insert_into(&mut details);
 
-        // Note: guppy's `cycles().all_cycles()` does not report self-loops
-        // as cycles — only cycles spanning multiple packages — so no
-        // `with_cycles` entry is needed even though `base` does have a
-        // path-self dev edge. The feature graph, however, does flag the
-        // path-self dev-dependency as a self-loop warning on the package's
-        // `[base]` (package-only) feature, which we record here.
+        // `cycles().all_cycles()` only reports cycles spanning more than
+        // one package, so no `with_cycles` entry is needed. The feature
+        // graph does flag the path-self dev-dependency as a self-loop
+        // warning on the package's `[base]` (package-only) feature.
         Self::new(details)
             .with_workspace_members(vec![
                 ("base", METADATA_SELF_DEV_CYCLE_BASE),

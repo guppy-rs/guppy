@@ -292,11 +292,17 @@ pub(super) fn depends_on_same_id<'g, G: GraphAssert<'g>>(graph: G, query_id: G::
         DependencyDirection::Forward,
         "depends_on for same ID returns true",
     );
-    assert!(
-        !graph
-            .directly_depends_on(query_id, query_id)
-            .expect("valid ID"),
-        "directly_depends_on for same ID returns false",
+    // `directly_depends_on(x, x)` returns true iff `x` has a self-loop edge.
+    // Cross-check against `has_self_edge`, which is computed via a different
+    // code path (iterating outgoing edges rather than `contains_edge`).
+    let direct = graph
+        .directly_depends_on(query_id, query_id)
+        .expect("valid ID");
+    assert_eq!(
+        direct,
+        graph.has_self_edge(query_id),
+        "directly_depends_on({query_id:?}, {query_id:?}) must agree with whether \
+         the graph has a self-loop edge on this ID",
     );
 }
 
