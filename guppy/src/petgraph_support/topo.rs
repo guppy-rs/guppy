@@ -73,6 +73,22 @@ impl<Ix: IndexType> TopoWithCycles<Ix> {
             // index set to the end of the topo order. We could do something fancier here with sccs,
             // but for guppy this should never happen in practice. (In fact, the one time this code
             // was hit there was actually an underlying bug.)
+            //
+            // Cross-check the claim above: every missing node must have at least one non-self
+            // incoming neighbor. If that's not true, the root predicate dropped a node that
+            // should have been a root, and the descendants of that dropped root are now being
+            // mis-placed at the end of the topo order. The proptest above only checks index
+            // uniqueness, not topological correctness, so without this assertion such a
+            // regression would pass tests silently.
+            debug_assert!(
+                graph.node_identifiers().all(|m| {
+                    dfs.finished.is_visited(&m)
+                        || graph.neighbors_directed(m, Incoming).any(|p| p != m)
+                }),
+                "topo fallback: a node was missed by the DFS but has no non-self incoming \
+                 neighbor, which means the root-set predicate dropped a legitimate root",
+            );
+
             let mut next = topo.len();
             for n in 0..graph.node_count() {
                 let a = NodeIndex::new(n);
@@ -130,6 +146,44 @@ mod tests {
              (got topo_ix(a)={}, topo_ix(b)={})",
             topo.topo_ix(a),
             topo.topo_ix(b),
+        );
+    }
+
+    /// The fallback path (`topo.len() < graph.node_count()`) fires for
+    /// multi-node cycles with no external entry. Verifies that the
+    /// debug-only invariant assertion does not false-positive on this
+    /// legitimate case, and that every node still gets a unique topo
+    /// index.
+    #[test]
+    fn topo_multi_node_cycle_no_external_entry_fallback() {
+        // a <-> b, plus an unrelated root c. The cycle {a, b} is
+        // unreachable from c, so neither member is a root and the DFS
+        // never enters the cycle. The fallback places a and b at the
+        // end of the topo order.
+        let mut graph = Graph::<(), (), Directed, u32>::new();
+        let a = graph.add_node(());
+        let b = graph.add_node(());
+        let c = graph.add_node(());
+        graph.add_edge(a, b, ());
+        graph.add_edge(b, a, ());
+
+        let topo = TopoWithCycles::<u32>::new(&graph);
+
+        // All three nodes get unique topo indexes in 0..3.
+        let mut seen = [false; 3];
+        for node in [a, b, c] {
+            let ix = topo.topo_ix(node);
+            assert!(ix < 3, "topo_ix out of range: {ix}");
+            assert!(!seen[ix], "topo_ix {ix} seen twice");
+            seen[ix] = true;
+        }
+
+        // `c` is the only real root, so it must come first.
+        assert_eq!(
+            topo.topo_ix(c),
+            0,
+            "c should be at the start of the topo order (got {})",
+            topo.topo_ix(c),
         );
     }
 
