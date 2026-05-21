@@ -89,8 +89,13 @@ impl<Ix: IndexType> Sccs<Ix> {
         self.sccs.iter()
     }
 
-    /// Returns all the nodes of this graph that have no incoming edges to them, and all the nodes
-    /// in an SCC into which there are no incoming edges.
+    /// Returns all the nodes that have no incoming edges from outside their
+    /// own SCC.
+    ///
+    /// Edges *within* an SCC -- including self-loop edges on single-node SCCs
+    /// -- don't disqualify a node. The result is one representative per
+    /// external multi-node SCC, plus every single-node SCC whose only
+    /// incoming edge (if any) is a self-loop.
     pub fn externals<'a, G>(&'a self, graph: G) -> impl Iterator<Item = NodeIndex<Ix>> + 'a
     where
         G: 'a + IntoNodeIdentifiers + IntoNeighborsDirected<NodeId = NodeIndex<Ix>>,

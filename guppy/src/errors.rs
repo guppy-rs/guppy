@@ -189,7 +189,12 @@ pub enum FeatureGraphWarning {
         feature_name: String,
     },
 
-    /// A self-loop was discovered.
+    /// A self-loop on a named-feature edge was discovered (for example,
+    /// `[features] a = ["a"]`).
+    ///
+    /// Self-loops arising from a package's dependency declarations -- such
+    /// as a `path` dev-dependency on the package's own crate -- are
+    /// legitimate Cargo constructs and do not produce this warning.
     SelfLoop {
         /// The package ID for which the self-loop was discovered.
         package_id: PackageId,
