@@ -33,9 +33,14 @@ impl<Ix: IndexType> TopoWithCycles<Ix> {
         // petgraph's default topo algorithms don't handle cycles. Use DfsPostOrder which does.
         let mut dfs = DfsPostOrder::empty(graph);
 
+        // A node is a root iff it has no incoming neighbors *other than
+        // itself* -- a self-loop is internal to the node's own (single-
+        // element) SCC and must not disqualify it from being a root. This
+        // matches `Sccs::externals`'s single-node SCC branch in
+        // `petgraph_support::scc`.
         let roots = graph
             .node_identifiers()
-            .filter(move |&a| graph.neighbors_directed(a, Incoming).next().is_none());
+            .filter(move |&a| !graph.neighbors_directed(a, Incoming).any(|n| n != a));
         dfs.stack.extend(roots);
 
         let mut topo: Vec<NodeIndex<Ix>> = (&mut dfs).iter(graph).collect();
@@ -59,10 +64,10 @@ impl<Ix: IndexType> TopoWithCycles<Ix> {
             graph.node_count(),
         );
         if topo.len() < graph.node_count() {
-            // This means there was a cycle in the graph which caused some nodes to be skipped (e.g.
-            // consider a node with a self-loop -- it will be filtered out by the
-            // graph.neighbors_directed call above, and might not end up being part of the topo
-            // order).
+            // This means there was a multi-node cycle in the graph which caused some nodes to be
+            // skipped: none of its members appears as a root (each has a non-self incoming edge),
+            // so the DFS never starts inside it. (Self-loops on otherwise-root nodes are handled
+            // by the root predicate above, matching `Sccs::externals`.)
             //
             // In this case, do a best-effort job: fill in the missing nodes with their reverse
             // index set to the end of the topo order. We could do something fancier here with sccs,
@@ -94,6 +99,60 @@ impl<Ix: IndexType> TopoWithCycles<Ix> {
     #[inline]
     pub fn topo_ix(&self, node_ix: NodeIndex<Ix>) -> usize {
         self.reverse_index[node_ix.index()]
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use petgraph::Graph;
+
+    /// A self-loop on a node with no other incoming edges must not
+    /// disqualify it from being a root. Without the fix, the node was
+    /// filtered out of the root set, its descendants were never visited
+    /// by the DFS, and the best-effort fallback placed them in node-
+    /// insertion order -- which can disagree with topological order.
+    #[test]
+    fn topo_self_loop_root_orders_descendants_correctly() {
+        // Insert `b` (index 0) before `a` (index 1) so that node-index
+        // order *disagrees* with topological order: the edge `a -> b`
+        // means `a` should precede `b`.
+        let mut graph = Graph::<(), (), Directed, u32>::new();
+        let b = graph.add_node(());
+        let a = graph.add_node(());
+        graph.add_edge(a, b, ());
+        graph.add_edge(a, a, ());
+
+        let topo = TopoWithCycles::<u32>::new(&graph);
+        assert!(
+            topo.topo_ix(a) < topo.topo_ix(b),
+            "a should precede b in topo order despite the self-loop on a \
+             (got topo_ix(a)={}, topo_ix(b)={})",
+            topo.topo_ix(a),
+            topo.topo_ix(b),
+        );
+    }
+
+    /// A self-loop on a node that is *also* reachable from a real root
+    /// must not change anything: the existing root drives the DFS and
+    /// the self-loop is ignored.
+    #[test]
+    fn topo_self_loop_on_non_root_is_harmless() {
+        // b -> a, plus a self-loop on a. `b` is the only root; `a` is
+        // visited via b's outgoing edge.
+        let mut graph = Graph::<(), (), Directed, u32>::new();
+        let a = graph.add_node(());
+        let b = graph.add_node(());
+        graph.add_edge(b, a, ());
+        graph.add_edge(a, a, ());
+
+        let topo = TopoWithCycles::<u32>::new(&graph);
+        assert!(
+            topo.topo_ix(b) < topo.topo_ix(a),
+            "b should precede a in topo order (got topo_ix(b)={}, topo_ix(a)={})",
+            topo.topo_ix(b),
+            topo.topo_ix(a),
+        );
     }
 }
 
