@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+### Fixed
+
+- Updated guppy to 0.17.26, picking up a number of self-loop fixes.
+
+### Changed
+
+- Builtin targets updated to Rust 1.94.
+
 ## [0.9.37] - 2025-12-26
 
 ### Changed
