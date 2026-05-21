@@ -402,11 +402,25 @@ impl FeatureGraphBuildState {
                 .unwrap_or_else(|| panic!("while adding feature edges, missing 'to': {to_node:?}"));
 
             if from_ix == to_ix {
-                let (package_id, feature_label) = from_node.package_id_and_feature_label(graph);
-                self.warnings.push(FeatureGraphWarning::SelfLoop {
-                    package_id: package_id.clone(),
-                    feature_name: feature_label.to_string(),
-                });
+                // Only named-feature self-loops are user errors -- e.g.,
+                // `[features] a = ["a"]`. Self-loops arising from a
+                // package's dependency declarations (such as a `path`
+                // dev-dependency on the package's own crate) are
+                // legitimate Cargo constructs and must not produce a
+                // warning.
+                let is_named_feature_loop = match &edge {
+                    FeatureEdge::NamedFeature
+                    | FeatureEdge::NamedFeatureDepColon(_)
+                    | FeatureEdge::NamedFeatureWithSlash { .. } => true,
+                    FeatureEdge::DependenciesSection(_) | FeatureEdge::FeatureToBase => false,
+                };
+                if is_named_feature_loop {
+                    let (package_id, feature_label) = from_node.package_id_and_feature_label(graph);
+                    self.warnings.push(FeatureGraphWarning::SelfLoop {
+                        package_id: package_id.clone(),
+                        feature_name: feature_label.to_string(),
+                    });
+                }
             }
 
             match self.graph.find_edge(from_ix, to_ix) {
