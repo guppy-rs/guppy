@@ -23,6 +23,10 @@ macro_rules! proptest_suite {
             use proptest::prelude::*;
             use proptest::sample::Index;
 
+            // `to_summary_id` and `metadata_by_summary_id` live behind
+            // the `summaries` feature; gate the roundtrip test on that
+            // feature too, so this file compiles under `proptest1` alone.
+            #[cfg(feature = "summaries")]
             #[test]
             fn proptest_summary_id_roundtrip() {
                 let fixture = JsonFixture::$name();
