@@ -871,7 +871,7 @@ pub fn assert_link_order<'g>(
             variable_seen.contains(&known_id),
             "{}: for package '{}': unexpected link {} package seen before any links {} package",
             msg,
-            &known_id,
+            known_id,
             desc.known_desc,
             desc.variable_desc,
         );
