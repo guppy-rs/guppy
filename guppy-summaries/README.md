@@ -17,7 +17,6 @@ use guppy_summaries::{Summary, SummaryId, SummarySource, PackageStatus};
 use pretty_assertions::assert_eq;
 use semver::Version;
 use std::collections::BTreeSet;
-use toml::Value;
 
 // A summary is a TOML file that has this format:
 static SUMMARY: &str = r#"

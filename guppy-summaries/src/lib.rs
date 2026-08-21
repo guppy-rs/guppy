@@ -16,7 +16,6 @@
 //! use pretty_assertions::assert_eq;
 //! use semver::Version;
 //! use std::collections::BTreeSet;
-//! use toml::Value;
 //!
 //! // A summary is a TOML file that has this format:
 //! static SUMMARY: &str = r#"
@@ -114,6 +113,7 @@ pub mod diff;
 // report::SummaryReport is exported through the diff module.
 mod report;
 mod summary;
+pub mod toml_compat;
 #[cfg(test)]
 mod unit_tests;
 

@@ -532,6 +532,7 @@ fn test_serialization() {
     status = "transitive"
     features = ["default"]
     optional-deps = ["dep2"]
+
     [[host-packages.changed]]
     name = "local-dep"
     version = "2.0.0"
@@ -575,7 +576,7 @@ fn test_serialization() {
 
     // TODO: add roundtrip test into the proper data structure. For now we just check that the output is valid TOML.
     let parsed = toml_out
-        .parse::<toml::Value>()
+        .parse::<toml::Table>()
         .expect("deserialization from value should work");
     println!("parsed output: {parsed:?}");
 }
@@ -602,4 +603,118 @@ fn make_summary(list: Vec<(SummaryId, PackageStatus, Vec<&str>, Vec<&str>)>) -> 
             )
         })
         .collect()
+}
+
+#[test]
+fn metadata_round_trips_match_toml_05() {
+    let cases: &[(&str, &str, &str)] = &[
+        (
+            "datetime",
+            "[metadata]\nd = 1979-05-27T07:32:00Z\n",
+            "[metadata]\nd = 1979-05-27T07:32:00Z\n",
+        ),
+        (
+            "array of tables declared before a plain array",
+            "[metadata.omitted-packages]\nids = [{ name = 'a' }]\nworkspace-members = ['b']\n",
+            "[metadata.omitted-packages]\nworkspace-members = ['b']\n\n\
+             [[metadata.omitted-packages.ids]]\nname = 'a'\n",
+        ),
+        (
+            "sub-table declared before an array of tables",
+            "[metadata.o.sub]\nx = 1\n[[metadata.o.aot]]\ny = 1\n",
+            "[[metadata.o.aot]]\ny = 1\n\n[metadata.o.sub]\nx = 1\n",
+        ),
+        (
+            "scalar declared after a nested sub-table",
+            "[metadata.outer.inner]\nx = 1\n[metadata.outer]\nflag = true\n",
+            "[metadata.outer]\nflag = true\n\n[metadata.outer.inner]\nx = 1\n",
+        ),
+        (
+            "misordered array of tables element",
+            "[[metadata.a]]\nsub = { x = 1 }\nv = 2\n",
+            "[[metadata.a]]\nv = 2\n\n[metadata.a.sub]\nx = 1\n",
+        ),
+        (
+            "metadata alongside packages",
+            "[metadata]\nname = 'n'\n[metadata.o.sub]\nx = 1\n[[metadata.o.aot]]\ny = 1\n\n\
+             [[target-package]]\nname = 'foo'\nversion = '1.2.3'\nworkspace-path = 'foo'\n\
+             status = 'initial'\nfeatures = ['a']\n",
+            "[metadata]\nname = 'n'\n[[metadata.o.aot]]\ny = 1\n\n[metadata.o.sub]\nx = 1\n\n\
+             [[target-package]]\nname = 'foo'\nversion = '1.2.3'\nworkspace-path = 'foo'\n\
+             status = 'initial'\nfeatures = ['a']\n",
+        ),
+    ];
+    for (name, input, expected) in cases {
+        let summary = Summary::parse(input).unwrap_or_else(|err| panic!("{name}: parsed: {err}"));
+        let actual = summary
+            .to_string()
+            .unwrap_or_else(|err| panic!("{name}: serialized: {err}"));
+        assert_eq!(&actual, expected, "{name}");
+        assert_eq!(
+            Summary::parse(&actual).unwrap_or_else(|err| panic!("{name}: reparsed: {err}")),
+            summary,
+            "{name}: round trip"
+        );
+    }
+}
+
+#[test]
+fn top_level_metadata_value_after_table_is_an_error() {
+    // toml 0.5 did not reorder the metadata map's own entries, so this was
+    // Err(ValueAfterTable) there too.
+    let summary = Summary::parse("[metadata.t]\nx = 1\n[metadata]\nv = 1\n").expect("parsed");
+    let err = summary.to_string().expect_err("value after table");
+    assert!(
+        err.to_string()
+            .contains("values must be emitted before tables"),
+        "unexpected error: {err}"
+    );
+}
+
+#[test]
+fn with_metadata_preserves_datetimes_and_reorders_fields() {
+    #[derive(serde::Serialize)]
+    struct Metadata {
+        nested: Nested,
+        when: toml::value::Datetime,
+        name: &'static str,
+        items: Vec<Nested>,
+    }
+
+    #[derive(serde::Serialize)]
+    struct Nested {
+        x: i64,
+        missing: Option<u32>,
+    }
+
+    let metadata = Metadata {
+        nested: Nested {
+            x: 1,
+            missing: None,
+        },
+        when: "1979-05-27T07:32:00Z".parse().expect("valid datetime"),
+        name: "n",
+        items: vec![Nested {
+            x: 2,
+            missing: None,
+        }],
+    };
+    let summary = Summary::with_metadata(&metadata).expect("metadata serialized");
+    assert!(
+        summary.metadata["when"].is_datetime(),
+        "datetime preserved: {:?}",
+        summary.metadata["when"]
+    );
+
+    let actual = summary.to_string().expect("summary serialized");
+    assert_eq!(
+        actual,
+        "[metadata]\nwhen = 1979-05-27T07:32:00Z\nname = 'n'\n\n[metadata.nested]\nx = 1\n\n\
+         [[metadata.items]]\nx = 2\n"
+    );
+    assert_eq!(
+        Summary::parse(&actual).expect("reparsed"),
+        summary,
+        "round trip"
+    );
 }

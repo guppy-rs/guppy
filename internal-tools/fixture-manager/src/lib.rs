@@ -158,7 +158,7 @@ impl GenerateOpts {
                 GenerateContext::new(fixture, &args, self.mode == GenerateMode::Force)?;
             for item in context {
                 let item = item?;
-                let is_changed = item.is_changed();
+                let is_changed = item.is_changed()?;
 
                 if is_changed {
                     num_changed += 1;

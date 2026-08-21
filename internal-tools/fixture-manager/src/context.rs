@@ -1,7 +1,7 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-use anyhow::{Result, bail};
+use anyhow::{Context, Result, bail};
 use camino::{Utf8Path, Utf8PathBuf};
 use fixtures::json::JsonFixture;
 
@@ -19,7 +19,11 @@ pub trait ContextImpl<'g> {
     ) -> Box<dyn Iterator<Item = Self::IterItem> + 'g>;
 
     fn parse_existing(path: &Utf8Path, contents: String) -> Result<Self::Existing>;
-    fn is_changed(item: &Self::IterItem, existing: &Self::Existing) -> bool;
+    fn is_changed(
+        fixture: &'g JsonFixture,
+        item: &Self::IterItem,
+        existing: &Self::Existing,
+    ) -> Result<bool>;
     fn diff(
         fixture: &'g JsonFixture,
         item: &Self::IterItem,
@@ -105,12 +109,13 @@ impl<'g, T: ContextImpl<'g>> ContextItem<'g, T> {
         &self.path
     }
 
-    pub fn is_changed(&self) -> bool {
+    pub fn is_changed(&self) -> Result<bool> {
         match &self.existing {
-            Some(existing) => T::is_changed(&self.item, existing),
+            Some(existing) => T::is_changed(self.fixture, &self.item, existing)
+                .with_context(|| format!("error while checking {} for changes", self.path)),
             None => {
                 // File doesn't exist: treat as changed.
-                true
+                Ok(true)
             }
         }
     }

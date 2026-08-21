@@ -73,8 +73,12 @@ impl<'g> ContextImpl<'g> for HakariTomlContext {
         Ok(HakariCargoToml::new_in_memory(path, contents)?)
     }
 
-    fn is_changed((_, item): &Self::IterItem, existing: &Self::Existing) -> bool {
-        existing.is_changed(&item.toml)
+    fn is_changed(
+        _fixture: &'g JsonFixture,
+        (_, item): &Self::IterItem,
+        existing: &Self::Existing,
+    ) -> Result<bool> {
+        Ok(existing.is_changed(&item.toml))
     }
 
     fn diff(
