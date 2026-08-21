@@ -3,7 +3,7 @@
 
 use crate::explain::HakariExplain;
 use guppy::graph::{DependencyDirection, feature::StandardFeatures};
-use itertools::{Itertools, Position};
+use itertools::Itertools;
 use owo_colors::{OwoColorize, Style};
 use std::{collections::BTreeSet, fmt};
 use tabular::{Row, Table};
@@ -193,13 +193,10 @@ impl fmt::Display for FeatureDisplay<'_, '_> {
         }
 
         for (position, feature) in self.features.iter().with_position() {
-            match position {
-                Position::First | Position::Middle => {
-                    write!(f, "{feature}, ")?;
-                }
-                Position::Last | Position::Only => {
-                    write!(f, "{feature}")?;
-                }
+            if position.is_last {
+                write!(f, "{feature}")?;
+            } else {
+                write!(f, "{feature}, ")?;
             }
         }
         Ok(())
