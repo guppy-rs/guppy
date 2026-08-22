@@ -5,7 +5,7 @@ use fixtures::dep_helpers::{GraphAssert, GraphMetadata, GraphQuery, GraphSet, as
 use guppy::{
     PackageId,
     graph::{
-        DependencyDirection, PackageGraph, Prop010Resolver,
+        DependencyDirection, PackageGraph, Prop010LinkVisitor,
         feature::{FeatureId, FeatureLabel, FeatureSet, StandardFeatures},
     },
 };
@@ -295,16 +295,16 @@ pub(super) fn run_package_feature_set_roundtrip(package_graph: &'static PackageG
     proptest!(|(
         query_ids in vec(package_graph.proptest1_id_strategy(), 1..16),
         query_direction in any::<DependencyDirection>(),
-        mut resolver in package_graph.proptest1_resolver_strategy(),
+        mut visitor in package_graph.proptest1_link_visitor_strategy(),
         test_ids in vec(feature_graph.proptest1_id_strategy(), 1..16),
         test_direction in any::<DependencyDirection>(),
     )| {
-        resolver.check_depends_on(true);
+        visitor.check_depends_on(true);
         package_feature_set_roundtrip(
             package_graph,
             query_ids,
             query_direction,
-            resolver,
+            visitor,
             test_ids,
             test_direction,
         );
@@ -671,14 +671,14 @@ pub(super) fn package_feature_set_roundtrip(
     package_graph: &PackageGraph,
     query_ids: Vec<&PackageId>,
     query_direction: DependencyDirection,
-    mut resolver: Prop010Resolver,
+    mut visitor: Prop010LinkVisitor,
     test_ids: Vec<FeatureId>,
     test_direction: DependencyDirection,
 ) {
     let package_set = package_graph
         .query_directed(query_ids.iter().copied(), query_direction)
         .expect("valid package IDs")
-        .resolve_with(&mut resolver);
+        .resolve_with(&mut visitor);
     let all_feature_set = package_set.to_feature_set(StandardFeatures::All);
     let no_feature_set = package_set.to_feature_set(StandardFeatures::None);
 

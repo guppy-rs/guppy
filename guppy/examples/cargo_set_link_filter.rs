@@ -5,29 +5,29 @@
 //!
 //! 1) any/all platforms (using default `CargoOptions` and `CargoSet::new`)
 //! 2) a single platform (using `CargoOptions::set_target_platform`)
-//! 3) a set of platforms (using `CargoSet::with_resolver`)
+//! 3) a set of platforms (using `CargoSet::with_cargo_link_visitor`)
 //!
-//! The last example uses `PackageResolver` as a filter - this is a very
+//! The last example uses `PackageLinkVisitor` as a filter - this is a very
 //! generic mechanism and can be used to not only filter by platforms,
 //! but also implement a variety of other filtering options.  For example,
 //! `CargoOptions::add_omitted_packages` could also be implemented using
-//! `CargoSet::with_resolver` and an appropriate `PackageResolver`.
+//! `CargoSet::with_cargo_link_visitor` and an appropriate `PackageLinkVisitor`.
 
 use guppy::{
     CargoMetadata, Error,
     graph::{
-        DependencyDirection, DependencyReq, PackageLink, PackageQuery, PackageResolver,
+        DependencyDirection, DependencyReq, PackageLink, PackageLinkVisitor, PackageQuery,
         cargo::{CargoOptions, CargoSet},
         feature::StandardFeatures,
     },
     platform::{EnabledTernary, PlatformSpec, PlatformStatus, Triple},
 };
 
-/// Custom `guppy::graph::PackageResolver` that will only accept `PackageLink`s
+/// Custom `guppy::graph::PackageLinkVisitor` that will only accept `PackageLink`s
 /// that are enabled on at least one from the given set of platforms.
-struct PackageResolverForPlatformSet(Vec<PlatformSpec>);
+struct PlatformSetLinkVisitor(Vec<PlatformSpec>);
 
-impl PackageResolverForPlatformSet {
+impl PlatformSetLinkVisitor {
     fn new(platform_set: Vec<PlatformSpec>) -> Self {
         Self(platform_set)
     }
@@ -46,8 +46,8 @@ impl PackageResolverForPlatformSet {
     }
 }
 
-impl<'g> PackageResolver<'g> for PackageResolverForPlatformSet {
-    fn accept(&mut self, _query: &PackageQuery<'g>, link: PackageLink<'g>) -> bool {
+impl<'g> PackageLinkVisitor<'g> for PlatformSetLinkVisitor {
+    fn visit_link(&mut self, _query: &PackageQuery<'g>, link: PackageLink<'g>) -> bool {
         self.should_include_dependency_req(link.normal())
             || self.should_include_dependency_req(link.build())
     }
@@ -168,13 +168,17 @@ fn main() -> Result<(), Error> {
     );
 
     // Finally, get a set of packages for a set of target platforms
-    // (by passing a custom resolver to `CargoSet::with_resolver`).
+    // (by passing a custom visitor to `CargoSet::with_cargo_link_visitor`).
     let platform_set_package_names = {
         let cargo_options = CargoOptions::new();
-        let resolver =
-            PackageResolverForPlatformSet::new(vec![win32_platform_spec(), win64_platform_spec()]);
-        let cargo_set =
-            CargoSet::with_package_resolver(initials, no_extra_features, resolver, &cargo_options)?;
+        let visitor =
+            PlatformSetLinkVisitor::new(vec![win32_platform_spec(), win64_platform_spec()]);
+        let cargo_set = CargoSet::with_cargo_link_visitor(
+            initials,
+            no_extra_features,
+            visitor,
+            &cargo_options,
+        )?;
         cargo_set_to_package_names(cargo_set)
     };
     assert_eq!(

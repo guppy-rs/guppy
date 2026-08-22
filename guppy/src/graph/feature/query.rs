@@ -312,19 +312,19 @@ impl<'g> FeatureQuery<'g> {
         FeatureSet::new(self)
     }
 
-    /// Resolves this query into a set of known feature IDs, using the provided resolver to
+    /// Resolves this query into a set of known feature IDs, using the provided visitor to
     /// determine which links are followed.
-    pub fn resolve_with(self, resolver: impl FeatureResolver<'g>) -> FeatureSet<'g> {
-        FeatureSet::with_resolver(self, resolver)
+    pub fn resolve_with(self, visitor: impl FeatureLinkVisitor<'g>) -> FeatureSet<'g> {
+        FeatureSet::with_link_visitor(self, visitor)
     }
 
-    /// Resolves this query into a set of known feature IDs, using the provided resolver function to
+    /// Resolves this query into a set of known feature IDs, using the provided visitor function to
     /// determine which links are followed.
     pub fn resolve_with_fn(
         self,
-        resolver_fn: impl FnMut(&FeatureQuery<'g>, ConditionalLink<'g>) -> bool,
+        visitor_fn: impl FnMut(&FeatureQuery<'g>, ConditionalLink<'g>) -> bool,
     ) -> FeatureSet<'g> {
-        self.resolve_with(ResolverFn(resolver_fn))
+        self.resolve_with(LinkVisitorFn(visitor_fn))
     }
 
     // ---
@@ -343,40 +343,40 @@ impl<'g> FeatureQuery<'g> {
 
 /// Represents whether a particular link within a feature graph should be followed during a
 /// resolve operation.
-pub trait FeatureResolver<'g> {
+pub trait FeatureLinkVisitor<'g> {
     /// Returns true if this conditional link should be followed during a resolve operation.
-    fn accept(&mut self, query: &FeatureQuery<'g>, link: ConditionalLink<'g>) -> bool;
+    fn visit_link(&mut self, query: &FeatureQuery<'g>, link: ConditionalLink<'g>) -> bool;
 }
 
-impl<'g, T> FeatureResolver<'g> for &mut T
+impl<'g, T> FeatureLinkVisitor<'g> for &mut T
 where
-    T: FeatureResolver<'g>,
+    T: FeatureLinkVisitor<'g>,
 {
-    fn accept(&mut self, query: &FeatureQuery<'g>, link: ConditionalLink<'g>) -> bool {
-        (**self).accept(query, link)
+    fn visit_link(&mut self, query: &FeatureQuery<'g>, link: ConditionalLink<'g>) -> bool {
+        (**self).visit_link(query, link)
     }
 }
 
-impl<'g> FeatureResolver<'g> for Box<dyn FeatureResolver<'g> + '_> {
-    fn accept(&mut self, query: &FeatureQuery<'g>, link: ConditionalLink<'g>) -> bool {
-        (**self).accept(query, link)
+impl<'g> FeatureLinkVisitor<'g> for Box<dyn FeatureLinkVisitor<'g> + '_> {
+    fn visit_link(&mut self, query: &FeatureQuery<'g>, link: ConditionalLink<'g>) -> bool {
+        (**self).visit_link(query, link)
     }
 }
 
-impl<'g> FeatureResolver<'g> for &mut dyn FeatureResolver<'g> {
-    fn accept(&mut self, query: &FeatureQuery<'g>, link: ConditionalLink<'g>) -> bool {
-        (**self).accept(query, link)
+impl<'g> FeatureLinkVisitor<'g> for &mut dyn FeatureLinkVisitor<'g> {
+    fn visit_link(&mut self, query: &FeatureQuery<'g>, link: ConditionalLink<'g>) -> bool {
+        (**self).visit_link(query, link)
     }
 }
 
 #[derive(Clone, Debug)]
-struct ResolverFn<F>(pub F);
+struct LinkVisitorFn<F>(pub F);
 
-impl<'g, F> FeatureResolver<'g> for ResolverFn<F>
+impl<'g, F> FeatureLinkVisitor<'g> for LinkVisitorFn<F>
 where
     F: FnMut(&FeatureQuery<'g>, ConditionalLink<'g>) -> bool,
 {
-    fn accept(&mut self, query: &FeatureQuery<'g>, link: ConditionalLink<'g>) -> bool {
+    fn visit_link(&mut self, query: &FeatureQuery<'g>, link: ConditionalLink<'g>) -> bool {
         (self.0)(query, link)
     }
 }

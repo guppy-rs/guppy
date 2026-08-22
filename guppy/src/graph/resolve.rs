@@ -177,9 +177,9 @@ impl<'g> PackageSet<'g> {
         }
     }
 
-    pub(super) fn with_resolver(
+    pub(super) fn with_link_visitor(
         query: PackageQuery<'g>,
-        mut resolver: impl PackageResolver<'g>,
+        mut visitor: impl PackageLinkVisitor<'g>,
     ) -> Self {
         let graph = query.graph;
         let params = query.params.clone();
@@ -187,7 +187,7 @@ impl<'g> PackageSet<'g> {
             graph: DebugIgnore(graph),
             core: ResolveCore::with_edge_filter(graph.dep_graph(), params, |edge| {
                 let link = graph.edge_ref_to_link(edge);
-                resolver.accept(&query, link)
+                visitor.visit_link(&query, link)
             }),
         }
     }
@@ -553,42 +553,42 @@ impl Eq for PackageSet<'_> {}
 
 /// Represents whether a particular link within a package graph should be followed during a
 /// resolve operation.
-pub trait PackageResolver<'g> {
+pub trait PackageLinkVisitor<'g> {
     /// Returns true if this link should be followed during a resolve operation.
     ///
     /// Returning false does not prevent the `to` package (or `from` package with `query_reverse`)
     /// from being included if it's reachable through other means.
-    fn accept(&mut self, query: &PackageQuery<'g>, link: PackageLink<'g>) -> bool;
+    fn visit_link(&mut self, query: &PackageQuery<'g>, link: PackageLink<'g>) -> bool;
 }
 
-impl<'g, T> PackageResolver<'g> for &mut T
+impl<'g, T> PackageLinkVisitor<'g> for &mut T
 where
-    T: PackageResolver<'g>,
+    T: PackageLinkVisitor<'g>,
 {
-    fn accept(&mut self, query: &PackageQuery<'g>, link: PackageLink<'g>) -> bool {
-        (**self).accept(query, link)
+    fn visit_link(&mut self, query: &PackageQuery<'g>, link: PackageLink<'g>) -> bool {
+        (**self).visit_link(query, link)
     }
 }
 
-impl<'g> PackageResolver<'g> for Box<dyn PackageResolver<'g> + '_> {
-    fn accept(&mut self, query: &PackageQuery<'g>, link: PackageLink<'g>) -> bool {
-        (**self).accept(query, link)
+impl<'g> PackageLinkVisitor<'g> for Box<dyn PackageLinkVisitor<'g> + '_> {
+    fn visit_link(&mut self, query: &PackageQuery<'g>, link: PackageLink<'g>) -> bool {
+        (**self).visit_link(query, link)
     }
 }
 
-impl<'g> PackageResolver<'g> for &mut dyn PackageResolver<'g> {
-    fn accept(&mut self, query: &PackageQuery<'g>, link: PackageLink<'g>) -> bool {
-        (**self).accept(query, link)
+impl<'g> PackageLinkVisitor<'g> for &mut dyn PackageLinkVisitor<'g> {
+    fn visit_link(&mut self, query: &PackageQuery<'g>, link: PackageLink<'g>) -> bool {
+        (**self).visit_link(query, link)
     }
 }
 
-pub(super) struct ResolverFn<F>(pub(super) F);
+pub(super) struct LinkVisitorFn<F>(pub(super) F);
 
-impl<'g, F> PackageResolver<'g> for ResolverFn<F>
+impl<'g, F> PackageLinkVisitor<'g> for LinkVisitorFn<F>
 where
     F: FnMut(&PackageQuery<'g>, PackageLink<'g>) -> bool,
 {
-    fn accept(&mut self, query: &PackageQuery<'g>, link: PackageLink<'g>) -> bool {
+    fn visit_link(&mut self, query: &PackageQuery<'g>, link: PackageLink<'g>) -> bool {
         (self.0)(query, link)
     }
 }
