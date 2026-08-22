@@ -10,8 +10,9 @@ use crate::{
         DependencyDirection, FeatureGraphSpec, FeatureIx, PackageIx, PackageMetadata, PackageSet,
         cargo::{CargoOptions, CargoSet},
         feature::{
-            ConditionalLink, FeatureEdge, FeatureGraph, FeatureId, FeatureLinkVisitor, FeatureList,
-            FeatureMetadata, FeatureQuery, build::FeatureEdgeReference,
+            ConditionalLink, FeatureEdge, FeatureGraph, FeatureId, FeatureLinkContext,
+            FeatureLinkVisitor, FeatureList, FeatureMetadata, FeatureQuery,
+            build::FeatureEdgeReference,
         },
         resolve_core::ResolveCore,
     },
@@ -95,12 +96,13 @@ impl<'g> FeatureSet<'g> {
     ) -> Self {
         let graph = query.graph;
         let params = query.params.clone();
+        let cx = FeatureLinkContext::new(query);
 
         // State used by the callback below.
         let mut buffer_states = graph
             .inner
             .weak
-            .new_buffer_states(|link| visitor.visit_link(&query, link));
+            .new_buffer_states(|link| visitor.visit_link(&cx, link));
 
         let filter_fn = |edge_ref: FeatureEdgeReference<'g>| {
             match graph.edge_to_conditional_link(

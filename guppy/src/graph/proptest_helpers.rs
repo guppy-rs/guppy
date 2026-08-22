@@ -4,7 +4,7 @@
 use crate::{
     PackageId,
     graph::{
-        PackageGraph, PackageLink, PackageLinkVisitor, PackageQuery, Workspace,
+        PackageGraph, PackageLink, PackageLinkContext, PackageLinkVisitor, Workspace,
         cargo::{CargoOptions, CargoResolverVersion, InitialsPlatform},
     },
     platform::PlatformSpec,
@@ -174,10 +174,10 @@ impl Prop010LinkVisitor {
 }
 
 impl<'g> PackageLinkVisitor<'g> for Prop010LinkVisitor {
-    fn visit_link(&mut self, query: &PackageQuery<'g>, link: PackageLink<'g>) -> bool {
+    fn visit_link(&mut self, cx: &PackageLinkContext<'g>, link: PackageLink<'g>) -> bool {
         if self.check_depends_on {
             assert!(
-                query
+                cx.query()
                     .graph()
                     .depends_on(link.from().id(), link.to().id())
                     .expect("valid package IDs"),

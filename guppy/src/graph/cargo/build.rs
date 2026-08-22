@@ -203,7 +203,7 @@ impl<'a> CargoSetBuildState<'a> {
         let target_platform = &self.opts.target_platform;
         let host_platform = &self.opts.host_platform;
 
-        let target_packages = target_query.resolve_with_fn(|query, link| {
+        let target_packages = target_query.resolve_with_fn(|cx, link| {
             let (from, to) = link.endpoints();
 
             if from.in_workspace() {
@@ -218,15 +218,14 @@ impl<'a> CargoSetBuildState<'a> {
 
             let accepted = visitor
                 .as_mut()
-                .map(|r| r.visit_link(query, link))
+                .map(|r| r.visit_link(cx, link))
                 .unwrap_or(true);
             if !accepted {
                 return false;
             }
 
             // Dev-dependencies are only considered if `from` is an initial.
-            let consider_dev =
-                self.opts.include_dev && query.starts_from(from.id()).expect("valid ID");
+            let consider_dev = self.opts.include_dev && cx.starts_from_initial(&link);
             // Build dependencies are only considered if there's a build script.
             let consider_build = from.has_build_script();
 
@@ -280,7 +279,7 @@ impl<'a> CargoSetBuildState<'a> {
         let host_packages = graph
             .package_graph
             .query_from_parts(host_ixs, DependencyDirection::Forward)
-            .resolve_with_fn(|query, link| {
+            .resolve_with_fn(|cx, link| {
                 let (from, to) = link.endpoints();
                 if self.is_omitted(to.package_ix()) {
                     // Pretend that the omitted set doesn't exist.
@@ -289,7 +288,7 @@ impl<'a> CargoSetBuildState<'a> {
 
                 let accepted = visitor
                     .as_mut()
-                    .map(|r| r.visit_link(query, link))
+                    .map(|r| r.visit_link(cx, link))
                     .unwrap_or(true);
                 if !accepted {
                     return false;
@@ -298,8 +297,7 @@ impl<'a> CargoSetBuildState<'a> {
                 // All relevant nodes in host_ixs have already been added to host_direct_deps at [a].
 
                 // Dev-dependencies are only considered if `from` is an initial.
-                let consider_dev =
-                    self.opts.include_dev && query.starts_from(from.id()).expect("valid ID");
+                let consider_dev = self.opts.include_dev && cx.starts_from_initial(&link);
                 let consider_build = from.has_build_script();
 
                 // Only normal and build dependencies are typically considered. Dev-dependencies of
@@ -357,15 +355,11 @@ impl<'a> CargoSetBuildState<'a> {
     ) -> CargoIntermediateSet<'g> {
         // Perform a "complete" feature query. This will provide more packages than will be
         // included in the final build, but for each package it will have the correct feature set.
-        let complete_set = query.resolve_with_fn(|query, link| {
+        let complete_set = query.resolve_with_fn(|cx, link| {
             if self.is_omitted(link.to().package_ix()) {
                 // Pretend that the omitted set doesn't exist.
                 false
-            } else if !avoid_dev_deps
-                && query
-                    .starts_from(link.from().feature_id())
-                    .expect("valid ID")
-            {
+            } else if !avoid_dev_deps && cx.starts_from_initial(&link) {
                 // Follow everything for initials.
                 true
             } else {
@@ -420,7 +414,7 @@ impl<'a> CargoSetBuildState<'a> {
         // 1. Perform a feature query for the target.
         let target_platform = &self.opts.target_platform;
         let host_platform = &self.opts.host_platform;
-        let target = target_query.resolve_with_fn(|query, link| {
+        let target = target_query.resolve_with_fn(|cx, link| {
             let (from, to) = link.endpoints();
 
             if self.is_omitted(to.package_ix()) {
@@ -428,8 +422,7 @@ impl<'a> CargoSetBuildState<'a> {
                 return false;
             }
 
-            let consider_dev =
-                self.opts.include_dev && query.starts_from(from.feature_id()).expect("valid ID");
+            let consider_dev = self.opts.include_dev && cx.starts_from_initial(&link);
             // This resolver doesn't check for whether this package has a build script.
             let mut follow_target = is_enabled(&link, DependencyKind::Normal, target_platform)
                 || (consider_dev

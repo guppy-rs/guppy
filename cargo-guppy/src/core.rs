@@ -7,7 +7,10 @@ use clap::{Parser, ValueEnum};
 use color_eyre::eyre::{Result, WrapErr, ensure, eyre};
 use guppy::{
     PackageId,
-    graph::{DependencyDirection, DependencyReq, PackageGraph, PackageLink, PackageQuery},
+    graph::{
+        DependencyDirection, DependencyReq, PackageGraph, PackageLink, PackageLinkContext,
+        PackageQuery,
+    },
     platform::EnabledTernary,
 };
 use guppy_cmdlib::string_to_platform_spec;
@@ -119,14 +122,14 @@ impl FilterOptions {
     pub fn make_resolver<'g>(
         &'g self,
         pkg_graph: &'g PackageGraph,
-    ) -> Result<impl Fn(&PackageQuery<'g>, PackageLink<'g>) -> bool + 'g> {
+    ) -> Result<impl Fn(&PackageLinkContext<'g>, PackageLink<'g>) -> bool + 'g> {
         let omitted_package_ids: HashSet<_> =
             self.base_opts.omitted_package_ids(pkg_graph).collect();
 
         let platform_spec = string_to_platform_spec(self.target.as_deref())
             .wrap_err_with(|| "target platform isn't known")?;
 
-        let ret = move |_: &PackageQuery<'g>, link| {
+        let ret = move |_: &PackageLinkContext<'g>, link| {
             // filter by the kind of dependency (--kind)
             let include_kind = self.base_opts.kind.should_traverse(&link);
 

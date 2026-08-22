@@ -3,7 +3,7 @@
 
 use fixtures::json::JsonFixture;
 use guppy::graph::{
-    DependencyDirection, PackageLink, PackageLinkVisitor, PackageQuery,
+    DependencyDirection, PackageLink, PackageLinkContext, PackageLinkVisitor,
     cargo::{CargoOptions, CargoSet},
     feature::StandardFeatures,
 };
@@ -55,7 +55,7 @@ fn links_to_strings<'g>(links: impl IntoIterator<Item = PackageLink<'g>>) -> Vec
 }
 
 impl<'g> PackageLinkVisitor<'g> for PackageLinkVisitorForTesting<'_, 'g> {
-    fn visit_link(&mut self, _query: &PackageQuery<'g>, link: PackageLink<'g>) -> bool {
+    fn visit_link(&mut self, _cx: &PackageLinkContext<'g>, link: PackageLink<'g>) -> bool {
         self.trace.push(link_to_string(&link));
         self.link_filter.map(|f| f(link)).unwrap_or(true)
     }
