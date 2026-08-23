@@ -3,13 +3,9 @@
 
 use crate::{
     Error, PackageId,
-    debug_ignore::DebugIgnore,
     graph::{
-        DependencyDirection, FeatureGraphSpec, FeatureIx, PackageIx, PackageMetadata,
-        feature::{
-            ConditionalLink, FeatureGraph, FeatureId, FeatureLabel, FeatureMetadata, FeatureSet,
-        },
-        query_core::QueryParams,
+        DependencyDirection, FeatureIx, PackageMetadata,
+        feature::{ConditionalLink, FeatureGraph, FeatureId, FeatureLabel, FeatureSet},
     },
 };
 use itertools::Itertools;
@@ -177,8 +173,8 @@ pub fn feature_id_filter<'g: 'a, 'a>(
 /// `FeatureGraph`, or through `PackageQuery::to_feature_query`.
 #[derive(Clone, Debug)]
 pub struct FeatureQuery<'g> {
-    pub(super) graph: DebugIgnore<FeatureGraph<'g>>,
-    pub(in crate::graph) params: QueryParams<FeatureGraphSpec>,
+    pub(super) initials: FeatureSet<'g>,
+    pub(super) direction: DependencyDirection,
 }
 
 assert_covariant!(FeatureQuery);
@@ -243,8 +239,8 @@ impl<'g> FeatureGraph<'g> {
         direction: DependencyDirection,
     ) -> FeatureQuery<'g> {
         FeatureQuery {
-            graph: DebugIgnore(*self),
-            params: QueryParams::new(self.dep_graph(), feature_ixs, direction),
+            initials: FeatureSet::from_ixs(*self, feature_ixs),
+            direction,
         }
     }
 }
@@ -252,48 +248,37 @@ impl<'g> FeatureGraph<'g> {
 impl<'g> FeatureQuery<'g> {
     /// Returns the feature graph the query is going to be executed on.
     pub fn graph(&self) -> &FeatureGraph<'g> {
-        &self.graph
+        self.initials.graph()
     }
 
     /// Returns the direction the query is happening in.
     pub fn direction(&self) -> DependencyDirection {
-        self.params.direction()
+        self.direction
     }
 
-    /// Returns the list of initial features specified in the query.
-    ///
-    /// The order of features is unspecified.
-    pub fn initials<'a>(&'a self) -> impl ExactSizeIterator<Item = FeatureMetadata<'g>> + 'a {
-        let graph = self.graph;
-        self.params
-            .initials()
-            .map(move |feature_ix| graph.metadata_for_ix(feature_ix))
+    /// Returns the set of initial features specified in the query.
+    pub fn initials(&self) -> &FeatureSet<'g> {
+        &self.initials
     }
 
     /// Returns the list of initial packages specified in the query.
     ///
     /// The order of packages is unspecified.
     pub fn initial_packages<'a>(&'a self) -> impl Iterator<Item = PackageMetadata<'g>> + 'a {
-        // ones() iterates in ascending ix order and each package's feature ixs
-        // are contiguous, so dedup() is fine.
-        self.initials().map(|feature| feature.package()).dedup()
+        let graph = *self.graph();
+        // sorted_ixs() iterates in ascending ix order and each package's
+        // feature ixs are contiguous, so dedup() is fine.
+        self.initials
+            .sorted_ixs()
+            .map(move |feature_ix| graph.metadata_for_ix(feature_ix).package())
+            .dedup()
     }
 
     /// Returns true if the query starts from the given package.
     ///
     /// Returns an error if the package ID is unknown.
     pub fn starts_from_package(&self, package_id: &PackageId) -> Result<bool, Error> {
-        let package_ix = self.graph.package_graph.package_ix(package_id)?;
-        Ok(self.starts_from_package_ix(package_ix))
-    }
-
-    /// Returns true if the query starts from the given feature ID.
-    ///
-    /// Returns an error if this feature ID is unknown.
-    pub fn starts_from<'a>(&self, feature_id: impl Into<FeatureId<'a>>) -> Result<bool, Error> {
-        Ok(self
-            .params
-            .has_initial(self.graph.feature_ix(feature_id.into())?))
+        self.initials.contains_package(package_id)
     }
 
     /// Resolves this query into a set of known feature IDs.
@@ -316,19 +301,6 @@ impl<'g> FeatureQuery<'g> {
         visitor_fn: impl FnMut(&FeatureLinkContext<'g>, ConditionalLink<'g>) -> bool,
     ) -> FeatureSet<'g> {
         self.resolve_with(LinkVisitorFn(visitor_fn))
-    }
-
-    // ---
-    // Helper methods
-    // ---
-
-    pub(in crate::graph) fn starts_from_package_ix(
-        &self,
-        package_ix: NodeIndex<PackageIx>,
-    ) -> bool {
-        self.graph
-            .feature_ixs_for_package_ix(package_ix)
-            .any(|feature_ix| self.params.has_initial(feature_ix))
     }
 }
 
@@ -361,7 +333,7 @@ impl<'g> FeatureLinkContext<'g> {
             DependencyDirection::Forward => link.from().feature_ix(),
             DependencyDirection::Reverse => link.to().feature_ix(),
         };
-        self.query.params.has_initial(feature_ix)
+        self.query.initials.contains_ix(feature_ix)
     }
 }
 

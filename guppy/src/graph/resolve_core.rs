@@ -3,22 +3,21 @@
 
 use crate::{
     debug_ignore::DebugIgnore,
-    graph::{
-        DependencyDirection, GraphSpec,
-        ix_set::IxSet,
-        query_core::{QueryParams, all_visit_map, reachable_map, reachable_map_buffered_filter},
-    },
+    graph::{DependencyDirection, GraphSpec, ix_set::IxSet},
     petgraph_support::{
-        dfs::{BufferedEdgeFilter, ReversedBufferedFilter, SimpleEdgeFilterFn},
+        dfs::{
+            BufferedEdgeFilter, ReversedBufferedFilter, SimpleEdgeFilterFn,
+            dfs_next_buffered_filter,
+        },
         scc::{NodeIter, Sccs},
         walk::EdgeDfs,
     },
 };
 use fixedbitset::FixedBitSet;
 use petgraph::{
-    graph::EdgeReference,
+    graph::{EdgeReference, IndexType},
     prelude::*,
-    visit::{NodeFiltered, Reversed},
+    visit::{IntoEdges, IntoNeighbors, NodeFiltered, Reversed, Visitable},
 };
 use std::fmt;
 
@@ -42,11 +41,12 @@ impl<G: GraphSpec> fmt::Debug for ResolveCore<G> {
 impl<G: GraphSpec> ResolveCore<G> {
     pub(super) fn new(
         graph: &Graph<G::Node, G::Edge, Directed, G::Ix>,
-        params: QueryParams<G>,
+        initials: impl IntoIterator<Item = NodeIndex<G::Ix>>,
+        direction: DependencyDirection,
     ) -> Self {
-        let (included, len) = match params.direction() {
-            DependencyDirection::Forward => reachable_map(graph, params.initials()),
-            DependencyDirection::Reverse => reachable_map(Reversed(graph), params.initials()),
+        let (included, len) = match direction {
+            DependencyDirection::Forward => reachable_map(graph, initials),
+            DependencyDirection::Reverse => reachable_map(Reversed(graph), initials),
         };
         Self {
             included: IxSet::from_visit_map(included, len, graph.node_count()),
@@ -69,19 +69,18 @@ impl<G: GraphSpec> ResolveCore<G> {
     /// The arguments to the edge filter are the (source, target, edge ix), unreversed.
     pub(super) fn with_edge_filter<'g>(
         graph: &'g Graph<G::Node, G::Edge, Directed, G::Ix>,
-        params: QueryParams<G>,
+        initials: impl IntoIterator<Item = NodeIndex<G::Ix>>,
+        direction: DependencyDirection,
         edge_filter: impl FnMut(EdgeReference<'g, G::Edge, G::Ix>) -> bool,
     ) -> Self {
-        let (included, len) = match params.direction() {
-            DependencyDirection::Forward => reachable_map_buffered_filter(
-                graph,
-                SimpleEdgeFilterFn(edge_filter),
-                params.initials(),
-            ),
+        let (included, len) = match direction {
+            DependencyDirection::Forward => {
+                reachable_map_buffered_filter(graph, SimpleEdgeFilterFn(edge_filter), initials)
+            }
             DependencyDirection::Reverse => reachable_map_buffered_filter(
                 Reversed(graph),
                 ReversedBufferedFilter(SimpleEdgeFilterFn(edge_filter)),
-                params.initials(),
+                initials,
             ),
         };
         Self {
@@ -92,21 +91,29 @@ impl<G: GraphSpec> ResolveCore<G> {
     /// The arguments to the edge filter are the (source, target, edge ix), unreversed.
     pub(super) fn with_buffered_edge_filter<'g>(
         graph: &'g Graph<G::Node, G::Edge, Directed, G::Ix>,
-        params: QueryParams<G>,
+        initials: impl IntoIterator<Item = NodeIndex<G::Ix>>,
+        direction: DependencyDirection,
         filter: impl BufferedEdgeFilter<&'g Graph<G::Node, G::Edge, Directed, G::Ix>>,
     ) -> Self {
-        let (included, len) = match params.direction() {
-            DependencyDirection::Forward => {
-                reachable_map_buffered_filter(graph, filter, params.initials())
-            }
+        let (included, len) = match direction {
+            DependencyDirection::Forward => reachable_map_buffered_filter(graph, filter, initials),
             DependencyDirection::Reverse => reachable_map_buffered_filter(
                 Reversed(graph),
                 ReversedBufferedFilter(filter),
-                params.initials(),
+                initials,
             ),
         };
         Self {
             included: IxSet::from_visit_map(included, len, graph.node_count()),
+        }
+    }
+
+    pub(super) fn from_ixs(
+        ixs: impl IntoIterator<Item = NodeIndex<G::Ix>>,
+        graph: &Graph<G::Node, G::Edge, Directed, G::Ix>,
+    ) -> Self {
+        Self {
+            included: IxSet::from_ixs(ixs, graph.node_count()),
         }
     }
 
@@ -304,4 +311,65 @@ impl<G: GraphSpec> Iterator for Links<'_, G> {
             }
         }
     }
+}
+
+fn all_visit_map<G, Ix>(graph: G) -> (FixedBitSet, usize)
+where
+    G: Visitable<NodeId = NodeIndex<Ix>, Map = FixedBitSet>,
+    Ix: IndexType,
+{
+    let mut visit_map = graph.visit_map();
+    // Mark all nodes visited.
+    visit_map.insert_range(..);
+    let len = visit_map.len();
+    (visit_map, len)
+}
+
+fn reachable_map<G, Ix>(
+    graph: G,
+    roots: impl IntoIterator<Item = G::NodeId>,
+) -> (FixedBitSet, usize)
+where
+    G: Visitable<NodeId = NodeIndex<Ix>, Map = FixedBitSet> + IntoNeighbors,
+    Ix: IndexType,
+{
+    // To figure out what nodes are reachable, run a DFS starting from the roots.
+    // This is DfsPostOrder since that handles cycles while a regular DFS doesn't.
+    let mut dfs = DfsPostOrder::empty(graph);
+    dfs.stack = roots.into_iter().collect();
+    while dfs.next(graph).is_some() {}
+
+    // Once the DFS is done, the discovered map (or the finished map) is what's reachable.
+    debug_assert_eq!(
+        dfs.discovered, dfs.finished,
+        "discovered and finished maps match at the end"
+    );
+    let reachable = dfs.discovered;
+    let len = reachable.count_ones(..);
+    (reachable, len)
+}
+
+fn reachable_map_buffered_filter<G, Ix>(
+    graph: G,
+    mut filter: impl BufferedEdgeFilter<G>,
+    roots: impl IntoIterator<Item = G::NodeId>,
+) -> (FixedBitSet, usize)
+where
+    G: Visitable<NodeId = NodeIndex<Ix>, Map = FixedBitSet> + IntoEdges,
+    Ix: IndexType,
+{
+    // To figure out what nodes are reachable, run a DFS starting from the roots.
+    // This is DfsPostOrder since that handles cycles while a regular DFS doesn't.
+    let mut dfs = DfsPostOrder::empty(graph);
+    dfs.stack = roots.into_iter().collect();
+    while dfs_next_buffered_filter(&mut dfs, graph, &mut filter).is_some() {}
+
+    // Once the DFS is done, the discovered map (or the finished map) is what's reachable.
+    debug_assert_eq!(
+        dfs.discovered, dfs.finished,
+        "discovered and finished maps match at the end"
+    );
+    let reachable = dfs.discovered;
+    let len = reachable.count_ones(..);
+    (reachable, len)
 }

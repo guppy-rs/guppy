@@ -5,9 +5,8 @@ use crate::{
     Error, PackageId,
     graph::{
         DependencyDirection, LinkVisitorFn, PackageGraph, PackageIx, PackageLink,
-        PackageLinkContext, PackageLinkVisitor, PackageMetadata, PackageSet,
+        PackageLinkContext, PackageLinkVisitor, PackageSet,
         feature::{FeatureFilter, FeatureQuery},
-        query_core::QueryParams,
     },
 };
 use camino::Utf8Path;
@@ -20,8 +19,8 @@ use petgraph::prelude::*;
 #[derive(Clone, Debug)]
 pub struct PackageQuery<'g> {
     // The fields are pub(super) for access within the graph module.
-    pub(super) graph: &'g PackageGraph,
-    pub(super) params: QueryParams<PackageGraph>,
+    pub(super) initials: PackageSet<'g>,
+    pub(super) direction: DependencyDirection,
 }
 
 assert_covariant!(PackageQuery);
@@ -125,8 +124,8 @@ impl PackageGraph {
         direction: DependencyDirection,
     ) -> PackageQuery<'_> {
         PackageQuery {
-            graph: self,
-            params: QueryParams::new(&self.dep_graph, package_ixs, direction),
+            initials: PackageSet::from_ixs(self, package_ixs),
+            direction,
         }
     }
 }
@@ -134,41 +133,27 @@ impl PackageGraph {
 impl<'g> PackageQuery<'g> {
     /// Returns the package graph on which the query is going to be executed.
     pub fn graph(&self) -> &'g PackageGraph {
-        self.graph
+        self.initials.graph()
     }
 
     /// Returns the direction the query is happening in.
     pub fn direction(&self) -> DependencyDirection {
-        self.params.direction()
+        self.direction
     }
 
-    /// Returns the list of initial packages specified in the query.
-    ///
-    /// The order of packages is unspecified.
-    pub fn initials<'a>(&'a self) -> impl ExactSizeIterator<Item = PackageMetadata<'g>> + 'a {
-        let graph = self.graph;
-        self.params.initials().map(move |package_ix| {
-            graph
-                .metadata(&graph.dep_graph[package_ix])
-                .expect("valid ID")
-        })
-    }
-
-    /// Returns true if the query starts from the given package ID.
-    ///
-    /// Returns an error if this package ID is unknown.
-    pub fn starts_from(&self, package_id: &PackageId) -> Result<bool, Error> {
-        Ok(self.params.has_initial(self.graph.package_ix(package_id)?))
+    /// Returns the set of initial packages specified in the query.
+    pub fn initials(&self) -> &PackageSet<'g> {
+        &self.initials
     }
 
     /// Converts this `PackageQuery` into a `FeatureQuery`, using the given feature filter.
     ///
     /// This will cause the feature graph to be constructed if it hasn't been done so already.
     pub fn to_feature_query(&self, filter: impl FeatureFilter<'g>) -> FeatureQuery<'g> {
-        let feature_graph = self.graph.feature_graph();
+        let feature_graph = self.graph().feature_graph();
         let feature_ixs: Vec<_> =
-            feature_graph.feature_ixs_for_package_ixs_filtered(self.params.initials(), filter);
-        feature_graph.query_from_parts(feature_ixs, self.direction())
+            feature_graph.feature_ixs_for_package_ixs_filtered(self.initials.sorted_ixs(), filter);
+        feature_graph.query_from_parts(feature_ixs, self.direction)
     }
 
     /// Resolves this query into a set of known packages, following every link found along the

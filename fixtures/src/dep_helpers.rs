@@ -675,7 +675,7 @@ impl<'g> GraphQuery<'g> for PackageQuery<'g> {
     }
 
     fn starts_from(&self, id: Self::Id) -> bool {
-        self.starts_from(id).expect("valid ID")
+        self.initials().contains(id).expect("valid ID")
     }
 
     fn resolve(self) -> Self::Set {
@@ -791,7 +791,7 @@ impl<'g> GraphQuery<'g> for FeatureQuery<'g> {
     }
 
     fn starts_from(&self, id: Self::Id) -> bool {
-        self.starts_from(id).expect("valid feature ID")
+        self.initials().contains(id).expect("valid feature ID")
     }
 
     fn resolve(self) -> Self::Set {

@@ -20,7 +20,6 @@ mod ix_set;
 #[cfg(feature = "proptest1")]
 mod proptest_helpers;
 mod query;
-mod query_core;
 mod resolve;
 mod resolve_core;
 #[cfg(feature = "summaries")]

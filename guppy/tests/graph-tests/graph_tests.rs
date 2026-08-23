@@ -797,6 +797,50 @@ mod small {
     }
 
     #[test]
+    fn query_initials_roundtrip() {
+        let metadata1 = JsonFixture::metadata1();
+        let graph = metadata1.graph();
+
+        let package_set = graph
+            .query_forward([&package_id(json::METADATA1_TESTCRATE)])
+            .expect("queried testcrate")
+            .resolve();
+        let feature_set = package_set.to_feature_set(StandardFeatures::Default);
+
+        for direction in [DependencyDirection::Forward, DependencyDirection::Reverse] {
+            assert_eq!(
+                package_set.to_package_query(direction).initials(),
+                &package_set,
+                "to_package_query preserves initials in {direction:?}"
+            );
+            assert_eq!(
+                feature_set.to_feature_query(direction).initials(),
+                &feature_set,
+                "to_feature_query preserves initials in {direction:?}"
+            );
+        }
+
+        let datatest_id = package_id(json::METADATA1_DATATEST);
+        let testcrate_id = package_id(json::METADATA1_TESTCRATE);
+        let feature_query = graph
+            .feature_graph()
+            .query_forward([(&datatest_id, FeatureLabel::Base)])
+            .expect("queried datatest base feature");
+        assert!(
+            feature_query
+                .starts_from_package(&datatest_id)
+                .expect("valid package ID"),
+            "feature query starts from datatest"
+        );
+        assert!(
+            !feature_query
+                .starts_from_package(&testcrate_id)
+                .expect("valid package ID"),
+            "feature query does not start from testcrate"
+        );
+    }
+
+    #[test]
     fn query_duplicate_initials() {
         let metadata1 = JsonFixture::metadata1();
         let graph = metadata1.graph();
@@ -812,7 +856,10 @@ mod small {
             2,
             "duplicate initials collapse into distinct packages"
         );
-        let initial_ids: HashSet<_> = query.initials().map(|package| package.id()).collect();
+        let initial_ids: HashSet<_> = query
+            .initials()
+            .package_ids(DependencyDirection::Forward)
+            .collect();
         let expected_ids: HashSet<_> = [&testcrate_id, &datatest_id].into_iter().collect();
         assert_eq!(
             initial_ids, expected_ids,
@@ -1084,8 +1131,8 @@ mod link_context {
                     };
                     assert_eq!(
                         cx.starts_from_initial(&link),
-                        cx.query().starts_from(start.id()).unwrap(),
-                        "starts_from_initial agrees with starts_from for {:?}",
+                        cx.query().initials().contains(start.id()).unwrap(),
+                        "starts_from_initial agrees with initials().contains for {:?}",
                         link
                     );
                     true
@@ -1115,8 +1162,8 @@ mod link_context {
                     };
                     assert_eq!(
                         cx.starts_from_initial(&link),
-                        cx.query().starts_from(start.feature_id()).unwrap(),
-                        "starts_from_initial agrees with starts_from for {:?}",
+                        cx.query().initials().contains(start.feature_id()).unwrap(),
+                        "starts_from_initial agrees with initials().contains for {:?}",
                         link
                     );
                     true

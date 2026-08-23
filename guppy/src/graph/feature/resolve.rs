@@ -57,7 +57,7 @@ impl<'g> FeatureGraph<'g> {
     }
 }
 
-/// A set of resolved feature IDs in a feature graph.
+/// A set of feature IDs in a feature graph.
 ///
 /// Created by `FeatureQuery::resolve`, the `FeatureGraph::resolve_` methods, or from
 /// `PackageSet::to_feature_set`.
@@ -79,10 +79,14 @@ assert_covariant!(FeatureSet);
 
 impl<'g> FeatureSet<'g> {
     pub(super) fn new(query: FeatureQuery<'g>) -> Self {
-        let graph = query.graph;
+        let graph = query.initials.graph;
         Self {
             graph,
-            core: ResolveCore::new(graph.dep_graph(), query.params),
+            core: ResolveCore::new(
+                graph.dep_graph(),
+                query.initials().sorted_ixs(),
+                query.direction,
+            ),
         }
     }
 
@@ -90,8 +94,7 @@ impl<'g> FeatureSet<'g> {
         query: FeatureQuery<'g>,
         mut visitor: impl FeatureLinkVisitor<'g>,
     ) -> Self {
-        let graph = query.graph;
-        let params = query.params.clone();
+        let graph = query.initials.graph;
         let cx = FeatureLinkContext::new(query);
 
         // State used by the callback below.
@@ -118,11 +121,22 @@ impl<'g> FeatureSet<'g> {
 
         let core = ResolveCore::with_buffered_edge_filter(
             graph.dep_graph(),
-            params,
+            cx.query().initials().sorted_ixs(),
+            cx.direction(),
             BufferedEdgeFilterFn(filter_fn),
         );
 
         Self { graph, core }
+    }
+
+    pub(super) fn from_ixs(
+        graph: FeatureGraph<'g>,
+        feature_ixs: impl IntoIterator<Item = NodeIndex<FeatureIx>>,
+    ) -> Self {
+        Self {
+            graph: DebugIgnore(graph),
+            core: ResolveCore::from_ixs(feature_ixs, graph.dep_graph()),
+        }
     }
 
     pub(in crate::graph) fn from_included(
@@ -145,7 +159,7 @@ impl<'g> FeatureSet<'g> {
         self.core.len()
     }
 
-    /// Returns true if no feature IDs were resolved in this set.
+    /// Returns true if there are no feature IDs in this set.
     pub fn is_empty(&self) -> bool {
         self.core.is_empty()
     }
@@ -154,9 +168,7 @@ impl<'g> FeatureSet<'g> {
     ///
     /// Returns an error if this feature ID was unknown.
     pub fn contains<'a>(&self, feature_id: impl Into<FeatureId<'a>>) -> Result<bool, Error> {
-        Ok(self
-            .core
-            .contains(self.graph.feature_ix(feature_id.into())?))
+        Ok(self.contains_ix(self.graph.feature_ix(feature_id.into())?))
     }
 
     /// Returns true if this set contains this package.
@@ -174,8 +186,10 @@ impl<'g> FeatureSet<'g> {
     ///
     /// This is equivalent to constructing a query from all the feature IDs in this set.
     pub fn to_feature_query(&self, direction: DependencyDirection) -> FeatureQuery<'g> {
-        self.graph
-            .query_from_parts(self.core.included.ones(), direction)
+        FeatureQuery {
+            initials: self.clone(),
+            direction,
+        }
     }
 
     // ---
@@ -552,11 +566,13 @@ impl<'g> FeatureSet<'g> {
         }
     }
 
-    /// Returns all the package ixs without topologically sorting them.
-    pub(in crate::graph) fn ixs_unordered(
-        &self,
-    ) -> impl Iterator<Item = NodeIndex<FeatureIx>> + '_ {
+    /// Returns all the feature ixs in ascending index order.
+    pub(in crate::graph) fn sorted_ixs(&self) -> impl Iterator<Item = NodeIndex<FeatureIx>> + '_ {
         self.core.included.ones()
+    }
+
+    pub(in crate::graph) fn contains_ix(&self, feature_ix: NodeIndex<FeatureIx>) -> bool {
+        self.core.contains(feature_ix)
     }
 
     /// Returns true if this feature set contains the given package ix.
