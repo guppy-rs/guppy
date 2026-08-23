@@ -322,7 +322,7 @@ impl<'g> FeatureQuery<'g> {
     /// determine which links are followed.
     pub fn resolve_with_fn(
         self,
-        visitor_fn: impl FnMut(&FeatureQuery<'g>, ConditionalLink<'g>) -> bool,
+        visitor_fn: impl FnMut(&FeatureLinkContext<'g>, ConditionalLink<'g>) -> bool,
     ) -> FeatureSet<'g> {
         self.resolve_with(LinkVisitorFn(visitor_fn))
     }
@@ -341,31 +341,64 @@ impl<'g> FeatureQuery<'g> {
     }
 }
 
+/// Context passed to a [`FeatureLinkVisitor`] for each link visited during a
+/// resolve operation.
+#[derive(Clone, Debug)]
+pub struct FeatureLinkContext<'g> {
+    query: FeatureQuery<'g>,
+}
+
+impl<'g> FeatureLinkContext<'g> {
+    pub(super) fn new(query: FeatureQuery<'g>) -> Self {
+        Self { query }
+    }
+
+    /// Returns the query this resolve operation was started from.
+    pub fn query(&self) -> &FeatureQuery<'g> {
+        &self.query
+    }
+
+    /// Returns the direction of the traversal.
+    pub fn direction(&self) -> DependencyDirection {
+        self.query.direction()
+    }
+
+    /// Returns true if the link's starting endpoint (`from` for forward
+    /// queries, `to` for reverse queries) is one of the query's initials.
+    pub fn starts_from_initial(&self, link: &ConditionalLink<'g>) -> bool {
+        let feature_ix = match self.direction() {
+            DependencyDirection::Forward => link.from().feature_ix(),
+            DependencyDirection::Reverse => link.to().feature_ix(),
+        };
+        self.query.params.has_initial(feature_ix)
+    }
+}
+
 /// Represents whether a particular link within a feature graph should be followed during a
 /// resolve operation.
 pub trait FeatureLinkVisitor<'g> {
     /// Returns true if this conditional link should be followed during a resolve operation.
-    fn visit_link(&mut self, query: &FeatureQuery<'g>, link: ConditionalLink<'g>) -> bool;
+    fn visit_link(&mut self, cx: &FeatureLinkContext<'g>, link: ConditionalLink<'g>) -> bool;
 }
 
 impl<'g, T> FeatureLinkVisitor<'g> for &mut T
 where
     T: FeatureLinkVisitor<'g>,
 {
-    fn visit_link(&mut self, query: &FeatureQuery<'g>, link: ConditionalLink<'g>) -> bool {
-        (**self).visit_link(query, link)
+    fn visit_link(&mut self, cx: &FeatureLinkContext<'g>, link: ConditionalLink<'g>) -> bool {
+        (**self).visit_link(cx, link)
     }
 }
 
 impl<'g> FeatureLinkVisitor<'g> for Box<dyn FeatureLinkVisitor<'g> + '_> {
-    fn visit_link(&mut self, query: &FeatureQuery<'g>, link: ConditionalLink<'g>) -> bool {
-        (**self).visit_link(query, link)
+    fn visit_link(&mut self, cx: &FeatureLinkContext<'g>, link: ConditionalLink<'g>) -> bool {
+        (**self).visit_link(cx, link)
     }
 }
 
 impl<'g> FeatureLinkVisitor<'g> for &mut dyn FeatureLinkVisitor<'g> {
-    fn visit_link(&mut self, query: &FeatureQuery<'g>, link: ConditionalLink<'g>) -> bool {
-        (**self).visit_link(query, link)
+    fn visit_link(&mut self, cx: &FeatureLinkContext<'g>, link: ConditionalLink<'g>) -> bool {
+        (**self).visit_link(cx, link)
     }
 }
 
@@ -374,9 +407,9 @@ struct LinkVisitorFn<F>(pub F);
 
 impl<'g, F> FeatureLinkVisitor<'g> for LinkVisitorFn<F>
 where
-    F: FnMut(&FeatureQuery<'g>, ConditionalLink<'g>) -> bool,
+    F: FnMut(&FeatureLinkContext<'g>, ConditionalLink<'g>) -> bool,
 {
-    fn visit_link(&mut self, query: &FeatureQuery<'g>, link: ConditionalLink<'g>) -> bool {
-        (self.0)(query, link)
+    fn visit_link(&mut self, cx: &FeatureLinkContext<'g>, link: ConditionalLink<'g>) -> bool {
+        (self.0)(cx, link)
     }
 }

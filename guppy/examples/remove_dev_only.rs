@@ -52,11 +52,11 @@ fn main() -> Result<(), Error> {
     // Use `resolve_with` to filter out dev-only links.
     let resolve_with_len = query
         .clone()
-        .resolve_with_fn(|_query, link| {
+        .resolve_with_fn(|_cx, link| {
             // A package link visitor allows for fine-grained control over which links are followed. In general,
             // it is anything that implements the `PackageLinkVisitor` trait.
             //
-            // Functions with signature FnMut(&PackageQuery<'_>, PackageLink<'_>) -> bool can be
+            // Functions with signature FnMut(&PackageLinkContext<'_>, PackageLink<'_>) -> bool can be
             // used with `resolve_with_fn`.
             visitor_fn(link)
         })

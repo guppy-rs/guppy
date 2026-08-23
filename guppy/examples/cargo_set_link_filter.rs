@@ -16,7 +16,7 @@
 use guppy::{
     CargoMetadata, Error,
     graph::{
-        DependencyDirection, DependencyReq, PackageLink, PackageLinkVisitor, PackageQuery,
+        DependencyDirection, DependencyReq, PackageLink, PackageLinkContext, PackageLinkVisitor,
         cargo::{CargoOptions, CargoSet},
         feature::StandardFeatures,
     },
@@ -47,7 +47,7 @@ impl PlatformSetLinkVisitor {
 }
 
 impl<'g> PackageLinkVisitor<'g> for PlatformSetLinkVisitor {
-    fn visit_link(&mut self, _query: &PackageQuery<'g>, link: PackageLink<'g>) -> bool {
+    fn visit_link(&mut self, _cx: &PackageLinkContext<'g>, link: PackageLink<'g>) -> bool {
         self.should_include_dependency_req(link.normal())
             || self.should_include_dependency_req(link.build())
     }

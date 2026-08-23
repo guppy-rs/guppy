@@ -5,7 +5,7 @@ use crate::{
     Error, PackageId,
     graph::{
         DependencyDirection, LinkVisitorFn, PackageGraph, PackageIx, PackageLink,
-        PackageLinkVisitor, PackageMetadata, PackageSet,
+        PackageLinkContext, PackageLinkVisitor, PackageMetadata, PackageSet,
         feature::{FeatureFilter, FeatureQuery},
         query_core::QueryParams,
     },
@@ -199,7 +199,7 @@ impl<'g> PackageQuery<'g> {
     /// to determine which links are followed.
     pub fn resolve_with_fn(
         self,
-        visitor_fn: impl FnMut(&PackageQuery<'g>, PackageLink<'g>) -> bool,
+        visitor_fn: impl FnMut(&PackageLinkContext<'g>, PackageLink<'g>) -> bool,
     ) -> PackageSet<'g> {
         self.resolve_with(LinkVisitorFn(visitor_fn))
     }

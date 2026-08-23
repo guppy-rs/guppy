@@ -183,11 +183,12 @@ impl<'g> PackageSet<'g> {
     ) -> Self {
         let graph = query.graph;
         let params = query.params.clone();
+        let cx = PackageLinkContext { query };
         Self {
             graph: DebugIgnore(graph),
             core: ResolveCore::with_edge_filter(graph.dep_graph(), params, |edge| {
                 let link = graph.edge_ref_to_link(edge);
-                visitor.visit_link(&query, link)
+                visitor.visit_link(&cx, link)
             }),
         }
     }
@@ -551,6 +552,35 @@ impl PartialEq for PackageSet<'_> {
 
 impl Eq for PackageSet<'_> {}
 
+/// Context passed to a [`PackageLinkVisitor`] for each link visited during a
+/// resolve operation.
+#[derive(Clone, Debug)]
+pub struct PackageLinkContext<'g> {
+    query: PackageQuery<'g>,
+}
+
+impl<'g> PackageLinkContext<'g> {
+    /// Returns the query this resolve operation was started from.
+    pub fn query(&self) -> &PackageQuery<'g> {
+        &self.query
+    }
+
+    /// Returns the direction of the traversal.
+    pub fn direction(&self) -> DependencyDirection {
+        self.query.direction()
+    }
+
+    /// Returns true if the link's starting endpoint (`from` for forward
+    /// queries, `to` for reverse queries) is one of the query's initials.
+    pub fn starts_from_initial(&self, link: &PackageLink<'g>) -> bool {
+        let package_ix = match self.direction() {
+            DependencyDirection::Forward => link.from().package_ix(),
+            DependencyDirection::Reverse => link.to().package_ix(),
+        };
+        self.query.params.has_initial(package_ix)
+    }
+}
+
 /// Represents whether a particular link within a package graph should be followed during a
 /// resolve operation.
 pub trait PackageLinkVisitor<'g> {
@@ -558,27 +588,27 @@ pub trait PackageLinkVisitor<'g> {
     ///
     /// Returning false does not prevent the `to` package (or `from` package with `query_reverse`)
     /// from being included if it's reachable through other means.
-    fn visit_link(&mut self, query: &PackageQuery<'g>, link: PackageLink<'g>) -> bool;
+    fn visit_link(&mut self, cx: &PackageLinkContext<'g>, link: PackageLink<'g>) -> bool;
 }
 
 impl<'g, T> PackageLinkVisitor<'g> for &mut T
 where
     T: PackageLinkVisitor<'g>,
 {
-    fn visit_link(&mut self, query: &PackageQuery<'g>, link: PackageLink<'g>) -> bool {
-        (**self).visit_link(query, link)
+    fn visit_link(&mut self, cx: &PackageLinkContext<'g>, link: PackageLink<'g>) -> bool {
+        (**self).visit_link(cx, link)
     }
 }
 
 impl<'g> PackageLinkVisitor<'g> for Box<dyn PackageLinkVisitor<'g> + '_> {
-    fn visit_link(&mut self, query: &PackageQuery<'g>, link: PackageLink<'g>) -> bool {
-        (**self).visit_link(query, link)
+    fn visit_link(&mut self, cx: &PackageLinkContext<'g>, link: PackageLink<'g>) -> bool {
+        (**self).visit_link(cx, link)
     }
 }
 
 impl<'g> PackageLinkVisitor<'g> for &mut dyn PackageLinkVisitor<'g> {
-    fn visit_link(&mut self, query: &PackageQuery<'g>, link: PackageLink<'g>) -> bool {
-        (**self).visit_link(query, link)
+    fn visit_link(&mut self, cx: &PackageLinkContext<'g>, link: PackageLink<'g>) -> bool {
+        (**self).visit_link(cx, link)
     }
 }
 
@@ -586,10 +616,10 @@ pub(super) struct LinkVisitorFn<F>(pub(super) F);
 
 impl<'g, F> PackageLinkVisitor<'g> for LinkVisitorFn<F>
 where
-    F: FnMut(&PackageQuery<'g>, PackageLink<'g>) -> bool,
+    F: FnMut(&PackageLinkContext<'g>, PackageLink<'g>) -> bool,
 {
-    fn visit_link(&mut self, query: &PackageQuery<'g>, link: PackageLink<'g>) -> bool {
-        (self.0)(query, link)
+    fn visit_link(&mut self, cx: &PackageLinkContext<'g>, link: PackageLink<'g>) -> bool {
+        (self.0)(cx, link)
     }
 }
 

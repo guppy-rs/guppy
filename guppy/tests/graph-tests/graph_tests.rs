@@ -897,3 +897,68 @@ impl PackageDotVisitor for NameVisitor {
         write!(f, "{}", link.dep_name())
     }
 }
+
+mod link_context {
+    use super::*;
+
+    #[test]
+    fn package_link_context() {
+        let graph = JsonFixture::by_name("metadata_libra")
+            .expect("metadata_libra fixture exists")
+            .graph();
+        let workspace_ids: Vec<_> = graph.workspace().member_ids().collect();
+        for direction in [DependencyDirection::Forward, DependencyDirection::Reverse] {
+            let mut visited = 0;
+            graph
+                .query_directed(workspace_ids.iter().copied(), direction)
+                .unwrap()
+                .resolve_with_fn(|cx, link| {
+                    visited += 1;
+                    assert_eq!(cx.direction(), direction, "direction matches");
+                    let start = match direction {
+                        DependencyDirection::Forward => link.from(),
+                        DependencyDirection::Reverse => link.to(),
+                    };
+                    assert_eq!(
+                        cx.starts_from_initial(&link),
+                        cx.query().starts_from(start.id()).unwrap(),
+                        "starts_from_initial agrees with starts_from for {:?}",
+                        link
+                    );
+                    true
+                });
+            assert!(visited > 0, "at least one link visited in {direction:?}");
+        }
+    }
+
+    #[test]
+    fn feature_link_context() {
+        let graph = JsonFixture::by_name("metadata_libra")
+            .expect("metadata_libra fixture exists")
+            .graph();
+        let workspace_ids: Vec<_> = graph.workspace().member_ids().collect();
+        for direction in [DependencyDirection::Forward, DependencyDirection::Reverse] {
+            let mut visited = 0;
+            graph
+                .query_directed(workspace_ids.iter().copied(), direction)
+                .unwrap()
+                .to_feature_query(StandardFeatures::Default)
+                .resolve_with_fn(|cx, link| {
+                    visited += 1;
+                    assert_eq!(cx.direction(), direction, "direction matches");
+                    let start = match direction {
+                        DependencyDirection::Forward => link.from(),
+                        DependencyDirection::Reverse => link.to(),
+                    };
+                    assert_eq!(
+                        cx.starts_from_initial(&link),
+                        cx.query().starts_from(start.feature_id()).unwrap(),
+                        "starts_from_initial agrees with starts_from for {:?}",
+                        link
+                    );
+                    true
+                });
+            assert!(visited > 0, "at least one link visited in {direction:?}");
+        }
+    }
+}
