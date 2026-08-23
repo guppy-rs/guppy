@@ -5,7 +5,15 @@
 
 ### Changed
 
-- MSRV updated to Rust 1.62.
+- Updated `toml` to 1.1.4. The on-disk format written by `Summary::write_to_string` is unchanged: summaries are now written by the new `toml_compat` module, which reproduces the output of `toml` 0.5's pretty serializer, including its ordering of nested metadata tables.
+  - `Summary::metadata` is now `toml` 1.x's `Table`.
+  - `Summary::parse`, `Summary::with_metadata`, `Summary::to_string` and `Summary::write_to_string` return `toml` 1.x's error types.
+  - `Summary::with_metadata` no longer rejects metadata whose fields are declared out of TOML emission order; the fields are reordered when the summary is constructed instead.
+  - `SummaryDiff` is still serialized with `toml`'s own serializer, whose blank-line placement differs slightly from 0.5.
+
+  This is a breaking change for code that names those types.
+- Parsing now follows the TOML 1.1 specification strictly. Documents that were accepted by the lenient `toml` 0.5 parser but are not valid TOML are rejected.
+- MSRV updated to Rust 1.86.
 
 ## [0.7.1] - 2022-09-30
 

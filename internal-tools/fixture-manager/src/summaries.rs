@@ -10,16 +10,22 @@ use guppy::graph::{
     summaries::{Summary, diff::SummaryDiff},
 };
 use guppy_cmdlib::PackagesAndFeatures;
+use hakari::diffy::{PatchFormatter, create_patch};
 use once_cell::sync::Lazy;
 use proptest_ext::ValueGenerator;
 use std::fmt::Write;
 
 pub struct SummaryContext;
 
+pub struct ExistingSummary {
+    summary: Summary,
+    contents: String,
+}
+
 impl<'g> ContextImpl<'g> for SummaryContext {
     type IterArgs = usize;
     type IterItem = (usize, Summary);
-    type Existing = Summary;
+    type Existing = ExistingSummary;
 
     fn dir_name(fixture: &'g JsonFixture) -> Utf8PathBuf {
         fixture
@@ -76,29 +82,47 @@ impl<'g> ContextImpl<'g> for SummaryContext {
     }
 
     fn parse_existing(_: &Utf8Path, contents: String) -> Result<Self::Existing> {
-        Ok(Summary::parse(&contents)?)
+        let summary = Summary::parse(&contents)?;
+        Ok(ExistingSummary { summary, contents })
     }
 
-    fn is_changed((_, summary): &Self::IterItem, existing: &Self::Existing) -> bool {
-        let diff = SummaryDiff::new(existing, summary);
-        diff.is_changed() || existing.metadata != summary.metadata
+    fn is_changed(
+        fixture: &'g JsonFixture,
+        item: &Self::IterItem,
+        existing: &Self::Existing,
+    ) -> Result<bool> {
+        let mut rendered = String::new();
+        Self::write_to_string(fixture, item, &mut rendered)?;
+        Ok(existing.contents != rendered)
     }
 
     fn diff(
-        _fixture: &'g JsonFixture,
-        (_, summary): &Self::IterItem,
+        fixture: &'g JsonFixture,
+        item @ (_, summary): &Self::IterItem,
         existing: Option<&Self::Existing>,
     ) -> String {
         // Need to make this a static to allow lifetimes to work out.
         static EMPTY_SUMMARY: Lazy<Summary> = Lazy::new(Summary::default);
 
-        let existing = match existing {
-            Some(summary) => summary,
+        let existing_summary = match existing {
+            Some(existing) => &existing.summary,
             None => &*EMPTY_SUMMARY,
         };
 
-        let diff = SummaryDiff::new(existing, summary);
-        format!("{}", diff.report())
+        let diff = SummaryDiff::new(existing_summary, summary);
+        if diff.is_changed() {
+            return format!("{}", diff.report());
+        }
+
+        let existing_contents = existing.map_or("", |existing| existing.contents.as_str());
+        let mut rendered = String::new();
+        match Self::write_to_string(fixture, item, &mut rendered) {
+            Ok(()) => {
+                let patch = create_patch(existing_contents, &rendered);
+                format!("{}", PatchFormatter::new().fmt_patch(&patch))
+            }
+            Err(err) => format!("error while rendering summary: {err}"),
+        }
     }
 
     fn write_to_string(

@@ -920,11 +920,11 @@ mod tests {
             (
                 r#"
                 workspace-members = [ { name = "s" } ]"#,
-                "expected a string for key `workspace-members`",
+                "expected a string",
             ),
             (
                 r#"third-party = [ { git = "git-repo" } ]"#,
-                "missing field `name` for key `third-party`",
+                "missing field `name`",
             ),
             (
                 r#"

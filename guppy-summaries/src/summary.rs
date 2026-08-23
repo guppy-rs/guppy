@@ -1,7 +1,7 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-use crate::diff::SummaryDiff;
+use crate::{diff::SummaryDiff, toml_compat};
 use camino::{Utf8Path, Utf8PathBuf};
 use semver::Version;
 use serde::{Deserialize, Serialize};
@@ -9,14 +9,12 @@ use std::{
     collections::{BTreeMap, BTreeSet},
     fmt,
 };
-use toml::{Serializer, value::Table};
+use toml::{Table, Value};
 
 /// A type representing a package map as used in `Summary` instances.
 pub type PackageMap = BTreeMap<SummaryId, PackageInfo>;
 
 /// An in-memory representation of a build summary.
-///
-/// The metadata parameter is customizable.
 ///
 /// For more, see the crate-level documentation.
 #[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq)]
@@ -26,7 +24,7 @@ pub struct Summary {
     ///
     /// This may be used for storing extra information about the summary.
     ///
-    /// The type defaults to `toml::Value` but is customizable.
+    /// Populate it from any [`Serialize`] type through [`Self::with_metadata`].
     #[serde(default, skip_serializing_if = "Table::is_empty")]
     pub metadata: Table,
 
@@ -53,16 +51,26 @@ impl Summary {
     /// Constructs a new summary with the provided metadata, and an empty `target_packages` and
     /// `host_packages`.
     pub fn with_metadata(metadata: &impl Serialize) -> Result<Self, toml::ser::Error> {
+        // Serialize as a string, then deserialize as a table.
+        //
+        // This is a bit strange, right? Ordinarily we would use
+        // `Table::try_from`. But that doesn't work here, for two reasons:
+        //
+        // 1. It retains struct field order, while for compatibility reasons we must
+        //    reorder fields so that values are emitted before tables.
+        // 2. `Table::try_from` doesn't understand the special marker `toml_datetime`
+        //    uses to serialize `Datetime` values.
         let toml_str = toml::to_string(metadata)?;
-        let metadata =
-            toml::from_str(&toml_str).expect("toml::to_string creates a valid TOML string");
+        let metadata = toml_str
+            .parse()
+            .expect("toml::to_string creates a valid TOML string");
         Ok(Self {
             metadata,
             ..Self::default()
         })
     }
 
-    /// Deserializes a summary from the given string, with optional custom metadata.
+    /// Deserializes a summary from the given string.
     pub fn parse(s: &str) -> Result<Self, toml::de::Error> {
         toml::from_str(s)
     }
@@ -81,12 +89,52 @@ impl Summary {
         Ok(dst)
     }
 
-    /// Serializes this summary into the given TOML string, using pretty TOML syntax.
+    /// Serializes this summary into the given TOML string, using pretty TOML
+    /// syntax.
+    ///
+    /// This serializes the summary using the [`toml_compat`] module, for
+    /// byte-identical output against previous versions of guppy-summaries which
+    /// used toml 0.5.
     pub fn write_to_string(&self, dst: &mut String) -> Result<(), toml::ser::Error> {
-        let mut serializer = Serializer::pretty(dst);
-        serializer.pretty_array(false);
-        self.serialize(&mut serializer)
+        // toml 0.5 wrote the metadata map's entries in order but reordered
+        // every Value::Table below them, and wrote the package lists in struct
+        // order.
+        //
+        // Build the root table by hand rather than using Table::try_from(self).
+        // This also avoids mangling `Value::Datetime` instances stored in the
+        // metadata.
+        let mut table = Table::new();
+        if !self.metadata.is_empty() {
+            let metadata = self
+                .metadata
+                .iter()
+                .map(|(key, value)| (key.clone(), toml_compat::reorder_value(value)))
+                .collect();
+            table.insert("metadata".to_owned(), Value::Table(metadata));
+        }
+        table.extend(Table::try_from(SummaryPackages {
+            target_packages: &self.target_packages,
+            host_packages: &self.host_packages,
+        })?);
+        toml_compat::write_table(&table, dst)
     }
+}
+
+#[derive(Serialize)]
+struct SummaryPackages<'a> {
+    #[serde(
+        rename = "target-package",
+        with = "package_map_impl",
+        skip_serializing_if = "PackageMap::is_empty"
+    )]
+    target_packages: &'a PackageMap,
+
+    #[serde(
+        rename = "host-package",
+        with = "package_map_impl",
+        skip_serializing_if = "PackageMap::is_empty"
+    )]
+    host_packages: &'a PackageMap,
 }
 
 /// A unique identifier for a package in a build summary.

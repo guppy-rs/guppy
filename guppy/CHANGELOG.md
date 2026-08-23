@@ -3,6 +3,12 @@
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+### Changed
+
+- With the `summaries` feature, `toml` is updated to 1.1.4. `Error::TomlSerializeError`
+  now wraps `toml` 1.x's `ser::Error`, a breaking change for code that names that type.
+  Summary parsing follows the TOML 1.1 specification strictly.
+
 ## [0.17.26] - 2026-05-21
 
 ### Fixed
