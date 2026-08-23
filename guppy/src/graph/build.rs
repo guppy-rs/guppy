@@ -541,10 +541,10 @@ impl<'g> ReqResolvedName<'g> {
     }
 
     fn matches(&self, name: &str) -> bool {
-        if let Some(rename) = &self.renamed {
-            if rename == name {
-                return true;
-            }
+        if let Some(rename) = &self.renamed
+            && rename == name
+        {
+            return true;
         }
 
         match self.resolved_name {

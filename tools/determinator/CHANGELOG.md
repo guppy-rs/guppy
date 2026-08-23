@@ -5,6 +5,7 @@
 
 ### Changed
 
+- MSRV updated to Rust 1.91, as required by dependencies.
 - Updated `toml` to 1.1.4. `DeterminatorRules::parse` now returns `toml` 1.x's
   `de::Error`, a breaking change for code that names that type. Rules files are
   parsed strictly according to the TOML 1.1 specification.

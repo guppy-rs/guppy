@@ -3,6 +3,11 @@
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+### Changed
+
+- Updated `cfg-expr` to version 0.20.9, updating builtin targets to Rust 1.98.
+- MSRV updated to Rust 1.91, as required by dependencies.
+
 ## [3.6.0] - 2026-03-31
 
 ### Added

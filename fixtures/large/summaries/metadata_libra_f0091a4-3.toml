@@ -7,12 +7,12 @@ include-dev = false
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'thumbv5te-none-eabi'
+triple = 'thumbv7a-none-eabi'
 target-features = 'all'
 flags = ['test-flag']
 
 [metadata.target-platform]
-triple = 'xtensa-esp32s2-espidf'
+triple = 'xtensa-esp32-none-elf'
 target-features = 'unknown'
 
 [[target-package]]
@@ -547,7 +547,7 @@ version = '0.5.7'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'getrandom', 'libc', 'mach_o_sys', 'use_os', 'winapi']
-optional-deps = ['getrandom', 'libc']
+optional-deps = ['getrandom']
 
 [[target-package]]
 name = 'nibble_vec'
@@ -611,7 +611,6 @@ version = '0.4.6'
 crates-io = true
 status = 'transitive'
 features = ['default', 'libc', 'std']
-optional-deps = ['libc']
 
 [[target-package]]
 name = 'rand'
@@ -619,7 +618,7 @@ version = '0.7.3'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'getrandom', 'getrandom_package', 'libc', 'std']
-optional-deps = ['getrandom_package', 'libc']
+optional-deps = ['getrandom_package']
 
 [[target-package]]
 name = 'rand04'

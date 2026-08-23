@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'sparcv9-sun-solaris'
+triple = 'thumbv6m-none-eabi'
 target-features = 'all'
 flags = ['flag-test']
 

@@ -7,12 +7,12 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'riscv32imc-esp-espidf'
+triple = 'riscv64-oe-linux-gnu'
 target-features = ['ssse3']
 flags = ['abc']
 
 [metadata.target-platform]
-triple = 'mipsel-unknown-linux-uclibc'
+triple = 'mipsisa32r6-unknown-linux-gnu'
 target-features = 'unknown'
 flags = ['flag-test']
 [[metadata.omitted-packages.ids]]

@@ -10,7 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'riscv64gc-unknown-fuchsia'
+triple = 'riscv64gc-unknown-managarm-mlibc'
 target-features = 'all'
 flags = ['bar', 'cargo_web']
 [[metadata.omitted-packages.ids]]

@@ -7,11 +7,11 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'aarch64-unknown-linux-musl'
+triple = 'aarch64-unknown-linux-ohos'
 target-features = 'unknown'
 
 [metadata.target-platform]
-triple = 'armv7-unknown-freebsd'
+triple = 'armv7-sony-vita-newlibeabihf'
 target-features = 'unknown'
 [[metadata.omitted-packages.ids]]
 name = 'self-dev-cycle-helper'

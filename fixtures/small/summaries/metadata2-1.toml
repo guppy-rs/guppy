@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'x86_64-pc-windows-gnu'
+triple = 'x86_64-pc-windows-gnullvm'
 target-features = 'unknown'
 flags = ['abc', 'foo']
 

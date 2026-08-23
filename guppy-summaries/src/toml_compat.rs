@@ -280,10 +280,10 @@ fn emit_key_inner(out: &mut String, state: &State<'_>) -> Result<(), Error> {
 }
 
 fn array_type(state: &State<'_>, type_: ArrayState) {
-    if let State::Array { type_: prev, .. } = state {
-        if prev.get().is_none() {
-            prev.set(Some(type_));
-        }
+    if let State::Array { type_: prev, .. } = state
+        && prev.get().is_none()
+    {
+        prev.set(Some(type_));
     }
 }
 
@@ -425,10 +425,10 @@ fn emit_table_header(out: &mut String, state: &State<'_>) {
     // `[a.b]` headers can omit their `[a]` ancestor, but `[[a]]` ancestors
     // cannot be omitted, so emit those first.
     let mut p = state;
-    if let State::Array { first, parent, .. } = *state {
-        if first.get() {
-            p = parent;
-        }
+    if let State::Array { first, parent, .. } = *state
+        && first.get()
+    {
+        p = parent;
     }
     while let State::Table { first, parent, .. } = *p {
         p = parent;
@@ -454,10 +454,10 @@ fn emit_table_header(out: &mut String, state: &State<'_>) {
         State::Array { parent, first, .. } => {
             if !first.get() {
                 out.push('\n');
-            } else if let State::Table { first, .. } = *parent {
-                if !first.get() {
-                    out.push('\n');
-                }
+            } else if let State::Table { first, .. } = *parent
+                && !first.get()
+            {
+                out.push('\n');
             }
         }
         State::End => {}

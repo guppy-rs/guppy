@@ -10,7 +10,7 @@ initials-platform = 'host'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'powerpc-wrs-vxworks-spe'
+triple = 'powerpc64-unknown-linux-gnuelfv2'
 target-features = 'all'
 [[metadata.omitted-packages.ids]]
 name = 'self-dev-cycle-cycle-a'

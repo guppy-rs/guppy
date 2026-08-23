@@ -7,11 +7,11 @@ include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'mips64-openwrt-linux-musl'
+triple = 'mips64-unknown-linux-muslabi64'
 target-features = 'unknown'
 
 [metadata.target-platform]
-triple = 'powerpc64-unknown-linux-gnu'
+triple = 'powerpc64le-unknown-freebsd'
 target-features = 'all'
 flags = ['bar', 'test-flag']
 [[metadata.omitted-packages.ids]]

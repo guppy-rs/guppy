@@ -67,7 +67,10 @@ impl GuppyCargoCommon {
         }
 
         let compile_kind = match &self.target_platform {
-            Some(platform) => CompileKind::Target(CompileTarget::new(platform)?),
+            // unstable_json (the second parameter to CompileTarget::new) =
+            // false matches stable cargo. (cargo-compare only accepts builtin
+            // target triples here.)
+            Some(platform) => CompileKind::Target(CompileTarget::new(platform, false)?),
             None => CompileKind::Host,
         };
         let mut target_data = RustcTargetData::new(&workspace, &[compile_kind])?;

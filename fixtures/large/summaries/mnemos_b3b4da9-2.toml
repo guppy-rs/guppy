@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'riscv64im-unknown-none-elf'
+triple = 's390x-unknown-none-softfloat'
 target-features = 'unknown'
 flags = ['foo']
 

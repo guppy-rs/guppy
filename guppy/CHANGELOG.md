@@ -13,6 +13,7 @@
 
 ### Changed
 
+- MSRV updated to Rust 1.91, as required by dependencies.
 - The package and feature "resolver" traits are renamed and now receive an
   opaque context ([#497]):
   - `PackageResolver` is now `PackageLinkVisitor`, and `FeatureResolver` is now

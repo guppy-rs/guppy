@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'aarch64_be-unknown-none-softfloat'
+triple = 'aarch64v8r-unknown-none'
 target-features = ['avx', 'bmi2', 'sse4.1', 'ssse3']
 
 [metadata.target-platform]

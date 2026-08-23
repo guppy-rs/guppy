@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '3'
 # workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['xtensa-esp32-espidf', 'riscv32imafc-esp-espidf']
+# platforms = ['x86_64h-apple-darwin', 'riscv32imc-unknown-nuttx-elf']
 # [[traversal-excludes.ids]]
 # name = 'bytes'
 # version = '0.5.4'

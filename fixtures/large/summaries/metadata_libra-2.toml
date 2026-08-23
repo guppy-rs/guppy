@@ -12,7 +12,7 @@ target-features = []
 flags = ['foo', 'test-flag']
 
 [metadata.target-platform]
-triple = 'aarch64_be-unknown-netbsd'
+triple = 'aarch64v8r-unknown-none'
 target-features = []
 [[metadata.omitted-packages.ids]]
 name = 'ed25519-dalek'
@@ -2058,7 +2058,7 @@ version = '0.5.6'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'getrandom', 'libc', 'mach_o_sys', 'use_os', 'winapi']
-optional-deps = ['getrandom', 'libc']
+optional-deps = ['getrandom']
 
 [[target-package]]
 name = 'mime'
@@ -2089,13 +2089,6 @@ status = 'transitive'
 features = ['default', 'with-deprecated']
 
 [[target-package]]
-name = 'mio-uds'
-version = '0.6.7'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
 name = 'net2'
 version = '0.2.33'
 crates-io = true
@@ -2105,13 +2098,6 @@ features = ['default', 'duration']
 [[target-package]]
 name = 'nibble_vec'
 version = '0.0.4'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'nix'
-version = '0.14.1'
 crates-io = true
 status = 'transitive'
 features = []
@@ -2349,7 +2335,6 @@ version = '0.4.6'
 crates-io = true
 status = 'transitive'
 features = ['default', 'libc', 'std']
-optional-deps = ['libc']
 
 [[target-package]]
 name = 'rand'
@@ -2357,7 +2342,6 @@ version = '0.5.6'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'cloudabi', 'default', 'fuchsia-cprng', 'libc', 'std', 'winapi']
-optional-deps = ['libc']
 
 [[target-package]]
 name = 'rand'
@@ -2493,7 +2477,6 @@ version = '0.16.9'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'dev_urandom_fallback', 'lazy_static', 'std']
-optional-deps = ['lazy_static']
 
 [[target-package]]
 name = 'rmp'
@@ -2699,7 +2682,7 @@ version = '0.1.22'
 crates-io = true
 status = 'transitive'
 features = ['bytes', 'codec', 'default', 'fs', 'io', 'mio', 'num_cpus', 'reactor', 'rt-full', 'sync', 'tcp', 'timer', 'tokio-codec', 'tokio-current-thread', 'tokio-executor', 'tokio-fs', 'tokio-io', 'tokio-reactor', 'tokio-sync', 'tokio-tcp', 'tokio-threadpool', 'tokio-timer', 'tokio-udp', 'tokio-uds', 'udp', 'uds']
-optional-deps = ['bytes', 'mio', 'num_cpus', 'tokio-codec', 'tokio-current-thread', 'tokio-executor', 'tokio-fs', 'tokio-io', 'tokio-reactor', 'tokio-sync', 'tokio-tcp', 'tokio-threadpool', 'tokio-timer', 'tokio-udp', 'tokio-uds']
+optional-deps = ['bytes', 'mio', 'num_cpus', 'tokio-codec', 'tokio-current-thread', 'tokio-executor', 'tokio-fs', 'tokio-io', 'tokio-reactor', 'tokio-sync', 'tokio-tcp', 'tokio-threadpool', 'tokio-timer', 'tokio-udp']
 
 [[target-package]]
 name = 'tokio-buf'
@@ -2780,7 +2763,7 @@ version = '0.2.0-alpha.6'
 crates-io = true
 status = 'transitive'
 features = ['async-traits', 'bytes', 'futures-sink-preview', 'iovec', 'libc', 'mio-uds', 'tcp', 'udp', 'uds']
-optional-deps = ['bytes', 'futures-sink-preview', 'iovec', 'libc', 'mio-uds']
+optional-deps = ['bytes', 'futures-sink-preview', 'iovec']
 
 [[target-package]]
 name = 'tokio-process'
@@ -2799,13 +2782,6 @@ features = []
 [[target-package]]
 name = 'tokio-rustls'
 version = '0.10.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'tokio-signal'
-version = '0.2.7'
 crates-io = true
 status = 'transitive'
 features = []
@@ -2848,13 +2824,6 @@ features = ['async-traits']
 [[target-package]]
 name = 'tokio-udp'
 version = '0.1.5'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'tokio-uds'
-version = '0.2.5'
 crates-io = true
 status = 'transitive'
 features = []
@@ -2958,13 +2927,6 @@ status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'utf8parse'
-version = '0.1.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
 name = 'uuid'
 version = '0.7.4'
 crates-io = true
@@ -2978,13 +2940,6 @@ version = '0.8.1'
 crates-io = true
 status = 'transitive'
 features = []
-
-[[target-package]]
-name = 'void'
-version = '1.0.2'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
 
 [[target-package]]
 name = 'wait-timeout'

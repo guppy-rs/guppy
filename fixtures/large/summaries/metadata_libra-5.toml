@@ -7,12 +7,12 @@ include-dev = false
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'aarch64-unknown-nto-qnx800'
+triple = 'aarch64-unknown-openbsd'
 target-features = ['avx2', 'sse4.1', 'ssse3', 'xsaves']
 flags = ['abc']
 
 [metadata.target-platform]
-triple = 'sparc-unknown-none-elf'
+triple = 'sparc64-unknown-openbsd'
 target-features = ['sha', 'sse4.1', 'ssse3']
 flags = ['abc']
 [[metadata.omitted-packages.ids]]
@@ -1858,6 +1858,7 @@ version = '0.16.9'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'dev_urandom_fallback', 'lazy_static', 'std']
+optional-deps = ['lazy_static']
 
 [[host-package]]
 name = 'rmp'
