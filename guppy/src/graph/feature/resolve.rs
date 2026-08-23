@@ -183,7 +183,7 @@ impl<'g> FeatureSet<'g> {
     // Set operations
     // ---
 
-    /// Returns a `FeatureSet` that contains all packages present in at least one of `self`
+    /// Returns a `FeatureSet` that contains all features present in at least one of `self`
     /// and `other`.
     ///
     /// ## Panics
@@ -191,7 +191,7 @@ impl<'g> FeatureSet<'g> {
     /// Panics if the package graphs associated with `self` and `other` don't match.
     pub fn union(&self, other: &Self) -> Self {
         assert!(
-            ::std::ptr::eq(self.graph.package_graph, self.graph.package_graph),
+            ::std::ptr::eq(self.graph.package_graph, other.graph.package_graph),
             "package graphs passed into union() match"
         );
         let mut res = self.clone();
@@ -199,14 +199,14 @@ impl<'g> FeatureSet<'g> {
         res
     }
 
-    /// Returns a `FeatureSet` that contains all packages present in both `self` and `other`.
+    /// Returns a `FeatureSet` that contains all features present in both `self` and `other`.
     ///
     /// ## Panics
     ///
     /// Panics if the package graphs associated with `self` and `other` don't match.
     pub fn intersection(&self, other: &Self) -> Self {
         assert!(
-            ::std::ptr::eq(self.graph.package_graph, self.graph.package_graph),
+            ::std::ptr::eq(self.graph.package_graph, other.graph.package_graph),
             "package graphs passed into intersection() match"
         );
         let mut res = self.clone();
@@ -214,14 +214,14 @@ impl<'g> FeatureSet<'g> {
         res
     }
 
-    /// Returns a `FeatureSet` that contains all packages present in `self` but not `other`.
+    /// Returns a `FeatureSet` that contains all features present in `self` but not `other`.
     ///
     /// ## Panics
     ///
     /// Panics if the package graphs associated with `self` and `other` don't match.
     pub fn difference(&self, other: &Self) -> Self {
         assert!(
-            ::std::ptr::eq(self.graph.package_graph, self.graph.package_graph),
+            ::std::ptr::eq(self.graph.package_graph, other.graph.package_graph),
             "package graphs passed into difference() match"
         );
         Self {
@@ -230,7 +230,7 @@ impl<'g> FeatureSet<'g> {
         }
     }
 
-    /// Returns a `FeatureSet` that contains all packages present in exactly one of `self` and
+    /// Returns a `FeatureSet` that contains all features present in exactly one of `self` and
     /// `other`.
     ///
     /// ## Panics
@@ -238,7 +238,7 @@ impl<'g> FeatureSet<'g> {
     /// Panics if the package graphs associated with `self` and `other` don't match.
     pub fn symmetric_difference(&self, other: &Self) -> Self {
         assert!(
-            ::std::ptr::eq(self.graph.package_graph, self.graph.package_graph),
+            ::std::ptr::eq(self.graph.package_graph, other.graph.package_graph),
             "package graphs passed into symmetric_difference() match"
         );
         let mut res = self.clone();
@@ -246,14 +246,14 @@ impl<'g> FeatureSet<'g> {
         res
     }
 
-    /// Returns a `PackageSet` on which a filter has been applied.
+    /// Returns a `FeatureSet` on which a filter has been applied.
     ///
     /// Filters out all values for which the callback returns false.
     ///
     /// ## Cycles
     ///
-    /// For packages within a dependency cycle, the callback will be called in non-dev order. When
-    /// the direction is forward, if package Foo has a dependency on Bar, and Bar has a cyclic
+    /// For features within a dependency cycle, the callback will be called in non-dev order. When
+    /// the direction is forward, if feature Foo has a dependency on Bar, and Bar has a cyclic
     /// dev-dependency on Foo, then Foo is returned before Bar.
     pub fn filter(
         &self,
@@ -275,15 +275,15 @@ impl<'g> FeatureSet<'g> {
         Self::from_included(*graph, included)
     }
 
-    /// Partitions this `PackageSet` into two.
+    /// Partitions this `FeatureSet` into two.
     ///
-    /// The first `PackageSet` contains packages for which the callback returned true, and the
-    /// second one contains packages for which the callback returned false.
+    /// The first `FeatureSet` contains features for which the callback returned true, and the
+    /// second one contains features for which the callback returned false.
     ///
     /// ## Cycles
     ///
-    /// For packages within a dependency cycle, the callback will be called in non-dev order. When
-    /// the direction is forward, if package Foo has a dependency on Bar, and Bar has a cyclic
+    /// For features within a dependency cycle, the callback will be called in non-dev order. When
+    /// the direction is forward, if feature Foo has a dependency on Bar, and Bar has a cyclic
     /// dev-dependency on Foo, then Foo is returned before Bar.
     pub fn partition(
         &self,
@@ -309,14 +309,14 @@ impl<'g> FeatureSet<'g> {
 
     /// Performs filtering and partitioning at the same time.
     ///
-    /// The first `PackageSet` contains packages for which the callback returned `Some(true)`, and
-    /// the second one contains packages for which the callback returned `Some(false)`. Packages
+    /// The first `FeatureSet` contains features for which the callback returned `Some(true)`, and
+    /// the second one contains features for which the callback returned `Some(false)`. Features
     /// for which the callback returned `None` are dropped.
     ///
     /// ## Cycles
     ///
-    /// For packages within a dependency cycle, the callback will be called in non-dev order. When
-    /// the direction is forward, if package Foo has a dependency on Bar, and Bar has a cyclic
+    /// For features within a dependency cycle, the callback will be called in non-dev order. When
+    /// the direction is forward, if feature Foo has a dependency on Bar, and Bar has a cyclic
     /// dev-dependency on Foo, then Foo is returned before Bar.
     pub fn filter_partition(
         &self,
@@ -462,7 +462,7 @@ impl<'g> FeatureSet<'g> {
     ///
     /// ## Cycles
     ///
-    /// If a root consists of a dependency cycle, all the packages in it will be returned in
+    /// If a root consists of a dependency cycle, all the features in it will be returned in
     /// non-dev order (when the direction is forward).
     pub fn root_ids<'a>(
         &'a self,
@@ -485,7 +485,7 @@ impl<'g> FeatureSet<'g> {
     ///
     /// ## Cycles
     ///
-    /// If a root consists of a dependency cycle, all the packages in it will be returned in
+    /// If a root consists of a dependency cycle, all the features in it will be returned in
     /// non-dev order (when the direction is forward).
     pub fn root_features<'a>(
         &'a self,

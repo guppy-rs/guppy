@@ -3,6 +3,14 @@
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+### Fixed
+
+- `FeatureSet::union`, `intersection`, `difference` and `symmetric_difference`
+  now panic, as documented, if the two sets were built from different package
+  graphs. Previously the check compared `self`'s graph against itself and could
+  never fire, so mismatched sets silently produced an invalid result. (The
+  corresponding `PackageSet` operations already checked this correctly.)
+
 ### Changed
 
 - The package and feature "resolver" traits are renamed and now receive an

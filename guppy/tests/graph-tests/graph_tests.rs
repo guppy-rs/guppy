@@ -795,6 +795,88 @@ mod small {
             "resolve_all matches a forward query from every feature ID"
         );
     }
+
+    #[track_caller]
+    fn expect_panic_message(f: impl FnOnce(), expected: &str) {
+        let prev_hook = std::panic::take_hook();
+        std::panic::set_hook(Box::new(|_| {}));
+        let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(f));
+        std::panic::set_hook(prev_hook);
+
+        let err = result.expect_err("operation on sets from different graphs panics");
+        let message = *err
+            .downcast_ref::<&str>()
+            .expect("panic payload is a &'static str");
+        assert_eq!(message, expected, "panic message matches");
+    }
+
+    #[test]
+    fn package_set_ops_panic_on_mismatched_graphs() {
+        let set1 = JsonFixture::metadata1().graph().resolve_all();
+        let set2 = JsonFixture::metadata2().graph().resolve_all();
+
+        expect_panic_message(
+            || {
+                set1.union(&set2);
+            },
+            "package graphs passed into union() match",
+        );
+        expect_panic_message(
+            || {
+                set1.intersection(&set2);
+            },
+            "package graphs passed into intersection() match",
+        );
+        expect_panic_message(
+            || {
+                set1.difference(&set2);
+            },
+            "package graphs passed into difference() match",
+        );
+        expect_panic_message(
+            || {
+                set1.symmetric_difference(&set2);
+            },
+            "package graphs passed into symmetric_difference() match",
+        );
+    }
+
+    #[test]
+    fn feature_set_ops_panic_on_mismatched_graphs() {
+        let set1 = JsonFixture::metadata1()
+            .graph()
+            .feature_graph()
+            .resolve_all();
+        let set2 = JsonFixture::metadata2()
+            .graph()
+            .feature_graph()
+            .resolve_all();
+
+        expect_panic_message(
+            || {
+                set1.union(&set2);
+            },
+            "package graphs passed into union() match",
+        );
+        expect_panic_message(
+            || {
+                set1.intersection(&set2);
+            },
+            "package graphs passed into intersection() match",
+        );
+        expect_panic_message(
+            || {
+                set1.difference(&set2);
+            },
+            "package graphs passed into difference() match",
+        );
+        expect_panic_message(
+            || {
+                set1.symmetric_difference(&set2);
+            },
+            "package graphs passed into symmetric_difference() match",
+        );
+    }
 }
 
 mod large {
