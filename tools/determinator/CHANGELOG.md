@@ -3,6 +3,12 @@
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+### Changed
+
+- Updated `toml` to 1.1.4. `DeterminatorRules::parse` now returns `toml` 1.x's
+  `de::Error`, a breaking change for code that names that type. Rules files are
+  parsed strictly according to the TOML 1.1 specification.
+
 ## [0.12.0] - 2023-06-25
 
 ### Changed

@@ -1042,7 +1042,7 @@ dependencies = [
  "petgraph",
  "rayon",
  "serde",
- "toml 0.5.11",
+ "toml 1.1.4+spec-1.1.0",
 ]
 
 [[package]]
