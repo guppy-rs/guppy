@@ -5,6 +5,7 @@
 
 ### Changed
 
+- MSRV updated to Rust 1.91, as required by dependencies.
 - Updated `toml` to 1.1.4 and `toml_edit` to 0.25.13.
   - `HakariConfig::from_str`, `HakariBuilderSummary::to_string` and
     `HakariBuilderSummary::write_to_string` now return error types from `toml`

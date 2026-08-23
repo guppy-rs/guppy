@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '1'
 # workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['riscv32e-unknown-none-elf', 'wasm32-unknown-emscripten', 'i686-unknown-helenos']
+# platforms = ['riscv32gc-unknown-linux-musl', 'wasm32-unknown-emscripten', 'i686-unknown-helenos']
 # [[traversal-excludes.ids]]
 # name = 'bytes'
 # version = '0.5.3'

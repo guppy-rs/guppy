@@ -7,11 +7,11 @@ include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'thumbv7em-nuttx-eabi'
+triple = 'thumbv7m-none-eabi'
 target-features = 'all'
 
 [metadata.target-platform]
-triple = 'riscv32imc-unknown-nuttx-elf'
+triple = 'riscv64a23-unknown-linux-gnu'
 target-features = 'all'
 flags = ['abc']
 [[metadata.omitted-packages.ids]]
@@ -1218,13 +1218,6 @@ version = '0.1.21'
 crates-io = true
 status = 'transitive'
 features = []
-
-[[host-package]]
-name = 'libc'
-version = '0.2.79'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
 
 [[host-package]]
 name = 'pkg-config'

@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '4'
 # workspace-hack-line-style = 'full'
-# platforms = ['aarch64-unknown-freebsd', 'loongarch64-unknown-none-softfloat', 'arm64e-apple-darwin']
+# platforms = ['aarch64-unknown-freebsd', 'm68k-unknown-none-elf', 'arm64e-apple-darwin']
 # [[traversal-excludes.ids]]
 # name = 'trust-dns-proto'
 # version = '0.22.0'
@@ -1131,7 +1131,7 @@ unicode-bom = { version = "2", default-features = false }
 webpki-roots-2ffb4c3fe830441c = { package = "webpki-roots", version = "0.25", default-features = false }
 xattr = { version = "1" }
 
-[target.loongarch64-unknown-none-softfloat.dependencies]
+[target.m68k-unknown-none-elf.dependencies]
 async-executor = { version = "1", default-features = false }
 async-global-executor = { version = "2" }
 async-io = { version = "1", default-features = false }
@@ -1151,7 +1151,7 @@ polling = { version = "2" }
 rustix-d736d0ac4424f0f1 = { package = "rustix", version = "0.37", features = ["fs", "termios"] }
 waker-fn = { version = "1", default-features = false }
 
-[target.loongarch64-unknown-none-softfloat.build-dependencies]
+[target.m68k-unknown-none-elf.build-dependencies]
 async-executor = { version = "1", default-features = false }
 async-global-executor = { version = "2" }
 async-io = { version = "1", default-features = false }

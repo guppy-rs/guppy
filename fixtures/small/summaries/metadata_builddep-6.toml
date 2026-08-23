@@ -10,7 +10,7 @@ initials-platform = 'host'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'x86_64h-apple-darwin'
+triple = 'x86_64-wrs-vxworks'
 target-features = ['aes', 'avx', 'rdrand', 'sse']
 flags = ['abc']
 

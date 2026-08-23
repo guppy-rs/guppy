@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'riscv32imc-unknown-nuttx-elf'
+triple = 'riscv64a23-unknown-linux-gnu'
 target-features = 'all'
 flags = ['cargo_web']
 

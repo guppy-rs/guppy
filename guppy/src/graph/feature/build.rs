@@ -169,20 +169,21 @@ impl FeatureGraphBuildState {
                     //
                     // should not insert a self-edge from `tokio` to `tokio`. The second condition
                     // checks this.
-                    if !*weak && &**dep_name != from_named_feature {
-                        if let Some(same_named_feature_node) = self.make_named_feature_node(
+                    if !*weak
+                        && &**dep_name != from_named_feature
+                        && let Some(same_named_feature_node) = self.make_named_feature_node(
                             &metadata,
                             from_label,
                             &metadata,
                             FeatureLabel::Named(dep_name),
                             // Don't warn if this dep isn't optional.
                             false,
-                        ) {
-                            nodes_edges.push((
-                                same_named_feature_node,
-                                Self::make_named_feature_cross_edge(link, None),
-                            ));
-                        }
+                        )
+                    {
+                        nodes_edges.push((
+                            same_named_feature_node,
+                            Self::make_named_feature_cross_edge(link, None),
+                        ));
                     }
                 }
             }
@@ -204,15 +205,14 @@ impl FeatureGraphBuildState {
                     &metadata,
                     FeatureLabel::OptionalDependency(dep_name.as_ref()),
                     true,
-                ) {
-                    if let Some(link) = dep_name_to_link.get(dep_name.as_ref()) {
-                        nodes_edges.push((
-                            same_node,
-                            FeatureEdge::NamedFeatureDepColon(
-                                Self::make_full_conditional_link_impl(link),
-                            ),
-                        ));
-                    }
+                ) && let Some(link) = dep_name_to_link.get(dep_name.as_ref())
+                {
+                    nodes_edges.push((
+                        same_node,
+                        FeatureEdge::NamedFeatureDepColon(Self::make_full_conditional_link_impl(
+                            link,
+                        )),
+                    ));
                 }
             }
         };

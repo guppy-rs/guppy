@@ -465,10 +465,10 @@ pub fn cmd_subtree_size(options: &SubtreeSizeOptions) -> Result<()> {
 
                 if !subtree_package_set.contains(from_id) || nonunique_deps_set.contains(from_id) {
                     // if the from is from outside the subtree rooted at root_id, we ignore it
-                    if let Some(root_id) = root_id {
-                        if !dep_cache.depends_on(root_id, from_id)? {
-                            continue;
-                        }
+                    if let Some(root_id) = root_id
+                        && !dep_cache.depends_on(root_id, from_id)?
+                    {
+                        continue;
                     }
 
                     unique = false;

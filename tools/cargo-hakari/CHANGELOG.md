@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+### Changed
+
+- Builtin targets updated to Rust 1.98.
+- MSRV updated to Rust 1.91, as required by dependencies.
+
 ## [0.9.38] - 2026-05-21
 
 ### Fixed

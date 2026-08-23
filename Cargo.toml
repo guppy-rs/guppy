@@ -21,7 +21,7 @@ members = [
 [workspace.dependencies]
 ahash = "0.8.12"
 cargo_metadata = "0.23.1"
-cfg-expr = "0.20.7"
+cfg-expr = "0.20.9"
 datatest-stable = { version = "0.3.3", features = ["include-dir"] }
 guppy-workspace-hack = "0.1.0"
 iddqd = "0.3.17"
@@ -34,7 +34,7 @@ itertools = "0.15"
 [workspace.package]
 # Note: we commit to supporting the last 6 months of Rust releases. This
 # typically means N-4 to 5, unless a dependency requires a newer version.
-rust-version = "1.86"
+rust-version = "1.91"
 
 [workspace.lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = [

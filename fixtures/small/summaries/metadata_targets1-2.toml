@@ -7,12 +7,12 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'mipsel-unknown-netbsd'
+triple = 'mipsisa32r6el-unknown-linux-gnu'
 target-features = 'unknown'
 flags = ['bar', 'foo']
 
 [metadata.target-platform]
-triple = 'riscv64gc-unknown-freebsd'
+triple = 'riscv64gc-unknown-linux-gnu'
 target-features = 'unknown'
 flags = ['abc', 'test-flag']
 

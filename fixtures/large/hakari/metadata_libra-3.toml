@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '1'
 # workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['riscv32imafc-esp-espidf', 'i686-pc-windows-gnullvm']
+# platforms = ['riscv32imc-unknown-nuttx-elf', 'i686-pc-windows-gnullvm']
 #
 # [traversal-excludes]
 # [[final-excludes.ids]]
@@ -111,10 +111,10 @@ tokio-sync = { version = "0.2.0-alpha.6", default-features = false, features = [
 toml = { version = "0.5" }
 x25519-dalek = { git = "https://github.com/calibra/x25519-dalek.git", branch = "fiat", default-features = false, features = ["fiat_u64_backend", "std", "u64_backend"] }
 
-[target.riscv32imafc-esp-espidf.dependencies]
+[target.riscv32imc-unknown-nuttx-elf.dependencies]
 lazy_static = { version = "1", default-features = false, features = ["spin", "spin_no_std"] }
 
-[target.riscv32imafc-esp-espidf.build-dependencies]
+[target.riscv32imc-unknown-nuttx-elf.build-dependencies]
 lazy_static = { version = "1", default-features = false, features = ["spin", "spin_no_std"] }
 
 [target.i686-pc-windows-gnullvm.dependencies]

@@ -7,12 +7,12 @@ include-dev = false
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'riscv32e-unknown-none-elf'
+triple = 'riscv32gc-unknown-linux-musl'
 target-features = 'all'
 flags = ['abc']
 
 [metadata.target-platform]
-triple = 'riscv32e-unknown-none-elf'
+triple = 'riscv32gc-unknown-linux-musl'
 target-features = 'unknown'
 [[metadata.omitted-packages.ids]]
 name = 'no-std-net'

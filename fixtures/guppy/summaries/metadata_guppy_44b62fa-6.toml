@@ -12,7 +12,7 @@ target-features = 'unknown'
 flags = ['cargo_web', 'foo']
 
 [metadata.target-platform]
-triple = 'x86_64-win7-windows-msvc'
+triple = 'x86_64-win7-windows-gnu'
 target-features = 'unknown'
 flags = ['abc', 'flag-test']
 [[metadata.omitted-packages.ids]]

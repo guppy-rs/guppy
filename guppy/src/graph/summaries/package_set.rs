@@ -587,19 +587,19 @@ impl<'a> PackageMatcher<'a> {
         let mut third_party: AHashMap<_, SmallVec<[_; 2]>> = AHashMap::new();
         let mut registry_names_to_urls = AHashMap::new();
         for tp_summary in &summary.third_party {
-            if let ThirdPartySource::Registry(Some(name)) = &tp_summary.source {
-                if !registry_names_to_urls.contains_key(name.as_str()) {
-                    match registry_name_to_url(name) {
-                        Some(url) => {
-                            registry_names_to_urls.insert(name.as_str(), url);
-                        }
-                        None => {
-                            return Err(Error::UnknownRegistryName {
-                                message: error_message.to_owned(),
-                                summary: Box::new(tp_summary.clone()),
-                                registry_name: name.clone(),
-                            });
-                        }
+            if let ThirdPartySource::Registry(Some(name)) = &tp_summary.source
+                && !registry_names_to_urls.contains_key(name.as_str())
+            {
+                match registry_name_to_url(name) {
+                    Some(url) => {
+                        registry_names_to_urls.insert(name.as_str(), url);
+                    }
+                    None => {
+                        return Err(Error::UnknownRegistryName {
+                            message: error_message.to_owned(),
+                            summary: Box::new(tp_summary.clone()),
+                            registry_name: name.clone(),
+                        });
                     }
                 }
             }

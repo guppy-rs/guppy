@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'riscv32emc-unknown-none-elf'
+triple = 'riscv32im-risc0-zkvm-elf'
 target-features = 'all'
 
 [metadata.target-platform]

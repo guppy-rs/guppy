@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'powerpc64-unknown-linux-musl'
+triple = 'powerpc64le-unknown-freebsd'
 target-features = ['avx', 'bmi2', 'fma', 'sha', 'sse2', 'xsave', 'xsaves']
 flags = ['bar']
 [[metadata.omitted-packages.ids]]

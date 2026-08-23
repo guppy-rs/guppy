@@ -7,12 +7,12 @@ include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'armv7a-kmc-solid_asp3-eabihf'
+triple = 'armv7a-kmc-solid_asp3-eabi'
 target-features = ['aes', 'rdrand']
 flags = ['cargo_web']
 
 [metadata.target-platform]
-triple = 'powerpc64le-unknown-linux-gnu'
+triple = 'riscv32e-unknown-none-elf'
 target-features = 'all'
 flags = ['cargo_web']
 
@@ -127,7 +127,7 @@ version = '0.4.26'
 crates-io = true
 status = 'direct'
 features = ['clock', 'default', 'iana-time-zone', 'js-sys', 'oldtime', 'std', 'time', 'wasm-bindgen', 'wasmbind', 'winapi']
-optional-deps = ['iana-time-zone', 'time']
+optional-deps = ['time']
 
 [[target-package]]
 name = 'clap'
@@ -303,7 +303,7 @@ version = '1.29.1'
 crates-io = true
 status = 'direct'
 features = ['bytes', 'default', 'io-std', 'io-util', 'libc', 'macros', 'mio', 'net', 'rt', 'socket2', 'sync', 'time', 'tokio-macros', 'tracing']
-optional-deps = ['bytes', 'libc', 'mio', 'socket2', 'tokio-macros']
+optional-deps = ['bytes', 'mio', 'socket2', 'tokio-macros']
 
 [[target-package]]
 name = 'tracing'
@@ -701,13 +701,6 @@ status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'iana-time-zone'
-version = '0.1.57'
-crates-io = true
-status = 'transitive'
-features = ['fallback']
-
-[[target-package]]
 name = 'idna'
 version = '0.4.0'
 crates-io = true
@@ -1034,7 +1027,7 @@ version = '0.8.5'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'getrandom', 'libc', 'rand_chacha', 'small_rng', 'std', 'std_rng']
-optional-deps = ['libc', 'rand_chacha']
+optional-deps = ['rand_chacha']
 
 [[target-package]]
 name = 'rand_chacha'

@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'riscv32imac-unknown-nuttx-elf'
+triple = 'riscv32imafc-unknown-nuttx-elf'
 target-features = 'all'
 
 [[metadata.features-only]]

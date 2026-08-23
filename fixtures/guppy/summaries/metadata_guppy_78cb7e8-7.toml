@@ -10,7 +10,7 @@ initials-platform = 'host'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'mipsel-unknown-none'
+triple = 'mipsisa64r6-unknown-linux-gnuabi64'
 target-features = 'unknown'
 flags = ['cargo_web']
 [[metadata.omitted-packages.ids]]

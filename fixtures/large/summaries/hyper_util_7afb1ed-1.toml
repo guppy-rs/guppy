@@ -10,7 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'riscv32im-risc0-zkvm-elf'
+triple = 'riscv32imac-unknown-nuttx-elf'
 target-features = 'all'
 flags = ['test-flag']
 [[metadata.omitted-packages.ids]]
@@ -226,6 +226,13 @@ status = 'transitive'
 features = []
 
 [[target-package]]
+name = 'libc'
+version = '0.2.155'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
 name = 'log'
 version = '0.4.22'
 crates-io = true
@@ -282,6 +289,13 @@ version = '0.8.4'
 crates-io = true
 status = 'transitive'
 features = ['std']
+
+[[target-package]]
+name = 'signal-hook-registry'
+version = '1.4.2'
+crates-io = true
+status = 'transitive'
+features = []
 
 [[target-package]]
 name = 'slab'
