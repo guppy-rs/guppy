@@ -36,7 +36,7 @@ fn main() -> Result<(), Error> {
         .count();
     println!("number of packages before: {before_count}");
 
-    let resolver_fn = |link: PackageLink<'_>| {
+    let visitor_fn = |link: PackageLink<'_>| {
         if link.dev_only() {
             println!(
                 "*** filtering out dev-only link: {} -> {}",
@@ -53,12 +53,12 @@ fn main() -> Result<(), Error> {
     let resolve_with_len = query
         .clone()
         .resolve_with_fn(|_query, link| {
-            // A package resolver allows for fine-grained control over which links are followed. In general,
-            // it is anything that implements the `PackageResolver` trait.
+            // A package link visitor allows for fine-grained control over which links are followed. In general,
+            // it is anything that implements the `PackageLinkVisitor` trait.
             //
             // Functions with signature FnMut(&PackageQuery<'_>, PackageLink<'_>) -> bool can be
             // used with `resolve_with_fn`.
-            resolver_fn(link)
+            visitor_fn(link)
         })
         .package_ids(DependencyDirection::Forward)
         .len();

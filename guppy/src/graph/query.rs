@@ -4,8 +4,8 @@
 use crate::{
     Error, PackageId,
     graph::{
-        DependencyDirection, PackageGraph, PackageIx, PackageLink, PackageMetadata,
-        PackageResolver, PackageSet, ResolverFn,
+        DependencyDirection, LinkVisitorFn, PackageGraph, PackageIx, PackageLink,
+        PackageLinkVisitor, PackageMetadata, PackageSet,
         feature::{FeatureFilter, FeatureQuery},
         query_core::QueryParams,
     },
@@ -189,18 +189,18 @@ impl<'g> PackageQuery<'g> {
         PackageSet::new(self)
     }
 
-    /// Resolves this query into a set of known packages, using the provided resolver to
+    /// Resolves this query into a set of known packages, using the provided visitor to
     /// determine which links are followed.
-    pub fn resolve_with(self, resolver: impl PackageResolver<'g>) -> PackageSet<'g> {
-        PackageSet::with_resolver(self, resolver)
+    pub fn resolve_with(self, visitor: impl PackageLinkVisitor<'g>) -> PackageSet<'g> {
+        PackageSet::with_link_visitor(self, visitor)
     }
 
-    /// Resolves this query into a set of known packages, using the provided resolver function
+    /// Resolves this query into a set of known packages, using the provided visitor function
     /// to determine which links are followed.
     pub fn resolve_with_fn(
         self,
-        resolver_fn: impl FnMut(&PackageQuery<'g>, PackageLink<'g>) -> bool,
+        visitor_fn: impl FnMut(&PackageQuery<'g>, PackageLink<'g>) -> bool,
     ) -> PackageSet<'g> {
-        self.resolve_with(ResolverFn(resolver_fn))
+        self.resolve_with(LinkVisitorFn(visitor_fn))
     }
 }

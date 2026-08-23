@@ -4,7 +4,7 @@
 use crate::{
     DependencyKind, Error,
     graph::{
-        DependencyDirection, PackageGraph, PackageIx, PackageLink, PackageResolver, PackageSet,
+        DependencyDirection, PackageGraph, PackageIx, PackageLink, PackageLinkVisitor, PackageSet,
         cargo::{
             CargoIntermediateSet, CargoOptions, CargoResolverVersion, CargoSet, InitialsPlatform,
         },
@@ -39,17 +39,17 @@ impl<'a> CargoSetBuildState<'a> {
         self,
         initials: FeatureSet<'g>,
         features_only: FeatureSet<'g>,
-        resolver: Option<&mut dyn PackageResolver<'g>>,
+        visitor: Option<&mut dyn PackageLinkVisitor<'g>>,
     ) -> CargoSet<'g> {
         match self.opts.resolver {
-            CargoResolverVersion::V1 => self.new_v1(initials, features_only, resolver, false),
+            CargoResolverVersion::V1 => self.new_v1(initials, features_only, visitor, false),
             CargoResolverVersion::V1Install => {
                 let avoid_dev_deps = !self.opts.include_dev;
-                self.new_v1(initials, features_only, resolver, avoid_dev_deps)
+                self.new_v1(initials, features_only, visitor, avoid_dev_deps)
             }
             // V2 and V3 do the same feature resolution.
             CargoResolverVersion::V2 | CargoResolverVersion::V3 => {
-                self.new_v2(initials, features_only, resolver)
+                self.new_v2(initials, features_only, visitor)
             }
         }
     }
@@ -69,10 +69,10 @@ impl<'a> CargoSetBuildState<'a> {
         self,
         initials: FeatureSet<'g>,
         features_only: FeatureSet<'g>,
-        resolver: Option<&mut dyn PackageResolver<'g>>,
+        visitor: Option<&mut dyn PackageLinkVisitor<'g>>,
         avoid_dev_deps: bool,
     ) -> CargoSet<'g> {
-        self.build_set(initials, features_only, resolver, |query| {
+        self.build_set(initials, features_only, visitor, |query| {
             self.new_v1_intermediate(query, avoid_dev_deps)
         })
     }
@@ -81,9 +81,9 @@ impl<'a> CargoSetBuildState<'a> {
         self,
         initials: FeatureSet<'g>,
         features_only: FeatureSet<'g>,
-        resolver: Option<&mut dyn PackageResolver<'g>>,
+        visitor: Option<&mut dyn PackageLinkVisitor<'g>>,
     ) -> CargoSet<'g> {
-        self.build_set(initials, features_only, resolver, |query| {
+        self.build_set(initials, features_only, visitor, |query| {
             self.new_v2_intermediate(query)
         })
     }
@@ -100,7 +100,7 @@ impl<'a> CargoSetBuildState<'a> {
         &self,
         initials: FeatureSet<'g>,
         features_only: FeatureSet<'g>,
-        mut resolver: Option<&mut dyn PackageResolver<'g>>,
+        mut visitor: Option<&mut dyn PackageLinkVisitor<'g>>,
         intermediate_fn: impl FnOnce(FeatureQuery<'g>) -> CargoIntermediateSet<'g>,
     ) -> CargoSet<'g> {
         // Prepare a package query for step 2.
@@ -216,9 +216,9 @@ impl<'a> CargoSetBuildState<'a> {
                 return false;
             }
 
-            let accepted = resolver
+            let accepted = visitor
                 .as_mut()
-                .map(|r| r.accept(query, link))
+                .map(|r| r.visit_link(query, link))
                 .unwrap_or(true);
             if !accepted {
                 return false;
@@ -287,9 +287,9 @@ impl<'a> CargoSetBuildState<'a> {
                     return false;
                 }
 
-                let accepted = resolver
+                let accepted = visitor
                     .as_mut()
-                    .map(|r| r.accept(query, link))
+                    .map(|r| r.visit_link(query, link))
                     .unwrap_or(true);
                 if !accepted {
                     return false;

@@ -4,7 +4,7 @@
 use crate::{
     Error, PackageId,
     graph::{
-        DependencyDirection, PackageGraph, PackageIx, PackageLink, PackageResolver, PackageSet,
+        DependencyDirection, PackageGraph, PackageIx, PackageLink, PackageLinkVisitor, PackageSet,
         cargo::build::CargoSetBuildState,
         feature::{FeatureGraph, FeatureSet},
     },
@@ -260,34 +260,35 @@ impl<'g> CargoSet<'g> {
         Self::new_internal(initials, features_only, None, opts)
     }
 
-    /// Like `Cargo.new`, but takes an additional [`PackageResolver`] which can
+    /// Like `Cargo.new`, but takes an additional [`PackageLinkVisitor`] which can
     /// be used to filter out some dependency edges, or to collect additional
     /// information.
     ///
-    /// [`resolver.accept`] is called for both target and host dependencies. It
+    /// [`visitor.visit_link`] is called for both target and host dependencies. It
     /// is called after static filtering through
     /// [`CargoOptions::add_omitted_packages`], but before any other decisions
     /// are made.
     ///
-    /// [`resolver.accept`]: PackageResolver::accept
-    pub fn with_package_resolver(
+    /// [`visitor.visit_link`]: PackageLinkVisitor::visit_link
+    pub fn with_cargo_link_visitor(
         initials: FeatureSet<'g>,
         features_only: FeatureSet<'g>,
-        mut resolver: impl PackageResolver<'g>,
+        mut visitor: impl PackageLinkVisitor<'g>,
         opts: &CargoOptions<'_>,
     ) -> Result<Self, Error> {
-        Self::new_internal(initials, features_only, Some(&mut resolver), opts)
+        Self::new_internal(initials, features_only, Some(&mut visitor), opts)
     }
 
-    /// Internal helper to deduplicate code across `CargoSet::new` and `CargoSet::with_resolver`.
+    /// Internal helper to deduplicate code across `CargoSet::new` and
+    /// `CargoSet::with_cargo_link_visitor`.
     fn new_internal(
         initials: FeatureSet<'g>,
         features_only: FeatureSet<'g>,
-        resolver: Option<&mut dyn PackageResolver<'g>>,
+        visitor: Option<&mut dyn PackageLinkVisitor<'g>>,
         opts: &CargoOptions<'_>,
     ) -> Result<Self, Error> {
         let build_state = CargoSetBuildState::new(initials.graph().package_graph, opts)?;
-        Ok(build_state.build(initials, features_only, resolver))
+        Ok(build_state.build(initials, features_only, visitor))
     }
 
     /// Creates a new `CargoIntermediateSet` based on the given query and options.

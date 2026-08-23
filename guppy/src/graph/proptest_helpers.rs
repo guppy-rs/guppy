@@ -4,7 +4,7 @@
 use crate::{
     PackageId,
     graph::{
-        PackageGraph, PackageLink, PackageQuery, PackageResolver, Workspace,
+        PackageGraph, PackageLink, PackageLinkVisitor, PackageQuery, Workspace,
         cargo::{CargoOptions, CargoResolverVersion, InitialsPlatform},
     },
     platform::PlatformSpec,
@@ -57,12 +57,14 @@ impl PackageGraph {
         })
     }
 
-    /// Returns a `Strategy` that generates a random `PackageResolver` instance from this graph.
+    /// Returns a `Strategy` that generates a random `PackageLinkVisitor` instance from this graph.
     ///
     /// Requires the `proptest1` feature to be enabled.
-    pub fn proptest1_resolver_strategy(&self) -> impl Strategy<Value = Prop010Resolver> + use<> {
+    pub fn proptest1_link_visitor_strategy(
+        &self,
+    ) -> impl Strategy<Value = Prop010LinkVisitor> + use<> {
         // Generate a FixedBitSet to filter based off of.
-        fixedbitset_strategy(self.dep_graph.edge_count()).prop_map(Prop010Resolver::new)
+        fixedbitset_strategy(self.dep_graph.edge_count()).prop_map(Prop010LinkVisitor::new)
     }
 
     /// Returns a `Strategy` that generates a random `CargoOptions` from this graph.
@@ -141,17 +143,17 @@ impl<'g> Workspace<'g> {
     }
 }
 
-/// A randomly generated package resolver.
+/// A randomly generated package link visitor.
 ///
-/// Created by `PackageGraph::proptest1_resolver_strategy`. Requires the `proptest1` feature to be
+/// Created by `PackageGraph::proptest1_link_visitor_strategy`. Requires the `proptest1` feature to be
 /// enabled.
 #[derive(Clone, Debug)]
-pub struct Prop010Resolver {
+pub struct Prop010LinkVisitor {
     included_edges: FixedBitSet,
     check_depends_on: bool,
 }
 
-impl Prop010Resolver {
+impl Prop010LinkVisitor {
     fn new(included_edges: FixedBitSet) -> Self {
         Self {
             included_edges,
@@ -159,20 +161,20 @@ impl Prop010Resolver {
         }
     }
 
-    /// If called with true, this resolver will then verify that any links passed in are in the
+    /// If called with true, this visitor will then verify that any links passed in are in the
     /// correct direction.
     pub fn check_depends_on(&mut self, check: bool) {
         self.check_depends_on = check;
     }
 
-    /// Returns true if the given link is accepted by this resolver.
+    /// Returns true if the given link is accepted by this visitor.
     pub fn accept_link(&self, link: PackageLink<'_>) -> bool {
         self.included_edges.is_visited(&link.edge_ix().index())
     }
 }
 
-impl<'g> PackageResolver<'g> for Prop010Resolver {
-    fn accept(&mut self, query: &PackageQuery<'g>, link: PackageLink<'g>) -> bool {
+impl<'g> PackageLinkVisitor<'g> for Prop010LinkVisitor {
+    fn visit_link(&mut self, query: &PackageQuery<'g>, link: PackageLink<'g>) -> bool {
         if self.check_depends_on {
             assert!(
                 query

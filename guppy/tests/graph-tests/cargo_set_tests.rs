@@ -3,23 +3,23 @@
 
 use fixtures::json::JsonFixture;
 use guppy::graph::{
-    DependencyDirection, PackageLink, PackageQuery, PackageResolver,
+    DependencyDirection, PackageLink, PackageLinkVisitor, PackageQuery,
     cargo::{CargoOptions, CargoSet},
     feature::StandardFeatures,
 };
 use std::collections::HashSet;
 
-struct PackageResolverForTesting<'a, 'g> {
+struct PackageLinkVisitorForTesting<'a, 'g> {
     /// Optional filter of `link`s.  If `None`, then all links are accepted.
     link_filter: Option<&'a dyn Fn(PackageLink<'g>) -> bool>,
 
-    /// The `trace` field stores `link`s that were passed to `fn accept`.
+    /// The `trace` field stores `link`s that were passed to `fn visit_link`.
     /// The links are formatted as `"foo@1.2.3 => bar@4.5.6"`.
-    /// The links are stored in the order of `fn accept` calls.
+    /// The links are stored in the order of `fn visit_link` calls.
     trace: Vec<String>,
 }
 
-impl<'a, 'g> PackageResolverForTesting<'a, 'g> {
+impl<'a, 'g> PackageLinkVisitorForTesting<'a, 'g> {
     fn new() -> Self {
         Self {
             link_filter: None,
@@ -54,17 +54,17 @@ fn links_to_strings<'g>(links: impl IntoIterator<Item = PackageLink<'g>>) -> Vec
     result
 }
 
-impl<'g> PackageResolver<'g> for PackageResolverForTesting<'_, 'g> {
-    fn accept(&mut self, _query: &PackageQuery<'g>, link: PackageLink<'g>) -> bool {
+impl<'g> PackageLinkVisitor<'g> for PackageLinkVisitorForTesting<'_, 'g> {
+    fn visit_link(&mut self, _query: &PackageQuery<'g>, link: PackageLink<'g>) -> bool {
         self.trace.push(link_to_string(&link));
         self.link_filter.map(|f| f(link)).unwrap_or(true)
     }
 }
 
-fn cargo_set_with_resolver<'g>(
+fn cargo_set_with_visitor<'g>(
     test_fixture: &'g JsonFixture,
     root_package_name: &str,
-    resolver: &mut dyn PackageResolver<'g>,
+    visitor: &mut dyn PackageLinkVisitor<'g>,
 ) -> CargoSet<'g> {
     let package_graph = test_fixture.graph();
 
@@ -76,7 +76,7 @@ fn cargo_set_with_resolver<'g>(
         .to_feature_set(StandardFeatures::Default);
 
     let cargo_options = CargoOptions::new();
-    CargoSet::with_package_resolver(initials, no_extra_features, resolver, &cargo_options).unwrap()
+    CargoSet::with_cargo_link_visitor(initials, no_extra_features, visitor, &cargo_options).unwrap()
 }
 
 fn cargo_set_package_names(cargo_set: &CargoSet) -> Vec<String> {
@@ -91,9 +91,9 @@ fn cargo_set_package_names(cargo_set: &CargoSet) -> Vec<String> {
 }
 
 #[test]
-fn test_package_resolver_visits() {
-    let mut resolver = PackageResolverForTesting::new();
-    let cargo_set = cargo_set_with_resolver(JsonFixture::metadata1(), "testcrate", &mut resolver);
+fn test_package_link_visitor_visits() {
+    let mut visitor = PackageLinkVisitorForTesting::new();
+    let cargo_set = cargo_set_with_visitor(JsonFixture::metadata1(), "testcrate", &mut visitor);
     assert_eq!(
         cargo_set_package_names(&cargo_set),
         vec![
@@ -130,7 +130,7 @@ fn test_package_resolver_visits() {
         ],
     );
     assert_eq!(
-        resolver.trace,
+        visitor.trace,
         vec![
             "testcrate@0.1.0 => datatest@0.4.2",
             "datatest@0.4.2 => yaml-rust@0.4.3",
@@ -179,12 +179,12 @@ fn test_package_resolver_visits() {
     );
 
     // In this test input none of the links are trimmed by cargo algorithm.
-    let count_of_links_visited_by_resolver = resolver.trace.len();
+    let count_of_links_visited_by_visitor = visitor.trace.len();
     let count_of_cargo_set_links = cargo_set.proc_macro_links().count()
         + cargo_set.build_dep_links().count()
         + cargo_set.target_links().count()
         + cargo_set.host_links().count();
-    assert_eq!(count_of_links_visited_by_resolver, count_of_cargo_set_links);
+    assert_eq!(count_of_links_visited_by_visitor, count_of_cargo_set_links);
 
     assert_eq!(
         links_to_strings(cargo_set.proc_macro_links()),
@@ -250,32 +250,32 @@ fn test_package_resolver_visits() {
 }
 
 #[test]
-fn test_package_resolver_filtering_normal_links_on_target() {
-    let mut resolver = PackageResolverForTesting::with_filter(&|link| {
+fn test_package_link_visitor_filtering_normal_links_on_target() {
+    let mut visitor = PackageLinkVisitorForTesting::with_filter(&|link| {
         // Remove `winapi` and `winapu-util` links.  This should transitively remove `winapi =>
         // winapi-x86_64-pc-windows-gnu` and `winapi => winapi-i686-pc-windows-gnu`.
         //
-        // This filter is meant to test whether `CargoSet` algotithm consults the `resolver`
+        // This filter is meant to test whether `CargoSet` algotithm consults the `visitor`
         // in all required cases.  The filter may or may not make sense in practice (here we
         // can pretend that we are filtering all packages that are only needed on Windows).
         !link.to().name().starts_with("winapi")
     });
-    let cargo_set = cargo_set_with_resolver(JsonFixture::metadata1(), "testcrate", &mut resolver);
+    let cargo_set = cargo_set_with_visitor(JsonFixture::metadata1(), "testcrate", &mut visitor);
 
-    // No `winapi...` packages (unlike in `test_package_resolver_visits`).
+    // No `winapi...` packages (unlike in `test_package_link_visitor_visits`).
     let package_names = cargo_set_package_names(&cargo_set)
         .into_iter()
         .collect::<HashSet<_>>();
     assert!(!package_names.contains("winapi"));
     assert!(!package_names.contains("winapi-util"));
 
-    // No `winapi...` => ... links (unlike in `test_package_resolver_visits`).
-    let trace = resolver.trace.into_iter().collect::<HashSet<_>>();
+    // No `winapi...` => ... links (unlike in `test_package_link_visitor_visits`).
+    let trace = visitor.trace.into_iter().collect::<HashSet<_>>();
     assert!(!trace.contains("winapi@0.3.8 => winapi-x86_64-pc-windows-gnu@0.4.0"));
     assert!(!trace.contains("winapi@0.3.8 => winapi-i686-pc-windows-gnu@0.4.0"));
     assert!(!trace.contains("winapi-util@0.1.2 => winapi@0.3.8"));
 
-    // The resolver was asked about these links, but didn't `accept` them.
+    // The visitor was asked about these links, but didn't accept them.
     // Therefore these links should be present in the `trace`, but missing from
     // the final `cargo_set`.
     let cargo_set_links = links_to_strings(cargo_set.target_links())
@@ -290,30 +290,30 @@ fn test_package_resolver_filtering_normal_links_on_target() {
 }
 
 #[test]
-fn test_package_resolver_filtering_build_links_on_target() {
-    let mut resolver = PackageResolverForTesting::with_filter(&|link| {
+fn test_package_link_visitor_filtering_build_links_on_target() {
+    let mut visitor = PackageLinkVisitorForTesting::with_filter(&|link| {
         // Remove `datatest` => `version_check` build dependency.
         //
-        // This filter is meant to test whether `CargoSet` algotithm consults the `resolver`
+        // This filter is meant to test whether `CargoSet` algotithm consults the `visitor`
         // in all required cases.  The filter may or may not make sense in practice (here
         // the trimmed down graph would fail to build...).
         link.to().name() != "version_check"
     });
-    let cargo_set = cargo_set_with_resolver(JsonFixture::metadata1(), "testcrate", &mut resolver);
+    let cargo_set = cargo_set_with_visitor(JsonFixture::metadata1(), "testcrate", &mut visitor);
 
-    // No `version_check...` packages (unlike in `test_package_resolver_visits`).
+    // No `version_check...` packages (unlike in `test_package_link_visitor_visits`).
     let package_names = cargo_set_package_names(&cargo_set)
         .into_iter()
         .collect::<HashSet<_>>();
     assert!(!package_names.contains("version_check"));
 
     // If `version_check` has transitive dependencies, then we would test here that
-    // they were not visited/consulted by the `resolver`.
+    // they were not visited/consulted by the `visitor`.
 
-    // The resolver was asked about these links, but didn't `accept` them.
+    // The visitor was asked about these links, but didn't accept them.
     // Therefore these links should be present in the `trace`, but missing from
     // the final `cargo_set`.
-    let trace = resolver.trace.into_iter().collect::<HashSet<_>>();
+    let trace = visitor.trace.into_iter().collect::<HashSet<_>>();
     let cargo_set_links = links_to_strings(cargo_set.build_dep_links())
         .into_iter()
         .collect::<HashSet<_>>();
@@ -323,19 +323,19 @@ fn test_package_resolver_filtering_build_links_on_target() {
 }
 
 #[test]
-fn test_package_resolver_filtering_links_on_host() {
-    let mut resolver = PackageResolverForTesting::with_filter(&|link| {
+fn test_package_link_visitor_filtering_links_on_host() {
+    let mut visitor = PackageLinkVisitorForTesting::with_filter(&|link| {
         // Remove dependencies of `ctor` and `datatest-derive` packages.  This should transitively
         // remove `proc-macro2`, `quote`, `syn`, and `unicode-xid` packages.
         //
-        // This filter is meant to test whether `CargoSet` algotithm consults the `resolver`
+        // This filter is meant to test whether `CargoSet` algotithm consults the `visitor`
         // in all required cases.  The filter may or may not make sense in practice (here
         // the trimmed down graph would fail to build...).
         link.from().name() != "ctor" && link.from().name() != "datatest-derive"
     });
-    let cargo_set = cargo_set_with_resolver(JsonFixture::metadata1(), "testcrate", &mut resolver);
+    let cargo_set = cargo_set_with_visitor(JsonFixture::metadata1(), "testcrate", &mut visitor);
 
-    // No `ctor` not `datatest-derive` dependencies (unlike in `test_package_resolver_visits`).
+    // No `ctor` not `datatest-derive` dependencies (unlike in `test_package_link_visitor_visits`).
     let package_names = cargo_set_package_names(&cargo_set)
         .into_iter()
         .collect::<HashSet<_>>();
@@ -344,17 +344,17 @@ fn test_package_resolver_filtering_links_on_host() {
     assert!(!package_names.contains("syn"));
     assert!(!package_names.contains("unicode-xid"));
 
-    // No `syn` => ... links (unlike in `test_package_resolver_visits`).
-    // No `quote` => ... links (unlike in `test_package_resolver_visits`).
-    // No `proc-macro2` ... => links (unlike in `test_package_resolver_visits`).
-    let trace = resolver.trace.into_iter().collect::<HashSet<_>>();
+    // No `syn` => ... links (unlike in `test_package_link_visitor_visits`).
+    // No `quote` => ... links (unlike in `test_package_link_visitor_visits`).
+    // No `proc-macro2` ... => links (unlike in `test_package_link_visitor_visits`).
+    let trace = visitor.trace.into_iter().collect::<HashSet<_>>();
     assert!(!trace.contains("syn@1.0.5 => unicode-xid@0.2.0"));
     assert!(!trace.contains("syn@1.0.5 => quote@1.0.2"));
     assert!(!trace.contains("syn@1.0.5 => proc-macro2@1.0.3"));
     assert!(!trace.contains("quote@1.0.2 => proc-macro2@1.0.3"));
     assert!(!trace.contains("proc-macro2@1.0.3 => unicode-xid@0.2.0"));
 
-    // The resolver was asked about these links, but didn't `accept` them.
+    // The visitor was asked about these links, but didn't accept them.
     // Therefore these links should be present in the `trace`, but missing from
     // the final `cargo_set`.
     let cargo_set_links = links_to_strings(cargo_set.host_links())
