@@ -5,6 +5,7 @@ use crate::{
     debug_ignore::DebugIgnore,
     graph::{
         DependencyDirection, GraphSpec,
+        ix_set::IxSet,
         query_core::{QueryParams, all_visit_map, reachable_map, reachable_map_buffered_filter},
     },
     petgraph_support::{
@@ -17,18 +18,15 @@ use fixedbitset::FixedBitSet;
 use petgraph::{
     graph::EdgeReference,
     prelude::*,
-    visit::{NodeFiltered, Reversed, VisitMap},
+    visit::{NodeFiltered, Reversed},
 };
-use std::marker::PhantomData;
 
 /// Core logic for queries that have been resolved into a known set of packages.
 ///
 /// The `G` param ensures that package and feature resolutions aren't mixed up accidentally.
 #[derive(Clone, Debug)]
 pub(super) struct ResolveCore<G> {
-    pub(super) included: FixedBitSet,
-    pub(super) len: usize,
-    _phantom: PhantomData<G>,
+    pub(super) included: IxSet<G>,
 }
 
 impl<G: GraphSpec> ResolveCore<G> {
@@ -41,26 +39,20 @@ impl<G: GraphSpec> ResolveCore<G> {
             QueryParams::Reverse(initials) => reachable_map(Reversed(graph), initials.into_inner()),
         };
         Self {
-            included,
-            len,
-            _phantom: PhantomData,
+            included: IxSet::from_visit_map(included, len, graph.node_count()),
         }
     }
 
     pub(super) fn all_nodes(graph: &Graph<G::Node, G::Edge, Directed, G::Ix>) -> Self {
         let (included, len) = all_visit_map(graph);
         Self {
-            included,
-            len,
-            _phantom: PhantomData,
+            included: IxSet::from_visit_map(included, len, graph.node_count()),
         }
     }
 
-    pub(super) fn empty() -> Self {
+    pub(super) fn empty(graph: &Graph<G::Node, G::Edge, Directed, G::Ix>) -> Self {
         Self {
-            included: FixedBitSet::with_capacity(0),
-            len: 0,
-            _phantom: PhantomData,
+            included: IxSet::empty(graph.node_count()),
         }
     }
 
@@ -83,9 +75,7 @@ impl<G: GraphSpec> ResolveCore<G> {
             ),
         };
         Self {
-            included,
-            len,
-            _phantom: PhantomData,
+            included: IxSet::from_visit_map(included, len, graph.node_count()),
         }
     }
 
@@ -106,32 +96,29 @@ impl<G: GraphSpec> ResolveCore<G> {
             ),
         };
         Self {
-            included,
-            len,
-            _phantom: PhantomData,
+            included: IxSet::from_visit_map(included, len, graph.node_count()),
         }
     }
 
-    pub(super) fn from_included<T: Into<FixedBitSet>>(included: T) -> Self {
-        let included = included.into();
-        let len = included.count_ones(..);
+    pub(super) fn from_included<T: Into<FixedBitSet>>(
+        included: T,
+        graph: &Graph<G::Node, G::Edge, Directed, G::Ix>,
+    ) -> Self {
         Self {
-            included,
-            len,
-            _phantom: PhantomData,
+            included: IxSet::from_bits(included.into(), graph.node_count()),
         }
     }
 
     pub(super) fn len(&self) -> usize {
-        self.len
+        self.included.len()
     }
 
     pub(super) fn is_empty(&self) -> bool {
-        self.len == 0
+        self.included.is_empty()
     }
 
     pub(super) fn contains(&self, ix: NodeIndex<G::Ix>) -> bool {
-        self.included.is_visited(&ix)
+        self.included.contains(ix)
     }
 
     // ---
@@ -140,30 +127,20 @@ impl<G: GraphSpec> ResolveCore<G> {
 
     pub(super) fn union_with(&mut self, other: &Self) {
         self.included.union_with(&other.included);
-        self.invalidate_caches();
     }
 
     pub(super) fn intersect_with(&mut self, other: &Self) {
         self.included.intersect_with(&other.included);
-        self.invalidate_caches();
     }
 
-    // fixedbitset 0.2.0 doesn't have a difference_with :(
     pub(super) fn difference(&self, other: &Self) -> Self {
-        Self::from_included(
-            self.included
-                .difference(&other.included)
-                .collect::<FixedBitSet>(),
-        )
+        Self {
+            included: self.included.difference(&other.included),
+        }
     }
 
     pub(super) fn symmetric_difference_with(&mut self, other: &Self) {
         self.included.symmetric_difference_with(&other.included);
-        self.invalidate_caches();
-    }
-
-    pub(super) fn invalidate_caches(&mut self) {
-        self.len = self.included.count_ones(..);
     }
 
     /// Returns the root metadatas in the specified direction.
@@ -211,7 +188,7 @@ impl<G: GraphSpec> ResolveCore<G> {
         Topo {
             node_iter,
             included: &self.included,
-            remaining: self.len,
+            remaining: self.included.len(),
         }
     }
 
@@ -246,18 +223,7 @@ impl<G: GraphSpec> ResolveCore<G> {
 
 impl<G: GraphSpec> PartialEq for ResolveCore<G> {
     fn eq(&self, other: &Self) -> bool {
-        if self.len != other.len {
-            return false;
-        }
-        if self.included == other.included {
-            return true;
-        }
-        // At the moment we don't normalize the capacity across self.included instances, so check
-        // the symmetric difference.
-        self.included
-            .symmetric_difference(&other.included)
-            .next()
-            .is_none()
+        self.included == other.included
     }
 }
 
@@ -267,7 +233,7 @@ impl<G: GraphSpec> Eq for ResolveCore<G> {}
 #[derive(Clone, Debug)]
 pub(super) struct Topo<'g, G: GraphSpec> {
     node_iter: NodeIter<'g, G::Ix>,
-    included: &'g FixedBitSet,
+    included: &'g IxSet<G>,
     remaining: usize,
 }
 
@@ -276,7 +242,7 @@ impl<G: GraphSpec> Iterator for Topo<'_, G> {
 
     fn next(&mut self) -> Option<Self::Item> {
         for ix in &mut self.node_iter {
-            if !self.included.is_visited(&ix) {
+            if !self.included.contains(ix) {
                 continue;
             }
             self.remaining -= 1;
@@ -301,7 +267,7 @@ impl<G: GraphSpec> ExactSizeIterator for Topo<'_, G> {
 #[allow(clippy::type_complexity)]
 pub(super) struct Links<'g, G: GraphSpec> {
     graph: DebugIgnore<&'g Graph<G::Node, G::Edge, Directed, G::Ix>>,
-    included: &'g FixedBitSet,
+    included: &'g IxSet<G>,
     edge_dfs: EdgeDfs<EdgeIndex<G::Ix>, NodeIndex<G::Ix>, FixedBitSet>,
     direction: DependencyDirection,
 }

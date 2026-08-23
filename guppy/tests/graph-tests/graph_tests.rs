@@ -738,6 +738,63 @@ mod small {
     }
 
     // No need for proptests because this is a really simple test.
+
+    #[test]
+    fn resolve_set_equality() {
+        let metadata1 = JsonFixture::metadata1();
+        let graph = metadata1.graph();
+
+        assert_eq!(
+            graph.resolve_none(),
+            graph
+                .resolve_ids(iter::empty::<&PackageId>())
+                .expect("resolved empty package ID list"),
+            "resolve_none matches resolving an empty package ID list"
+        );
+        assert_eq!(
+            graph.resolve_all(),
+            graph
+                .resolve_ids(graph.package_ids())
+                .expect("resolved all package IDs"),
+            "resolve_all matches resolving every package ID"
+        );
+        assert_eq!(
+            graph.resolve_all(),
+            graph
+                .query_forward(graph.package_ids())
+                .expect("queried all package IDs")
+                .resolve(),
+            "resolve_all matches a forward query from every package ID"
+        );
+
+        let feature_graph = graph.feature_graph();
+        assert_eq!(
+            feature_graph.resolve_none(),
+            feature_graph
+                .resolve_ids(iter::empty::<FeatureId>())
+                .expect("resolved empty feature ID list"),
+            "resolve_none matches resolving an empty feature ID list"
+        );
+        let all_feature_ids: Vec<FeatureId> = feature_graph
+            .resolve_all()
+            .feature_ids(DependencyDirection::Forward)
+            .collect();
+        assert_eq!(
+            feature_graph.resolve_all(),
+            feature_graph
+                .resolve_ids(all_feature_ids.clone())
+                .expect("resolved all feature IDs"),
+            "resolve_all matches resolving every feature ID"
+        );
+        assert_eq!(
+            feature_graph.resolve_all(),
+            feature_graph
+                .query_forward(all_feature_ids)
+                .expect("queried all feature IDs")
+                .resolve(),
+            "resolve_all matches a forward query from every feature ID"
+        );
+    }
 }
 
 mod large {

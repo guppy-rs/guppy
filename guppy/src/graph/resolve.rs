@@ -44,7 +44,7 @@ impl PackageGraph {
     pub fn resolve_none(&self) -> PackageSet<'_> {
         PackageSet {
             graph: DebugIgnore(self),
-            core: ResolveCore::empty(),
+            core: ResolveCore::empty(&self.dep_graph),
         }
     }
 
@@ -57,10 +57,8 @@ impl PackageGraph {
         &self,
         package_ids: impl IntoIterator<Item = &'a PackageId>,
     ) -> Result<PackageSet<'_>, Error> {
-        Ok(PackageSet {
-            graph: DebugIgnore(self),
-            core: ResolveCore::from_included::<IxBitSet>(self.package_ixs(package_ids)?),
-        })
+        let included: IxBitSet = self.package_ixs(package_ids)?;
+        Ok(PackageSet::from_included(self, included))
     }
 
     /// Creates a new `PackageSet` consisting of all packages in this workspace.
@@ -72,10 +70,7 @@ impl PackageGraph {
             .iter_by_path()
             .map(|(_, package)| package.package_ix())
             .collect();
-        PackageSet {
-            graph: DebugIgnore(self),
-            core: ResolveCore::from_included(included),
-        }
+        PackageSet::from_included(self, included)
     }
 
     /// Creates a new `PackageSet` consisting of the specified workspace packages by path.
@@ -96,10 +91,7 @@ impl PackageGraph {
                     .map(|package| package.package_ix())
             })
             .collect::<Result<_, Error>>()?;
-        Ok(PackageSet {
-            graph: DebugIgnore(self),
-            core: ResolveCore::from_included(included),
-        })
+        Ok(PackageSet::from_included(self, included))
     }
 
     /// Creates a new `PackageSet` consisting of the specified workspace packages by name.
@@ -120,10 +112,7 @@ impl PackageGraph {
                     .map(|package| package.package_ix())
             })
             .collect::<Result<_, _>>()?;
-        Ok(PackageSet {
-            graph: DebugIgnore(self),
-            core: ResolveCore::from_included(included),
-        })
+        Ok(PackageSet::from_included(self, included))
     }
 
     /// Creates a new `PackageSet` consisting of packages with the given name.
@@ -173,7 +162,7 @@ impl<'g> PackageSet<'g> {
     pub(super) fn from_included(graph: &'g PackageGraph, included: impl Into<FixedBitSet>) -> Self {
         Self {
             graph: DebugIgnore(graph),
-            core: ResolveCore::from_included(included),
+            core: ResolveCore::from_included(included, graph.dep_graph()),
         }
     }
 
@@ -214,13 +203,7 @@ impl<'g> PackageSet<'g> {
     ///
     /// This is equivalent to constructing a query from all the `package_ids`.
     pub fn to_package_query(&self, direction: DependencyDirection) -> PackageQuery<'g> {
-        let package_ixs = SortedSet::new(
-            self.core
-                .included
-                .ones()
-                .map(NodeIndex::new)
-                .collect::<Vec<_>>(),
-        );
+        let package_ixs = SortedSet::new(self.core.included.ones().collect::<Vec<_>>());
         self.graph.query_from_parts(package_ixs, direction)
     }
 
@@ -336,7 +319,7 @@ impl<'g> PackageSet<'g> {
         mut callback: impl FnMut(PackageMetadata<'g>) -> bool,
     ) -> (Self, Self) {
         let graph = *self.graph;
-        let mut left = IxBitSet::with_capacity(self.core.included.len());
+        let mut left = IxBitSet::with_capacity(graph.dep_graph().node_count());
         let mut right = left.clone();
 
         self.packages(direction).for_each(|package| {
@@ -369,7 +352,7 @@ impl<'g> PackageSet<'g> {
         mut callback: impl FnMut(PackageMetadata<'g>) -> Option<bool>,
     ) -> (Self, Self) {
         let graph = *self.graph;
-        let mut left = IxBitSet::with_capacity(self.core.included.len());
+        let mut left = IxBitSet::with_capacity(graph.dep_graph().node_count());
         let mut right = left.clone();
 
         self.packages(direction).for_each(|package| {
@@ -536,7 +519,7 @@ impl<'g> PackageSet<'g> {
     /// Returns all the package ixs without topologically sorting them.
     #[allow(dead_code)]
     pub(super) fn ixs_unordered(&self) -> impl Iterator<Item = NodeIndex<PackageIx>> + '_ {
-        self.core.included.ones().map(NodeIndex::new)
+        self.core.included.ones()
     }
 
     pub(super) fn contains_ix(&self, package_ix: NodeIndex<PackageIx>) -> bool {
