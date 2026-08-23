@@ -3,6 +3,14 @@
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+### Changed
+
+- Updated `toml` to 1.1.4 and `toml_edit` to 0.25.13.
+  - `HakariConfig::from_str`, `HakariBuilderSummary::to_string` and
+    `HakariBuilderSummary::write_to_string` now return error types from `toml`
+    1.x, and `TomlOutError::Toml` wraps `toml` 1.x's `ser::Error`.
+  - Configuration files are parsed according to the TOML 1.1 specification.
+
 ## [0.17.9] - 2025-12-26
 
 ### Changed

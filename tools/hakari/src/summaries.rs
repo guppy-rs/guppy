@@ -15,7 +15,6 @@ use guppy::{
 };
 use serde::{Deserialize, Serialize};
 use std::{collections::BTreeMap, fmt, str::FromStr};
-use toml::Serializer;
 
 /// The location of the configuration used by `cargo hakari`, relative to the workspace root.
 pub static DEFAULT_CONFIG_PATH: &str = ".config/hakari.toml";
@@ -190,9 +189,8 @@ impl HakariBuilderSummary {
     ///
     /// Returns an error if writing out the TOML was unsuccessful.
     pub fn write_to_string(&self, dst: &mut String) -> Result<(), toml::ser::Error> {
-        let mut serializer = Serializer::pretty(dst);
-        serializer.pretty_array(false);
-        self.serialize(&mut serializer)
+        let table = toml::Table::try_from(self)?;
+        guppy::graph::summaries::toml_compat::write_table(&table, dst)
     }
 }
 
