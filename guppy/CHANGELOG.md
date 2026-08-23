@@ -5,9 +5,32 @@
 
 ### Changed
 
+- The package and feature "resolver" traits are renamed and now receive an
+  opaque context ([#497]):
+  - `PackageResolver` is now `PackageLinkVisitor`, and `FeatureResolver` is now
+    `FeatureLinkVisitor`. The "resolver" name was easily confused with the Cargo
+    feature resolver, and the trait visits links rather than packages or features.
+  - `accept` is now `visit_link` on both traits.
+  - `visit_link` (and the closures passed to `PackageQuery::resolve_with_fn` and
+    `FeatureQuery::resolve_with_fn`) takes a `&PackageLinkContext` or
+    `&FeatureLinkContext` instead of a `&PackageQuery` or `&FeatureQuery`. The
+    query is available via `query()`; the context also provides `direction()`
+    and `starts_from_initial(&link)`.
+  - `CargoSet::with_package_resolver` is now `CargoSet::with_cargo_link_visitor`
+    and takes a new `CargoLinkVisitor` trait (in `guppy::graph::cargo`). Its
+    `CargoLinkContext` exposes which pass the link is being evaluated for
+    (`build_platform()`), the platform specs in effect (`platform_spec()` and
+    `build_dep_platform_spec()`), and whether dev and build dependencies are
+    under consideration for the link (`considers_dev_deps` and
+    `considers_build_deps` respectively).
+  - With the `proptest1` feature, `Prop010Resolver` is now `Prop010LinkVisitor`
+    and `PackageGraph::proptest1_resolver_strategy` is now
+    `proptest1_link_visitor_strategy`.
 - With the `summaries` feature, `toml` is updated to 1.1.4. `Error::TomlSerializeError`
   now wraps `toml` 1.x's `ser::Error`, a breaking change for code that names that type.
   Summary parsing follows the TOML 1.1 specification strictly.
+
+[#497]: https://github.com/guppy-rs/guppy/issues/497
 
 ## [0.17.26] - 2026-05-21
 
