@@ -762,7 +762,7 @@ impl<'g> PackageMetadata<'g> {
     /// The `PackageQuery` can be used to inspect dependencies in this graph.
     pub fn to_package_query(&self, direction: DependencyDirection) -> PackageQuery<'g> {
         self.graph
-            .query_from_parts(iter::once(self.inner.package_ix).collect(), direction)
+            .query_from_parts(iter::once(self.inner.package_ix), direction)
     }
 
     /// Creates a `PackageSet` consisting of just this package.

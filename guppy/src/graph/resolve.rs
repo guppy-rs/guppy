@@ -15,7 +15,6 @@ use crate::{
         dot::{DotFmt, DotVisitor, DotWrite},
         edge_ref::GraphEdgeRef,
     },
-    sorted_set::SortedSet,
 };
 use camino::Utf8Path;
 use fixedbitset::FixedBitSet;
@@ -203,8 +202,8 @@ impl<'g> PackageSet<'g> {
     ///
     /// This is equivalent to constructing a query from all the `package_ids`.
     pub fn to_package_query(&self, direction: DependencyDirection) -> PackageQuery<'g> {
-        let package_ixs = SortedSet::new(self.core.included.ones().collect::<Vec<_>>());
-        self.graph.query_from_parts(package_ixs, direction)
+        self.graph
+            .query_from_parts(self.core.included.ones(), direction)
     }
 
     // ---

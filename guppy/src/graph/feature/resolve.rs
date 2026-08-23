@@ -17,7 +17,6 @@ use crate::{
         resolve_core::ResolveCore,
     },
     petgraph_support::{IxBitSet, dfs::BufferedEdgeFilterFn},
-    sorted_set::SortedSet,
 };
 use fixedbitset::FixedBitSet;
 use itertools::Either;
@@ -175,8 +174,8 @@ impl<'g> FeatureSet<'g> {
     ///
     /// This is equivalent to constructing a query from all the feature IDs in this set.
     pub fn to_feature_query(&self, direction: DependencyDirection) -> FeatureQuery<'g> {
-        let feature_ixs = SortedSet::new(self.core.included.ones().collect::<Vec<_>>());
-        self.graph.query_from_parts(feature_ixs, direction)
+        self.graph
+            .query_from_parts(self.core.included.ones(), direction)
     }
 
     // ---
