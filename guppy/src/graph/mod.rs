@@ -16,6 +16,7 @@ pub mod cargo;
 mod cycles;
 pub mod feature;
 mod graph_impl;
+mod ix_set;
 #[cfg(feature = "proptest1")]
 mod proptest_helpers;
 mod query;

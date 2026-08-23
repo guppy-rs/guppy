@@ -41,7 +41,7 @@ impl<'g> FeatureGraph<'g> {
     pub fn resolve_none(&self) -> FeatureSet<'g> {
         FeatureSet {
             graph: DebugIgnore(*self),
-            core: ResolveCore::empty(),
+            core: ResolveCore::empty(self.dep_graph()),
         }
     }
 
@@ -52,12 +52,9 @@ impl<'g> FeatureGraph<'g> {
         &self,
         feature_ids: impl IntoIterator<Item = impl Into<FeatureId<'a>>>,
     ) -> Result<FeatureSet<'g>, Error> {
-        Ok(FeatureSet {
-            graph: DebugIgnore(*self),
-            core: ResolveCore::from_included::<IxBitSet>(
-                self.feature_ixs(feature_ids.into_iter().map(|feature| feature.into()))?,
-            ),
-        })
+        let included: IxBitSet =
+            self.feature_ixs(feature_ids.into_iter().map(|feature| feature.into()))?;
+        Ok(FeatureSet::from_included(*self, included))
     }
 }
 
@@ -129,14 +126,13 @@ impl<'g> FeatureSet<'g> {
         Self { graph, core }
     }
 
-    #[allow(dead_code)]
     pub(in crate::graph) fn from_included(
         graph: FeatureGraph<'g>,
         included: impl Into<FixedBitSet>,
     ) -> Self {
         Self {
             graph: DebugIgnore(graph),
-            core: ResolveCore::from_included(included.into()),
+            core: ResolveCore::from_included(included.into(), graph.dep_graph()),
         }
     }
 
@@ -179,13 +175,7 @@ impl<'g> FeatureSet<'g> {
     ///
     /// This is equivalent to constructing a query from all the feature IDs in this set.
     pub fn to_feature_query(&self, direction: DependencyDirection) -> FeatureQuery<'g> {
-        let feature_ixs = SortedSet::new(
-            self.core
-                .included
-                .ones()
-                .map(NodeIndex::new)
-                .collect::<Vec<_>>(),
-        );
+        let feature_ixs = SortedSet::new(self.core.included.ones().collect::<Vec<_>>());
         self.graph.query_from_parts(feature_ixs, direction)
     }
 
@@ -301,7 +291,7 @@ impl<'g> FeatureSet<'g> {
         mut callback: impl FnMut(FeatureMetadata<'g>) -> bool,
     ) -> (Self, Self) {
         let graph = self.graph;
-        let mut left = IxBitSet::with_capacity(self.core.included.len());
+        let mut left = IxBitSet::with_capacity(graph.dep_graph().node_count());
         let mut right = left.clone();
 
         self.features(direction).for_each(|feature| {
@@ -334,7 +324,7 @@ impl<'g> FeatureSet<'g> {
         mut callback: impl FnMut(FeatureMetadata<'g>) -> Option<bool>,
     ) -> (Self, Self) {
         let graph = self.graph;
-        let mut left = IxBitSet::with_capacity(self.core.included.len());
+        let mut left = IxBitSet::with_capacity(graph.dep_graph().node_count());
         let mut right = left.clone();
 
         self.features(direction).for_each(|feature| {
@@ -371,10 +361,7 @@ impl<'g> FeatureSet<'g> {
             .core
             .included
             .ones()
-            .map(|feature_ix| {
-                self.graph
-                    .package_ix_for_feature_ix(NodeIndex::new(feature_ix))
-            })
+            .map(|feature_ix| self.graph.package_ix_for_feature_ix(feature_ix))
             .collect();
         PackageSet::from_included(self.graph.package_graph, included.0)
     }
@@ -570,7 +557,7 @@ impl<'g> FeatureSet<'g> {
     pub(in crate::graph) fn ixs_unordered(
         &self,
     ) -> impl Iterator<Item = NodeIndex<FeatureIx>> + '_ {
-        self.core.included.ones().map(NodeIndex::new)
+        self.core.included.ones()
     }
 
     /// Returns true if this feature set contains the given package ix.
