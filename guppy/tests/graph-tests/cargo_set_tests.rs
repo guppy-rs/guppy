@@ -3,34 +3,55 @@
 
 use fixtures::json::JsonFixture;
 use guppy::graph::{
-    DependencyDirection, PackageLink, PackageLinkContext, PackageLinkVisitor,
-    cargo::{CargoOptions, CargoSet},
+    DependencyDirection, PackageLink,
+    cargo::{BuildPlatform, CargoLinkContext, CargoLinkVisitor, CargoOptions, CargoSet},
     feature::StandardFeatures,
 };
 use std::collections::HashSet;
 
-struct PackageLinkVisitorForTesting<'a, 'g> {
+struct CargoLinkVisitorForTesting<'a, 'g> {
     /// Optional filter of `link`s.  If `None`, then all links are accepted.
     link_filter: Option<&'a dyn Fn(PackageLink<'g>) -> bool>,
+
+    /// The value of `CargoOptions::set_include_dev` the visitor expects to be
+    /// used with, for checking `CargoLinkContext::considers_dev_deps`.
+    include_dev: bool,
 
     /// The `trace` field stores `link`s that were passed to `fn visit_link`.
     /// The links are formatted as `"foo@1.2.3 => bar@4.5.6"`.
     /// The links are stored in the order of `fn visit_link` calls.
     trace: Vec<String>,
+
+    /// Like `trace`, but also records the `BuildPlatform` each link was
+    /// visited on.
+    platform_trace: Vec<(BuildPlatform, String)>,
 }
 
-impl<'a, 'g> PackageLinkVisitorForTesting<'a, 'g> {
+impl<'a, 'g> CargoLinkVisitorForTesting<'a, 'g> {
     fn new() -> Self {
         Self {
             link_filter: None,
+            include_dev: false,
             trace: vec![],
+            platform_trace: vec![],
         }
     }
 
     fn with_filter(f: &'a impl Fn(PackageLink<'g>) -> bool) -> Self {
         Self {
             link_filter: Some(f),
+            include_dev: false,
             trace: vec![],
+            platform_trace: vec![],
+        }
+    }
+
+    fn with_include_dev(include_dev: bool) -> Self {
+        Self {
+            link_filter: None,
+            include_dev,
+            trace: vec![],
+            platform_trace: vec![],
         }
     }
 }
@@ -54,9 +75,40 @@ fn links_to_strings<'g>(links: impl IntoIterator<Item = PackageLink<'g>>) -> Vec
     result
 }
 
-impl<'g> PackageLinkVisitor<'g> for PackageLinkVisitorForTesting<'_, 'g> {
-    fn visit_link(&mut self, _cx: &PackageLinkContext<'g>, link: PackageLink<'g>) -> bool {
-        self.trace.push(link_to_string(&link));
+impl<'g> CargoLinkVisitor<'g> for CargoLinkVisitorForTesting<'_, 'g> {
+    fn visit_link(&mut self, cx: &CargoLinkContext<'_, 'g>, link: PackageLink<'g>) -> bool {
+        let link_str = link_to_string(&link);
+
+        // The context must return values consistent with what can be computed
+        // from the link and options directly.
+        assert_eq!(
+            cx.considers_build_deps(&link),
+            link.from().has_build_script(),
+            "considers_build_deps for {link_str}",
+        );
+        assert_eq!(
+            cx.considers_dev_deps(&link),
+            self.include_dev && cx.package_context().starts_from_initial(&link),
+            "considers_dev_deps for {link_str}",
+        );
+        assert_eq!(
+            cx.package_context().direction(),
+            DependencyDirection::Forward,
+            "direction for {link_str}",
+        );
+        match cx.build_platform() {
+            BuildPlatform::Target => {}
+            BuildPlatform::Host => {
+                assert_eq!(
+                    format!("{:?}", cx.platform_spec()),
+                    format!("{:?}", cx.build_dep_platform_spec()),
+                    "host pass evaluates all deps against the host platform for {link_str}",
+                );
+            }
+        }
+
+        self.trace.push(link_str.clone());
+        self.platform_trace.push((cx.build_platform(), link_str));
         self.link_filter.map(|f| f(link)).unwrap_or(true)
     }
 }
@@ -64,7 +116,17 @@ impl<'g> PackageLinkVisitor<'g> for PackageLinkVisitorForTesting<'_, 'g> {
 fn cargo_set_with_visitor<'g>(
     test_fixture: &'g JsonFixture,
     root_package_name: &str,
-    visitor: &mut dyn PackageLinkVisitor<'g>,
+    visitor: &mut dyn CargoLinkVisitor<'g>,
+) -> CargoSet<'g> {
+    let cargo_options = CargoOptions::new();
+    cargo_set_with_visitor_and_options(test_fixture, root_package_name, visitor, &cargo_options)
+}
+
+fn cargo_set_with_visitor_and_options<'g>(
+    test_fixture: &'g JsonFixture,
+    root_package_name: &str,
+    visitor: &mut dyn CargoLinkVisitor<'g>,
+    cargo_options: &CargoOptions<'_>,
 ) -> CargoSet<'g> {
     let package_graph = test_fixture.graph();
 
@@ -75,8 +137,22 @@ fn cargo_set_with_visitor<'g>(
         .resolve_none()
         .to_feature_set(StandardFeatures::Default);
 
-    let cargo_options = CargoOptions::new();
-    CargoSet::with_cargo_link_visitor(initials, no_extra_features, visitor, &cargo_options).unwrap()
+    CargoSet::with_cargo_link_visitor(initials, no_extra_features, visitor, cargo_options).unwrap()
+}
+
+/// Returns the links from `platform_trace` visited on `build_platform`,
+/// sorted.
+fn platform_trace_links(
+    platform_trace: &[(BuildPlatform, String)],
+    build_platform: BuildPlatform,
+) -> Vec<String> {
+    let mut result = platform_trace
+        .iter()
+        .filter(|(platform, _)| *platform == build_platform)
+        .map(|(_, link)| link.clone())
+        .collect::<Vec<_>>();
+    result.sort();
+    result
 }
 
 fn cargo_set_package_names(cargo_set: &CargoSet) -> Vec<String> {
@@ -92,7 +168,7 @@ fn cargo_set_package_names(cargo_set: &CargoSet) -> Vec<String> {
 
 #[test]
 fn test_package_link_visitor_visits() {
-    let mut visitor = PackageLinkVisitorForTesting::new();
+    let mut visitor = CargoLinkVisitorForTesting::new();
     let cargo_set = cargo_set_with_visitor(JsonFixture::metadata1(), "testcrate", &mut visitor);
     assert_eq!(
         cargo_set_package_names(&cargo_set),
@@ -250,8 +326,57 @@ fn test_package_link_visitor_visits() {
 }
 
 #[test]
+fn test_cargo_link_visitor_build_platforms() {
+    let mut visitor = CargoLinkVisitorForTesting::new();
+    let cargo_set = cargo_set_with_visitor(JsonFixture::metadata1(), "testcrate", &mut visitor);
+
+    // testcrate has proc-macro and build deps, so both passes show up in the
+    // trace.
+    assert_eq!(visitor.platform_trace.len(), visitor.trace.len());
+
+    // For this fixture, the target pass == target + proc-macro + build-dep
+    // links, and host pass == host links.
+    let expected_target = links_to_strings(
+        cargo_set
+            .target_links()
+            .chain(cargo_set.proc_macro_links())
+            .chain(cargo_set.build_dep_links()),
+    );
+    assert_eq!(
+        platform_trace_links(&visitor.platform_trace, BuildPlatform::Target),
+        expected_target,
+    );
+    assert_eq!(
+        platform_trace_links(&visitor.platform_trace, BuildPlatform::Host),
+        links_to_strings(cargo_set.host_links()),
+    );
+}
+
+#[test]
+fn test_cargo_link_visitor_include_dev() {
+    let mut visitor = CargoLinkVisitorForTesting::with_include_dev(true);
+    let mut cargo_options = CargoOptions::new();
+    cargo_options.set_include_dev(true);
+    let cargo_set = cargo_set_with_visitor_and_options(
+        JsonFixture::metadata1(),
+        "testcrate",
+        &mut visitor,
+        &cargo_options,
+    );
+
+    let host_links = platform_trace_links(&visitor.platform_trace, BuildPlatform::Host);
+    let target_links = platform_trace_links(&visitor.platform_trace, BuildPlatform::Target);
+    assert!(!host_links.is_empty());
+    assert!(!target_links.is_empty());
+    assert_eq!(
+        platform_trace_links(&visitor.platform_trace, BuildPlatform::Host),
+        links_to_strings(cargo_set.host_links()),
+    );
+}
+
+#[test]
 fn test_package_link_visitor_filtering_normal_links_on_target() {
-    let mut visitor = PackageLinkVisitorForTesting::with_filter(&|link| {
+    let mut visitor = CargoLinkVisitorForTesting::with_filter(&|link| {
         // Remove `winapi` and `winapu-util` links.  This should transitively remove `winapi =>
         // winapi-x86_64-pc-windows-gnu` and `winapi => winapi-i686-pc-windows-gnu`.
         //
@@ -291,7 +416,7 @@ fn test_package_link_visitor_filtering_normal_links_on_target() {
 
 #[test]
 fn test_package_link_visitor_filtering_build_links_on_target() {
-    let mut visitor = PackageLinkVisitorForTesting::with_filter(&|link| {
+    let mut visitor = CargoLinkVisitorForTesting::with_filter(&|link| {
         // Remove `datatest` => `version_check` build dependency.
         //
         // This filter is meant to test whether `CargoSet` algotithm consults the `visitor`
@@ -324,7 +449,7 @@ fn test_package_link_visitor_filtering_build_links_on_target() {
 
 #[test]
 fn test_package_link_visitor_filtering_links_on_host() {
-    let mut visitor = PackageLinkVisitorForTesting::with_filter(&|link| {
+    let mut visitor = CargoLinkVisitorForTesting::with_filter(&|link| {
         // Remove dependencies of `ctor` and `datatest-derive` packages.  This should transitively
         // remove `proc-macro2`, `quote`, `syn`, and `unicode-xid` packages.
         //

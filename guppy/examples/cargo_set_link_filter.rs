@@ -1,30 +1,32 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-//! Demonstration how `CargoSet` algorithm can accept links that are present on:
+//! Demonstration of how the `CargoSet` algorithm can accept links that ar
+//! present on:
 //!
 //! 1) any/all platforms (using default `CargoOptions` and `CargoSet::new`)
 //! 2) a single platform (using `CargoOptions::set_target_platform`)
 //! 3) a set of platforms (using `CargoSet::with_cargo_link_visitor`)
 //!
-//! The last example uses `PackageLinkVisitor` as a filter - this is a very
+//! The last example uses `CargoLinkVisitor` as a filter - this is a very
 //! generic mechanism and can be used to not only filter by platforms,
 //! but also implement a variety of other filtering options.  For example,
 //! `CargoOptions::add_omitted_packages` could also be implemented using
-//! `CargoSet::with_cargo_link_visitor` and an appropriate `PackageLinkVisitor`.
+//! `CargoSet::with_cargo_link_visitor` and an appropriate `CargoLinkVisitor`.
 
 use guppy::{
     CargoMetadata, Error,
     graph::{
-        DependencyDirection, DependencyReq, PackageLink, PackageLinkContext, PackageLinkVisitor,
-        cargo::{CargoOptions, CargoSet},
+        DependencyDirection, DependencyReq, PackageLink,
+        cargo::{CargoLinkContext, CargoLinkVisitor, CargoOptions, CargoSet},
         feature::StandardFeatures,
     },
     platform::{EnabledTernary, PlatformSpec, PlatformStatus, Triple},
 };
 
-/// Custom `guppy::graph::PackageLinkVisitor` that will only accept `PackageLink`s
-/// that are enabled on at least one from the given set of platforms.
+/// Custom `guppy::graph::cargo::CargoLinkVisitor` that will only accept
+/// `PackageLink`s that are enabled on at least one from the given set of
+/// platforms.
 struct PlatformSetLinkVisitor(Vec<PlatformSpec>);
 
 impl PlatformSetLinkVisitor {
@@ -46,10 +48,13 @@ impl PlatformSetLinkVisitor {
     }
 }
 
-impl<'g> PackageLinkVisitor<'g> for PlatformSetLinkVisitor {
-    fn visit_link(&mut self, _cx: &PackageLinkContext<'g>, link: PackageLink<'g>) -> bool {
+impl<'g> CargoLinkVisitor<'g> for PlatformSetLinkVisitor {
+    fn visit_link(&mut self, cx: &CargoLinkContext<'_, 'g>, link: PackageLink<'g>) -> bool {
+        // Apply the same rules that the `CargoSet` algorithm does around dev
+        // and build deps.
         self.should_include_dependency_req(link.normal())
-            || self.should_include_dependency_req(link.build())
+            || (cx.considers_dev_deps(&link) && self.should_include_dependency_req(link.dev()))
+            || (cx.considers_build_deps(&link) && self.should_include_dependency_req(link.build()))
     }
 }
 
