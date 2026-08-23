@@ -4,9 +4,10 @@
 use crate::{
     DependencyKind, Error,
     graph::{
-        DependencyDirection, PackageGraph, PackageIx, PackageLink, PackageLinkVisitor, PackageSet,
+        DependencyDirection, PackageGraph, PackageIx, PackageLink, PackageSet,
         cargo::{
-            CargoIntermediateSet, CargoOptions, CargoResolverVersion, CargoSet, InitialsPlatform,
+            BuildPlatform, CargoIntermediateSet, CargoLinkContext, CargoLinkVisitor, CargoOptions,
+            CargoResolverVersion, CargoSet, InitialsPlatform,
         },
         feature::{ConditionalLink, FeatureLabel, FeatureQuery, FeatureSet, StandardFeatures},
     },
@@ -39,7 +40,7 @@ impl<'a> CargoSetBuildState<'a> {
         self,
         initials: FeatureSet<'g>,
         features_only: FeatureSet<'g>,
-        visitor: Option<&mut dyn PackageLinkVisitor<'g>>,
+        visitor: Option<&mut dyn CargoLinkVisitor<'g>>,
     ) -> CargoSet<'g> {
         match self.opts.resolver {
             CargoResolverVersion::V1 => self.new_v1(initials, features_only, visitor, false),
@@ -69,7 +70,7 @@ impl<'a> CargoSetBuildState<'a> {
         self,
         initials: FeatureSet<'g>,
         features_only: FeatureSet<'g>,
-        visitor: Option<&mut dyn PackageLinkVisitor<'g>>,
+        visitor: Option<&mut dyn CargoLinkVisitor<'g>>,
         avoid_dev_deps: bool,
     ) -> CargoSet<'g> {
         self.build_set(initials, features_only, visitor, |query| {
@@ -81,7 +82,7 @@ impl<'a> CargoSetBuildState<'a> {
         self,
         initials: FeatureSet<'g>,
         features_only: FeatureSet<'g>,
-        visitor: Option<&mut dyn PackageLinkVisitor<'g>>,
+        visitor: Option<&mut dyn CargoLinkVisitor<'g>>,
     ) -> CargoSet<'g> {
         self.build_set(initials, features_only, visitor, |query| {
             self.new_v2_intermediate(query)
@@ -100,7 +101,7 @@ impl<'a> CargoSetBuildState<'a> {
         &self,
         initials: FeatureSet<'g>,
         features_only: FeatureSet<'g>,
-        mut visitor: Option<&mut dyn PackageLinkVisitor<'g>>,
+        mut visitor: Option<&mut dyn CargoLinkVisitor<'g>>,
         intermediate_fn: impl FnOnce(FeatureQuery<'g>) -> CargoIntermediateSet<'g>,
     ) -> CargoSet<'g> {
         // Prepare a package query for step 2.
@@ -216,18 +217,19 @@ impl<'a> CargoSetBuildState<'a> {
                 return false;
             }
 
+            let cargo_cx = CargoLinkContext::new(cx, BuildPlatform::Target, self.opts);
             let accepted = visitor
                 .as_mut()
-                .map(|r| r.visit_link(cx, link))
+                .map(|r| r.visit_link(&cargo_cx, link))
                 .unwrap_or(true);
             if !accepted {
                 return false;
             }
 
             // Dev-dependencies are only considered if `from` is an initial.
-            let consider_dev = self.opts.include_dev && cx.starts_from_initial(&link);
+            let consider_dev = cargo_cx.considers_dev_deps(&link);
             // Build dependencies are only considered if there's a build script.
-            let consider_build = from.has_build_script();
+            let consider_build = cargo_cx.considers_build_deps(&link);
 
             let mut follow_target =
                 is_enabled(target_set, &link, DependencyKind::Normal, target_platform)
@@ -286,9 +288,10 @@ impl<'a> CargoSetBuildState<'a> {
                     return false;
                 }
 
+                let cargo_cx = CargoLinkContext::new(cx, BuildPlatform::Host, self.opts);
                 let accepted = visitor
                     .as_mut()
-                    .map(|r| r.visit_link(cx, link))
+                    .map(|r| r.visit_link(&cargo_cx, link))
                     .unwrap_or(true);
                 if !accepted {
                     return false;
@@ -297,8 +300,8 @@ impl<'a> CargoSetBuildState<'a> {
                 // All relevant nodes in host_ixs have already been added to host_direct_deps at [a].
 
                 // Dev-dependencies are only considered if `from` is an initial.
-                let consider_dev = self.opts.include_dev && cx.starts_from_initial(&link);
-                let consider_build = from.has_build_script();
+                let consider_dev = cargo_cx.considers_dev_deps(&link);
+                let consider_build = cargo_cx.considers_build_deps(&link);
 
                 // Only normal and build dependencies are typically considered. Dev-dependencies of
                 // initials are also considered.

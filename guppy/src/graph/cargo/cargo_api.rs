@@ -4,7 +4,7 @@
 use crate::{
     Error, PackageId,
     graph::{
-        DependencyDirection, PackageGraph, PackageIx, PackageLink, PackageLinkVisitor, PackageSet,
+        DependencyDirection, PackageGraph, PackageIx, PackageLink, PackageLinkContext, PackageSet,
         cargo::build::CargoSetBuildState,
         feature::{FeatureGraph, FeatureSet},
     },
@@ -117,6 +117,109 @@ impl<'a> CargoOptions<'a> {
 impl Default for CargoOptions<'_> {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+/// Represents whether a particular link within a package graph should be
+/// followed while building a [`CargoSet`].
+///
+/// This is similar to [`PackageLinkVisitor`], but is passed a
+/// [`CargoLinkContext`] with additional information about the Cargo build.
+///
+/// [`PackageLinkVisitor`]: crate::graph::PackageLinkVisitor
+pub trait CargoLinkVisitor<'g> {
+    /// Returns true if this link should be followed.
+    ///
+    /// Returning false does not prevent the `to` package from being included
+    /// if it's reachable through other means.
+    fn visit_link(&mut self, cx: &CargoLinkContext<'_, 'g>, link: PackageLink<'g>) -> bool;
+}
+
+impl<'g, T> CargoLinkVisitor<'g> for &mut T
+where
+    T: CargoLinkVisitor<'g>,
+{
+    fn visit_link(&mut self, cx: &CargoLinkContext<'_, 'g>, link: PackageLink<'g>) -> bool {
+        (**self).visit_link(cx, link)
+    }
+}
+
+impl<'g> CargoLinkVisitor<'g> for Box<dyn CargoLinkVisitor<'g> + '_> {
+    fn visit_link(&mut self, cx: &CargoLinkContext<'_, 'g>, link: PackageLink<'g>) -> bool {
+        (**self).visit_link(cx, link)
+    }
+}
+
+impl<'g> CargoLinkVisitor<'g> for &mut dyn CargoLinkVisitor<'g> {
+    fn visit_link(&mut self, cx: &CargoLinkContext<'_, 'g>, link: PackageLink<'g>) -> bool {
+        (**self).visit_link(cx, link)
+    }
+}
+
+/// Context passed to a [`CargoLinkVisitor`] for each link visited while
+/// building a [`CargoSet`].
+#[derive(Clone, Debug)]
+pub struct CargoLinkContext<'a, 'g> {
+    package_context: &'a PackageLinkContext<'g>,
+    build_platform: BuildPlatform,
+    platform_spec: &'a PlatformSpec,
+    build_dep_platform_spec: &'a PlatformSpec,
+    include_dev: bool,
+}
+
+impl<'a, 'g> CargoLinkContext<'a, 'g> {
+    pub(super) fn new(
+        package_context: &'a PackageLinkContext<'g>,
+        build_platform: BuildPlatform,
+        opts: &'a CargoOptions<'_>,
+    ) -> Self {
+        let (platform_spec, build_dep_platform_spec) = match build_platform {
+            BuildPlatform::Target => (&opts.target_platform, &opts.host_platform),
+            BuildPlatform::Host => (&opts.host_platform, &opts.host_platform),
+        };
+        Self {
+            package_context,
+            build_platform,
+            platform_spec,
+            build_dep_platform_spec,
+            include_dev: opts.include_dev,
+        }
+    }
+
+    /// Returns the context for the underlying package graph traversal.
+    pub fn package_context(&self) -> &PackageLinkContext<'g> {
+        self.package_context
+    }
+
+    /// Returns the platform this link is being evaluated for: the target pass
+    /// or the host pass.
+    pub fn build_platform(&self) -> BuildPlatform {
+        self.build_platform
+    }
+
+    /// Returns the platform spec that normal and dev dependencies are
+    /// evaluated against in this pass.
+    pub fn platform_spec(&self) -> &PlatformSpec {
+        self.platform_spec
+    }
+
+    /// Returns the platform spec that build dependencies are evaluated against
+    /// in this pass (always the host platform).
+    pub fn build_dep_platform_spec(&self) -> &PlatformSpec {
+        self.build_dep_platform_spec
+    }
+
+    /// Returns true if dev-dependencies of this link may be followed:
+    /// [`CargoOptions::set_include_dev`] is set and the `from` package is an
+    /// initial.
+    pub fn considers_dev_deps(&self, link: &PackageLink<'g>) -> bool {
+        self.include_dev && self.package_context.starts_from_initial(link)
+    }
+
+    /// Returns true if build-dependencies of this link may be followed: the
+    /// `from` package has a build script.
+    pub fn considers_build_deps(&self, link: &PackageLink<'g>) -> bool {
+        link.from().has_build_script()
     }
 }
 
@@ -260,7 +363,7 @@ impl<'g> CargoSet<'g> {
         Self::new_internal(initials, features_only, None, opts)
     }
 
-    /// Like `Cargo.new`, but takes an additional [`PackageLinkVisitor`] which can
+    /// Like `Cargo.new`, but takes an additional [`CargoLinkVisitor`] which can
     /// be used to filter out some dependency edges, or to collect additional
     /// information.
     ///
@@ -269,11 +372,11 @@ impl<'g> CargoSet<'g> {
     /// [`CargoOptions::add_omitted_packages`], but before any other decisions
     /// are made.
     ///
-    /// [`visitor.visit_link`]: PackageLinkVisitor::visit_link
+    /// [`visitor.visit_link`]: CargoLinkVisitor::visit_link
     pub fn with_cargo_link_visitor(
         initials: FeatureSet<'g>,
         features_only: FeatureSet<'g>,
-        mut visitor: impl PackageLinkVisitor<'g>,
+        mut visitor: impl CargoLinkVisitor<'g>,
         opts: &CargoOptions<'_>,
     ) -> Result<Self, Error> {
         Self::new_internal(initials, features_only, Some(&mut visitor), opts)
@@ -284,7 +387,7 @@ impl<'g> CargoSet<'g> {
     fn new_internal(
         initials: FeatureSet<'g>,
         features_only: FeatureSet<'g>,
-        visitor: Option<&mut dyn PackageLinkVisitor<'g>>,
+        visitor: Option<&mut dyn CargoLinkVisitor<'g>>,
         opts: &CargoOptions<'_>,
     ) -> Result<Self, Error> {
         let build_state = CargoSetBuildState::new(initials.graph().package_graph, opts)?;
