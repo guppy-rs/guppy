@@ -55,6 +55,9 @@
     and `PackageGraph::proptest1_resolver_strategy` is now
     `proptest1_link_visitor_strategy`.
 - A new `CargoSetInputs` struct in `guppy::graph::cargo` combines `CargoOptions` and the features-only set.
+- `CargoSet` now keeps a copy of the inputs it was built with.
+  - With the `summaries` feature, `CargoSet::to_summary` uses the options the set was built with.
+  - `CargoSet::features_only` is removed. Use `CargoSet::inputs().features_only` instead.
 - With the `summaries` feature, `CargoOptionsSummary` is renamed to
   `CargoSetInputsSummary`. Each `features-only` entry now records whether the
   package's base feature is enabled, and `base = false` when it isn't. (The field

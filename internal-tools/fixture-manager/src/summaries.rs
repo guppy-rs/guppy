@@ -70,7 +70,7 @@ impl<'g> ContextImpl<'g> for SummaryContext {
             let cargo_set = CargoSet::new(initials, features_only, &cargo_opts)
                 .expect("into_cargo_set succeeded");
             let summary = cargo_set
-                .to_summary(&cargo_opts)
+                .to_summary()
                 .expect("generated summaries should serialize correctly");
 
             let metadata: CargoSetInputsSummary = summary
@@ -83,13 +83,13 @@ impl<'g> ContextImpl<'g> for SummaryContext {
                 .expect("cargo set inputs rebuilt from the summary");
             assert_eq!(
                 &inputs.features_only,
-                cargo_set.features_only(),
+                &cargo_set.inputs().features_only,
                 "features-only set rebuilt from the summary",
             );
             let rebuilt_summary = inputs
                 .to_cargo_set(cargo_set.initials().clone())
                 .expect("cargo set rebuilt from the summary")
-                .to_summary(&inputs.options)
+                .to_summary()
                 .expect("rebuilt summary generated");
             assert_eq!(
                 rebuilt_summary, summary,

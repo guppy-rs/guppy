@@ -22,16 +22,12 @@ use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
 
 impl CargoSet<'_> {
-    /// Creates a build summary with the given options.
+    /// Creates a build summary for this `CargoSet`.
     ///
     /// Requires the `summaries` feature to be enabled.
-    pub fn to_summary(&self, opts: &CargoOptions<'_>) -> Result<Summary, Error> {
+    pub fn to_summary(&self) -> Result<Summary, Error> {
         let initials = self.initials();
-        let metadata = CargoSetInputsSummary::from_parts(
-            initials.graph().package_graph,
-            self.features_only(),
-            opts,
-        )?;
+        let metadata = CargoSetInputsSummary::new(self.inputs())?;
         let target_features = self.target_features();
         let host_features = self.host_features();
 
@@ -172,18 +168,9 @@ pub struct CargoSetInputsSummary {
 impl CargoSetInputsSummary {
     /// Creates a new `CargoSetInputsSummary` from the given inputs.
     pub fn new(inputs: &CargoSetInputs<'_>) -> Result<Self, Error> {
-        Self::from_parts(
-            inputs.features_only.graph().package_graph,
-            &inputs.features_only,
-            &inputs.options,
-        )
-    }
-
-    fn from_parts(
-        graph: &PackageGraph,
-        features_only: &FeatureSet<'_>,
-        opts: &CargoOptions<'_>,
-    ) -> Result<Self, Error> {
+        let graph = inputs.features_only.graph().package_graph;
+        let features_only = &inputs.features_only;
+        let opts = &inputs.options;
         let omitted_packages =
             PackageSetSummary::from_package_ids(graph, opts.omitted_packages.iter().copied())?;
 
