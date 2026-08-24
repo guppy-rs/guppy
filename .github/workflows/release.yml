@@ -16,7 +16,7 @@ jobs:
       id-token: write     # Required for OIDC token exchange
       contents: write     # Required for creating releases
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
       - uses: rust-lang/crates-io-auth-action@v1
@@ -47,7 +47,7 @@ jobs:
       id-token: write     # Required for OIDC token exchange
       contents: write     # Required for creating releases
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
       - uses: rust-lang/crates-io-auth-action@v1
@@ -78,7 +78,7 @@ jobs:
       id-token: write     # Required for OIDC token exchange
       contents: write     # Required for creating releases
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
       - uses: rust-lang/crates-io-auth-action@v1
@@ -110,7 +110,7 @@ jobs:
       id-token: write     # Required for OIDC token exchange
       contents: write     # Required for creating releases
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
       - uses: rust-lang/crates-io-auth-action@v1
@@ -141,7 +141,7 @@ jobs:
       id-token: write     # Required for OIDC token exchange
       contents: write     # Required for creating releases
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
       - uses: rust-lang/crates-io-auth-action@v1
@@ -172,7 +172,7 @@ jobs:
       id-token: write     # Required for OIDC token exchange
       contents: write     # Required for creating releases
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
       - uses: rust-lang/crates-io-auth-action@v1
@@ -201,7 +201,7 @@ jobs:
     permissions:
       contents: write     # Required for creating releases
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
       # Note: do not publish this to crates.io until binaries are built and uploaded below. This is
@@ -275,7 +275,7 @@ jobs:
             build-tool: cross
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - name: Install Rust
         uses: dtolnay/rust-toolchain@4360b52568e2003a75bf9bc1d59f33a8e3fc893c # stable
       - uses: taiki-e/upload-rust-binary-action@3962470d6e7f1993108411bc3f75a135ec67fc8c # v1
@@ -323,7 +323,7 @@ jobs:
     permissions:
       id-token: write     # Required for OIDC token exchange
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
       - uses: rust-lang/crates-io-auth-action@v1
