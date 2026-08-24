@@ -314,6 +314,47 @@ impl Default for InitialsPlatform {
     }
 }
 
+/// The inputs to a `CargoSet` other than the initials.
+///
+/// The initials are kept separate so that one `CargoSetInputs` can be reused
+/// across many `CargoSet`s via [`to_cargo_set`](Self::to_cargo_set).
+///
+/// Both fields must refer to the same `PackageGraph` as the initials they
+/// are used with.
+#[derive(Clone, Debug)]
+#[non_exhaustive]
+pub struct CargoSetInputs<'g> {
+    /// The Cargo options used to build the `CargoSet`.
+    pub options: CargoOptions<'g>,
+
+    /// The features-only set: see [`CargoSet::new`].
+    pub features_only: FeatureSet<'g>,
+}
+
+assert_covariant!(CargoSetInputs);
+
+impl<'g> CargoSetInputs<'g> {
+    /// Creates a new `CargoSetInputs` from the given inputs.
+    pub fn new(options: CargoOptions<'g>, features_only: FeatureSet<'g>) -> Self {
+        Self {
+            options,
+            features_only,
+        }
+    }
+
+    /// Simulates a Cargo build of `initials` with these inputs.
+    ///
+    /// This is a shorthand for [`CargoSet::new`].
+    ///
+    /// ## Panics
+    ///
+    /// Panics if `initials` was built from a different package graph than
+    /// these inputs.
+    pub fn to_cargo_set(&self, initials: FeatureSet<'g>) -> Result<CargoSet<'g>, Error> {
+        CargoSet::new(initials, self.features_only.clone(), &self.options)
+    }
+}
+
 /// A set of packages and features, as would be built by Cargo.
 ///
 /// Cargo implements a set of algorithms to figure out which packages or features are built in

@@ -32,6 +32,12 @@ macro_rules! proptest_suite {
                 run_summary_id_roundtrip(JsonFixture::$name().graph());
             }
 
+            #[cfg(feature = "summaries")]
+            #[test]
+            fn proptest_features_only_summary_roundtrip() {
+                run_features_only_summary_roundtrip(JsonFixture::$name().graph());
+            }
+
             #[test]
             fn proptest_query_depends_on() {
                 run_query_depends_on(JsonFixture::$name().graph());
@@ -148,6 +154,78 @@ pub(super) fn run_summary_id_roundtrip(graph: &'static PackageGraph) {
             .metadata_by_summary_id(&summary_id)
             .expect("summary ID is valid");
         prop_assert_eq!(package_id, package2.id(), "roundtrip successful");
+    })
+}
+
+#[cfg(feature = "summaries")]
+pub(super) fn run_features_only_summary_roundtrip(graph: &'static PackageGraph) {
+    use guppy::graph::{
+        cargo::{CargoSet, CargoSetInputs},
+        summaries::CargoSetInputsSummary,
+    };
+
+    let feature_graph = graph.feature_graph();
+
+    proptest!(|(
+        initial_ids in hash_set(graph.workspace().proptest1_id_strategy(), 0..8),
+        initials_filter in prop::sample::select(StandardFeatures::VALUES.as_slice()),
+        features_only in feature_graph.proptest1_set_strategy(),
+        opts in graph.proptest1_cargo_options_strategy(),
+    )| {
+        let initials = graph
+            .resolve_ids(initial_ids.iter().copied())
+            .expect("valid package IDs")
+            .to_feature_set(initials_filter);
+
+        let inputs = CargoSetInputs::new(opts, features_only);
+        let summary = CargoSetInputsSummary::new(&inputs).expect("inputs summary generated");
+        let rebuilt = summary
+            .to_cargo_set_inputs(graph)
+            .expect("cargo set inputs rebuilt from the summary");
+
+        // The summary doesn't record base features, so the rebuilt set is the
+        // original plus the base feature of every package in it.
+        let base_features = feature_graph
+            .resolve_ids(
+                inputs
+                    .features_only
+                    .packages_with_features(DependencyDirection::Forward)
+                    .map(|feature_list| FeatureId::base(feature_list.package().id())),
+            )
+            .expect("valid base feature IDs");
+        let normalized_features_only = inputs.features_only.union(&base_features);
+        prop_assert_eq!(
+            &rebuilt.features_only,
+            &normalized_features_only,
+            "features-only set rebuilt from the summary, plus base features"
+        );
+
+        let rebuilt_summary =
+            CargoSetInputsSummary::new(&rebuilt).expect("inputs summary regenerated");
+        prop_assert_eq!(
+            &rebuilt_summary,
+            &summary,
+            "inputs summary regenerated from the rebuilt inputs"
+        );
+
+        // Base features affect the simulated build, so compare against the
+        // normalized set rather than the original one.
+        let normalized_set =
+            CargoSet::new(initials.clone(), normalized_features_only, &inputs.options)
+                .expect("cargo set built from the normalized inputs");
+        let rebuilt_set = rebuilt
+            .to_cargo_set(initials)
+            .expect("cargo set built from the rebuilt inputs");
+        prop_assert_eq!(
+            rebuilt_set.target_features(),
+            normalized_set.target_features(),
+            "target features match after the round trip"
+        );
+        prop_assert_eq!(
+            rebuilt_set.host_features(),
+            normalized_set.host_features(),
+            "host features match after the round trip"
+        );
     })
 }
 

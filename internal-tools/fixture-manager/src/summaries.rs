@@ -7,7 +7,7 @@ use camino::{Utf8Path, Utf8PathBuf};
 use fixtures::json::JsonFixture;
 use guppy::graph::{
     cargo::CargoSet,
-    summaries::{Summary, diff::SummaryDiff},
+    summaries::{CargoSetInputsSummary, Summary, diff::SummaryDiff},
 };
 use guppy_cmdlib::PackagesAndFeatures;
 use hakari::diffy::{PatchFormatter, create_patch};
@@ -69,13 +69,34 @@ impl<'g> ContextImpl<'g> for SummaryContext {
                 .generate(&cargo_opts_strategy);
             let cargo_set = CargoSet::new(initials, features_only, &cargo_opts)
                 .expect("into_cargo_set succeeded");
+            let summary = cargo_set
+                .to_summary(&cargo_opts)
+                .expect("generated summaries should serialize correctly");
 
-            (
-                idx,
-                cargo_set
-                    .to_summary(&cargo_opts)
-                    .expect("generated summaries should serialize correctly"),
-            )
+            let metadata: CargoSetInputsSummary = summary
+                .metadata
+                .clone()
+                .try_into()
+                .expect("metadata deserialized as a CargoSetInputsSummary");
+            let inputs = metadata
+                .to_cargo_set_inputs(graph)
+                .expect("cargo set inputs rebuilt from the summary");
+            assert_eq!(
+                &inputs.features_only,
+                cargo_set.features_only(),
+                "features-only set rebuilt from the summary",
+            );
+            let rebuilt_summary = inputs
+                .to_cargo_set(cargo_set.initials().clone())
+                .expect("cargo set rebuilt from the summary")
+                .to_summary(&inputs.options)
+                .expect("rebuilt summary generated");
+            assert_eq!(
+                rebuilt_summary, summary,
+                "resolution rebuilt from the summary matches the original",
+            );
+
+            (idx, summary)
         });
 
         Box::new(iter)

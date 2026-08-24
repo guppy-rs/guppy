@@ -5,6 +5,8 @@
 
 ### Fixed
 
+- With the `summaries` feature, rebuilding Cargo options from a summary no
+  longer silently drops the features-only set.
 - `FeatureSet::union`, `intersection`, `difference` and `symmetric_difference`
   now panic, as documented, if the two sets were built from different package
   graphs. Previously the check compared `self`'s graph against itself and could
@@ -49,6 +51,9 @@
   - With the `proptest1` feature, `Prop010Resolver` is now `Prop010LinkVisitor`
     and `PackageGraph::proptest1_resolver_strategy` is now
     `proptest1_link_visitor_strategy`.
+- A new `CargoSetInputs` struct in `guppy::graph::cargo` combines `CargoOptions` and the features-only set.
+- With the `summaries` feature, `CargoOptionsSummary` is renamed to
+  `CargoSetInputsSummary`. The serialized format is unchanged.
 - With the `summaries` feature, `toml` is updated to 1.1.4. `Error::TomlSerializeError`
   now wraps `toml` 1.x's `ser::Error`, a breaking change for code that names that type.
   Summary parsing follows the TOML 1.1 specification strictly.
