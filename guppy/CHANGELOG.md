@@ -14,6 +14,20 @@
 ### Changed
 
 - MSRV updated to Rust 1.91, as required by dependencies.
+- `PackageQuery` and `FeatureQuery` are now represented as a set of initial
+  nodes plus a direction, sharing their internal bitset representation with
+  `PackageSet` and `FeatureSet`:
+  - `PackageQuery::initials` now returns a `&PackageSet`, and
+    `FeatureQuery::initials` a `&FeatureSet`, rather than iterators over
+    metadatas. To obtain the old iterators, use
+    `initials().packages(direction)` and `initials().features(direction)`.
+  - `PackageQuery::starts_from` and `FeatureQuery::starts_from` are removed.
+    Use `initials().contains(id)` instead, which returns the same
+    `Result<bool, Error>`.
+  - The `Debug` output of both query types now goes through the set types'
+    `Debug` impls. `PackageQuery`'s `Debug` no longer dumps the entire package
+    graph, and `FeatureQuery`'s now prints its initial packages with their
+    features.
 - The package and feature "resolver" traits are renamed and now receive an
   opaque context ([#497]):
   - `PackageResolver` is now `PackageLinkVisitor`, and `FeatureResolver` is now

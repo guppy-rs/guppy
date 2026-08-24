@@ -138,9 +138,10 @@ impl PackageGraph {
     }
 }
 
-/// A set of resolved packages in a package graph.
+/// A set of packages in a package graph.
 ///
-/// Created by `PackageQuery::resolve`.
+/// Created by `PackageQuery::resolve`, the `PackageGraph::resolve_` methods, or from
+/// `FeatureSet::to_package_set`.
 #[derive(Clone, Debug)]
 pub struct PackageSet<'g> {
     graph: DebugIgnore<&'g PackageGraph>,
@@ -151,10 +152,24 @@ assert_covariant!(PackageSet);
 
 impl<'g> PackageSet<'g> {
     pub(super) fn new(query: PackageQuery<'g>) -> Self {
-        let graph = query.graph;
+        let graph = query.graph();
         Self {
             graph: DebugIgnore(graph),
-            core: ResolveCore::new(graph.dep_graph(), query.params),
+            core: ResolveCore::new(
+                graph.dep_graph(),
+                query.initials().sorted_ixs(),
+                query.direction,
+            ),
+        }
+    }
+
+    pub(super) fn from_ixs(
+        graph: &'g PackageGraph,
+        package_ixs: impl IntoIterator<Item = NodeIndex<PackageIx>>,
+    ) -> Self {
+        Self {
+            graph: DebugIgnore(graph),
+            core: ResolveCore::from_ixs(package_ixs, graph.dep_graph()),
         }
     }
 
@@ -169,15 +184,19 @@ impl<'g> PackageSet<'g> {
         query: PackageQuery<'g>,
         mut visitor: impl PackageLinkVisitor<'g>,
     ) -> Self {
-        let graph = query.graph;
-        let params = query.params.clone();
+        let graph = query.graph();
         let cx = PackageLinkContext { query };
         Self {
             graph: DebugIgnore(graph),
-            core: ResolveCore::with_edge_filter(graph.dep_graph(), params, |edge| {
-                let link = graph.edge_ref_to_link(edge);
-                visitor.visit_link(&cx, link)
-            }),
+            core: ResolveCore::with_edge_filter(
+                graph.dep_graph(),
+                cx.query().initials().sorted_ixs(),
+                cx.direction(),
+                |edge| {
+                    let link = graph.edge_ref_to_link(edge);
+                    visitor.visit_link(&cx, link)
+                },
+            ),
         }
     }
 
@@ -186,12 +205,12 @@ impl<'g> PackageSet<'g> {
         self.core.len()
     }
 
-    /// Returns true if no packages were resolved in this set.
+    /// Returns true if there are no packages in this set.
     pub fn is_empty(&self) -> bool {
         self.core.is_empty()
     }
 
-    /// Returns true if this package ID is contained in this resolve set.
+    /// Returns true if this package ID is contained in this set.
     ///
     /// Returns an error if the package ID is unknown.
     pub fn contains(&self, package_id: &PackageId) -> Result<bool, Error> {
@@ -202,8 +221,10 @@ impl<'g> PackageSet<'g> {
     ///
     /// This is equivalent to constructing a query from all the `package_ids`.
     pub fn to_package_query(&self, direction: DependencyDirection) -> PackageQuery<'g> {
-        self.graph
-            .query_from_parts(self.core.included.ones(), direction)
+        PackageQuery {
+            initials: self.clone(),
+            direction,
+        }
     }
 
     // ---
@@ -515,9 +536,12 @@ impl<'g> PackageSet<'g> {
     // Helper methods
     // ---
 
-    /// Returns all the package ixs without topologically sorting them.
-    #[allow(dead_code)]
-    pub(super) fn ixs_unordered(&self) -> impl Iterator<Item = NodeIndex<PackageIx>> + '_ {
+    pub(super) fn graph(&self) -> &'g PackageGraph {
+        self.graph.0
+    }
+
+    /// Returns all the package ixs in ascending index order.
+    pub(super) fn sorted_ixs(&self) -> impl Iterator<Item = NodeIndex<PackageIx>> + '_ {
         self.core.included.ones()
     }
 
@@ -559,7 +583,7 @@ impl<'g> PackageLinkContext<'g> {
             DependencyDirection::Forward => link.from().package_ix(),
             DependencyDirection::Reverse => link.to().package_ix(),
         };
-        self.query.params.has_initial(package_ix)
+        self.query.initials().contains_ix(package_ix)
     }
 }
 

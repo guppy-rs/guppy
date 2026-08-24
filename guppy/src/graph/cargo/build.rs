@@ -110,7 +110,7 @@ impl<'a> CargoSetBuildState<'a> {
         // the host.
         let mut host_ixs = Vec::new();
         let target_ixs: Vec<_> = initials
-            .ixs_unordered()
+            .sorted_ixs()
             .filter_map(|feature_ix| {
                 let metadata = graph.metadata_for_ix(feature_ix);
                 let package_ix = metadata.package_ix();
@@ -380,8 +380,8 @@ impl<'a> CargoSetBuildState<'a> {
         // host and target ixs instead.
         // https://github.com/rust-lang/cargo/issues/8312
         let mut host_ixs: Vec<_> = query
-            .params
             .initials()
+            .sorted_ixs()
             .filter_map(|feature_ix| {
                 let metadata = graph.metadata_for_ix(feature_ix);
                 if self.opts.initials_platform == InitialsPlatform::Host
@@ -479,9 +479,7 @@ impl<'a> CargoSetBuildState<'a> {
                 // has a build script. It also unifies dev dependencies of initials, even on the
                 // host platform.
                 let consider_dev = self.opts.include_dev
-                    && target_query_2
-                        .starts_from(from.feature_id())
-                        .expect("valid ID");
+                    && target_query_2.initials().contains_ix(from.feature_ix());
 
                 is_enabled(&link, DependencyKind::Normal, host_platform)
                     || is_enabled(&link, DependencyKind::Build, host_platform)
