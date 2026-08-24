@@ -55,6 +55,19 @@ pub enum Error {
         /// Third-party packages that weren't known to the `PackageGraph`.
         unknown_third_party: Vec<crate::graph::summaries::ThirdPartySummary>,
     },
+    /// While resolving the features-only set of a
+    /// [`CargoSetInputsSummary`](crate::graph::summaries::CargoSetInputsSummary), some
+    /// elements were unknown to the `PackageGraph`.
+    ///
+    /// This is present if the `summaries` feature is enabled.
+    #[cfg(feature = "summaries")]
+    UnknownFeaturesOnlySummary {
+        /// Summary IDs that weren't known to the `PackageGraph`.
+        unknown_summary_ids: Vec<crate::graph::summaries::SummaryId>,
+        /// Features and optional dependencies that weren't known to the `FeatureGraph`, grouped
+        /// by package. Each entry lists only the unknown ones.
+        unknown_features: Vec<crate::graph::summaries::FeaturesOnlySummary>,
+    },
     /// While resolving a [`PackageSetSummary`](crate::graph::summaries::PackageSetSummary),
     /// an unknown external registry was encountered.
     #[cfg(feature = "summaries")]
@@ -133,6 +146,36 @@ impl fmt::Display for Error {
                 Ok(())
             }
             #[cfg(feature = "summaries")]
+            UnknownFeaturesOnlySummary {
+                unknown_summary_ids,
+                unknown_features,
+            } => {
+                writeln!(f, "unknown elements: resolving features-only")?;
+                if !unknown_summary_ids.is_empty() {
+                    writeln!(f, "* unknown summary IDs:")?;
+                    for summary_id in unknown_summary_ids {
+                        writeln!(f, "  - {summary_id}")?;
+                    }
+                }
+                if !unknown_features.is_empty() {
+                    writeln!(f, "* unknown features:")?;
+                    for entry in unknown_features {
+                        writeln!(f, "  - {}:", entry.summary_id)?;
+                        if !entry.features.is_empty() {
+                            writeln!(f, "    - features: {}", join_names(&entry.features))?;
+                        }
+                        if !entry.optional_deps.is_empty() {
+                            writeln!(
+                                f,
+                                "    - optional-deps: {}",
+                                join_names(&entry.optional_deps)
+                            )?;
+                        }
+                    }
+                }
+                Ok(())
+            }
+            #[cfg(feature = "summaries")]
             UnknownRegistryName {
                 message,
                 summary,
@@ -168,11 +211,22 @@ impl error::Error for Error {
             #[cfg(feature = "summaries")]
             UnknownPackageSetSummary { .. } => None,
             #[cfg(feature = "summaries")]
+            UnknownFeaturesOnlySummary { .. } => None,
+            #[cfg(feature = "summaries")]
             UnknownRegistryName { .. } => None,
             #[cfg(feature = "summaries")]
             TomlSerializeError(err) => Some(err),
         }
     }
+}
+
+#[cfg(feature = "summaries")]
+fn join_names(names: &std::collections::BTreeSet<String>) -> String {
+    names
+        .iter()
+        .map(String::as_str)
+        .collect::<Vec<_>>()
+        .join(", ")
 }
 
 /// Describes warnings emitted during feature graph construction.

@@ -16,4 +16,6 @@ mod cargo_set_tests;
 mod feature_helpers;
 mod graph_tests;
 mod invalid_tests;
+#[cfg(feature = "summaries")]
+mod summary_tests;
 mod weak_namespaced;

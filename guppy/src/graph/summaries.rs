@@ -11,8 +11,8 @@ use crate::{
     Error,
     graph::{
         DependencyDirection, PackageGraph, PackageMetadata, PackageSet, PackageSource,
-        cargo::{CargoOptions, CargoResolverVersion, CargoSet, InitialsPlatform},
-        feature::FeatureSet,
+        cargo::{CargoOptions, CargoResolverVersion, CargoSet, CargoSetInputs, InitialsPlatform},
+        feature::{FeatureId, FeatureSet},
     },
     platform::PlatformSpecSummary,
 };
@@ -27,8 +27,11 @@ impl CargoSet<'_> {
     /// Requires the `summaries` feature to be enabled.
     pub fn to_summary(&self, opts: &CargoOptions<'_>) -> Result<Summary, Error> {
         let initials = self.initials();
-        let metadata =
-            CargoOptionsSummary::new(initials.graph().package_graph, self.features_only(), opts)?;
+        let metadata = CargoSetInputsSummary::from_parts(
+            initials.graph().package_graph,
+            self.features_only(),
+            opts,
+        )?;
         let target_features = self.target_features();
         let host_features = self.host_features();
 
@@ -96,19 +99,20 @@ impl PackageGraph {
             SummarySource::Workspace { workspace_path } => {
                 self.workspace().member_by_path(workspace_path)
             }
-            _ => {
+            SummarySource::Path { .. }
+            | SummarySource::CratesIo
+            | SummarySource::External { .. } => {
                 // Do a linear search for now -- this appears to be the easiest thing to do and is
                 // pretty fast. This could potentially be sped up by building an index by name, but
                 // at least for reasonably-sized graphs it's really fast.
                 //
                 // TODO: consider optimizing this in the future.
-                let mut filter = self.packages().filter(|package| {
-                    package.name() == summary_id.name
-                        && package.version() == &summary_id.version
-                        && package.source() == summary_id.source
-                });
-                filter
-                    .next()
+                self.packages()
+                    .find(|package| {
+                        package.name() == summary_id.name
+                            && package.version() == &summary_id.version
+                            && package.source() == summary_id.source
+                    })
                     .ok_or_else(|| Error::UnknownSummaryId(summary_id.clone()))
             }
         }
@@ -128,13 +132,13 @@ impl PackageMetadata<'_> {
     }
 }
 
-/// A summary of Cargo options used to build a `CargoSet`.
+/// A summary of the [`CargoSetInputs`] used to build a `CargoSet`.
 ///
 /// Requires the `summaries` feature to be enabled.
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(rename_all = "kebab-case")]
 #[non_exhaustive]
-pub struct CargoOptionsSummary {
+pub struct CargoSetInputsSummary {
     /// The Cargo resolver version used.
     ///
     /// For more information, see the documentation for [`CargoResolverVersion`].
@@ -165,9 +169,17 @@ pub struct CargoOptionsSummary {
     pub features_only: Vec<FeaturesOnlySummary>,
 }
 
-impl CargoOptionsSummary {
-    /// Creates a new `CargoOptionsSummary` from the given Cargo options.
-    pub fn new(
+impl CargoSetInputsSummary {
+    /// Creates a new `CargoSetInputsSummary` from the given inputs.
+    pub fn new(inputs: &CargoSetInputs<'_>) -> Result<Self, Error> {
+        Self::from_parts(
+            inputs.features_only.graph().package_graph,
+            &inputs.features_only,
+            &inputs.options,
+        )
+    }
+
+    fn from_parts(
         graph: &PackageGraph,
         features_only: &FeatureSet<'_>,
         opts: &CargoOptions<'_>,
@@ -204,16 +216,23 @@ impl CargoOptionsSummary {
         })
     }
 
-    /// Creates a new `CargoOptions` from this summary.
-    pub fn to_cargo_options<'g>(
+    /// Creates a new [`CargoSetInputs`] from this summary.
+    ///
+    /// The summary does not record base features, so the rebuilt features-only
+    /// set includes the base feature of every package listed in
+    /// `features_only`. See [`FeaturesOnlySummary`].
+    ///
+    /// Returns an error if any of the omitted packages, the platforms, or the
+    /// features-only elements could not be resolved against `package_graph`.
+    pub fn to_cargo_set_inputs<'g>(
         &'g self,
         package_graph: &'g PackageGraph,
-    ) -> Result<CargoOptions<'g>, Error> {
+    ) -> Result<CargoSetInputs<'g>, Error> {
         let omitted_packages = self
             .omitted_packages
             .to_package_set(package_graph, "resolving omitted-packages")?;
 
-        // TODO: return the features-only set
+        let features_only = self.to_features_only(package_graph)?;
 
         let mut options = CargoOptions::new();
         options
@@ -229,7 +248,74 @@ impl CargoOptionsSummary {
                 Error::TargetSpecError("parsing target platform".to_string(), err)
             })?)
             .add_omitted_packages(omitted_packages.package_ids(DependencyDirection::Forward));
-        Ok(options)
+        Ok(CargoSetInputs {
+            options,
+            features_only,
+        })
+    }
+
+    fn to_features_only<'g>(
+        &'g self,
+        package_graph: &'g PackageGraph,
+    ) -> Result<FeatureSet<'g>, Error> {
+        let feature_graph = package_graph.feature_graph();
+        let mut feature_ids = Vec::new();
+        let mut unknown_summary_ids = Vec::new();
+        let mut unknown_features = Vec::new();
+
+        for features_only in &self.features_only {
+            let metadata = match package_graph.metadata_by_summary_id(&features_only.summary_id) {
+                Ok(metadata) => metadata,
+                Err(Error::UnknownWorkspacePath(_) | Error::UnknownSummaryId(_)) => {
+                    unknown_summary_ids.push(features_only.summary_id.clone());
+                    continue;
+                }
+                Err(err) => return Err(err),
+            };
+            let package_id = metadata.id();
+
+            // The summary doesn't record base features, so always enable the
+            // base feature for a listed package.
+            feature_ids.push(FeatureId::base(package_id));
+
+            let mut unknown = FeaturesOnlySummary {
+                summary_id: features_only.summary_id.clone(),
+                features: BTreeSet::new(),
+                optional_deps: BTreeSet::new(),
+            };
+            for feature in &features_only.features {
+                let feature_id = FeatureId::named(package_id, feature);
+                if feature_graph.contains(feature_id) {
+                    feature_ids.push(feature_id);
+                } else {
+                    unknown.features.insert(feature.clone());
+                }
+            }
+            for dep_name in &features_only.optional_deps {
+                let feature_id = FeatureId::optional_dependency(package_id, dep_name);
+                if feature_graph.contains(feature_id) {
+                    feature_ids.push(feature_id);
+                } else {
+                    unknown.optional_deps.insert(dep_name.clone());
+                }
+            }
+            if !unknown.features.is_empty() || !unknown.optional_deps.is_empty() {
+                unknown_features.push(unknown);
+            }
+        }
+
+        if !unknown_summary_ids.is_empty() || !unknown_features.is_empty() {
+            return Err(Error::UnknownFeaturesOnlySummary {
+                unknown_summary_ids,
+                unknown_features,
+            });
+        }
+
+        // Every ID above was checked against the feature graph, so a failure
+        // here is a programmer error.
+        Ok(feature_graph
+            .resolve_ids(feature_ids)
+            .expect("feature IDs were checked against the feature graph"))
     }
 }
 
@@ -272,13 +358,13 @@ impl From<InitialsPlatformSummary> for InitialsPlatform {
 
 /// Summary information for a features-only package.
 ///
-/// These packages are stored in `CargoOptionsSummary` because they may or may not be in the final
+/// These packages are stored in `CargoSetInputsSummary` because they may or may not be in the final
 /// build set.
 #[derive(Clone, Debug, Deserialize, Eq, Ord, PartialEq, PartialOrd, Serialize)]
 #[serde(rename_all = "kebab-case")]
 #[non_exhaustive]
 pub struct FeaturesOnlySummary {
-    /// The summary ID for this feature.
+    /// The summary ID for this package.
     #[serde(flatten)]
     pub summary_id: SummaryId,
 
@@ -339,10 +425,45 @@ include-dev = true
 proc-macros-on-target = false
 ";
 
-        let summary: CargoOptionsSummary = toml::from_str(metadata).expect("parsed correctly");
+        let summary: CargoSetInputsSummary = toml::from_str(metadata).expect("parsed correctly");
         assert_eq!(
             InitialsPlatform::from(summary.initials_platform),
             InitialsPlatform::Standard
+        );
+    }
+
+    #[test]
+    fn parse_features_only_metadata() {
+        let metadata = "\
+resolver = '2'
+include-dev = false
+initials-platform = 'standard'
+
+[[features-only]]
+name = 'guppy'
+version = '0.5.0'
+workspace-path = 'guppy'
+features = ['guppy-summaries', 'summaries']
+optional-deps = ['guppy-summaries']
+";
+
+        let summary: CargoSetInputsSummary = toml::from_str(metadata).expect("parsed correctly");
+        let features_only = match summary.features_only.as_slice() {
+            [features_only] => features_only,
+            other => panic!("expected exactly one features-only entry, found {other:?}"),
+        };
+        assert_eq!(features_only.summary_id.name, "guppy");
+        assert_eq!(
+            features_only.summary_id.source,
+            SummarySource::workspace("guppy")
+        );
+        assert_eq!(
+            features_only.features.iter().collect::<Vec<_>>(),
+            ["guppy-summaries", "summaries"]
+        );
+        assert_eq!(
+            features_only.optional_deps.iter().collect::<Vec<_>>(),
+            ["guppy-summaries"]
         );
     }
 }
