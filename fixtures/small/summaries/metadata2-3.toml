@@ -6,13 +6,22 @@ resolver = '1'
 include-dev = true
 initials-platform = 'standard'
 
-[metadata.host-platform]
-triple = 'riscv64gc-unknown-redox'
+[[metadata.host-platform]]
+triple = 'armv4t-unknown-linux-gnueabi'
 target-features = 'all'
-flags = ['flag-test', 'foo']
+
+[[metadata.host-platform]]
+triple = 'sparcv9-sun-solaris'
+target-features = 'unknown'
+
+[[metadata.host-platform]]
+triple = 'powerpc64-ibm-aix'
+target-features = ['avx2']
 
 [metadata.target-platform]
-spec = 'any'
+triple = 'bpfeb-unknown-none'
+target-features = 'unknown'
+flags = ['abc', 'test-flag']
 
 [[metadata.features-only]]
 name = 'testworkspace-crate'
@@ -135,34 +144,6 @@ features = []
 [[target-package]]
 name = 'thread_local'
 version = '0.3.6'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'winapi'
-version = '0.3.8'
-crates-io = true
-status = 'transitive'
-features = ['consoleapi', 'errhandlingapi', 'fileapi', 'minwindef', 'processenv', 'std', 'winbase', 'wincon', 'winerror', 'winnt']
-
-[[target-package]]
-name = 'winapi-i686-pc-windows-gnu'
-version = '0.4.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'winapi-util'
-version = '0.1.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'winapi-x86_64-pc-windows-gnu'
-version = '0.4.0'
 crates-io = true
 status = 'transitive'
 features = []

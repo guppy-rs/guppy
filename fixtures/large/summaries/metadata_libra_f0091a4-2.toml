@@ -7,20 +7,19 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'mipsisa64r6el-unknown-linux-gnuabi64'
+triple = 'aarch64-nintendo-switch-freestanding'
 target-features = 'unknown'
+flags = ['abc']
 
-[metadata.target-platform]
-spec = 'always'
-[[metadata.omitted-packages.ids]]
-name = 'rand_pcg'
-version = '0.2.1'
-crates-io = true
+[[metadata.target-platform]]
+triple = 'mipsisa64r6-unknown-linux-gnuabi64'
+target-features = 'unknown'
+flags = ['abc']
 
-[[metadata.omitted-packages.ids]]
-name = 'tokio-util'
-version = '0.2.0'
-crates-io = true
+[[metadata.target-platform]]
+triple = 'aarch64_be-unknown-linux-musl'
+target-features = ['aes', 'avx', 'fma', 'sse4.2', 'xsaveopt', 'xsaves']
+flags = ['abc']
 
 [[metadata.features-only]]
 name = 'libra-secure-net'
@@ -1060,7 +1059,7 @@ name = 'futures-core'
 version = '0.3.4'
 crates-io = true
 status = 'transitive'
-features = ['alloc', 'std']
+features = ['alloc', 'default', 'std']
 
 [[host-package]]
 name = 'futures-executor'
@@ -1088,7 +1087,7 @@ name = 'futures-sink'
 version = '0.3.4'
 crates-io = true
 status = 'transitive'
-features = ['alloc', 'std']
+features = ['alloc', 'default', 'std']
 
 [[host-package]]
 name = 'futures-task'
@@ -1867,6 +1866,13 @@ version = '1.5.0'
 crates-io = true
 status = 'transitive'
 features = ['default', 'keccak']
+
+[[host-package]]
+name = 'tokio-util'
+version = '0.2.0'
+crates-io = true
+status = 'transitive'
+features = ['codec', 'default']
 
 [[host-package]]
 name = 'tower-service'

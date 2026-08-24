@@ -6,26 +6,32 @@ resolver = '1'
 include-dev = false
 initials-platform = 'proc-macros-on-target'
 
-[metadata.host-platform]
-triple = 'thumbv7neon-unknown-linux-musleabihf'
-target-features = ['avx2', 'bmi1', 'sha', 'sse3', 'xsave', 'xsaves']
-
-[metadata.target-platform]
-triple = 'thumbv7a-none-eabi'
+[[metadata.host-platform]]
+triple = 'sparc64-unknown-netbsd'
 target-features = 'unknown'
-[[metadata.omitted-packages.ids]]
-name = 'libra-node'
-version = '0.1.0'
-workspace-path = 'libra-node'
+flags = ['cargo_web']
 
-[[metadata.omitted-packages.ids]]
-name = 'rustls-native-certs'
-version = '0.3.0'
-crates-io = true
+[[metadata.host-platform]]
+triple = 'aarch64-unknown-linux-musl'
+target-features = 'unknown'
+flags = ['flag-test', 'test-flag']
 
+[[metadata.target-platform]]
+triple = 'thumbv8m.main-none-eabi'
+target-features = 'all'
+flags = ['test-flag']
+
+[[metadata.target-platform]]
+triple = 'riscv32gc-unknown-linux-gnu'
+target-features = ['bmi1']
+flags = ['abc', 'test-flag']
+
+[[metadata.target-platform]]
+triple = 'armv7-unknown-trusty'
+target-features = ['aes']
 [[metadata.omitted-packages.ids]]
-name = 'serde_json'
-version = '1.0.48'
+name = 'futures-core'
+version = '0.3.4'
 crates-io = true
 
 [[metadata.features-only]]
@@ -639,6 +645,13 @@ features = ['default', 'derive', 'rc', 'serde_derive', 'std']
 optional-deps = ['serde_derive']
 
 [[target-package]]
+name = 'serde_json'
+version = '1.0.48'
+crates-io = true
+status = 'direct'
+features = ['default', 'std']
+
+[[target-package]]
 name = 'sha2'
 version = '0.8.1'
 crates-io = true
@@ -1024,13 +1037,6 @@ features = ['alloc', 'default', 'futures-sink', 'sink', 'std']
 optional-deps = ['futures-sink']
 
 [[target-package]]
-name = 'futures-core'
-version = '0.3.4'
-crates-io = true
-status = 'transitive'
-features = ['alloc', 'default', 'std']
-
-[[target-package]]
 name = 'futures-executor'
 version = '0.3.4'
 crates-io = true
@@ -1248,6 +1254,13 @@ version = '0.6.21'
 crates-io = true
 status = 'transitive'
 features = ['default', 'with-deprecated']
+
+[[target-package]]
+name = 'mio-uds'
+version = '0.6.7'
+crates-io = true
+status = 'transitive'
+features = []
 
 [[target-package]]
 name = 'net2'
@@ -1528,6 +1541,13 @@ features = ['timeout', 'wait-timeout']
 optional-deps = ['wait-timeout']
 
 [[target-package]]
+name = 'ryu'
+version = '1.0.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
 name = 'scopeguard'
 version = '1.1.0'
 crates-io = true
@@ -1547,6 +1567,13 @@ version = '0.8.2'
 crates-io = true
 status = 'transitive'
 features = ['default', 'std']
+
+[[target-package]]
+name = 'signal-hook-registry'
+version = '1.2.0'
+crates-io = true
+status = 'transitive'
+features = []
 
 [[target-package]]
 name = 'slab'

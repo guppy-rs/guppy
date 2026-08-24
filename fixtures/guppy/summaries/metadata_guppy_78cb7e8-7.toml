@@ -9,18 +9,22 @@ initials-platform = 'host'
 [metadata.host-platform]
 spec = 'always'
 
-[metadata.target-platform]
+[[metadata.target-platform]]
 triple = 'mipsisa64r6-unknown-linux-gnuabi64'
-target-features = 'unknown'
-flags = ['cargo_web']
-[[metadata.omitted-packages.ids]]
-name = 'humantime'
-version = '2.0.1'
-crates-io = true
+target-features = 'all'
 
+[[metadata.target-platform]]
+triple = 'x86_64-unknown-managarm-mlibc'
+target-features = ['avx', 'sse2', 'xsave', 'xsaveopt']
+flags = ['flag-test', 'foo']
+
+[[metadata.target-platform]]
+triple = 'sparc64-unknown-helenos'
+target-features = ['avx2', 'rdrand', 'sse', 'sse3']
+flags = ['bar', 'foo']
 [[metadata.omitted-packages.ids]]
-name = 'rand_xorshift'
-version = '0.2.0'
+name = 'hashbrown'
+version = '0.9.1'
 crates-io = true
 
 [[metadata.features-only]]
@@ -184,13 +188,6 @@ version = '1.6.1'
 crates-io = true
 status = 'transitive'
 features = []
-
-[[host-package]]
-name = 'hashbrown'
-version = '0.9.1'
-crates-io = true
-status = 'transitive'
-features = ['raw']
 
 [[host-package]]
 name = 'itoa'

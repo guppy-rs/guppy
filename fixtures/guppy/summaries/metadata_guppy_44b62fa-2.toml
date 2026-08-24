@@ -10,16 +10,16 @@ initials-platform = 'host'
 spec = 'any'
 
 [metadata.target-platform]
-spec = 'any'
+spec = 'always'
 [[metadata.omitted-packages.ids]]
-name = 'guppy-cmdlib'
+name = 'cargo-guppy'
 version = '0.1.0'
-workspace-path = 'guppy-cmdlib'
+workspace-path = 'cargo-guppy'
 
 [[metadata.omitted-packages.ids]]
-name = 'guppy-summaries'
-version = '0.6.1'
-workspace-path = 'guppy-summaries'
+name = 'guppy'
+version = '0.12.4'
+workspace-path = 'guppy'
 
 [[metadata.features-only]]
 name = 'fixtures'

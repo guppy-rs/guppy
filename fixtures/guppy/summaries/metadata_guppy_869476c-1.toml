@@ -6,26 +6,22 @@ resolver = 'install'
 include-dev = false
 initials-platform = 'proc-macros-on-target'
 
-[metadata.host-platform]
-triple = 'sparc64-unknown-helenos'
-target-features = ['xsaveopt']
+[[metadata.host-platform]]
+triple = 'thumbv5te-none-eabi'
+target-features = ['avx', 'bmi2', 'rdrand', 'sse', 'sse2']
 flags = ['test-flag']
 
+[[metadata.host-platform]]
+triple = 'x86_64-oe-linux-gnu'
+target-features = 'all'
+
 [metadata.target-platform]
-spec = 'always'
+triple = 'armv5te-unknown-linux-musleabi'
+target-features = 'unknown'
+flags = ['abc', 'test-flag']
 [[metadata.omitted-packages.ids]]
-name = 'semver'
-version = '0.10.0'
-crates-io = true
-
-[[metadata.omitted-packages.ids]]
-name = 'unicode-normalization'
-version = '0.1.13'
-crates-io = true
-
-[[metadata.omitted-packages.ids]]
-name = 'winapi-util'
-version = '0.1.5'
+name = 'crypto-hash'
+version = '0.3.4'
 crates-io = true
 
 [[target-package]]
@@ -144,6 +140,14 @@ features = ['bit-set', 'break-dead-code', 'default', 'fork', 'lazy_static', 'qui
 optional-deps = ['bit-set', 'lazy_static', 'quick-error', 'regex-syntax', 'rusty-fork', 'tempfile']
 
 [[target-package]]
+name = 'semver'
+version = '0.10.0'
+crates-io = true
+status = 'direct'
+features = ['default', 'serde']
+optional-deps = ['serde']
+
+[[target-package]]
 name = 'serde'
 version = '1.0.116'
 crates-io = true
@@ -257,6 +261,13 @@ status = 'transitive'
 features = []
 
 [[target-package]]
+name = 'libc'
+version = '0.2.79'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
 name = 'num-traits'
 version = '0.2.12'
 crates-io = true
@@ -332,6 +343,13 @@ optional-deps = ['wait-timeout']
 [[target-package]]
 name = 'ryu'
 version = '1.0.5'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'semver-parser'
+version = '0.7.0'
 crates-io = true
 status = 'transitive'
 features = []

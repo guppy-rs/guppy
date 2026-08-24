@@ -5,14 +5,30 @@
 resolver = 'install'
 include-dev = true
 initials-platform = 'host'
+target-platform = []
 
-[metadata.host-platform]
-triple = 'x86_64-unknown-linux-none'
-target-features = ['sha', 'sse2', 'sse4.2', 'ssse3', 'xsave', 'xsaves']
-flags = ['flag-test']
+[[metadata.host-platform]]
+triple = 'mipsel-unknown-linux-musl'
+target-features = ['avx', 'sse3']
+flags = ['bar']
 
-[metadata.target-platform]
-spec = 'always'
+[[metadata.host-platform]]
+triple = 'thumbv8m.base-nuttx-eabi'
+target-features = 'all'
+
+[[metadata.host-platform]]
+triple = 'riscv32emc-unknown-none-elf'
+target-features = 'all'
+flags = ['abc', 'test-flag']
+[[metadata.omitted-packages.ids]]
+name = 'fnv'
+version = '1.0.6'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'tokio-rustls'
+version = '0.12.2'
+crates-io = true
 
 [[metadata.features-only]]
 name = 'invalid-mutations'

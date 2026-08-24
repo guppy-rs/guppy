@@ -7,21 +7,11 @@ include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'i586-unknown-linux-musl'
-target-features = 'unknown'
-flags = ['flag-test']
+triple = 'aarch64-nintendo-switch-freestanding'
+target-features = ['rdrand', 'sse4.1', 'xsavec']
 
 [metadata.target-platform]
 spec = 'any'
-[[metadata.omitted-packages.ids]]
-name = 'bit-set'
-version = '0.5.1'
-crates-io = true
-
-[[metadata.omitted-packages.ids]]
-name = 'libra-proptest-helpers'
-version = '0.1.0'
-workspace-path = 'common/proptest-helpers'
 
 [[target-package]]
 name = 'libra-canonical-serialization'
@@ -255,6 +245,13 @@ version = '0.1.0'
 workspace-path = 'common/nibble'
 status = 'workspace'
 features = ['default']
+
+[[target-package]]
+name = 'libra-proptest-helpers'
+version = '0.1.0'
+workspace-path = 'common/proptest-helpers'
+status = 'workspace'
+features = []
 
 [[target-package]]
 name = 'libra-prost-ext'
@@ -555,6 +552,14 @@ version = '0.8.0'
 crates-io = true
 status = 'direct'
 features = []
+
+[[target-package]]
+name = 'crossbeam'
+version = '0.7.3'
+crates-io = true
+status = 'direct'
+features = ['crossbeam-channel', 'crossbeam-deque', 'crossbeam-queue', 'default', 'std']
+optional-deps = ['crossbeam-channel', 'crossbeam-deque', 'crossbeam-queue']
 
 [[target-package]]
 name = 'curve25519-dalek'
@@ -1027,6 +1032,20 @@ status = 'transitive'
 features = ['default', 'std']
 
 [[target-package]]
+name = 'bit-set'
+version = '0.5.1'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
+name = 'bit-vec'
+version = '0.5.1'
+crates-io = true
+status = 'transitive'
+features = ['std']
+
+[[target-package]]
 name = 'bitflags'
 version = '1.2.1'
 crates-io = true
@@ -1161,6 +1180,13 @@ crates-io = true
 status = 'transitive'
 features = ['percent-encode', 'url']
 optional-deps = ['url']
+
+[[target-package]]
+name = 'crossbeam-channel'
+version = '0.4.2'
+crates-io = true
+status = 'transitive'
+features = []
 
 [[target-package]]
 name = 'crossbeam-deque'
@@ -3151,7 +3177,7 @@ version = '0.7.3'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'getrandom', 'getrandom_package', 'libc', 'std']
-optional-deps = ['getrandom_package', 'libc']
+optional-deps = ['getrandom_package']
 
 [[host-package]]
 name = 'rand_chacha'

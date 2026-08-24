@@ -6,17 +6,22 @@ resolver = '3'
 include-dev = true
 initials-platform = 'host'
 
-[metadata.host-platform]
-triple = 'armv7a-vex-v5'
-target-features = ['avx', 'rdrand', 'sse2', 'xsaves']
-flags = ['abc']
+[[metadata.host-platform]]
+triple = 'aarch64-unknown-nto-qnx710'
+target-features = []
+
+[[metadata.host-platform]]
+triple = 'powerpc-unknown-helenos'
+target-features = ['sse3', 'sse4.2', 'xsaveopt']
 
 [metadata.target-platform]
-spec = 'any'
+triple = 'thumbv7a-pc-windows-msvc'
+target-features = ['sha', 'ssse3', 'xsave']
+flags = ['abc', 'foo']
 [[metadata.omitted-packages.ids]]
-name = 'builddep'
+name = 'main'
 version = '0.1.0'
-workspace-path = 'builddep'
+workspace-path = 'main'
 
 [[host-package]]
 name = 'builddep'

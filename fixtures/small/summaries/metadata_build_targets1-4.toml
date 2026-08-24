@@ -6,11 +6,23 @@ resolver = '1'
 include-dev = true
 initials-platform = 'standard'
 
-[metadata.host-platform]
-spec = 'always'
+[[metadata.host-platform]]
+triple = 'loongarch64-unknown-linux-ohos'
+target-features = 'unknown'
 
-[metadata.target-platform]
-spec = 'any'
+[[metadata.host-platform]]
+triple = 'x86_64-unknown-netbsd'
+target-features = ['aes', 'bmi2', 'fma', 'sha', 'sse2', 'xsaveopt']
+flags = ['bar']
+
+[[metadata.target-platform]]
+triple = 'arm-linux-androideabi'
+target-features = 'all'
+flags = ['test-flag']
+
+[[metadata.target-platform]]
+triple = 'x86_64-pc-windows-gnu'
+target-features = ['aes', 'fma', 'rdrand', 'xsaveopt', 'xsaves']
 [[metadata.omitted-packages.ids]]
 name = 'testcrate'
 version = '0.1.0'

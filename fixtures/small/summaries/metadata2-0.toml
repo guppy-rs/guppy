@@ -5,14 +5,35 @@
 resolver = '3'
 include-dev = false
 initials-platform = 'proc-macros-on-target'
+host-platform = []
 
-[metadata.host-platform]
-triple = 'i586-unknown-redox'
+[[metadata.target-platform]]
+triple = 'loongarch64-unknown-linux-ohos'
+target-features = ['sha', 'sse4.1', 'sse4.2', 'ssse3', 'xsave', 'xsaveopt', 'xsaves']
+
+[[metadata.target-platform]]
+triple = 'i686-unknown-linux-gnu'
+target-features = 'unknown'
+flags = ['foo']
+
+[[metadata.target-platform]]
+triple = 'mipsisa32r6-unknown-linux-gnu'
 target-features = 'all'
-flags = ['bar', 'test-flag']
+flags = ['bar', 'foo']
+[[metadata.omitted-packages.ids]]
+name = 'quote'
+version = '1.0.2'
+path = '../quote'
 
-[metadata.target-platform]
-spec = 'any'
+[[metadata.omitted-packages.ids]]
+name = 'walkdir'
+version = '2.2.9'
+workspace-path = 'walkdir'
+
+[[metadata.omitted-packages.ids]]
+name = 'winapi-x86_64-pc-windows-gnu'
+version = '0.4.0'
+crates-io = true
 
 [[metadata.features-only]]
 name = 'testworkspace-crate'
@@ -140,34 +161,6 @@ status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'winapi'
-version = '0.3.8'
-crates-io = true
-status = 'transitive'
-features = ['consoleapi', 'errhandlingapi', 'fileapi', 'minwindef', 'processenv', 'std', 'winbase', 'wincon', 'winerror', 'winnt']
-
-[[target-package]]
-name = 'winapi-i686-pc-windows-gnu'
-version = '0.4.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'winapi-util'
-version = '0.1.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'winapi-x86_64-pc-windows-gnu'
-version = '0.4.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
 name = 'yaml-rust'
 version = '0.4.3'
 crates-io = true
@@ -184,42 +177,6 @@ features = []
 [[host-package]]
 name = 'datatest-derive'
 version = '0.4.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'proc-macro2'
-version = '1.0.3'
-crates-io = true
-status = 'transitive'
-features = ['default', 'proc-macro']
-
-[[host-package]]
-name = 'quote'
-version = '1.0.2'
-path = '../quote'
-status = 'transitive'
-features = ['default', 'proc-macro']
-
-[[host-package]]
-name = 'syn'
-version = '1.0.5'
-crates-io = true
-status = 'transitive'
-features = ['clone-impls', 'default', 'derive', 'fold', 'full', 'parsing', 'printing', 'proc-macro', 'quote']
-optional-deps = ['quote']
-
-[[host-package]]
-name = 'unicode-xid'
-version = '0.2.0'
-crates-io = true
-status = 'transitive'
-features = ['default']
-
-[[host-package]]
-name = 'version_check'
-version = '0.9.1'
 crates-io = true
 status = 'transitive'
 features = []

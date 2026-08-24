@@ -6,17 +6,26 @@ resolver = '1'
 include-dev = true
 initials-platform = 'proc-macros-on-target'
 
-[metadata.host-platform]
-triple = 'riscv64gc-unknown-fuchsia'
-target-features = ['bmi2', 'rdrand', 'sse2', 'xsave', 'xsaves']
-flags = ['test-flag']
+[[metadata.host-platform]]
+triple = 'riscv32emc-unknown-none-elf'
+target-features = 'unknown'
+flags = ['flag-test']
+
+[[metadata.host-platform]]
+triple = 'riscv32-wrs-vxworks'
+target-features = 'all'
+
+[[metadata.host-platform]]
+triple = 'aarch64-linux-android'
+target-features = ['avx', 'avx2', 'bmi1', 'sse4.2']
+flags = ['cargo_web', 'foo']
 
 [metadata.target-platform]
 spec = 'any'
 [[metadata.omitted-packages.ids]]
-name = 'build-user'
+name = 'normal-user'
 version = '0.1.0'
-workspace-path = 'build-user'
+workspace-path = 'normal-user'
 
 [[target-package]]
 name = 'build-user'

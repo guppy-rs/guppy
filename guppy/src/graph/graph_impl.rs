@@ -2102,8 +2102,9 @@ impl<'g> EnabledStatus<'g> {
 
     /// Evaluates whether this dependency is required on the given platform spec.
     ///
-    /// Returns `Unknown` if the result was unknown, which may happen if evaluating against an
-    /// individual platform and its target features are unknown.
+    /// Returns `Unknown` if the result was unknown, which may happen if
+    /// evaluating against [`PlatformSpec::Platforms`] and the target features
+    /// of one of its platforms are unknown.
     pub fn required_on(&self, platform_spec: &PlatformSpec) -> EnabledTernary {
         self.required.enabled_on(platform_spec)
     }
@@ -2111,8 +2112,9 @@ impl<'g> EnabledStatus<'g> {
     /// Evaluates whether this dependency is enabled (required or optional) on the given platform
     /// spec.
     ///
-    /// Returns `Unknown` if the result was unknown, which may happen if evaluating against an
-    /// individual platform and its target features are unknown.
+    /// Returns `Unknown` if the result was unknown, which may happen if
+    /// evaluating against [`PlatformSpec::Platforms`] and the target features
+    /// of one of its platforms are unknown.
     pub fn enabled_on(&self, platform_spec: &PlatformSpec) -> EnabledTernary {
         let required = self.required.enabled_on(platform_spec);
         let optional = self.optional.enabled_on(platform_spec);

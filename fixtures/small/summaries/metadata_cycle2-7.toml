@@ -10,16 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'always'
 
 [metadata.target-platform]
-spec = 'any'
-[[metadata.omitted-packages.ids]]
-name = 'lower-b'
-version = '0.1.0'
-workspace-path = 'lower-b'
-
-[[metadata.omitted-packages.ids]]
-name = 'upper-b'
-version = '0.1.0'
-workspace-path = 'upper-b'
+spec = 'always'
 
 [[metadata.features-only]]
 name = 'lower-b'

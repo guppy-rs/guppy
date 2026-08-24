@@ -5,24 +5,14 @@
 resolver = '2'
 include-dev = false
 initials-platform = 'proc-macros-on-target'
+target-platform = []
 
 [metadata.host-platform]
-triple = 'riscv64gc-unknown-openbsd'
-target-features = ['aes', 'bmi1', 'sha', 'sse4.1', 'xsavec']
-flags = ['abc', 'cargo_web']
-
-[metadata.target-platform]
-triple = 'mipsel-unknown-linux-gnu'
-target-features = []
-flags = ['bar']
-[[metadata.omitted-packages.ids]]
-name = 'dep-a'
-version = '0.1.0'
-path = '../dep-a'
-
+triple = 'aarch64-unknown-nto-qnx700'
+target-features = 'all'
 [[metadata.omitted-packages.ids]]
 name = 'lazy_static'
-version = '0.2.11'
+version = '1.4.0'
 crates-io = true
 
 [[metadata.omitted-packages.ids]]
@@ -44,25 +34,3 @@ workspace-path = ''
 status = 'initial'
 features = ['bytes', 'dep-a']
 optional-deps = ['bytes', 'dep-a']
-
-[[target-package]]
-name = 'bytes'
-version = '0.5.3'
-crates-io = true
-status = 'direct'
-features = ['serde']
-optional-deps = ['serde']
-
-[[target-package]]
-name = 'lazy_static'
-version = '1.4.0'
-crates-io = true
-status = 'direct'
-features = []
-
-[[target-package]]
-name = 'serde'
-version = '1.0.105'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']

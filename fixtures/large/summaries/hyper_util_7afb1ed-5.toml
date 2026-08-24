@@ -6,28 +6,18 @@ resolver = '2'
 include-dev = true
 initials-platform = 'host'
 
-[metadata.host-platform]
-triple = 'thumbv7a-uwp-windows-msvc'
+[[metadata.host-platform]]
+triple = 'aarch64-unknown-teeos'
+target-features = 'all'
+
+[[metadata.host-platform]]
+triple = 'sparc-unknown-linux-gnu'
 target-features = 'unknown'
-flags = ['bar']
+flags = ['abc', 'flag-test']
 
 [metadata.target-platform]
-triple = 'm68k-unknown-none-elf'
+triple = 'powerpc-unknown-linux-gnuspe'
 target-features = 'all'
-[[metadata.omitted-packages.ids]]
-name = 'httpdate'
-version = '1.0.3'
-crates-io = true
-
-[[metadata.omitted-packages.ids]]
-name = 'humantime'
-version = '2.1.0'
-crates-io = true
-
-[[metadata.omitted-packages.ids]]
-name = 'memchr'
-version = '2.7.4'
-crates-io = true
 
 [[metadata.features-only]]
 name = 'hyper-util'
@@ -171,6 +161,13 @@ version = '1.9.4'
 crates-io = true
 status = 'transitive'
 features = ['default', 'std']
+
+[[host-package]]
+name = 'httpdate'
+version = '1.0.3'
+crates-io = true
+status = 'transitive'
+features = []
 
 [[host-package]]
 name = 'indexmap'

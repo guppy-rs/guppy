@@ -10,10 +10,22 @@ initials-platform = 'proc-macros-on-target'
 spec = 'any'
 
 [metadata.target-platform]
-spec = 'always'
+triple = 'thumbv7a-nuttx-eabihf'
+target-features = 'all'
+flags = ['cargo_web', 'test-flag']
 [[metadata.omitted-packages.ids]]
-name = 'openssl-probe'
-version = '0.1.2'
+name = 'rustc-workspace-hack'
+version = '1.0.0'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'strsim'
+version = '0.8.0'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'vte'
+version = '0.3.3'
 crates-io = true
 
 [[metadata.features-only]]
@@ -127,7 +139,7 @@ version = '2.33.3'
 crates-io = true
 status = 'direct'
 features = ['ansi_term', 'atty', 'color', 'default', 'strsim', 'suggestions', 'vec_map']
-optional-deps = ['atty', 'strsim', 'vec_map']
+optional-deps = ['ansi_term', 'atty', 'strsim', 'vec_map']
 
 [[target-package]]
 name = 'dialoguer'
@@ -433,7 +445,7 @@ name = 'ppv-lite86'
 version = '0.2.9'
 crates-io = true
 status = 'transitive'
-features = ['simd']
+features = ['simd', 'std']
 
 [[target-package]]
 name = 'quick-error'
@@ -448,14 +460,14 @@ version = '0.7.3'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'getrandom', 'getrandom_package', 'libc', 'std']
-optional-deps = ['getrandom_package']
+optional-deps = ['getrandom_package', 'libc']
 
 [[target-package]]
 name = 'rand_chacha'
 version = '0.2.2'
 crates-io = true
 status = 'transitive'
-features = []
+features = ['std']
 
 [[target-package]]
 name = 'rand_core'
@@ -523,13 +535,6 @@ status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'strsim'
-version = '0.8.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
 name = 'tempfile'
 version = '3.1.0'
 crates-io = true
@@ -539,6 +544,13 @@ features = []
 [[target-package]]
 name = 'terminal_size'
 version = '0.1.13'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'termios'
+version = '0.3.2'
 crates-io = true
 status = 'transitive'
 features = []

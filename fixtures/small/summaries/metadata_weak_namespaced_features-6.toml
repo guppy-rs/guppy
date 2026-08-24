@@ -5,17 +5,12 @@
 resolver = '1'
 include-dev = false
 initials-platform = 'standard'
-
-[metadata.host-platform]
-spec = 'always'
-
-[metadata.target-platform]
-triple = 'powerpc-unknown-helenos'
-target-features = 'all'
+host-platform = []
+target-platform = []
 [[metadata.omitted-packages.ids]]
-name = 'arrayvec'
-version = '0.7.2'
-crates-io = true
+name = 'namespaced-weak'
+version = '0.1.0'
+workspace-path = ''
 
 [[metadata.features-only]]
 name = 'namespaced-weak'

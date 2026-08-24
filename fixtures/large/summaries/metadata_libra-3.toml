@@ -6,17 +6,34 @@ resolver = 'install'
 include-dev = false
 initials-platform = 'proc-macros-on-target'
 
-[metadata.host-platform]
-triple = 'powerpc-unknown-linux-musl'
-target-features = ['bmi2', 'fma', 'sse2', 'sse4.2', 'xsaves']
-flags = ['cargo_web', 'flag-test']
+[[metadata.host-platform]]
+triple = 'aarch64-apple-watchos-sim'
+target-features = []
 
-[metadata.target-platform]
-spec = 'any'
-[[metadata.omitted-packages.ids]]
-name = 'blake2b_simd'
-version = '0.5.8'
-crates-io = true
+[[metadata.host-platform]]
+triple = 's390x-unknown-linux-gnu'
+target-features = 'all'
+flags = ['flag-test', 'test-flag']
+
+[[metadata.host-platform]]
+triple = 'loongarch64-unknown-none'
+target-features = 'unknown'
+flags = ['flag-test']
+
+[[metadata.target-platform]]
+triple = 'thumbv8m.main-none-eabi'
+target-features = 'all'
+flags = ['bar', 'flag-test']
+
+[[metadata.target-platform]]
+triple = 'mipsel-unknown-linux-uclibc'
+target-features = 'unknown'
+flags = ['bar']
+
+[[metadata.target-platform]]
+triple = 'm68k-unknown-linux-gnu'
+target-features = ['aes', 'avx2', 'bmi1', 'bmi2', 'fma', 'xsaveopt']
+flags = ['bar']
 
 [[metadata.features-only]]
 name = 'libra-canonical-serialization'
@@ -862,14 +879,6 @@ status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'cloudabi'
-version = '0.0.3'
-crates-io = true
-status = 'transitive'
-features = ['bitflags', 'default']
-optional-deps = ['bitflags']
-
-[[target-package]]
 name = 'cookie'
 version = '0.12.0'
 crates-io = true
@@ -1020,13 +1029,6 @@ status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'errno-dragonfly'
-version = '0.1.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
 name = 'error-chain'
 version = '0.12.1'
 crates-io = true
@@ -1056,27 +1058,6 @@ status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'fuchsia-cprng'
-version = '0.1.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'fuchsia-zircon'
-version = '0.3.3'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'fuchsia-zircon-sys'
-version = '0.3.3'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
 name = 'futures-cpupool'
 version = '0.1.8'
 crates-io = true
@@ -1086,13 +1067,6 @@ features = ['default', 'with-deprecated']
 [[target-package]]
 name = 'generic-array'
 version = '0.12.3'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'get_if_addrs-sys'
-version = '0.1.1'
 crates-io = true
 status = 'transitive'
 features = []
@@ -1190,22 +1164,8 @@ status = 'transitive'
 features = ['default', 'std']
 
 [[target-package]]
-name = 'js-sys'
-version = '0.3.28'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
 name = 'keccak'
 version = '0.1.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'kernel32-sys'
-version = '0.2.2'
 crates-io = true
 status = 'transitive'
 features = []
@@ -1224,13 +1184,6 @@ crates-io = true
 status = 'transitive'
 features = ['owning_ref']
 optional-deps = ['owning_ref']
-
-[[target-package]]
-name = 'mach_o_sys'
-version = '0.1.1'
-crates-io = true
-status = 'transitive'
-features = []
 
 [[target-package]]
 name = 'matches'
@@ -1297,29 +1250,8 @@ status = 'transitive'
 features = ['default', 'with-deprecated']
 
 [[target-package]]
-name = 'mio-named-pipes'
-version = '0.1.6'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
 name = 'mio-uds'
 version = '0.6.7'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'miow'
-version = '0.2.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'miow'
-version = '0.3.3'
 crates-io = true
 status = 'transitive'
 features = []
@@ -1561,13 +1493,6 @@ status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'rand_hc'
-version = '0.2.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
 name = 'rand_isaac'
 version = '0.1.1'
 crates-io = true
@@ -1603,34 +1528,6 @@ status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'rdrand'
-version = '0.4.0'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
-
-[[target-package]]
-name = 'redox_syscall'
-version = '0.1.56'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'redox_termios'
-version = '0.1.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'redox_users'
-version = '0.3.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
 name = 'regex-syntax'
 version = '0.6.12'
 crates-io = true
@@ -1655,13 +1552,6 @@ optional-deps = ['lazy_static']
 [[target-package]]
 name = 'rusoto_credential'
 version = '0.41.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'rust-argon2'
-version = '0.5.1'
 crates-io = true
 status = 'transitive'
 features = []
@@ -1779,13 +1669,6 @@ version = '0.6.10'
 crates-io = true
 status = 'transitive'
 features = ['default', 'std']
-
-[[target-package]]
-name = 'socket2'
-version = '0.3.11'
-crates-io = true
-status = 'transitive'
-features = []
 
 [[target-package]]
 name = 'spin'
@@ -2128,27 +2011,6 @@ status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'wasi'
-version = '0.7.0'
-crates-io = true
-status = 'transitive'
-features = ['alloc', 'default']
-
-[[target-package]]
-name = 'wasm-bindgen'
-version = '0.2.51'
-crates-io = true
-status = 'transitive'
-features = ['default', 'spans', 'std']
-
-[[target-package]]
-name = 'web-sys'
-version = '0.3.28'
-crates-io = true
-status = 'transitive'
-features = ['Crypto', 'Window']
-
-[[target-package]]
 name = 'webpki'
 version = '0.21.0'
 crates-io = true
@@ -2158,62 +2020,6 @@ features = ['default', 'std', 'trust_anchor_util']
 [[target-package]]
 name = 'webpki-roots'
 version = '0.17.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'winapi'
-version = '0.2.8'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'winapi'
-version = '0.3.8'
-crates-io = true
-status = 'transitive'
-features = ['consoleapi', 'errhandlingapi', 'fileapi', 'handleapi', 'impl-debug', 'impl-default', 'ioapiset', 'knownfolders', 'libloaderapi', 'memoryapi', 'minwinbase', 'minwindef', 'namedpipeapi', 'ntdef', 'ntsecapi', 'ntstatus', 'objbase', 'processenv', 'processthreadsapi', 'profileapi', 'shlobj', 'std', 'synchapi', 'sysinfoapi', 'threadpoollegacyapiset', 'timezoneapi', 'winbase', 'wincon', 'winerror', 'winnt', 'winreg', 'winsock2', 'winuser', 'ws2def', 'ws2ipdef', 'ws2tcpip', 'wtypesbase']
-
-[[target-package]]
-name = 'winapi-i686-pc-windows-gnu'
-version = '0.4.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'winapi-util'
-version = '0.1.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'winapi-x86_64-pc-windows-gnu'
-version = '0.4.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'wincolor'
-version = '1.0.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'winreg'
-version = '0.6.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'ws2_32-sys'
-version = '0.2.1'
 crates-io = true
 status = 'transitive'
 features = []
@@ -2318,13 +2124,6 @@ version = '1.1.0'
 crates-io = true
 status = 'transitive'
 features = ['default']
-
-[[host-package]]
-name = 'bumpalo'
-version = '2.6.0'
-crates-io = true
-status = 'transitive'
-features = ['collections', 'default', 'std']
 
 [[host-package]]
 name = 'byteorder'
@@ -2786,13 +2585,6 @@ status = 'transitive'
 features = []
 
 [[host-package]]
-name = 'sourcefile'
-version = '0.1.4'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
 name = 'spin'
 version = '0.5.2'
 crates-io = true
@@ -2899,57 +2691,8 @@ status = 'transitive'
 features = []
 
 [[host-package]]
-name = 'wasm-bindgen-backend'
-version = '0.2.51'
-crates-io = true
-status = 'transitive'
-features = ['spans']
-
-[[host-package]]
-name = 'wasm-bindgen-macro'
-version = '0.2.51'
-crates-io = true
-status = 'transitive'
-features = ['spans']
-
-[[host-package]]
-name = 'wasm-bindgen-macro-support'
-version = '0.2.51'
-crates-io = true
-status = 'transitive'
-features = ['spans']
-
-[[host-package]]
-name = 'wasm-bindgen-shared'
-version = '0.2.51'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'wasm-bindgen-webidl'
-version = '0.2.51'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'weedle'
-version = '0.10.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
 name = 'which'
 version = '2.0.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'winapi-build'
-version = '0.1.1'
 crates-io = true
 status = 'transitive'
 features = []

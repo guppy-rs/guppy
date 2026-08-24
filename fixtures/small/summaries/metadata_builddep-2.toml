@@ -6,22 +6,19 @@ resolver = '1'
 include-dev = false
 initials-platform = 'standard'
 
-[metadata.host-platform]
-triple = 'aarch64-unknown-netbsd'
-target-features = 'unknown'
+[[metadata.host-platform]]
+triple = 'i586-unknown-netbsd'
+target-features = ['avx2', 'sse2', 'ssse3']
+
+[[metadata.host-platform]]
+triple = 'powerpc64-unknown-linux-musl'
+target-features = ['bmi1', 'rdrand', 'xsave']
 flags = ['cargo_web', 'flag-test']
 
 [metadata.target-platform]
-spec = 'any'
-[[metadata.omitted-packages.ids]]
-name = 'builddep'
-version = '0.1.0'
-workspace-path = 'builddep'
-
-[[metadata.omitted-packages.ids]]
-name = 'main'
-version = '0.1.0'
-workspace-path = 'main'
+triple = 'mipsel-unknown-netbsd'
+target-features = ['aes', 'rdrand', 'sse3', 'sse4.1', 'sse4.2', 'xsavec']
+flags = ['foo', 'test-flag']
 
 [[metadata.features-only]]
 name = 'main'
@@ -40,5 +37,12 @@ features = []
 name = 'main'
 version = '0.1.0'
 workspace-path = 'main'
+status = 'initial'
+features = []
+
+[[host-package]]
+name = 'builddep'
+version = '0.1.0'
+workspace-path = 'builddep'
 status = 'initial'
 features = []

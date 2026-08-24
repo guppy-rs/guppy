@@ -6,24 +6,34 @@ resolver = 'install'
 include-dev = true
 initials-platform = 'host'
 
-[metadata.host-platform]
-triple = 'aarch64-linux-android'
-target-features = ['bmi1']
-flags = ['flag-test', 'test-flag']
+[[metadata.host-platform]]
+triple = 'x86_64-unknown-hermit'
+target-features = 'unknown'
+flags = ['abc', 'foo']
 
-[metadata.target-platform]
-triple = 'armv7-unknown-netbsd-eabihf'
+[[metadata.host-platform]]
+triple = 'loongarch64-unknown-linux-ohos'
+target-features = ['avx2', 'sse3', 'xsavec', 'xsaveopt', 'xsaves']
+
+[[metadata.host-platform]]
+triple = 'powerpc-unknown-linux-gnu'
 target-features = 'all'
-[[metadata.omitted-packages.ids]]
-name = 'bytes'
-version = '0.5.3'
-crates-io = true
+flags = ['abc', 'bar']
 
-[[metadata.omitted-packages.ids]]
-name = 'dep-a'
-version = '0.1.0'
-path = '../dep-a'
+[[metadata.target-platform]]
+triple = 'x86_64-unknown-dragonfly'
+target-features = 'all'
+flags = ['cargo_web']
 
+[[metadata.target-platform]]
+triple = 'arm64e-apple-tvos'
+target-features = ['avx', 'avx2', 'sse3', 'xsavec', 'xsaveopt', 'xsaves']
+flags = ['foo']
+
+[[metadata.target-platform]]
+triple = 'armv7r-none-eabi'
+target-features = ['avx', 'fma', 'xsave', 'xsaveopt', 'xsaves']
+flags = ['abc', 'flag-test']
 [[metadata.omitted-packages.ids]]
 name = 'lazy_static'
 version = '0.2.11'
@@ -38,8 +48,30 @@ features = ['bytes', 'dep-a']
 optional-deps = ['bytes', 'dep-a']
 
 [[host-package]]
+name = 'bytes'
+version = '0.5.3'
+crates-io = true
+status = 'direct'
+features = ['default', 'serde', 'std']
+optional-deps = ['serde']
+
+[[host-package]]
+name = 'dep-a'
+version = '0.1.0'
+path = '../dep-a'
+status = 'direct'
+features = ['bar', 'baz', 'foo', 'quux']
+
+[[host-package]]
 name = 'lazy_static'
 version = '1.4.0'
 crates-io = true
 status = 'direct'
 features = []
+
+[[host-package]]
+name = 'serde'
+version = '1.0.105'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']

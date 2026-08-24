@@ -7,15 +7,36 @@ include-dev = false
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'sparc-unknown-none-elf'
-target-features = 'all'
+triple = 'i586-unknown-linux-musl'
+target-features = 'unknown'
+flags = ['flag-test']
 
-[metadata.target-platform]
-triple = 'i686-wrs-vxworks'
-target-features = []
+[[metadata.target-platform]]
+triple = 'armv7r-none-eabi'
+target-features = ['sse4.2']
+flags = ['cargo_web', 'test-flag']
+
+[[metadata.target-platform]]
+triple = 'armv5te-unknown-linux-musleabi'
+target-features = ['sse2']
+
+[[metadata.target-platform]]
+triple = 'riscv32imac-unknown-xous-elf'
+target-features = 'unknown'
+flags = ['cargo_web', 'test-flag']
 [[metadata.omitted-packages.ids]]
-name = 'endian-type'
-version = '0.1.2'
+name = 'bitflags'
+version = '1.2.1'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'libra_fuzzer_fuzz'
+version = '0.1.0'
+workspace-path = 'testsuite/libra-fuzzer/fuzz'
+
+[[metadata.omitted-packages.ids]]
+name = 'zeroize'
+version = '1.1.0'
 crates-io = true
 
 [[metadata.features-only]]
@@ -1522,13 +1543,6 @@ status = 'transitive'
 features = ['std']
 
 [[target-package]]
-name = 'bitflags'
-version = '1.2.1'
-crates-io = true
-status = 'transitive'
-features = ['default']
-
-[[target-package]]
 name = 'blake2'
 version = '0.8.1'
 crates-io = true
@@ -1810,6 +1824,13 @@ features = ['default', 'use_std']
 [[target-package]]
 name = 'encoding_rs'
 version = '0.8.22'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'endian-type'
+version = '0.1.2'
 crates-io = true
 status = 'transitive'
 features = []
@@ -2260,6 +2281,13 @@ features = ['std']
 [[target-package]]
 name = 'opaque-debug'
 version = '0.2.3'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'openssl-probe'
+version = '0.1.2'
 crates-io = true
 status = 'transitive'
 features = []
@@ -3176,14 +3204,6 @@ status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'zeroize'
-version = '1.1.0'
-crates-io = true
-status = 'transitive'
-features = ['alloc', 'zeroize_derive']
-optional-deps = ['zeroize_derive']
-
-[[target-package]]
 name = 'zstd-sys'
 version = '1.4.15+zstd.1.4.4'
 source = 'git+https://github.com/gyscos/zstd-rs.git#3df21bbc06a5257967ca7f30ba33a6512e0cde4b'
@@ -3324,13 +3344,6 @@ version = '1.0.0'
 crates-io = true
 status = 'transitive'
 features = []
-
-[[host-package]]
-name = 'bitflags'
-version = '1.2.1'
-crates-io = true
-status = 'transitive'
-features = ['default']
 
 [[host-package]]
 name = 'build_const'
@@ -3990,13 +4003,6 @@ features = []
 [[host-package]]
 name = 'which'
 version = '3.1.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'zeroize_derive'
-version = '1.0.0'
 crates-io = true
 status = 'transitive'
 features = []

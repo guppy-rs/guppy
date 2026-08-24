@@ -6,22 +6,41 @@ resolver = '1'
 include-dev = false
 initials-platform = 'proc-macros-on-target'
 
-[metadata.host-platform]
-triple = 'armv7-wrs-vxworks-eabihf'
+[[metadata.host-platform]]
+triple = 'armebv7r-none-eabi'
 target-features = 'unknown'
-
-[metadata.target-platform]
-triple = 'thumbv8m.base-none-eabi'
-target-features = 'all'
 flags = ['bar']
+
+[[metadata.host-platform]]
+triple = 'riscv64gc-unknown-fuchsia'
+target-features = 'unknown'
+flags = ['bar', 'test-flag']
+
+[[metadata.host-platform]]
+triple = 'powerpc64-unknown-freebsd'
+target-features = ['sha', 'sse2', 'sse3', 'xsavec']
+
+[[metadata.target-platform]]
+triple = 'thumbv7r-none-eabi'
+target-features = 'unknown'
+flags = ['abc', 'bar']
+
+[[metadata.target-platform]]
+triple = 'mipsel-sony-psx'
+target-features = ['sha']
+flags = ['abc']
+
+[[metadata.target-platform]]
+triple = 'powerpc-unknown-helenos'
+target-features = ['bmi1', 'sse4.1', 'ssse3']
 [[metadata.omitted-packages.ids]]
-name = 'rand_xoshiro'
-version = '0.3.1'
+name = 'fake-simd'
+version = '0.1.2'
 crates-io = true
 
 [[metadata.omitted-packages.ids]]
-name = 'winapi'
-version = '0.2.8'
+name = 'owning_ref'
+version = '0.4.0'
 crates-io = true
 
 [[metadata.features-only]]
@@ -1230,13 +1249,6 @@ features = ['backtrace', 'default', 'example_generated']
 optional-deps = ['backtrace']
 
 [[target-package]]
-name = 'fake-simd'
-version = '0.1.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
 name = 'fixedbitset'
 version = '0.1.9'
 crates-io = true
@@ -1576,13 +1588,6 @@ features = []
 [[target-package]]
 name = 'owning_ref'
 version = '0.3.3'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'owning_ref'
-version = '0.4.0'
 crates-io = true
 status = 'transitive'
 features = []

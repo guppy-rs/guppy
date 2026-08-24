@@ -10,12 +10,17 @@ initials-platform = 'host'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'armv6-unknown-freebsd'
-target-features = 'unknown'
-flags = ['bar', 'cargo_web']
+triple = 'powerpc-unknown-linux-muslspe'
+target-features = ['avx', 'bmi2', 'ssse3', 'xsaves']
+flags = ['cargo_web']
 [[metadata.omitted-packages.ids]]
-name = 'libc'
-version = '0.2.79'
+name = 'output_vt100'
+version = '0.1.2'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'void'
+version = '1.0.2'
 crates-io = true
 
 [[host-package]]

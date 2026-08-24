@@ -5,21 +5,31 @@
 resolver = '2'
 include-dev = true
 initials-platform = 'proc-macros-on-target'
+host-platform = []
 
-[metadata.host-platform]
-spec = 'always'
+[[metadata.target-platform]]
+triple = 'armv5te-unknown-linux-musleabi'
+target-features = 'all'
+flags = ['cargo_web']
 
-[metadata.target-platform]
-spec = 'any'
+[[metadata.target-platform]]
+triple = 'mipsel-unknown-netbsd'
+target-features = 'unknown'
+flags = ['abc', 'cargo_web']
+
+[[metadata.target-platform]]
+triple = 'x86_64-unknown-linux-ohos'
+target-features = 'unknown'
+flags = ['bar', 'flag-test']
 [[metadata.omitted-packages.ids]]
 name = 'bytes'
 version = '0.3.0'
 crates-io = true
 
 [[metadata.omitted-packages.ids]]
-name = 'testcrate-dups'
-version = '0.1.0'
-workspace-path = ''
+name = 'bytes'
+version = '0.5.4'
+crates-io = true
 
 [[metadata.features-only]]
 name = 'testcrate-dups'
@@ -33,13 +43,6 @@ version = '0.1.0'
 workspace-path = ''
 status = 'initial'
 features = []
-
-[[target-package]]
-name = 'bytes'
-version = '0.5.4'
-crates-io = true
-status = 'direct'
-features = ['default', 'std']
 
 [[target-package]]
 name = 'lazy_static'

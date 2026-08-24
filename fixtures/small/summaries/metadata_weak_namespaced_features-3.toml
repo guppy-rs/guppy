@@ -6,12 +6,23 @@ resolver = '2'
 include-dev = true
 initials-platform = 'proc-macros-on-target'
 
-[metadata.host-platform]
-triple = 'nvptx64-nvidia-cuda'
-target-features = ['sse4.2', 'xsavec', 'xsaves']
+[[metadata.host-platform]]
+triple = 'armv7s-apple-ios'
+target-features = 'unknown'
+flags = ['bar', 'test-flag']
+
+[[metadata.host-platform]]
+triple = 'aarch64-unknown-linux-gnu_ilp32'
+target-features = 'all'
+flags = ['bar']
 
 [metadata.target-platform]
-spec = 'always'
+triple = 'powerpc-unknown-helenos'
+target-features = 'unknown'
+[[metadata.omitted-packages.ids]]
+name = 'smallvec'
+version = '1.8.0'
+crates-io = true
 
 [[metadata.features-only]]
 name = 'namespaced-weak'
@@ -41,10 +52,3 @@ version = '0.2.1'
 crates-io = true
 status = 'direct'
 features = []
-
-[[target-package]]
-name = 'smallvec'
-version = '1.8.0'
-crates-io = true
-status = 'direct'
-features = ['union']

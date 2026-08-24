@@ -1,14 +1,21 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-use fixtures::json::JsonFixture;
-use guppy::graph::{
-    DependencyDirection, PackageLink,
-    cargo::{
-        BuildPlatform, CargoLinkContext, CargoLinkVisitor, CargoOptions, CargoResolverVersion,
-        CargoSet,
+use fixtures::{
+    json::{JsonFixture, METADATA_TARGETS1_TESTCRATE, METADATA_WEAK_NAMESPACED_ID},
+    package_id,
+};
+use guppy::{
+    DependencyKind,
+    graph::{
+        DependencyDirection, PackageGraph, PackageLink,
+        cargo::{
+            BuildPlatform, CargoLinkContext, CargoLinkVisitor, CargoOptions, CargoResolverVersion,
+            CargoSet,
+        },
+        feature::{FeatureSet, StandardFeatures},
     },
-    feature::StandardFeatures,
+    platform::{EnabledTernary, Platform, PlatformSpec, TargetFeatures},
 };
 use std::collections::HashSet;
 
@@ -543,4 +550,239 @@ fn test_package_link_visitor_filtering_links_on_host() {
     assert!(trace.contains("datatest-derive@0.4.0 => syn@1.0.5"));
     assert!(trace.contains("datatest-derive@0.4.0 => quote@1.0.2"));
     assert!(trace.contains("datatest-derive@0.4.0 => proc-macro2@1.0.3"));
+}
+
+fn linux() -> Platform {
+    Platform::new("x86_64-unknown-linux-gnu", TargetFeatures::Unknown).expect("known triple")
+}
+
+fn windows() -> Platform {
+    Platform::new("x86_64-pc-windows-msvc", TargetFeatures::Unknown).expect("known triple")
+}
+
+fn package_versions(feature_set: &FeatureSet<'_>) -> HashSet<String> {
+    feature_set
+        .packages_with_features(DependencyDirection::Forward)
+        .map(|feature_list| {
+            let package = feature_list.package();
+            format!("{}@{}", package.name(), package.version())
+        })
+        .collect()
+}
+
+fn platforms_cargo_set<'g>(
+    graph: &'g PackageGraph,
+    package_name: &str,
+    features: StandardFeatures,
+    include_dev: bool,
+    host_platform: PlatformSpec,
+    target_platform: PlatformSpec,
+) -> CargoSet<'g> {
+    let initials = graph
+        .resolve_package_name(package_name)
+        .to_feature_set(features);
+
+    let mut opts = CargoOptions::new();
+    opts.set_include_dev(include_dev)
+        .set_host_platform(host_platform)
+        .set_target_platform(target_platform);
+    initials.into_cargo_set(&opts).expect("cargo set built")
+}
+
+#[test]
+fn test_platforms_host_and_target_platform() {
+    let graph = JsonFixture::metadata_targets1().graph();
+    let targets1 = |target_platform| {
+        platforms_cargo_set(
+            graph,
+            "testcrate-targets",
+            StandardFeatures::Default,
+            true,
+            PlatformSpec::Always,
+            target_platform,
+        )
+    };
+    let all_packages = |cargo_set: &CargoSet| {
+        package_versions(&cargo_set.target_features().union(cargo_set.host_features()))
+    };
+
+    let libra_graph = JsonFixture::metadata_libra().graph();
+    // libz-sys has a build script, and its build dependency vcpkg is gated on
+    // cfg(target_env = "msvc").
+    let libz_sys_host = |host_platform| {
+        let cargo_set = platforms_cargo_set(
+            libra_graph,
+            "libz-sys",
+            StandardFeatures::Default,
+            false,
+            host_platform,
+            PlatformSpec::Always,
+        );
+        package_versions(cargo_set.host_features())
+    };
+    let msvc_build_dep = "vcpkg@0.2.7";
+    let unconditional_build_dep = "cc@1.0.45";
+
+    let host_both = libz_sys_host(PlatformSpec::platforms([linux(), windows()]));
+    assert!(
+        host_both.contains(msvc_build_dep),
+        "msvc-only build dep is on the host for Platforms([linux, windows]): {host_both:?}",
+    );
+    let host_linux = libz_sys_host(PlatformSpec::platforms([linux()]));
+    assert!(
+        !host_linux.contains(msvc_build_dep),
+        "msvc-only build dep is not on the host for Platforms([linux]): {host_linux:?}",
+    );
+    assert!(
+        host_linux.contains(unconditional_build_dep),
+        "unconditional build dep is on the host for Platforms([linux]): {host_linux:?}",
+    );
+    let host_windows = libz_sys_host(PlatformSpec::platforms([windows()]));
+    assert!(
+        host_windows.contains(msvc_build_dep),
+        "msvc-only build dep is on the host for Platforms([windows]): {host_windows:?}",
+    );
+    let host_empty = libz_sys_host(PlatformSpec::Platforms(vec![]));
+    assert!(
+        host_empty.is_empty(),
+        "nothing is on the host for Platforms([]), not even cc: {host_empty:?}",
+    );
+
+    // lazy_static 0.1 is a Windows-only dev-dependency.
+    let windows_only = "lazy_static@0.1.16";
+    // lazy_static 0.2 is a non-Windows dependency.
+    let non_windows_only = "lazy_static@0.2.11";
+
+    let both = all_packages(&targets1(PlatformSpec::platforms([linux(), windows()])));
+    assert!(
+        both.contains(windows_only),
+        "windows-only dep is included in Platforms([linux, windows]): {both:?}",
+    );
+    assert!(
+        both.contains(non_windows_only),
+        "non-windows dep is included in Platforms([linux, windows]): {both:?}",
+    );
+
+    let linux_only = all_packages(&targets1(PlatformSpec::platforms([linux()])));
+    assert!(
+        !linux_only.contains(windows_only),
+        "windows-only dep is excluded from Platforms([linux]): {linux_only:?}",
+    );
+    assert!(
+        linux_only.contains(non_windows_only),
+        "non-windows dep is included in Platforms([linux]): {linux_only:?}",
+    );
+
+    let windows_only_set = all_packages(&targets1(PlatformSpec::platforms([windows()])));
+    assert!(
+        windows_only_set.contains(windows_only),
+        "windows-only dep is included in Platforms([windows]): {windows_only_set:?}",
+    );
+    assert!(
+        !windows_only_set.contains(non_windows_only),
+        "non-windows dep is excluded from Platforms([windows]): {windows_only_set:?}",
+    );
+
+    // Platforms([]) disables all links, including unconditional ones like bytes
+    // and lazy_static 1.x, so the result only consists of the initials.
+    let empty_set = targets1(PlatformSpec::Platforms(vec![]));
+    assert_eq!(
+        package_versions(empty_set.target_features()),
+        ["testcrate-targets@0.1.0".to_owned()].into_iter().collect(),
+        "only the initials are on the target for Platforms([])",
+    );
+}
+
+#[test]
+fn test_platforms_optional_dep_status() {
+    let graph = JsonFixture::metadata_targets1().graph();
+
+    // There are no target features, so cfg(target_feature) is knowably false.
+    let windows_no_features =
+        Platform::new("x86_64-pc-windows-msvc", TargetFeatures::none()).expect("known triple");
+
+    // testcrate-targets has a required build dep on dep-a gated on
+    // cfg(target_feature = "sse"), which drives required_on below, and two
+    // optional build deps gated on unix/sse combinations.
+    let build_req = graph
+        .metadata(&package_id(METADATA_TARGETS1_TESTCRATE))
+        .expect("testcrate-targets is in the graph")
+        .direct_links()
+        .find(|link| link.to().name() == "dep-a")
+        .expect("testcrate-targets depends on dep-a")
+        .req_for_kind(DependencyKind::Build);
+    let status = build_req.status();
+
+    let both = PlatformSpec::platforms([linux(), windows_no_features.clone()]);
+    assert_eq!(
+        status.required_on(&both),
+        EnabledTernary::Unknown,
+        "required status is unknown on the union (linux unknown, windows disabled)",
+    );
+    assert_eq!(
+        status.enabled_on(&both),
+        EnabledTernary::Enabled,
+        "the optional build dep is enabled on the union via linux",
+    );
+    assert_eq!(
+        status.enabled_on(&PlatformSpec::platforms([windows_no_features])),
+        EnabledTernary::Disabled,
+        "the optional build dep is disabled on Platforms([windows])",
+    );
+    assert_eq!(
+        status.enabled_on(&PlatformSpec::Platforms(vec![])),
+        EnabledTernary::Disabled,
+        "the optional build dep is disabled on the empty union",
+    );
+}
+
+#[test]
+fn test_platforms_optional_deps_in_cargo_set() {
+    // tinyvec is optional and cfg(windows)-gated.
+    let graph = JsonFixture::metadata_weak_namespaced_features().graph();
+    let tinyvec = "tinyvec@1.5.1";
+    let target_packages = |target_platform| {
+        let cargo_set = platforms_cargo_set(
+            graph,
+            "namespaced-weak",
+            StandardFeatures::All,
+            false,
+            PlatformSpec::Always,
+            target_platform,
+        );
+        package_versions(cargo_set.target_features())
+    };
+
+    let tinyvec_req = graph
+        .metadata(&package_id(METADATA_WEAK_NAMESPACED_ID))
+        .expect("namespaced-weak is in the graph")
+        .direct_links()
+        .find(|link| link.to().name() == "tinyvec")
+        .expect("namespaced-weak depends on tinyvec")
+        .req_for_kind(DependencyKind::Normal);
+    assert_eq!(
+        tinyvec_req
+            .status()
+            .required_on(&PlatformSpec::platforms([linux(), windows()])),
+        EnabledTernary::Disabled,
+        "tinyvec is never required, so inclusion comes from the optional half",
+    );
+
+    let both = target_packages(PlatformSpec::platforms([linux(), windows()]));
+    assert!(
+        both.contains(tinyvec),
+        "optional windows dep is included in Platforms([linux, windows]): {both:?}",
+    );
+
+    let windows_only = target_packages(PlatformSpec::platforms([windows()]));
+    assert!(
+        windows_only.contains(tinyvec),
+        "optional windows dep is included in Platforms([windows]): {windows_only:?}",
+    );
+
+    let linux_only = target_packages(PlatformSpec::platforms([linux()]));
+    assert!(
+        !linux_only.contains(tinyvec),
+        "optional windows dep is excluded from Platforms([linux]): {linux_only:?}",
+    );
 }

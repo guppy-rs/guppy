@@ -7,25 +7,14 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'x86_64-linux-android'
+triple = 'x86_64-apple-tvos'
 target-features = 'all'
+flags = ['bar']
 
 [metadata.target-platform]
-spec = 'any'
-[[metadata.omitted-packages.ids]]
-name = 'bytes'
-version = '0.5.4'
-crates-io = true
-
-[[metadata.omitted-packages.ids]]
-name = 'lazy_static'
-version = '0.2.11'
-crates-io = true
-
-[[metadata.omitted-packages.ids]]
-name = 'testcrate-dups'
-version = '0.1.0'
-workspace-path = ''
+triple = 'msp430-none-elf'
+target-features = 'unknown'
+flags = ['flag-test']
 
 [[metadata.features-only]]
 name = 'testcrate-dups'
@@ -39,6 +28,13 @@ version = '0.1.0'
 workspace-path = ''
 status = 'initial'
 features = []
+
+[[target-package]]
+name = 'bytes'
+version = '0.5.4'
+crates-io = true
+status = 'direct'
+features = ['default', 'std']
 
 [[target-package]]
 name = 'lazy_static'

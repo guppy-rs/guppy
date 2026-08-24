@@ -9,8 +9,33 @@ initials-platform = 'standard'
 [metadata.host-platform]
 spec = 'always'
 
-[metadata.target-platform]
-spec = 'always'
+[[metadata.target-platform]]
+triple = 'armv6-none-eabi'
+target-features = 'unknown'
+flags = ['test-flag']
+
+[[metadata.target-platform]]
+triple = 'armv7-wrs-vxworks-eabihf'
+target-features = 'unknown'
+flags = ['test-flag']
+
+[[metadata.target-platform]]
+triple = 'aarch64-unknown-linux-gnu'
+target-features = ['aes', 'xsaveopt']
+[[metadata.omitted-packages.ids]]
+name = 'bit-vec'
+version = '0.6.2'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'ctor'
+version = '0.1.16'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'linked-hash-map'
+version = '0.5.3'
+crates-io = true
 
 [[metadata.features-only]]
 name = 'fixtures'
@@ -256,13 +281,6 @@ status = 'transitive'
 features = ['default', 'std']
 
 [[target-package]]
-name = 'bit-vec'
-version = '0.6.2'
-crates-io = true
-status = 'transitive'
-features = ['std']
-
-[[target-package]]
 name = 'bitflags'
 version = '1.2.1'
 crates-io = true
@@ -368,13 +386,6 @@ version = '0.2.79'
 crates-io = true
 status = 'transitive'
 features = ['default', 'std']
-
-[[target-package]]
-name = 'linked-hash-map'
-version = '0.5.3'
-crates-io = true
-status = 'transitive'
-features = []
 
 [[target-package]]
 name = 'memchr'
@@ -508,6 +519,13 @@ features = []
 [[target-package]]
 name = 'terminal_size'
 version = '0.1.13'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'termios'
+version = '0.3.2'
 crates-io = true
 status = 'transitive'
 features = []

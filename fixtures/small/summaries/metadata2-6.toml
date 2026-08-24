@@ -5,24 +5,22 @@
 resolver = '3'
 include-dev = true
 initials-platform = 'host'
+target-platform = []
 
 [metadata.host-platform]
 spec = 'any'
-
-[metadata.target-platform]
-spec = 'always'
 [[metadata.omitted-packages.ids]]
 name = 'dtoa'
 version = '0.4.4'
 crates-io = true
 
 [[metadata.omitted-packages.ids]]
-name = 'lazy_static'
-version = '1.4.0'
+name = 'winapi'
+version = '0.3.8'
 crates-io = true
 
 [[metadata.omitted-packages.ids]]
-name = 'winapi-x86_64-pc-windows-gnu'
+name = 'winapi-i686-pc-windows-gnu'
 version = '0.4.0'
 crates-io = true
 
@@ -78,6 +76,13 @@ features = []
 [[host-package]]
 name = 'datatest-derive'
 version = '0.4.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'lazy_static'
+version = '1.4.0'
 crates-io = true
 status = 'transitive'
 features = []
@@ -171,20 +176,6 @@ features = ['default']
 [[host-package]]
 name = 'version_check'
 version = '0.9.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'winapi'
-version = '0.3.8'
-crates-io = true
-status = 'transitive'
-features = ['consoleapi', 'errhandlingapi', 'fileapi', 'minwindef', 'processenv', 'std', 'winbase', 'wincon', 'winerror', 'winnt']
-
-[[host-package]]
-name = 'winapi-i686-pc-windows-gnu'
-version = '0.4.0'
 crates-io = true
 status = 'transitive'
 features = []

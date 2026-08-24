@@ -6,13 +6,33 @@ resolver = '1'
 include-dev = false
 initials-platform = 'standard'
 
-[metadata.host-platform]
-triple = 'i686-unknown-freebsd'
+[[metadata.host-platform]]
+triple = 'x86_64-unknown-uefi'
 target-features = 'all'
-flags = ['bar']
+
+[[metadata.host-platform]]
+triple = 'aarch64-unknown-teeos'
+target-features = 'unknown'
+flags = ['cargo_web']
 
 [metadata.target-platform]
-spec = 'always'
+triple = 'x86_64-pc-nto-qnx710'
+target-features = 'unknown'
+flags = ['abc', 'flag-test']
+[[metadata.omitted-packages.ids]]
+name = 'assert_matches'
+version = '1.4.0'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'clap'
+version = '2.33.3'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'env_logger'
+version = '0.7.1'
+crates-io = true
 
 [[metadata.features-only]]
 name = 'cargo-compare'
@@ -187,13 +207,6 @@ status = 'direct'
 features = ['default']
 
 [[target-package]]
-name = 'atty'
-version = '0.2.14'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
 name = 'bit-set'
 version = '0.5.2'
 crates-io = true
@@ -227,14 +240,6 @@ version = '0.1.10'
 crates-io = true
 status = 'transitive'
 features = []
-
-[[target-package]]
-name = 'clap'
-version = '2.33.3'
-crates-io = true
-status = 'transitive'
-features = ['ansi_term', 'atty', 'color', 'default', 'strsim', 'suggestions', 'vec_map']
-optional-deps = ['ansi_term', 'atty', 'strsim', 'vec_map']
 
 [[target-package]]
 name = 'either'
@@ -284,6 +289,13 @@ version = '1.4.0'
 crates-io = true
 status = 'transitive'
 features = []
+
+[[target-package]]
+name = 'libc'
+version = '0.2.79'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
 
 [[target-package]]
 name = 'num-traits'
@@ -380,36 +392,8 @@ status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'strsim'
-version = '0.8.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
 name = 'tempfile'
 version = '3.1.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'textwrap'
-version = '0.11.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'unicode-width'
-version = '0.1.8'
-crates-io = true
-status = 'transitive'
-features = ['default']
-
-[[target-package]]
-name = 'vec_map'
-version = '0.8.2'
 crates-io = true
 status = 'transitive'
 features = []

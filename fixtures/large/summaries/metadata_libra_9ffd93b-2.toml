@@ -10,9 +10,13 @@ initials-platform = 'proc-macros-on-target'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'armv4t-none-eabi'
-target-features = []
-flags = ['abc', 'test-flag']
+triple = 'thumbv7a-none-eabi'
+target-features = 'unknown'
+flags = ['bar']
+[[metadata.omitted-packages.ids]]
+name = 'paste-impl'
+version = '0.1.7'
+crates-io = true
 
 [[metadata.features-only]]
 name = 'language-e2e-tests'

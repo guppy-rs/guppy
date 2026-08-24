@@ -5,16 +5,19 @@
 resolver = '2'
 include-dev = false
 initials-platform = 'proc-macros-on-target'
+target-platform = []
 
 [metadata.host-platform]
 spec = 'any'
-
-[metadata.target-platform]
-spec = 'always'
 [[metadata.omitted-packages.ids]]
 name = 'builddep'
 version = '0.1.0'
 workspace-path = 'builddep'
+
+[[metadata.omitted-packages.ids]]
+name = 'main'
+version = '0.1.0'
+workspace-path = 'main'
 
 [[metadata.features-only]]
 name = 'builddep'

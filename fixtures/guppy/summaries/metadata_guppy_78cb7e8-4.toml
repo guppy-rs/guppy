@@ -10,7 +10,21 @@ initials-platform = 'proc-macros-on-target'
 spec = 'any'
 
 [metadata.target-platform]
-spec = 'any'
+spec = 'always'
+[[metadata.omitted-packages.ids]]
+name = 'pretty_assertions'
+version = '0.6.1'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'rand'
+version = '0.7.3'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'wait-timeout'
+version = '0.2.0'
+crates-io = true
 
 [[metadata.features-only]]
 name = 'fixtures'
@@ -102,7 +116,7 @@ name = 'syn'
 version = '1.0.42'
 crates-io = true
 status = 'transitive'
-features = ['clone-impls', 'default', 'derive', 'full', 'parsing', 'printing', 'proc-macro', 'quote', 'visit']
+features = ['clone-impls', 'default', 'derive', 'parsing', 'printing', 'proc-macro', 'quote', 'visit']
 optional-deps = ['quote']
 
 [[host-package]]

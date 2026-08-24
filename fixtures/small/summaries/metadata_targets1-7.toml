@@ -6,19 +6,42 @@ resolver = '3'
 include-dev = true
 initials-platform = 'proc-macros-on-target'
 
-[metadata.host-platform]
-triple = 'sparc64-unknown-openbsd'
-target-features = 'unknown'
-flags = ['flag-test']
-
-[metadata.target-platform]
-triple = 'loongarch64-unknown-linux-musl'
+[[metadata.host-platform]]
+triple = 'powerpc-unknown-helenos'
 target-features = 'all'
-flags = ['abc', 'flag-test']
+flags = ['cargo_web', 'test-flag']
+
+[[metadata.host-platform]]
+triple = 'aarch64-apple-visionos'
+target-features = 'all'
+flags = ['foo', 'test-flag']
+
+[[metadata.host-platform]]
+triple = 'x86_64-win7-windows-gnu'
+target-features = ['bmi2', 'sse3', 'xsavec']
+
+[[metadata.target-platform]]
+triple = 'riscv32i-unknown-none-elf'
+target-features = 'unknown'
+
+[[metadata.target-platform]]
+triple = 'mipsel-unknown-netbsd'
+target-features = 'unknown'
+flags = ['abc', 'bar']
+
+[[metadata.target-platform]]
+triple = 'i686-apple-darwin'
+target-features = ['aes', 'avx', 'avx2', 'bmi1', 'sse3', 'ssse3']
+flags = ['bar']
 [[metadata.omitted-packages.ids]]
-name = 'bytes'
-version = '0.5.3'
+name = 'lazy_static'
+version = '0.1.16'
 crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'testcrate-targets'
+version = '0.1.0'
+workspace-path = ''
 
 [[target-package]]
 name = 'testcrate-targets'
@@ -29,11 +52,19 @@ features = ['bytes', 'dep-a']
 optional-deps = ['bytes', 'dep-a']
 
 [[target-package]]
+name = 'bytes'
+version = '0.5.3'
+crates-io = true
+status = 'direct'
+features = ['default', 'serde', 'std']
+optional-deps = ['serde']
+
+[[target-package]]
 name = 'dep-a'
 version = '0.1.0'
 path = '../dep-a'
 status = 'direct'
-features = ['baz', 'foo', 'quux']
+features = ['bar', 'baz', 'foo', 'quux']
 
 [[target-package]]
 name = 'lazy_static'
@@ -48,3 +79,10 @@ version = '1.4.0'
 crates-io = true
 status = 'direct'
 features = []
+
+[[target-package]]
+name = 'serde'
+version = '1.0.105'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']

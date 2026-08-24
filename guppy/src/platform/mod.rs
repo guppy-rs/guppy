@@ -30,9 +30,10 @@
 //!
 //! * [`Platform`] represents a single platform.
 //! * [`Triple`] is a [Rust target triple](https://doc.rust-lang.org/stable/rustc/platform-support.html).
-//! * [`PlatformSpec`] represents a single platform or a range of platforms, including any platform
-//!   (the union of all possible platforms) and all platforms (the intersection of all possible
-//!   platforms).
+//! * [`PlatformSpec`] represents a set of platforms: any platform (the union
+//!   of all possible platforms), all platforms (the intersection of all
+//!   possible platforms), or the union of an explicit, possibly empty, list of
+//!   platforms.
 //!
 //! # Evaluating platforms
 //!

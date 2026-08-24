@@ -9,14 +9,15 @@ initials-platform = 'standard'
 [metadata.host-platform]
 spec = 'any'
 
-[metadata.target-platform]
-triple = 'aarch64-pc-windows-msvc'
-target-features = 'unknown'
-flags = ['cargo_web']
-[[metadata.omitted-packages.ids]]
-name = 'hex'
-version = '0.4.2'
-crates-io = true
+[[metadata.target-platform]]
+triple = 'armv7a-kmc-solid_asp3-eabihf'
+target-features = 'all'
+flags = ['abc']
+
+[[metadata.target-platform]]
+triple = 'aarch64-unknown-nuttx'
+target-features = ['sse4.2', 'xsave', 'xsaveopt']
+flags = ['abc']
 
 [[metadata.features-only]]
 name = 'cargo-guppy'
@@ -124,7 +125,7 @@ version = '2.33.3'
 crates-io = true
 status = 'direct'
 features = ['ansi_term', 'atty', 'color', 'default', 'strsim', 'suggestions', 'vec_map']
-optional-deps = ['atty', 'strsim', 'vec_map']
+optional-deps = ['ansi_term', 'atty', 'strsim', 'vec_map']
 
 [[target-package]]
 name = 'criterion'
@@ -476,13 +477,6 @@ status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'output_vt100'
-version = '0.1.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
 name = 'plotters'
 version = '0.2.15'
 crates-io = true
@@ -509,7 +503,7 @@ version = '0.7.3'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'getrandom', 'getrandom_package', 'libc', 'std']
-optional-deps = ['getrandom_package']
+optional-deps = ['getrandom_package', 'libc']
 
 [[target-package]]
 name = 'rand_chacha'
@@ -681,20 +675,6 @@ crates-io = true
 status = 'transitive'
 features = []
 
-[[target-package]]
-name = 'winapi'
-version = '0.3.9'
-crates-io = true
-status = 'transitive'
-features = ['consoleapi', 'errhandlingapi', 'fileapi', 'handleapi', 'minwinbase', 'minwindef', 'ntdef', 'processenv', 'profileapi', 'std', 'sysinfoapi', 'timezoneapi', 'winbase', 'wincon', 'winerror', 'winnt', 'winuser']
-
-[[target-package]]
-name = 'winapi-util'
-version = '0.1.5'
-crates-io = true
-status = 'transitive'
-features = []
-
 [[host-package]]
 name = 'proptest-derive'
 version = '0.2.0'
@@ -705,13 +685,6 @@ features = []
 [[host-package]]
 name = 'autocfg'
 version = '1.0.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'ctor'
-version = '0.1.16'
 crates-io = true
 status = 'transitive'
 features = []

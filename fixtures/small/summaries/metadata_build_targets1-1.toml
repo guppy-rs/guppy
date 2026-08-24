@@ -9,10 +9,19 @@ initials-platform = 'standard'
 [metadata.host-platform]
 spec = 'always'
 
-[metadata.target-platform]
-triple = 'csky-unknown-linux-gnuabiv2hf'
+[[metadata.target-platform]]
+triple = 'wasm32-wasip1'
 target-features = 'all'
-flags = ['bar', 'foo']
+
+[[metadata.target-platform]]
+triple = 'wasm64-unknown-unknown'
+target-features = ['sse4.2', 'ssse3', 'xsave', 'xsavec']
+flags = ['bar']
+
+[[metadata.target-platform]]
+triple = 'mips-unknown-linux-uclibc'
+target-features = ['bmi1', 'bmi2', 'sha', 'sse3', 'sse4.1', 'xsave']
+flags = ['flag-test', 'foo']
 [[metadata.omitted-packages.ids]]
 name = 'testcrate'
 version = '0.1.0'

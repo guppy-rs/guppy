@@ -10,9 +10,8 @@ initials-platform = 'standard'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'powerpc64le-unknown-freebsd'
-target-features = ['avx', 'bmi2', 'fma', 'sha', 'sse2', 'xsave', 'xsaves']
-flags = ['bar']
+triple = 'i686-wrs-vxworks'
+target-features = ['avx', 'fma', 'rdrand', 'xsavec', 'xsaves']
 [[metadata.omitted-packages.ids]]
 name = 'self-dev-cycle-cycle-b'
 version = '0.1.0'

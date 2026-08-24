@@ -5,13 +5,14 @@
 resolver = '2'
 include-dev = true
 initials-platform = 'host'
+host-platform = []
 
-[metadata.host-platform]
-triple = 'armv7a-vex-v5'
+[[metadata.target-platform]]
+triple = 'armv7-sony-vita-newlibeabihf'
 target-features = 'all'
-flags = ['bar']
+flags = ['test-flag']
 
-[metadata.target-platform]
+[[metadata.target-platform]]
 triple = 'riscv32imfc-unknown-none-elf'
 target-features = ['avx', 'avx2', 'fma', 'rdrand', 'sse3', 'ssse3', 'xsaves']
 flags = ['flag-test']

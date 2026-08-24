@@ -6,28 +6,16 @@ resolver = '2'
 include-dev = true
 initials-platform = 'host'
 
-[metadata.host-platform]
-triple = 'x86_64-unknown-hermit'
-target-features = 'unknown'
-flags = ['abc']
+[[metadata.host-platform]]
+triple = 'aarch64-unknown-managarm-mlibc'
+target-features = 'all'
+
+[[metadata.host-platform]]
+triple = 'armv7-unknown-linux-gnueabihf'
+target-features = 'all'
 
 [metadata.target-platform]
-triple = 'arm-linux-androideabi'
-target-features = 'unknown'
-[[metadata.omitted-packages.ids]]
-name = 'serde'
-version = '1.0.130'
-source = 'registry+https://github.com/fakeorg/crates.io-index'
-
-[[metadata.omitted-packages.ids]]
-name = 'serde_json'
-version = '1.0.68'
-crates-io = true
-
-[[metadata.omitted-packages.ids]]
-name = 'syn'
-version = '1.0.80'
-source = 'registry+https://github.com/fakeorg/crates.io-index'
+spec = 'any'
 
 [[metadata.features-only]]
 name = 'debug-ignore'
@@ -45,8 +33,52 @@ features = ['serde']
 optional-deps = ['serde']
 
 [[host-package]]
+name = 'serde'
+version = '1.0.130'
+source = 'registry+https://github.com/fakeorg/crates.io-index'
+status = 'direct'
+features = ['derive', 'serde_derive']
+optional-deps = ['serde_derive']
+
+[[host-package]]
 name = 'unicode-xid'
 version = '0.2.2'
 crates-io = true
 status = 'direct'
+features = ['default']
+
+[[host-package]]
+name = 'proc-macro2'
+version = '1.0.29'
+source = 'registry+https://github.com/fakeorg/crates.io-index'
+status = 'transitive'
+features = ['default', 'proc-macro']
+
+[[host-package]]
+name = 'quote'
+version = '1.0.10'
+source = 'registry+https://github.com/fakeorg/crates.io-index'
+status = 'transitive'
+features = ['default', 'proc-macro']
+
+[[host-package]]
+name = 'serde_derive'
+version = '1.0.130'
+source = 'registry+https://github.com/fakeorg/crates.io-index'
+status = 'transitive'
+features = ['default']
+
+[[host-package]]
+name = 'syn'
+version = '1.0.80'
+source = 'registry+https://github.com/fakeorg/crates.io-index'
+status = 'transitive'
+features = ['clone-impls', 'default', 'derive', 'parsing', 'printing', 'proc-macro', 'quote']
+optional-deps = ['quote']
+
+[[host-package]]
+name = 'unicode-xid'
+version = '0.2.2'
+source = 'registry+https://github.com/fakeorg/crates.io-index'
+status = 'transitive'
 features = ['default']

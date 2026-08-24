@@ -6,12 +6,33 @@ resolver = 'install'
 include-dev = true
 initials-platform = 'host'
 
-[metadata.host-platform]
-triple = 'x86_64-pc-windows-gnu'
-target-features = ['aes', 'bmi2', 'sha']
+[[metadata.host-platform]]
+triple = 'powerpc64-ibm-aix'
+target-features = 'unknown'
+flags = ['test-flag']
 
-[metadata.target-platform]
-spec = 'any'
+[[metadata.host-platform]]
+triple = 'x86_64h-apple-darwin'
+target-features = ['avx', 'bmi1', 'sse']
+flags = ['flag-test', 'foo']
+
+[[metadata.target-platform]]
+triple = 'armv7a-kmc-solid_asp3-eabi'
+target-features = 'unknown'
+flags = ['abc', 'test-flag']
+
+[[metadata.target-platform]]
+triple = 'hexagon-unknown-qurt'
+target-features = 'all'
+[[metadata.omitted-packages.ids]]
+name = 'dev-user'
+version = '0.1.0'
+workspace-path = 'dev-user'
+
+[[metadata.omitted-packages.ids]]
+name = 'normal-user'
+version = '0.1.0'
+workspace-path = 'normal-user'
 
 [[metadata.features-only]]
 name = 'build-user'

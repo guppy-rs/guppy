@@ -5,16 +5,16 @@
 resolver = '1'
 include-dev = true
 initials-platform = 'proc-macros-on-target'
+host-platform = []
 
-[metadata.host-platform]
-spec = 'always'
+[[metadata.target-platform]]
+triple = 'riscv64imac-unknown-none-elf'
+target-features = 'all'
+flags = ['cargo_web', 'foo']
 
-[metadata.target-platform]
-spec = 'always'
-[[metadata.omitted-packages.ids]]
-name = 'macro'
-version = '0.1.0'
-workspace-path = 'macro'
+[[metadata.target-platform]]
+triple = 'loongarch64-unknown-linux-ohos'
+target-features = 'all'
 
 [[metadata.features-only]]
 name = 'build-user'

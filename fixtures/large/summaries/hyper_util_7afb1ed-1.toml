@@ -6,16 +6,41 @@ resolver = 'install'
 include-dev = true
 initials-platform = 'proc-macros-on-target'
 
-[metadata.host-platform]
-spec = 'always'
+[[metadata.host-platform]]
+triple = 'aarch64-unknown-helenos'
+target-features = 'unknown'
 
-[metadata.target-platform]
-triple = 'riscv32imac-unknown-nuttx-elf'
+[[metadata.host-platform]]
+triple = 'aarch64-unknown-fuchsia'
 target-features = 'all'
-flags = ['test-flag']
+
+[[metadata.host-platform]]
+triple = 'x86_64-unknown-freebsd'
+target-features = 'unknown'
+flags = ['bar', 'flag-test']
+
+[[metadata.target-platform]]
+triple = 'riscv32imafc-unknown-nuttx-elf'
+target-features = 'unknown'
+flags = ['foo', 'test-flag']
+
+[[metadata.target-platform]]
+triple = 'armv5te-none-eabi'
+target-features = ['avx', 'bmi1', 'rdrand']
+flags = ['abc', 'bar']
 [[metadata.omitted-packages.ids]]
-name = 'serde'
-version = '1.0.204'
+name = 'atomic-waker'
+version = '1.1.2'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'autocfg'
+version = '1.3.0'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'tokio-stream'
+version = '0.1.15'
 crates-io = true
 
 [[target-package]]
@@ -108,13 +133,6 @@ optional-deps = ['memchr']
 [[target-package]]
 name = 'async-stream'
 version = '0.3.5'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'atomic-waker'
-version = '1.1.2'
 crates-io = true
 status = 'transitive'
 features = []
@@ -319,13 +337,6 @@ status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'tokio-stream'
-version = '0.1.15'
-crates-io = true
-status = 'transitive'
-features = ['default', 'time']
-
-[[target-package]]
 name = 'tokio-util'
 version = '0.7.11'
 crates-io = true
@@ -364,13 +375,6 @@ features = []
 [[host-package]]
 name = 'async-stream-impl'
 version = '0.3.5'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'autocfg'
-version = '1.3.0'
 crates-io = true
 status = 'transitive'
 features = []

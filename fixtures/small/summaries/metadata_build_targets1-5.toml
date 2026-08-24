@@ -6,15 +6,28 @@ resolver = '1'
 include-dev = false
 initials-platform = 'standard'
 
-[metadata.host-platform]
-triple = 'riscv32ima-unknown-none-elf'
-target-features = 'all'
-flags = ['bar', 'foo']
+[[metadata.host-platform]]
+triple = 'riscv64imac-unknown-none-elf'
+target-features = ['fma', 'sha', 'sse4.1', 'xsave']
+flags = ['foo']
+
+[[metadata.host-platform]]
+triple = 'aarch64v8r-unknown-none'
+target-features = 'unknown'
+flags = ['flag-test']
+
+[[metadata.host-platform]]
+triple = 'aarch64-apple-darwin'
+target-features = 'unknown'
 
 [metadata.target-platform]
-triple = 'x86_64-apple-ios'
+triple = 'armv7-wrs-vxworks-eabihf'
 target-features = 'all'
 flags = ['test-flag']
+[[metadata.omitted-packages.ids]]
+name = 'testcrate'
+version = '0.1.0'
+workspace-path = ''
 
 [[metadata.features-only]]
 name = 'testcrate'

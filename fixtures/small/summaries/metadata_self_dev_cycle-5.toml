@@ -6,19 +6,34 @@ resolver = '1'
 include-dev = false
 initials-platform = 'standard'
 
-[metadata.host-platform]
-triple = 'aarch64-unknown-netbsd'
+[[metadata.host-platform]]
+triple = 'powerpc64-unknown-linux-gnu'
+target-features = 'unknown'
+flags = ['abc']
+
+[[metadata.host-platform]]
+triple = 'riscv32imc-unknown-nuttx-elf'
 target-features = 'all'
+flags = ['cargo_web']
+
+[[metadata.target-platform]]
+triple = 'xtensa-esp32s3-none-elf'
+target-features = 'unknown'
+flags = ['bar', 'cargo_web']
+
+[[metadata.target-platform]]
+triple = 'x86_64-unknown-freebsd'
+target-features = 'unknown'
 flags = ['flag-test']
 
-[metadata.target-platform]
-triple = 'x86_64h-apple-darwin'
-target-features = 'all'
-flags = ['abc']
+[[metadata.target-platform]]
+triple = 'x86_64-unknown-linux-musl'
+target-features = ['fma', 'sha']
+flags = ['flag-test', 'foo']
 [[metadata.omitted-packages.ids]]
-name = 'self-dev-cycle-helper'
+name = 'self-dev-cycle-base'
 version = '0.1.0'
-workspace-path = 'helper'
+workspace-path = 'base'
 
 [[target-package]]
 name = 'self-dev-cycle-cycle-b'
