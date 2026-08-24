@@ -113,7 +113,7 @@ pub struct CargoResolverOpts {
     pub initials_platform: InitialsPlatformCmd,
 
     #[clap(long = "resolver-version")]
-    #[clap(value_enum, default_value_t = CargoResolverVersionCmd::V1)]
+    #[clap(value_enum, default_value_t = CargoResolverVersionCmd::V3)]
     /// Cargo resolver version to use
     pub resolver_version: CargoResolverVersionCmd,
 }
