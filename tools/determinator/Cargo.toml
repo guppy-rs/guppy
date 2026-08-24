@@ -51,4 +51,4 @@ guppy-workspace-hack.workspace = true
 
 [dev-dependencies]
 fixtures = { path = "../../fixtures" }
-cfg-if = "1.0.3"
+cfg-if = "1.0.4"
