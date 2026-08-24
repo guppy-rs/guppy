@@ -9,7 +9,6 @@ use crate::{
         feature::{FeatureFilter, FeatureQuery},
         query_core::QueryParams,
     },
-    sorted_set::SortedSet,
 };
 use camino::Utf8Path;
 use petgraph::prelude::*;
@@ -56,7 +55,7 @@ impl PackageGraph {
                     .member_by_path(path.as_ref())
                     .map(|package| package.package_ix())
             })
-            .collect::<Result<SortedSet<_>, Error>>()?;
+            .collect::<Result<Vec<_>, Error>>()?;
 
         Ok(self.query_from_parts(package_ixs, DependencyDirection::Forward))
     }
@@ -78,7 +77,7 @@ impl PackageGraph {
                     .member_by_name(name.as_ref())
                     .map(|package| package.package_ix())
             })
-            .collect::<Result<SortedSet<_>, Error>>()?;
+            .collect::<Result<Vec<_>, Error>>()?;
 
         Ok(self.query_from_parts(package_ixs, DependencyDirection::Forward))
     }
@@ -105,10 +104,8 @@ impl PackageGraph {
         &'g self,
         package_ids: impl IntoIterator<Item = &'a PackageId>,
     ) -> Result<PackageQuery<'g>, Error> {
-        Ok(PackageQuery {
-            graph: self,
-            params: QueryParams::Forward(self.package_ixs(package_ids)?),
-        })
+        let package_ixs: Vec<_> = self.package_ixs(package_ids)?;
+        Ok(self.query_from_parts(package_ixs, DependencyDirection::Forward))
     }
 
     /// Creates a new query that returns transitive reverse dependencies of the given packages.
@@ -118,24 +115,18 @@ impl PackageGraph {
         &'g self,
         package_ids: impl IntoIterator<Item = &'a PackageId>,
     ) -> Result<PackageQuery<'g>, Error> {
-        Ok(PackageQuery {
-            graph: self,
-            params: QueryParams::Reverse(self.package_ixs(package_ids)?),
-        })
+        let package_ixs: Vec<_> = self.package_ixs(package_ids)?;
+        Ok(self.query_from_parts(package_ixs, DependencyDirection::Reverse))
     }
 
     pub(super) fn query_from_parts(
         &self,
-        package_ixs: SortedSet<NodeIndex<PackageIx>>,
+        package_ixs: impl IntoIterator<Item = NodeIndex<PackageIx>>,
         direction: DependencyDirection,
     ) -> PackageQuery<'_> {
-        let params = match direction {
-            DependencyDirection::Forward => QueryParams::Forward(package_ixs),
-            DependencyDirection::Reverse => QueryParams::Reverse(package_ixs),
-        };
         PackageQuery {
             graph: self,
-            params,
+            params: QueryParams::new(&self.dep_graph, package_ixs, direction),
         }
     }
 }
@@ -156,9 +147,9 @@ impl<'g> PackageQuery<'g> {
     /// The order of packages is unspecified.
     pub fn initials<'a>(&'a self) -> impl ExactSizeIterator<Item = PackageMetadata<'g>> + 'a {
         let graph = self.graph;
-        self.params.initials().iter().map(move |package_ix| {
+        self.params.initials().map(move |package_ix| {
             graph
-                .metadata(&graph.dep_graph[*package_ix])
+                .metadata(&graph.dep_graph[package_ix])
                 .expect("valid ID")
         })
     }
@@ -174,10 +165,9 @@ impl<'g> PackageQuery<'g> {
     ///
     /// This will cause the feature graph to be constructed if it hasn't been done so already.
     pub fn to_feature_query(&self, filter: impl FeatureFilter<'g>) -> FeatureQuery<'g> {
-        let package_ixs = self.params.initials();
         let feature_graph = self.graph.feature_graph();
-        let feature_ixs =
-            feature_graph.feature_ixs_for_package_ixs_filtered(package_ixs.iter().copied(), filter);
+        let feature_ixs: Vec<_> =
+            feature_graph.feature_ixs_for_package_ixs_filtered(self.params.initials(), filter);
         feature_graph.query_from_parts(feature_ixs, self.direction())
     }
 

@@ -11,7 +11,6 @@ use crate::{
         },
         query_core::QueryParams,
     },
-    sorted_set::SortedSet,
 };
 use itertools::Itertools;
 use petgraph::graph::NodeIndex;
@@ -222,10 +221,8 @@ impl<'g> FeatureGraph<'g> {
         feature_ids: impl IntoIterator<Item = impl Into<FeatureId<'a>>>,
     ) -> Result<FeatureQuery<'g>, Error> {
         let feature_ids = feature_ids.into_iter().map(|feature_id| feature_id.into());
-        Ok(FeatureQuery {
-            graph: DebugIgnore(*self),
-            params: QueryParams::Forward(self.feature_ixs(feature_ids)?),
-        })
+        let feature_ixs: Vec<_> = self.feature_ixs(feature_ids)?;
+        Ok(self.query_from_parts(feature_ixs, DependencyDirection::Forward))
     }
 
     /// Creates a new query that returns transitive reverse dependencies of the given feature IDs.
@@ -236,24 +233,18 @@ impl<'g> FeatureGraph<'g> {
         feature_ids: impl IntoIterator<Item = impl Into<FeatureId<'a>>>,
     ) -> Result<FeatureQuery<'g>, Error> {
         let feature_ids = feature_ids.into_iter().map(|feature_id| feature_id.into());
-        Ok(FeatureQuery {
-            graph: DebugIgnore(*self),
-            params: QueryParams::Reverse(self.feature_ixs(feature_ids)?),
-        })
+        let feature_ixs: Vec<_> = self.feature_ixs(feature_ids)?;
+        Ok(self.query_from_parts(feature_ixs, DependencyDirection::Reverse))
     }
 
     pub(in crate::graph) fn query_from_parts(
         &self,
-        feature_ixs: SortedSet<NodeIndex<FeatureIx>>,
+        feature_ixs: impl IntoIterator<Item = NodeIndex<FeatureIx>>,
         direction: DependencyDirection,
     ) -> FeatureQuery<'g> {
-        let params = match direction {
-            DependencyDirection::Forward => QueryParams::Forward(feature_ixs),
-            DependencyDirection::Reverse => QueryParams::Reverse(feature_ixs),
-        };
         FeatureQuery {
             graph: DebugIgnore(*self),
-            params,
+            params: QueryParams::new(self.dep_graph(), feature_ixs, direction),
         }
     }
 }
@@ -276,15 +267,15 @@ impl<'g> FeatureQuery<'g> {
         let graph = self.graph;
         self.params
             .initials()
-            .iter()
-            .map(move |feature_ix| graph.metadata_for_ix(*feature_ix))
+            .map(move |feature_ix| graph.metadata_for_ix(feature_ix))
     }
 
     /// Returns the list of initial packages specified in the query.
     ///
     /// The order of packages is unspecified.
     pub fn initial_packages<'a>(&'a self) -> impl Iterator<Item = PackageMetadata<'g>> + 'a {
-        // feature ixs are stored in sorted order by package ix, so dedup() is fine.
+        // ones() iterates in ascending ix order and each package's feature ixs
+        // are contiguous, so dedup() is fine.
         self.initials().map(|feature| feature.package()).dedup()
     }
 

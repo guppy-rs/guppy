@@ -142,7 +142,7 @@ impl<'a> CargoSetBuildState<'a> {
             .collect();
         let target_query = graph
             .package_graph
-            .query_from_parts(SortedSet::new(target_ixs), DependencyDirection::Forward);
+            .query_from_parts(target_ixs, DependencyDirection::Forward);
 
         // 1. Build the intermediate set containing the features for any possible package that can
         // be built, including features-only packages.
@@ -277,7 +277,6 @@ impl<'a> CargoSetBuildState<'a> {
         });
 
         // 3. Figure out what packages will be included on the host platform.
-        let host_ixs = SortedSet::new(host_ixs);
         let host_packages = graph
             .package_graph
             .query_from_parts(host_ixs, DependencyDirection::Forward)
@@ -383,9 +382,8 @@ impl<'a> CargoSetBuildState<'a> {
         let mut host_ixs: Vec<_> = query
             .params
             .initials()
-            .iter()
             .filter_map(|feature_ix| {
-                let metadata = graph.metadata_for_ix(*feature_ix);
+                let metadata = graph.metadata_for_ix(feature_ix);
                 if self.opts.initials_platform == InitialsPlatform::Host
                     || metadata.package().is_proc_macro()
                 {
@@ -406,7 +404,7 @@ impl<'a> CargoSetBuildState<'a> {
 
         let target_query = if self.opts.initials_platform == InitialsPlatform::Host {
             // Empty query on the target.
-            graph.query_from_parts(SortedSet::new(vec![]), DependencyDirection::Forward)
+            graph.query_from_parts(std::iter::empty(), DependencyDirection::Forward)
         } else {
             query
         };
@@ -470,7 +468,7 @@ impl<'a> CargoSetBuildState<'a> {
 
         // 2. Perform a feature query for the host.
         let host = graph
-            .query_from_parts(SortedSet::new(host_ixs), DependencyDirection::Forward)
+            .query_from_parts(host_ixs, DependencyDirection::Forward)
             .resolve_with_fn(|_, link| {
                 let (from, to) = link.endpoints();
                 if self.is_omitted(to.package_ix()) {

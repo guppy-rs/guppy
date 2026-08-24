@@ -796,6 +796,30 @@ mod small {
         );
     }
 
+    #[test]
+    fn query_duplicate_initials() {
+        let metadata1 = JsonFixture::metadata1();
+        let graph = metadata1.graph();
+
+        let testcrate_id = package_id(json::METADATA1_TESTCRATE);
+        let datatest_id = package_id(json::METADATA1_DATATEST);
+        let query = graph
+            .query_forward([&testcrate_id, &testcrate_id, &datatest_id])
+            .expect("queried duplicate package IDs");
+
+        assert_eq!(
+            query.initials().len(),
+            2,
+            "duplicate initials collapse into distinct packages"
+        );
+        let initial_ids: HashSet<_> = query.initials().map(|package| package.id()).collect();
+        let expected_ids: HashSet<_> = [&testcrate_id, &datatest_id].into_iter().collect();
+        assert_eq!(
+            initial_ids, expected_ids,
+            "initials are testcrate and datatest"
+        );
+    }
+
     #[track_caller]
     fn expect_panic_message(f: impl FnOnce(), expected: &str) {
         let prev_hook = std::panic::take_hook();

@@ -20,13 +20,23 @@ use petgraph::{
     prelude::*,
     visit::{NodeFiltered, Reversed},
 };
+use std::fmt;
 
 /// Core logic for queries that have been resolved into a known set of packages.
 ///
 /// The `G` param ensures that package and feature resolutions aren't mixed up accidentally.
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub(super) struct ResolveCore<G> {
     pub(super) included: IxSet<G>,
+}
+
+// A manual impl avoids a G: Debug bound from the derive.
+impl<G: GraphSpec> fmt::Debug for ResolveCore<G> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("ResolveCore")
+            .field("included", &self.included)
+            .finish()
+    }
 }
 
 impl<G: GraphSpec> ResolveCore<G> {
@@ -34,9 +44,9 @@ impl<G: GraphSpec> ResolveCore<G> {
         graph: &Graph<G::Node, G::Edge, Directed, G::Ix>,
         params: QueryParams<G>,
     ) -> Self {
-        let (included, len) = match params {
-            QueryParams::Forward(initials) => reachable_map(graph, initials.into_inner()),
-            QueryParams::Reverse(initials) => reachable_map(Reversed(graph), initials.into_inner()),
+        let (included, len) = match params.direction() {
+            DependencyDirection::Forward => reachable_map(graph, params.initials()),
+            DependencyDirection::Reverse => reachable_map(Reversed(graph), params.initials()),
         };
         Self {
             included: IxSet::from_visit_map(included, len, graph.node_count()),
@@ -62,16 +72,16 @@ impl<G: GraphSpec> ResolveCore<G> {
         params: QueryParams<G>,
         edge_filter: impl FnMut(EdgeReference<'g, G::Edge, G::Ix>) -> bool,
     ) -> Self {
-        let (included, len) = match params {
-            QueryParams::Forward(initials) => reachable_map_buffered_filter(
+        let (included, len) = match params.direction() {
+            DependencyDirection::Forward => reachable_map_buffered_filter(
                 graph,
                 SimpleEdgeFilterFn(edge_filter),
-                initials.into_inner(),
+                params.initials(),
             ),
-            QueryParams::Reverse(initials) => reachable_map_buffered_filter(
+            DependencyDirection::Reverse => reachable_map_buffered_filter(
                 Reversed(graph),
                 ReversedBufferedFilter(SimpleEdgeFilterFn(edge_filter)),
-                initials.into_inner(),
+                params.initials(),
             ),
         };
         Self {
@@ -85,14 +95,14 @@ impl<G: GraphSpec> ResolveCore<G> {
         params: QueryParams<G>,
         filter: impl BufferedEdgeFilter<&'g Graph<G::Node, G::Edge, Directed, G::Ix>>,
     ) -> Self {
-        let (included, len) = match params {
-            QueryParams::Forward(initials) => {
-                reachable_map_buffered_filter(graph, filter, initials.into_inner())
+        let (included, len) = match params.direction() {
+            DependencyDirection::Forward => {
+                reachable_map_buffered_filter(graph, filter, params.initials())
             }
-            QueryParams::Reverse(initials) => reachable_map_buffered_filter(
+            DependencyDirection::Reverse => reachable_map_buffered_filter(
                 Reversed(graph),
                 ReversedBufferedFilter(filter),
-                initials.into_inner(),
+                params.initials(),
             ),
         };
         Self {
