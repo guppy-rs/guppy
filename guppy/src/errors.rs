@@ -56,17 +56,26 @@ pub enum Error {
         unknown_third_party: Vec<crate::graph::summaries::ThirdPartySummary>,
     },
     /// While resolving the features-only set of a
-    /// [`CargoSetInputsSummary`](crate::graph::summaries::CargoSetInputsSummary), some
-    /// elements were unknown to the `PackageGraph`.
+    /// [`CargoSetInputsSummary`][summary], some entries could not be applied
+    /// to the `PackageGraph`.
     ///
     /// This is present if the `summaries` feature is enabled.
+    ///
+    /// [summary]: crate::graph::summaries::CargoSetInputsSummary
     #[cfg(feature = "summaries")]
-    UnknownFeaturesOnlySummary {
+    InvalidFeaturesOnlySummary {
         /// Summary IDs that weren't known to the `PackageGraph`.
         unknown_summary_ids: Vec<crate::graph::summaries::SummaryId>,
-        /// Features and optional dependencies that weren't known to the `FeatureGraph`, grouped
-        /// by package. Each entry lists only the unknown ones.
-        unknown_features: Vec<crate::graph::summaries::FeaturesOnlySummary>,
+
+        /// Features and optional dependencies that weren't known to the
+        /// `FeatureGraph`, grouped by package.
+        unknown_features: Vec<crate::graph::summaries::UnknownFeatures>,
+
+        /// Entries that do not enable anything (`base` is false and there are
+        /// no features or optional dependencies). See [`is_empty`].
+        ///
+        /// [`is_empty`]: crate::graph::summaries::FeaturesOnlySummary::is_empty
+        empty_entries: Vec<crate::graph::summaries::SummaryId>,
     },
     /// While resolving a [`PackageSetSummary`](crate::graph::summaries::PackageSetSummary),
     /// an unknown external registry was encountered.
@@ -146,11 +155,12 @@ impl fmt::Display for Error {
                 Ok(())
             }
             #[cfg(feature = "summaries")]
-            UnknownFeaturesOnlySummary {
+            InvalidFeaturesOnlySummary {
                 unknown_summary_ids,
                 unknown_features,
+                empty_entries,
             } => {
-                writeln!(f, "unknown elements: resolving features-only")?;
+                writeln!(f, "invalid entries: resolving features-only")?;
                 if !unknown_summary_ids.is_empty() {
                     writeln!(f, "* unknown summary IDs:")?;
                     for summary_id in unknown_summary_ids {
@@ -171,6 +181,15 @@ impl fmt::Display for Error {
                                 join_names(&entry.optional_deps)
                             )?;
                         }
+                    }
+                }
+                if !empty_entries.is_empty() {
+                    writeln!(
+                        f,
+                        "* entries that enable nothing (base = false, no features):"
+                    )?;
+                    for summary_id in empty_entries {
+                        writeln!(f, "  - {summary_id}")?;
                     }
                 }
                 Ok(())
@@ -211,7 +230,7 @@ impl error::Error for Error {
             #[cfg(feature = "summaries")]
             UnknownPackageSetSummary { .. } => None,
             #[cfg(feature = "summaries")]
-            UnknownFeaturesOnlySummary { .. } => None,
+            InvalidFeaturesOnlySummary { .. } => None,
             #[cfg(feature = "summaries")]
             UnknownRegistryName { .. } => None,
             #[cfg(feature = "summaries")]

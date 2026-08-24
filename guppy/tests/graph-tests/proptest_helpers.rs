@@ -159,10 +159,7 @@ pub(super) fn run_summary_id_roundtrip(graph: &'static PackageGraph) {
 
 #[cfg(feature = "summaries")]
 pub(super) fn run_features_only_summary_roundtrip(graph: &'static PackageGraph) {
-    use guppy::graph::{
-        cargo::{CargoSet, CargoSetInputs},
-        summaries::CargoSetInputsSummary,
-    };
+    use guppy::graph::{cargo::CargoSetInputs, summaries::CargoSetInputsSummary};
 
     let feature_graph = graph.feature_graph();
 
@@ -183,21 +180,10 @@ pub(super) fn run_features_only_summary_roundtrip(graph: &'static PackageGraph) 
             .to_cargo_set_inputs(graph)
             .expect("cargo set inputs rebuilt from the summary");
 
-        // The summary doesn't record base features, so the rebuilt set is the
-        // original plus the base feature of every package in it.
-        let base_features = feature_graph
-            .resolve_ids(
-                inputs
-                    .features_only
-                    .packages_with_features(DependencyDirection::Forward)
-                    .map(|feature_list| FeatureId::base(feature_list.package().id())),
-            )
-            .expect("valid base feature IDs");
-        let normalized_features_only = inputs.features_only.union(&base_features);
         prop_assert_eq!(
             &rebuilt.features_only,
-            &normalized_features_only,
-            "features-only set rebuilt from the summary, plus base features"
+            &inputs.features_only,
+            "features-only set rebuilt from the summary"
         );
 
         let rebuilt_summary =
@@ -208,22 +194,20 @@ pub(super) fn run_features_only_summary_roundtrip(graph: &'static PackageGraph) 
             "inputs summary regenerated from the rebuilt inputs"
         );
 
-        // Base features affect the simulated build, so compare against the
-        // normalized set rather than the original one.
-        let normalized_set =
-            CargoSet::new(initials.clone(), normalized_features_only, &inputs.options)
-                .expect("cargo set built from the normalized inputs");
+        let original_set = inputs
+            .to_cargo_set(initials.clone())
+            .expect("cargo set built from the original inputs");
         let rebuilt_set = rebuilt
             .to_cargo_set(initials)
             .expect("cargo set built from the rebuilt inputs");
         prop_assert_eq!(
             rebuilt_set.target_features(),
-            normalized_set.target_features(),
+            original_set.target_features(),
             "target features match after the round trip"
         );
         prop_assert_eq!(
             rebuilt_set.host_features(),
-            normalized_set.host_features(),
+            original_set.host_features(),
             "host features match after the round trip"
         );
     })

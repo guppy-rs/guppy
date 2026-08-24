@@ -191,6 +191,7 @@ impl CargoSetInputsSummary {
             .packages_with_features(DependencyDirection::Forward)
             .map(|features| FeaturesOnlySummary {
                 summary_id: features.package().to_summary_id(),
+                base: features.has_base(),
                 features: features
                     .named_features()
                     .map(|feature| feature.to_owned())
@@ -217,10 +218,6 @@ impl CargoSetInputsSummary {
     }
 
     /// Creates a new [`CargoSetInputs`] from this summary.
-    ///
-    /// The summary does not record base features, so the rebuilt features-only
-    /// set includes the base feature of every package listed in
-    /// `features_only`. See [`FeaturesOnlySummary`].
     ///
     /// Returns an error if any of the omitted packages, the platforms, or the
     /// features-only elements could not be resolved against `package_graph`.
@@ -262,6 +259,7 @@ impl CargoSetInputsSummary {
         let mut feature_ids = Vec::new();
         let mut unknown_summary_ids = Vec::new();
         let mut unknown_features = Vec::new();
+        let mut empty_entries = Vec::new();
 
         for features_only in &self.features_only {
             let metadata = match package_graph.metadata_by_summary_id(&features_only.summary_id) {
@@ -274,11 +272,16 @@ impl CargoSetInputsSummary {
             };
             let package_id = metadata.id();
 
-            // The summary doesn't record base features, so always enable the
-            // base feature for a listed package.
-            feature_ids.push(FeatureId::base(package_id));
+            if features_only.is_empty() {
+                empty_entries.push(features_only.summary_id.clone());
+                continue;
+            }
 
-            let mut unknown = FeaturesOnlySummary {
+            if features_only.base {
+                feature_ids.push(FeatureId::base(package_id));
+            }
+
+            let mut unknown = UnknownFeatures {
                 summary_id: features_only.summary_id.clone(),
                 features: BTreeSet::new(),
                 optional_deps: BTreeSet::new(),
@@ -304,10 +307,14 @@ impl CargoSetInputsSummary {
             }
         }
 
-        if !unknown_summary_ids.is_empty() || !unknown_features.is_empty() {
-            return Err(Error::UnknownFeaturesOnlySummary {
+        if !unknown_summary_ids.is_empty()
+            || !unknown_features.is_empty()
+            || !empty_entries.is_empty()
+        {
+            return Err(Error::InvalidFeaturesOnlySummary {
                 unknown_summary_ids,
                 unknown_features,
+                empty_entries,
             });
         }
 
@@ -368,11 +375,61 @@ pub struct FeaturesOnlySummary {
     #[serde(flatten)]
     pub summary_id: SummaryId,
 
+    /// Whether the base feature is enabled for this package.
+    ///
+    /// Summaries written before this field existed do not record it, so it
+    /// defaults to true.
+    #[serde(default = "default_true", skip_serializing_if = "is_true")]
+    pub base: bool,
+
     /// The named features built for this package.
     pub features: BTreeSet<String>,
 
     /// The optional dependencies built for this package.
     #[serde(skip_serializing_if = "BTreeSet::is_empty", default)]
+    pub optional_deps: BTreeSet<String>,
+}
+
+impl FeaturesOnlySummary {
+    /// Returns true if this entry is vacuous, which requires the following
+    /// conditions to all be met:
+    ///
+    /// 1. `base` is false.
+    /// 2. There are no named features.
+    /// 3. There are no optional dependencies.
+    ///
+    /// [`CargoSetInputsSummary::new`] never produces such an entry, but a
+    /// hand-edited summary can.
+    ///
+    /// [`CargoSetInputsSummary::to_cargo_set_inputs`] rejects cases for which
+    /// this method returns true, since this is most likely an error.
+    pub fn is_empty(&self) -> bool {
+        !self.base && self.features.is_empty() && self.optional_deps.is_empty()
+    }
+}
+
+fn default_true() -> bool {
+    true
+}
+
+fn is_true(value: &bool) -> bool {
+    *value
+}
+
+/// The features and optional dependencies of a features-only package that
+/// were unknown to the `FeatureGraph`.
+///
+/// Returned as part of [`Error::InvalidFeaturesOnlySummary`].
+#[derive(Clone, Debug, Eq, PartialEq)]
+#[non_exhaustive]
+pub struct UnknownFeatures {
+    /// The summary ID for this package.
+    pub summary_id: SummaryId,
+
+    /// The named features that weren't known.
+    pub features: BTreeSet<String>,
+
+    /// The optional dependencies that weren't known.
     pub optional_deps: BTreeSet<String>,
 }
 
@@ -457,6 +514,7 @@ optional-deps = ['guppy-summaries']
             features_only.summary_id.source,
             SummarySource::workspace("guppy")
         );
+        assert!(features_only.base, "base defaults to true when absent");
         assert_eq!(
             features_only.features.iter().collect::<Vec<_>>(),
             ["guppy-summaries", "summaries"]
@@ -465,5 +523,37 @@ optional-deps = ['guppy-summaries']
             features_only.optional_deps.iter().collect::<Vec<_>>(),
             ["guppy-summaries"]
         );
+    }
+
+    #[test]
+    fn parse_features_only_without_base() {
+        let metadata = "\
+resolver = '2'
+include-dev = false
+initials-platform = 'standard'
+
+[[features-only]]
+name = 'guppy'
+version = '0.5.0'
+workspace-path = 'guppy'
+base = false
+features = ['summaries']
+";
+
+        let summary: CargoSetInputsSummary = toml::from_str(metadata).expect("parsed correctly");
+        let features_only = match summary.features_only.as_slice() {
+            [features_only] => features_only,
+            other => panic!("expected exactly one features-only entry, found {other:?}"),
+        };
+        assert!(!features_only.base, "base parsed as false");
+
+        let serialized = toml::to_string(&summary).expect("serialized correctly");
+        assert!(
+            serialized.contains("base = false"),
+            "base = false is written out: {serialized}"
+        );
+        let reparsed: CargoSetInputsSummary =
+            toml::from_str(&serialized).expect("reparsed correctly");
+        assert_eq!(reparsed, summary, "summary round-tripped through TOML");
     }
 }

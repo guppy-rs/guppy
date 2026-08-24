@@ -6,12 +6,51 @@ use guppy::{
     Error, Version,
     graph::{
         PackageGraph,
-        cargo::{CargoOptions, CargoSet},
-        feature::{FeatureSet, StandardFeatures},
+        cargo::{CargoOptions, CargoSet, CargoSetInputs},
+        feature::{FeatureId, FeatureSet, StandardFeatures},
         summaries::{CargoSetInputsSummary, Summary, SummaryId, SummarySource},
     },
 };
 use pretty_assertions::assert_eq;
+
+#[test]
+fn features_only_summary_records_missing_base() {
+    let graph = JsonFixture::metadata_guppy_c9b4f76().graph();
+    let guppy_id = graph
+        .workspace()
+        .member_by_name("guppy")
+        .expect("guppy is a workspace member")
+        .id();
+    let features_only = graph
+        .feature_graph()
+        .resolve_ids([FeatureId::named(guppy_id, "summaries")])
+        .expect("summaries is a feature of guppy");
+    let inputs = CargoSetInputs::new(CargoOptions::new(), features_only.clone());
+
+    let summary = CargoSetInputsSummary::new(&inputs).expect("inputs summary generated");
+    let entry = match summary.features_only.as_slice() {
+        [entry] => entry,
+        other => panic!("expected exactly one features-only entry, found {other:?}"),
+    };
+    assert!(!entry.base, "missing base feature recorded in the summary");
+
+    let serialized = toml::to_string(&summary).expect("summary serialized to TOML");
+    assert!(
+        serialized.contains("base = false"),
+        "serialized summary records the missing base: {serialized}"
+    );
+    let parsed: CargoSetInputsSummary =
+        toml::from_str(&serialized).expect("summary parsed from TOML");
+    assert_eq!(parsed, summary, "summary round-tripped through TOML");
+
+    let rebuilt = parsed
+        .to_cargo_set_inputs(graph)
+        .expect("cargo set inputs rebuilt from the summary");
+    assert_eq!(
+        rebuilt.features_only, features_only,
+        "features-only set rebuilt without the base feature",
+    );
+}
 
 fn feature_sets_for_guppy_c9b4f76(graph: &PackageGraph) -> (FeatureSet<'_>, FeatureSet<'_>) {
     let initials = graph
@@ -95,8 +134,16 @@ initials-platform = 'standard'
 name = 'guppy'
 version = '0.5.0'
 workspace-path = 'guppy'
+base = false
 features = ['summaries', 'no-such-feature']
 optional-deps = ['guppy-summaries', 'no-such-dep']
+
+[[features-only]]
+name = 'fixtures'
+version = '0.1.0'
+workspace-path = 'fixtures'
+base = false
+features = []
 
 [[features-only]]
 name = 'not-a-member'
@@ -115,13 +162,14 @@ features = []
         toml::from_str(metadata).expect("summary parsed from TOML");
     let err = summary
         .to_cargo_set_inputs(graph)
-        .expect_err("unknown features-only elements rejected");
+        .expect_err("invalid features-only entries rejected");
 
     #[cfg_attr(guppy_nightly, expect(non_exhaustive_omitted_patterns))]
     match &err {
-        Error::UnknownFeaturesOnlySummary {
+        Error::InvalidFeaturesOnlySummary {
             unknown_summary_ids,
             unknown_features,
+            empty_entries,
         } => {
             assert_eq!(
                 unknown_summary_ids,
@@ -161,14 +209,23 @@ features = []
                 ["no-such-dep"],
                 "only the unknown optional deps are reported",
             );
+            assert_eq!(
+                empty_entries,
+                &[SummaryId::new(
+                    "fixtures",
+                    Version::new(0, 1, 0),
+                    SummarySource::workspace("fixtures"),
+                )],
+                "the entry that enables nothing is reported",
+            );
         }
-        other => panic!("expected UnknownFeaturesOnlySummary, found {other:?}"),
+        other => panic!("expected InvalidFeaturesOnlySummary, found {other:?}"),
     }
 
     assert_eq!(
         err.to_string(),
         "\
-unknown elements: resolving features-only
+invalid entries: resolving features-only
 * unknown summary IDs:
   - { name = \"not-a-member\", version = \"0.1.0\", source = \"path 'not-a-member'\"}
   - { name = \"no-such-crate\", version = \"1.0.0\", source = \"crates.io\"}
@@ -176,7 +233,63 @@ unknown elements: resolving features-only
   - { name = \"guppy\", version = \"0.5.0\", source = \"path 'guppy'\"}:
     - features: no-such-feature
     - optional-deps: no-such-dep
+* entries that enable nothing (base = false, no features):
+  - { name = \"fixtures\", version = \"0.1.0\", source = \"path 'fixtures'\"}
 ",
-        "error message lists every unknown element",
+        "error message lists every invalid entry",
     );
+}
+
+#[test]
+fn features_only_summary_rejects_empty_entry() {
+    let graph = JsonFixture::metadata_guppy_c9b4f76().graph();
+    let metadata = "\
+resolver = '2'
+include-dev = false
+initials-platform = 'standard'
+
+[[features-only]]
+name = 'fixtures'
+version = '0.1.0'
+workspace-path = 'fixtures'
+base = false
+features = []
+";
+
+    let summary: CargoSetInputsSummary =
+        toml::from_str(metadata).expect("summary parsed from TOML");
+    let entry = match summary.features_only.as_slice() {
+        [entry] => entry,
+        other => panic!("expected exactly one features-only entry, found {other:?}"),
+    };
+    assert!(
+        entry.is_empty(),
+        "entry with base = false and no features is empty"
+    );
+
+    let err = summary
+        .to_cargo_set_inputs(graph)
+        .expect_err("entry that enables nothing rejected");
+
+    #[cfg_attr(guppy_nightly, expect(non_exhaustive_omitted_patterns))]
+    match &err {
+        Error::InvalidFeaturesOnlySummary {
+            unknown_summary_ids,
+            unknown_features,
+            empty_entries,
+        } => {
+            assert!(unknown_summary_ids.is_empty(), "the package is known");
+            assert!(unknown_features.is_empty(), "no features to be unknown");
+            assert_eq!(
+                empty_entries,
+                &[SummaryId::new(
+                    "fixtures",
+                    Version::new(0, 1, 0),
+                    SummarySource::workspace("fixtures"),
+                )],
+                "the empty entry is reported rather than silently dropped",
+            );
+        }
+        other => panic!("expected InvalidFeaturesOnlySummary, found {other:?}"),
+    }
 }
