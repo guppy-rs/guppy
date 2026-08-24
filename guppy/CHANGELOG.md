@@ -14,6 +14,9 @@
 ### Changed
 
 - MSRV updated to Rust 1.91, as required by dependencies.
+- `CargoOptions::new` now defaults to [version 3 of the Cargo feature resolver](https://doc.rust-lang.org/cargo/reference/resolver.html#resolver-versions)
+  rather than version 1. To restore the old behavior, call
+  `set_resolver(CargoResolverVersion::V1)`.
 - `PackageQuery` and `FeatureQuery` are now represented as a set of initial
   nodes plus a direction, sharing their internal bitset representation with
   `PackageSet` and `FeatureSet`:

@@ -30,18 +30,18 @@ pub struct CargoOptions<'a> {
 }
 
 impl<'a> CargoOptions<'a> {
-    /// Creates a new `CargoOptions` with this resolver version and default settings.
+    /// Creates a new `CargoOptions` with default settings.
     ///
     /// The default settings are similar to what a plain `cargo build` does:
     ///
-    /// * use version 1 of the Cargo resolver
+    /// * use version 3 of the Cargo resolver
     /// * exclude dev-dependencies
     /// * do not build proc macros specified in the query on the target platform
     /// * resolve dependencies assuming any possible host or target platform
     /// * do not omit any packages.
     pub fn new() -> Self {
         Self {
-            resolver: CargoResolverVersion::V1,
+            resolver: CargoResolverVersion::V3,
             include_dev: false,
             initials_platform: InitialsPlatform::Standard,
             host_platform: PlatformSpec::Any,
@@ -240,7 +240,7 @@ pub enum CargoResolverVersion {
     /// The "classic" feature resolver in Rust, as used by commands like `cargo install`.
     ///
     /// This resolver is the same as `V1`, except it doesn't unify features across dev dependencies
-    /// for initials. However, if `CargoOptions::with_dev_deps` is set to true, it behaves
+    /// for initials. However, if `CargoOptions::set_include_dev` is set to true, it behaves
     /// identically to the V1 resolver.
     ///
     /// For more, see

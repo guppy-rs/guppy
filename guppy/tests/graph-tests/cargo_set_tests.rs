@@ -4,7 +4,10 @@
 use fixtures::json::JsonFixture;
 use guppy::graph::{
     DependencyDirection, PackageLink,
-    cargo::{BuildPlatform, CargoLinkContext, CargoLinkVisitor, CargoOptions, CargoSet},
+    cargo::{
+        BuildPlatform, CargoLinkContext, CargoLinkVisitor, CargoOptions, CargoResolverVersion,
+        CargoSet,
+    },
     feature::StandardFeatures,
 };
 use std::collections::HashSet;
@@ -166,6 +169,55 @@ fn cargo_set_package_names(cargo_set: &CargoSet) -> Vec<String> {
     result
 }
 
+// Resolver versions 2 and 3 visit this link, but `region` is only enabled as a
+// dev dependency.
+const VISITED_BUT_NOT_ENABLED: &str = "datatest@0.4.2 => region@2.1.2";
+
+// testcrate turns on datatest/unsafe_test_runner via a dev dependency.
+const REGION_SUBTREE: [&str; 4] = ["bitflags", "libc", "mach", "region"];
+
+#[test]
+fn test_default_resolver_is_v3() {
+    let mut v3_visitor = CargoLinkVisitorForTesting::new();
+    let v3_set = cargo_set_with_visitor_and_options(
+        JsonFixture::metadata1(),
+        "testcrate",
+        &mut v3_visitor,
+        &CargoOptions::new(),
+    );
+    let v3_names = cargo_set_package_names(&v3_set)
+        .into_iter()
+        .collect::<HashSet<_>>();
+    for name in REGION_SUBTREE {
+        assert!(
+            !v3_names.contains(name),
+            "{name} is absent under the default resolver (v3 resolves \
+             features identically to v2, and doesn't unify dev-dependency \
+             features into a non-dev build)",
+        );
+    }
+
+    let mut v1_options = CargoOptions::new();
+    v1_options.set_resolver(CargoResolverVersion::V1);
+    let mut v1_visitor = CargoLinkVisitorForTesting::new();
+    let v1_set = cargo_set_with_visitor_and_options(
+        JsonFixture::metadata1(),
+        "testcrate",
+        &mut v1_visitor,
+        &v1_options,
+    );
+    let v1_names = cargo_set_package_names(&v1_set)
+        .into_iter()
+        .collect::<HashSet<_>>();
+    for name in REGION_SUBTREE {
+        assert!(
+            v1_names.contains(name),
+            "{name} is present under resolver v1, which unifies dev-dependency \
+             features into a non-dev build",
+        );
+    }
+}
+
 #[test]
 fn test_package_link_visitor_visits() {
     let mut visitor = CargoLinkVisitorForTesting::new();
@@ -174,21 +226,17 @@ fn test_package_link_visitor_visits() {
         cargo_set_package_names(&cargo_set),
         vec![
             "aho-corasick",
-            "bitflags",
             "ctor",
             "datatest",
             "datatest-derive",
             "dtoa",
             "lazy_static",
-            "libc",
             "linked-hash-map",
-            "mach",
             "memchr",
             "proc-macro2",
             "quote",
             "regex",
             "regex-syntax",
-            "region",
             "same-file",
             "serde",
             "serde_yaml",
@@ -224,13 +272,6 @@ fn test_package_link_visitor_visits() {
             "regex@1.3.1 => aho-corasick@0.7.6",
             "aho-corasick@0.7.6 => memchr@2.2.1",
             "thread_local@0.3.6 => lazy_static@1.4.0",
-            "region@2.1.2 => winapi@0.3.8",
-            "region@2.1.2 => mach@0.2.3",
-            "region@2.1.2 => libc@0.2.62",
-            "region@2.1.2 => bitflags@1.1.0",
-            "mach@0.2.3 => libc@0.2.62",
-            "winapi@0.3.8 => winapi-x86_64-pc-windows-gnu@0.4.0",
-            "winapi@0.3.8 => winapi-i686-pc-windows-gnu@0.4.0",
             "serde_yaml@0.8.9 => yaml-rust@0.4.3",
             "serde_yaml@0.8.9 => serde@1.0.100",
             "serde_yaml@0.8.9 => linked-hash-map@0.5.2",
@@ -241,6 +282,8 @@ fn test_package_link_visitor_visits() {
             "walkdir@2.2.9 => same-file@1.0.5",
             "same-file@1.0.5 => winapi-util@0.1.2",
             "winapi-util@0.1.2 => winapi@0.3.8",
+            "winapi@0.3.8 => winapi-x86_64-pc-windows-gnu@0.4.0",
+            "winapi@0.3.8 => winapi-i686-pc-windows-gnu@0.4.0",
             "ctor@0.1.10 => syn@1.0.5",
             "ctor@0.1.10 => quote@1.0.2",
             "quote@1.0.2 => proc-macro2@1.0.3",
@@ -254,13 +297,18 @@ fn test_package_link_visitor_visits() {
         ],
     );
 
-    // In this test input none of the links are trimmed by cargo algorithm.
-    let count_of_links_visited_by_visitor = visitor.trace.len();
-    let count_of_cargo_set_links = cargo_set.proc_macro_links().count()
-        + cargo_set.build_dep_links().count()
-        + cargo_set.target_links().count()
-        + cargo_set.host_links().count();
-    assert_eq!(count_of_links_visited_by_visitor, count_of_cargo_set_links);
+    let mut expected_trace = links_to_strings(
+        cargo_set
+            .proc_macro_links()
+            .chain(cargo_set.build_dep_links())
+            .chain(cargo_set.target_links())
+            .chain(cargo_set.host_links()),
+    );
+    expected_trace.push(VISITED_BUT_NOT_ENABLED.to_owned());
+    expected_trace.sort();
+    let mut sorted_trace = visitor.trace.clone();
+    sorted_trace.sort();
+    assert_eq!(sorted_trace, expected_trace);
 
     assert_eq!(
         links_to_strings(cargo_set.proc_macro_links()),
@@ -278,20 +326,14 @@ fn test_package_link_visitor_visits() {
         vec![
             "aho-corasick@0.7.6 => memchr@2.2.1",
             "datatest@0.4.2 => regex@1.3.1",
-            "datatest@0.4.2 => region@2.1.2",
             "datatest@0.4.2 => serde@1.0.100",
             "datatest@0.4.2 => serde_yaml@0.8.9",
             "datatest@0.4.2 => walkdir@2.2.9",
             "datatest@0.4.2 => yaml-rust@0.4.3",
-            "mach@0.2.3 => libc@0.2.62",
             "regex@1.3.1 => aho-corasick@0.7.6",
             "regex@1.3.1 => memchr@2.2.1",
             "regex@1.3.1 => regex-syntax@0.6.12",
             "regex@1.3.1 => thread_local@0.3.6",
-            "region@2.1.2 => bitflags@1.1.0",
-            "region@2.1.2 => libc@0.2.62",
-            "region@2.1.2 => mach@0.2.3",
-            "region@2.1.2 => winapi@0.3.8",
             "same-file@1.0.5 => winapi-util@0.1.2",
             "serde_yaml@0.8.9 => dtoa@0.4.4",
             "serde_yaml@0.8.9 => linked-hash-map@0.5.2",
@@ -332,16 +374,24 @@ fn test_cargo_link_visitor_build_platforms() {
 
     // testcrate has proc-macro and build deps, so both passes show up in the
     // trace.
-    assert_eq!(visitor.platform_trace.len(), visitor.trace.len());
+    assert!(
+        !platform_trace_links(&visitor.platform_trace, BuildPlatform::Host).is_empty(),
+        "host pass visited at least one link",
+    );
+    assert!(
+        !platform_trace_links(&visitor.platform_trace, BuildPlatform::Target).is_empty(),
+        "target pass visited at least one link",
+    );
 
-    // For this fixture, the target pass == target + proc-macro + build-dep
-    // links, and host pass == host links.
-    let expected_target = links_to_strings(
+    // The target trace also has visited-but-not-enabled links.
+    let mut expected_target = links_to_strings(
         cargo_set
             .target_links()
             .chain(cargo_set.proc_macro_links())
             .chain(cargo_set.build_dep_links()),
     );
+    expected_target.push(VISITED_BUT_NOT_ENABLED.to_owned());
+    expected_target.sort();
     assert_eq!(
         platform_trace_links(&visitor.platform_trace, BuildPlatform::Target),
         expected_target,
@@ -407,10 +457,8 @@ fn test_package_link_visitor_filtering_normal_links_on_target() {
         .into_iter()
         .collect::<HashSet<_>>();
     assert!(!cargo_set_links.contains("walkdir@2.2.9 => winapi@0.3.8"));
-    assert!(!cargo_set_links.contains("region@2.1.2 => winapi@0.3.8"));
     assert!(!cargo_set_links.contains("same-file@1.0.5 => winapi-util@0.1.2"));
     assert!(trace.contains("walkdir@2.2.9 => winapi@0.3.8"));
-    assert!(trace.contains("region@2.1.2 => winapi@0.3.8"));
     assert!(trace.contains("same-file@1.0.5 => winapi-util@0.1.2"));
 }
 
