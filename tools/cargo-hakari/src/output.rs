@@ -4,8 +4,9 @@
 use clap::{Parser, ValueEnum};
 use env_logger::fmt::Formatter;
 use log::{Level, LevelFilter, Record};
-use owo_colors::{OwoColorize, Stream, Style};
+use owo_colors::{OwoColorize, Style};
 use std::{io::Write, sync::Arc};
+use supports_color::Stream;
 
 #[derive(Debug, Parser)]
 #[must_use]

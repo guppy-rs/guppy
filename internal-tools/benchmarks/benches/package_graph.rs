@@ -1,14 +1,14 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-use criterion::{BatchSize, Criterion, black_box, criterion_group, criterion_main};
+use criterion::{BatchSize, Criterion, criterion_group, criterion_main};
 use guppy::{
     PackageId,
     graph::{DependencyDirection, PackageGraph, PackageMetadata},
 };
 use proptest::{collection::vec, prelude::*};
 use proptest_ext::ValueGenerator;
-use std::{collections::HashMap, time::Instant};
+use std::{collections::HashMap, hint::black_box, time::Instant};
 
 pub fn construct_benchmarks(c: &mut Criterion) {
     c.bench_function("make_package_graph", |b| b.iter(make_package_graph));

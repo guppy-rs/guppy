@@ -26,24 +26,26 @@ pre-release-replacements = [
 ]
 
 [dependencies]
-camino = "1.2.1"
+camino = "1.2.5"
 cfg-if = "1.0.4"
 clap = { version = "4.6.6", features = ["derive"] }
 # disable tracing integration since we don't use it
 color-eyre = { version = "0.6.5", default-features = false }
-dialoguer = "0.11.0"
-duct = "0.13.7"
+dialoguer = "0.12.0"
+# duct's default features enable wait_timeout/wait_deadline, which pull in
+# signal-hook via SIGCHLD. cargo-hakari only ever calls run().
+duct = { version = "1.1.1", default-features = false }
 enable-ansi-support = "0.3.1"
 env_logger = "0.11.11"
 guppy = { version = "0.17.26", path = "../../guppy" }
 hakari = { version = "0.17.9", path = "../hakari", features = ["cli-support"] }
-log = "0.4.28"
-owo-colors = { version = "3.5.0", features = ["supports-colors"] }
-supports-color = "1.3.1"
+log = "0.4.34"
+owo-colors = { version = "4.3.0", features = ["supports-colors"] }
+supports-color = "3.0.2"
 guppy-workspace-hack.workspace = true
 
 [dev-dependencies]
-tempfile = "3.20.0"
+tempfile = "3.27.0"
 
 # Metadata for cargo-binstall to get the right artifacts.
 [package.metadata.binstall]
