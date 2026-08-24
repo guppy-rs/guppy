@@ -3,7 +3,6 @@
 
 use crate::{
     Error, PackageId,
-    debug_ignore::DebugIgnore,
     graph::{
         DependencyDirection, PackageGraph, PackageIx, PackageLink, PackageLinkImpl,
         PackageMetadata, PackageQuery,
@@ -17,6 +16,7 @@ use crate::{
     },
 };
 use camino::Utf8Path;
+use debug_ignore::DebugIgnore;
 use fixedbitset::FixedBitSet;
 use petgraph::{
     prelude::*,
