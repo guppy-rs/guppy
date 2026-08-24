@@ -10,7 +10,7 @@ use std::sync::Arc;
 ///
 /// Some uses of `guppy` care about a single platform, and others care about queries against the
 /// intersection of all hypothetical platforms, or against a union of any of them. `PlatformSpec`
-/// handles the
+/// represents this notion.
 ///
 /// `PlatformSpec` does not currently support expressions, but it might in the future, using an
 /// [SMT solver](https://en.wikipedia.org/wiki/Satisfiability_modulo_theories).
@@ -47,19 +47,6 @@ pub enum PlatformSpec {
 }
 
 impl PlatformSpec {
-    /// Previous name for [`Self::build_target`], renamed to clarify what
-    /// `current` means.
-    ///
-    /// This method is deprecated and will be removed in a future version.
-    #[deprecated(
-        since = "0.17.13",
-        note = "this method has been renamed to `build_target`"
-    )]
-    #[inline]
-    pub fn current() -> Result<Self, TargetSpecError> {
-        Self::build_target()
-    }
-
     /// Returns a `PlatformSpec` corresponding to the target platform, as
     /// determined at build time.
     ///

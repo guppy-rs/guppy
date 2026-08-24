@@ -3,7 +3,6 @@
 
 use crate::{
     DependencyKind, Error, PackageId,
-    debug_ignore::DebugIgnore,
     errors::FeatureGraphWarning,
     graph::{
         DependencyDirection, FeatureIndexInPackage, FeatureIx, PackageGraph, PackageIx,
@@ -17,6 +16,7 @@ use crate::{
     platform::{PlatformStatus, PlatformStatusImpl},
 };
 use ahash::AHashMap;
+use debug_ignore::DebugIgnore;
 use once_cell::sync::OnceCell;
 use petgraph::{
     algo::has_path_connecting,

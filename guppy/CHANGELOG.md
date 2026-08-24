@@ -52,6 +52,26 @@
 - With the `summaries` feature, `toml` is updated to 1.1.4. `Error::TomlSerializeError`
   now wraps `toml` 1.x's `ser::Error`, a breaking change for code that names that type.
   Summary parsing follows the TOML 1.1 specification strictly.
+- `PackageMetadata::minimum_rust_version` is renamed to
+  `PackageMetadata::rust_version`, and the existing (deprecated) `rust_version`
+  method has been removed. As a result, `rust_version` now returns `Option<&Version>` rather
+  than `Option<&VersionReq>`.
+  - Code that calls `.matches(version)` on the old return value will fail to compile; use `version >= *rust_version` instead.
+  - For code that displays or serializes these versions, the output will change from a requirement such as `>=1.65.0`
+  to a plain version such as `1.65.0`.
+
+### Removed
+
+- `PackageMetadata::rust_version`'s old form, deprecated since 0.17.1, which
+  returned an `Option<&VersionReq>`. The returned `VersionReq` always had a single `>=X.Y.Z` comparator synthesized from the `rust-version` field.
+
+  Use the renamed `PackageMetadata::rust_version` described above, which returns an `Option<&Version>`.
+- `BuildTarget::doc_tests`, deprecated since 0.17.16. Use
+  `BuildTarget::doctest_by_default` instead.
+- `PlatformSpec::current`, deprecated since 0.17.13. Use
+  `PlatformSpec::build_target` instead.
+- The hidden re-export of the `debug_ignore` crate at the root of `guppy`.
+  Depend on [`debug-ignore`](https://crates.io/crates/debug-ignore) directly if you need it.
 
 [#497]: https://github.com/guppy-rs/guppy/issues/497
 

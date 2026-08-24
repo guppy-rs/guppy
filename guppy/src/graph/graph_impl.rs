@@ -989,29 +989,14 @@ impl<'g> PackageMetadata<'g> {
     /// Returns the minimum Rust compiler version, which should be able to compile the package, if
     /// specified.
     ///
+    /// Cargo normalizes this to the form `X.Y.0`.
+    ///
     /// This is the same as the `rust-version` field of `Cargo.toml`. For more, see [the
     /// `rust-version` field](https://doc.rust-lang.org/cargo/reference/manifest.html#the-rust-version-field)
     /// in the Cargo reference.
-    pub fn minimum_rust_version(&self) -> Option<&'g Version> {
+    #[doc(alias = "minimum_rust_version")]
+    pub fn rust_version(&self) -> Option<&'g Version> {
         self.inner.rust_version.as_ref()
-    }
-
-    /// Returns the minimum Rust compiler version, which should be able to compile the package, if
-    /// specified.
-    ///
-    /// Returned as a [`semver::VersionReq`]. This is actually not correct -- it is deprecated and
-    /// will go away in the next major version of guppy: use [`Self::minimum_rust_version`] instead.
-    ///
-    /// This is the same as the `rust-version` field of `Cargo.toml`. For more, see [the
-    /// `rust-version`
-    /// field](https://doc.rust-lang.org/cargo/reference/manifest.html#the-rust-version-field) in
-    /// the Cargo reference.
-    #[deprecated(
-        since = "0.17.1",
-        note = "use Self::rust_version instead, it returns a Version"
-    )]
-    pub fn rust_version(&self) -> Option<&'g VersionReq> {
-        self.inner.rust_version_req.as_ref()
     }
 
     /// Returns all the build targets for this package.
@@ -1242,7 +1227,6 @@ pub(crate) struct PackageMetadataImpl {
     pub(super) publish: PackagePublishImpl,
     pub(super) default_run: Option<Box<str>>,
     pub(super) rust_version: Option<Version>,
-    pub(super) rust_version_req: Option<VersionReq>,
     pub(super) named_features: IndexMap<Box<str>, SmallVec<[NamedFeatureDep; 4]>>,
     pub(super) optional_deps: IndexSet<Box<str>>,
 

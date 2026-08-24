@@ -5,7 +5,6 @@ use std::fmt;
 
 use crate::{
     Error, PackageId,
-    debug_ignore::DebugIgnore,
     graph::{
         DependencyDirection, FeatureGraphSpec, FeatureIx, PackageIx, PackageMetadata, PackageSet,
         cargo::{CargoOptions, CargoSet},
@@ -18,6 +17,7 @@ use crate::{
     },
     petgraph_support::{IxBitSet, dfs::BufferedEdgeFilterFn},
 };
+use debug_ignore::DebugIgnore;
 use fixedbitset::FixedBitSet;
 use itertools::Either;
 use petgraph::{graph::NodeIndex, visit::EdgeRef};

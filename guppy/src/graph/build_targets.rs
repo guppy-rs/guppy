@@ -91,18 +91,14 @@ impl<'g> BuildTarget<'g> {
     /// Returns true if documentation tests are run by default for this build
     /// target.
     ///
+    /// This is true by default for library targets, as well as binaries that
+    /// don't share a name with the library they are in.
+    ///
     /// For more information, see [the Cargo documentation].
     ///
     /// [the Cargo documentation]: https://doc.rust-lang.org/cargo/reference/cargo-targets.html#the-doctest-field
     #[inline]
     pub fn doctest_by_default(&self) -> bool {
-        self.inner.doctest_by_default
-    }
-
-    /// Previous name for [`Self::doctest_by_default`].
-    #[deprecated(since = "0.17.16", note = "use `doctest_by_default` instead")]
-    #[inline]
-    pub fn doc_tests(&self) -> bool {
         self.inner.doctest_by_default
     }
 

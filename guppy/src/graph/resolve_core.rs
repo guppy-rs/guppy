@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use crate::{
-    debug_ignore::DebugIgnore,
     graph::{DependencyDirection, GraphSpec, ix_set::IxSet},
     petgraph_support::{
         dfs::{
@@ -13,6 +12,7 @@ use crate::{
         walk::EdgeDfs,
     },
 };
+use debug_ignore::DebugIgnore;
 use fixedbitset::FixedBitSet;
 use petgraph::{
     graph::{EdgeReference, IndexType},
