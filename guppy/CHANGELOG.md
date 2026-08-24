@@ -56,7 +56,9 @@
     `proptest1_link_visitor_strategy`.
 - A new `CargoSetInputs` struct in `guppy::graph::cargo` combines `CargoOptions` and the features-only set.
 - With the `summaries` feature, `CargoOptionsSummary` is renamed to
-  `CargoSetInputsSummary`. The serialized format is unchanged.
+  `CargoSetInputsSummary`. Each `features-only` entry now records whether the
+  package's base feature is enabled, and `base = false` when it isn't. (The field
+  defaults to true, so existing summaries continue to work.)
 - With the `summaries` feature, `toml` is updated to 1.1.4. `Error::TomlSerializeError`
   now wraps `toml` 1.x's `ser::Error`, a breaking change for code that names that type.
   Summary parsing follows the TOML 1.1 specification strictly.
