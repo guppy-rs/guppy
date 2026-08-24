@@ -35,7 +35,7 @@ pre-release-replacements = [
 [dependencies]
 ahash.workspace = true
 camino = "1.2.1"
-globset = "0.4.16"
+globset = "0.4.20"
 guppy = { version = "0.17.26", path = "../../guppy", features = [
     "rayon1",
     "summaries",
