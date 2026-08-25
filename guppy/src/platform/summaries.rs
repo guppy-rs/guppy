@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use crate::{errors::TargetSpecError, platform::PlatformSpec};
-use std::sync::Arc;
+use std::{error, fmt, sync::Arc};
 pub use target_spec::summaries::{PlatformSummary, TargetFeaturesSummary};
 
 /// A serializable version of [`PlatformSpec`].
@@ -119,12 +119,20 @@ impl PlatformSpecSummary {
 
     /// Converts `self` to a `PlatformSpec`.
     ///
-    /// Returns an `Error` if the platform was unknown.
-    pub fn to_platform_spec(&self) -> Result<PlatformSpec, TargetSpecError> {
+    /// Returns an error naming the platform if it could not be converted, for
+    /// example because its triple was unknown.
+    pub fn to_platform_spec(&self) -> Result<PlatformSpec, PlatformSpecSummaryError> {
         match self {
             PlatformSpecSummary::Always => Ok(PlatformSpec::Always),
             PlatformSpecSummary::Platform(platform) => {
-                Ok(PlatformSpec::Platform(Arc::new(platform.to_platform()?)))
+                let platform =
+                    platform
+                        .to_platform()
+                        .map_err(|source| PlatformSpecSummaryError {
+                            triple: platform.triple.clone(),
+                            source,
+                        })?;
+                Ok(PlatformSpec::Platform(Arc::new(platform)))
             }
             PlatformSpecSummary::Any => Ok(PlatformSpec::Any),
         }
@@ -133,6 +141,39 @@ impl PlatformSpecSummary {
     /// Returns true if `self` is `PlatformSpecSummary::Any`.
     pub fn is_any(&self) -> bool {
         matches!(self, PlatformSpecSummary::Any)
+    }
+}
+
+/// An error returned by [`PlatformSpecSummary::to_platform_spec`].
+#[derive(Debug)]
+pub struct PlatformSpecSummaryError {
+    triple: String,
+    source: TargetSpecError,
+}
+
+impl PlatformSpecSummaryError {
+    /// Returns the triple of the platform that failed.
+    pub fn triple(&self) -> &str {
+        &self.triple
+    }
+
+    /// Returns the underlying target-spec error.
+    ///
+    /// This error is also returned by `Error::source` for this error.
+    pub fn target_spec_error(&self) -> &TargetSpecError {
+        &self.source
+    }
+}
+
+impl fmt::Display for PlatformSpecSummaryError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "invalid platform `{}`", self.triple)
+    }
+}
+
+impl error::Error for PlatformSpecSummaryError {
+    fn source(&self) -> Option<&(dyn error::Error + 'static)> {
+        Some(&self.source)
     }
 }
 
@@ -218,6 +259,47 @@ mod serde_impl {
             #[serde(skip_serializing_if = "BTreeSet::is_empty", default)]
             flags: BTreeSet<String>,
         },
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::error::Error as _;
+
+    #[test]
+    fn to_platform_spec_names_invalid_platform() {
+        let summary = PlatformSpecSummary::Platform(PlatformSummary::new("x86_64-unknown-foo"));
+        let err = summary
+            .to_platform_spec()
+            .expect_err("unknown triple rejected");
+        assert_eq!(err.triple(), "x86_64-unknown-foo", "error names the triple");
+        assert_eq!(
+            err.to_string(),
+            "invalid platform `x86_64-unknown-foo`",
+            "display names the triple"
+        );
+        assert!(
+            err.source().is_some(),
+            "the target-spec error is the source"
+        );
+        assert!(
+            matches!(
+                err.target_spec_error(),
+                TargetSpecError::UnknownPlatformTriple(_)
+            ),
+            "underlying error is an unknown triple, found {:?}",
+            err.target_spec_error(),
+        );
+    }
+
+    #[test]
+    fn to_platform_spec_accepts_non_platform_variants() {
+        for summary in [PlatformSpecSummary::Always, PlatformSpecSummary::Any] {
+            summary
+                .to_platform_spec()
+                .unwrap_or_else(|err| panic!("{summary:?} converted: {err}"));
+        }
     }
 }
 

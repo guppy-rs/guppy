@@ -11,7 +11,10 @@ use crate::{
     Error,
     graph::{
         DependencyDirection, PackageGraph, PackageMetadata, PackageSet, PackageSource,
-        cargo::{CargoOptions, CargoResolverVersion, CargoSet, CargoSetInputs, InitialsPlatform},
+        cargo::{
+            BuildPlatform, CargoOptions, CargoResolverVersion, CargoSet, CargoSetInputs,
+            InitialsPlatform,
+        },
         feature::{FeatureId, FeatureSet},
     },
     platform::PlatformSpecSummary,
@@ -223,13 +226,17 @@ impl CargoSetInputsSummary {
             .set_resolver(self.resolver)
             .set_include_dev(self.include_dev)
             .set_initials_platform(self.initials_platform.into())
-            .set_host_platform(
-                self.host_platform.to_platform_spec().map_err(|err| {
-                    Error::TargetSpecError("parsing host platform".to_string(), err)
-                })?,
-            )
-            .set_target_platform(self.target_platform.to_platform_spec().map_err(|err| {
-                Error::TargetSpecError("parsing target platform".to_string(), err)
+            .set_host_platform(self.host_platform.to_platform_spec().map_err(|error| {
+                Error::InvalidPlatformSpecSummary {
+                    build_platform: BuildPlatform::Host,
+                    error,
+                }
+            })?)
+            .set_target_platform(self.target_platform.to_platform_spec().map_err(|error| {
+                Error::InvalidPlatformSpecSummary {
+                    build_platform: BuildPlatform::Target,
+                    error,
+                }
             })?)
             .add_omitted_packages(omitted_packages.package_ids(DependencyDirection::Forward));
         Ok(CargoSetInputs {
