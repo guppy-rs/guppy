@@ -3,6 +3,8 @@
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+## [3.7.0] - 2026-08-25
+
 ### Changed
 
 - Updated `cfg-expr` to version 0.20.9, updating builtin targets to Rust 1.98.
@@ -434,6 +436,7 @@ This was mistakenly published and was yanked.
 - Initial release.
 
 <!-- next-url -->
+[3.7.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.7.0
 [3.6.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.6.0
 [3.5.7]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.5.7
 [3.5.6]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.5.6
