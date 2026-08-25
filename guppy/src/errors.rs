@@ -77,6 +77,20 @@ pub enum Error {
         /// [`is_empty`]: crate::graph::summaries::FeaturesOnlySummary::is_empty
         empty_entries: Vec<crate::graph::summaries::SummaryId>,
     },
+    /// While rebuilding a [`CargoSetInputsSummary`][summary], the host or
+    /// target platform could not be converted to a `PlatformSpec`.
+    ///
+    /// This is present if the `summaries` feature is enabled.
+    ///
+    /// [summary]: crate::graph::summaries::CargoSetInputsSummary
+    #[cfg(feature = "summaries")]
+    InvalidPlatformSpecSummary {
+        /// Whether the host or the target platform was invalid.
+        build_platform: crate::graph::cargo::BuildPlatform,
+
+        /// The underlying error.
+        error: crate::platform::PlatformSpecSummaryError,
+    },
     /// While resolving a [`PackageSetSummary`](crate::graph::summaries::PackageSetSummary),
     /// an unknown external registry was encountered.
     #[cfg(feature = "summaries")]
@@ -195,6 +209,14 @@ impl fmt::Display for Error {
                 Ok(())
             }
             #[cfg(feature = "summaries")]
+            InvalidPlatformSpecSummary { build_platform, .. } => {
+                let which = match build_platform {
+                    crate::graph::cargo::BuildPlatform::Host => "host",
+                    crate::graph::cargo::BuildPlatform::Target => "target",
+                };
+                write!(f, "invalid {which} platform in summary")
+            }
+            #[cfg(feature = "summaries")]
             UnknownRegistryName {
                 message,
                 summary,
@@ -231,6 +253,8 @@ impl error::Error for Error {
             UnknownPackageSetSummary { .. } => None,
             #[cfg(feature = "summaries")]
             InvalidFeaturesOnlySummary { .. } => None,
+            #[cfg(feature = "summaries")]
+            InvalidPlatformSpecSummary { error, .. } => Some(error),
             #[cfg(feature = "summaries")]
             UnknownRegistryName { .. } => None,
             #[cfg(feature = "summaries")]

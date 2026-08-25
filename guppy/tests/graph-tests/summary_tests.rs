@@ -6,7 +6,7 @@ use guppy::{
     Error, Version,
     graph::{
         PackageGraph,
-        cargo::{CargoOptions, CargoSet, CargoSetInputs},
+        cargo::{BuildPlatform, CargoOptions, CargoSet, CargoSetInputs},
         feature::{FeatureId, FeatureSet, StandardFeatures},
         summaries::{CargoSetInputsSummary, Summary, SummaryId, SummarySource},
     },
@@ -118,6 +118,56 @@ fn features_only_summary_round_trip() {
         summary,
         "resolution rebuilt from the summary matches the original",
     );
+}
+
+#[test]
+fn invalid_platform_names_build_platform() {
+    let graph = JsonFixture::metadata_guppy_c9b4f76().graph();
+
+    for (key, expected) in [
+        ("host-platform", BuildPlatform::Host),
+        ("target-platform", BuildPlatform::Target),
+    ] {
+        let metadata = format!(
+            "\
+resolver = '2'
+include-dev = false
+initials-platform = 'standard'
+{key} = 'x86_64-unknown-foo'
+"
+        );
+        let summary: CargoSetInputsSummary =
+            toml::from_str(&metadata).expect("summary parsed from TOML");
+        let err = summary
+            .to_cargo_set_inputs(graph)
+            .expect_err("unknown platform rejected");
+
+        #[cfg_attr(guppy_nightly, expect(non_exhaustive_omitted_patterns))]
+        match &err {
+            Error::InvalidPlatformSpecSummary {
+                build_platform,
+                error,
+            } => {
+                assert_eq!(*build_platform, expected, "{key} reported for {key}");
+                assert_eq!(
+                    error.triple(),
+                    "x86_64-unknown-foo",
+                    "error names the triple for {key}"
+                );
+            }
+            other => panic!("expected InvalidPlatformSpecSummary for {key}, found {other:?}"),
+        }
+
+        let which = match expected {
+            BuildPlatform::Host => "host",
+            BuildPlatform::Target => "target",
+        };
+        assert_eq!(
+            err.to_string(),
+            format!("invalid {which} platform in summary"),
+            "top-level message for {key}"
+        );
+    }
 }
 
 #[test]

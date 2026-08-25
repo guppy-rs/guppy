@@ -16,6 +16,9 @@
 ### Changed
 
 - MSRV updated to Rust 1.91, as required by dependencies.
+- With the `summaries` feature, `PlatformSpecSummary::to_platform_spec` now
+  returns `PlatformSpecSummaryError`, which names the platform that could not be
+  converted, instead of a bare `TargetSpecError`.
 - `CargoOptions::new` now defaults to [version 3 of the Cargo feature resolver](https://doc.rust-lang.org/cargo/reference/resolver.html#resolver-versions)
   rather than version 1. To restore the old behavior, call
   `set_resolver(CargoResolverVersion::V1)`.
