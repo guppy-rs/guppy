@@ -218,57 +218,81 @@ impl TargetFeaturesSummary {
 
 mod platform_impl {
     use super::*;
-    use serde::Deserializer;
+    use serde::{
+        Deserializer,
+        de::{self, MapAccess, Visitor, value::MapAccessDeserializer},
+    };
+    use std::fmt;
 
     impl<'de> Deserialize<'de> for PlatformSummary {
         fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
         where
             D: Deserializer<'de>,
         {
-            let d = PlatformSummaryDeserialize::deserialize(deserializer)?;
-            match d {
-                PlatformSummaryDeserialize::String(triple) => Ok(PlatformSummary {
-                    triple,
-                    custom_json: None,
-                    custom_cfg: None,
-                    target_features: TargetFeaturesSummary::default(),
-                    flags: BTreeSet::default(),
-                }),
-                PlatformSummaryDeserialize::Full {
-                    triple,
-                    custom_json,
-                    custom_cfg,
-                    target_features,
-                    flags,
-                } => Ok(PlatformSummary {
-                    triple,
-                    custom_json,
-                    custom_cfg,
-                    target_features,
-                    flags,
-                }),
-            }
+            deserializer.deserialize_any(PlatformSummaryVisitor)
         }
     }
 
+    // This is a hand-written visitor and not serde(untagged) for better error
+    // messages.
+    struct PlatformSummaryVisitor;
+
+    impl<'de> Visitor<'de> for PlatformSummaryVisitor {
+        type Value = PlatformSummary;
+
+        fn expecting(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            f.write_str("a platform (a triple string or a table with a `triple` key)")
+        }
+
+        fn visit_str<E>(self, triple: &str) -> Result<Self::Value, E>
+        where
+            E: de::Error,
+        {
+            validate_triple(triple)?;
+            Ok(PlatformSummary::new(triple))
+        }
+
+        fn visit_map<A>(self, map: A) -> Result<Self::Value, A::Error>
+        where
+            A: MapAccess<'de>,
+        {
+            let PlatformSummaryTable {
+                triple,
+                custom_json,
+                custom_cfg,
+                target_features,
+                flags,
+            } = PlatformSummaryTable::deserialize(MapAccessDeserializer::new(map))?;
+            validate_triple(&triple)?;
+            Ok(PlatformSummary {
+                triple,
+                custom_json,
+                custom_cfg,
+                target_features,
+                flags,
+            })
+        }
+    }
+
+    fn validate_triple<E: de::Error>(triple: &str) -> Result<(), E> {
+        if triple.is_empty() {
+            return Err(E::custom("a platform triple cannot be empty"));
+        }
+        Ok(())
+    }
+
     #[derive(Deserialize)]
-    #[serde(untagged)]
-    enum PlatformSummaryDeserialize {
-        String(String),
-        #[serde(rename_all = "kebab-case")]
-        Full {
-            triple: String,
-            #[serde(default)]
-            custom_json: Option<String>,
-            #[serde(default)]
-            custom_cfg: Option<String>,
-            /// The target features used.
-            #[serde(default)]
-            target_features: TargetFeaturesSummary,
-            /// The flags enabled.
-            #[serde(skip_serializing_if = "BTreeSet::is_empty", default)]
-            flags: BTreeSet<String>,
-        },
+    #[serde(rename_all = "kebab-case", deny_unknown_fields)]
+    struct PlatformSummaryTable {
+        triple: String,
+        #[serde(default)]
+        custom_json: Option<String>,
+        #[serde(default)]
+        custom_cfg: Option<String>,
+        #[serde(default)]
+        target_features: TargetFeaturesSummary,
+        #[serde(default)]
+        flags: BTreeSet<String>,
     }
 }
 
@@ -504,6 +528,54 @@ mod tests {
                     ));
                 }
             }
+        }
+    }
+    #[test]
+    fn platform_deserialize_errors() {
+        #[derive(Debug, Deserialize)]
+        struct Wrapper {
+            #[allow(dead_code)]
+            platform: PlatformSummary,
+        }
+
+        for (input, expected) in [
+            (r#"platform = """#, "a platform triple cannot be empty"),
+            (
+                r#"platform = { triple = "" }"#,
+                "a platform triple cannot be empty",
+            ),
+            (
+                r#"platform = { target-features = [] }"#,
+                "missing field `triple`",
+            ),
+            (
+                r#"platform = { tripel = "x86_64-unknown-linux-gnu" }"#,
+                "unknown field `tripel`",
+            ),
+            (
+                r#"platform = { triple = "x86_64-unknown-linux-gnu", target-feature = ["sse2"] }"#,
+                "unknown field `target-feature`",
+            ),
+            (
+                r#"platform = { triple = "x86_64-unknown-linux-gnu", target-features = "bogus" }"#,
+                "unknown string for target features: bogus",
+            ),
+            (
+                "platform = 5",
+                "expected a platform (a triple string or a table with a `triple` key)",
+            ),
+            (
+                r#"platform = ["x86_64-unknown-linux-gnu"]"#,
+                "expected a platform (a triple string or a table with a `triple` key)",
+            ),
+        ] {
+            let message = toml::from_str::<Wrapper>(input)
+                .expect_err("input rejected")
+                .to_string();
+            assert!(
+                message.contains(expected),
+                "for input {input}: error `{message}` contains `{expected}`",
+            );
         }
     }
 }

@@ -6,6 +6,9 @@
 ### Changed
 
 - Updated `cfg-expr` to version 0.20.9, updating builtin targets to Rust 1.98.
+- With the `summaries` feature, `PlatformSummary` deserialization now rejects
+  unknown keys and empty triples, and its errors name the offending field
+  rather than reporting serde's "data did not match any variant" message.
 - MSRV updated to Rust 1.91, as required by dependencies.
 
 ## [3.6.0] - 2026-03-31
