@@ -91,7 +91,7 @@ fn features_only_summary_round_trip() {
 
     let cargo_set = CargoSet::new(initials.clone(), features_only.clone(), &opts)
         .expect("cargo set built with a features-only set");
-    let summary = cargo_set.to_summary(&opts).expect("summary generated");
+    let summary = cargo_set.to_summary().expect("summary generated");
 
     let serialized = summary.to_string().expect("summary serialized to TOML");
     let parsed = Summary::parse(&serialized).expect("summary parsed from TOML");
@@ -114,9 +114,7 @@ fn features_only_summary_round_trip() {
         .to_cargo_set(initials)
         .expect("cargo set rebuilt from the summary");
     assert_eq!(
-        rebuilt
-            .to_summary(&inputs.options)
-            .expect("rebuilt summary generated"),
+        rebuilt.to_summary().expect("rebuilt summary generated"),
         summary,
         "resolution rebuilt from the summary matches the original",
     );

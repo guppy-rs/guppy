@@ -112,6 +112,28 @@ impl<'a> CargoOptions<'a> {
         self.omitted_packages.extend(package_ids);
         self
     }
+
+    // Note that the lifetime of the returned value is `'g` rather than being
+    // tied to `self`.
+    pub(crate) fn resolve_package_ids<'g>(
+        &self,
+        graph: &'g PackageGraph,
+    ) -> Result<CargoOptions<'g>, Error> {
+        let omitted_packages = self
+            .omitted_packages
+            .iter()
+            .map(|package_id| graph.metadata(package_id).map(|metadata| metadata.id()))
+            .collect::<Result<HashSet<_>, _>>()?;
+
+        Ok(CargoOptions {
+            resolver: self.resolver,
+            include_dev: self.include_dev,
+            initials_platform: self.initials_platform,
+            host_platform: self.host_platform.clone(),
+            target_platform: self.target_platform.clone(),
+            omitted_packages,
+        })
+    }
 }
 
 impl Default for CargoOptions<'_> {
@@ -362,7 +384,7 @@ impl<'g> CargoSetInputs<'g> {
 #[derive(Clone, Debug)]
 pub struct CargoSet<'g> {
     pub(super) initials: FeatureSet<'g>,
-    pub(super) features_only: FeatureSet<'g>,
+    pub(super) inputs: CargoSetInputs<'g>,
     pub(super) target_features: FeatureSet<'g>,
     pub(super) host_features: FeatureSet<'g>,
     pub(super) target_direct_deps: PackageSet<'g>,
@@ -431,7 +453,8 @@ impl<'g> CargoSet<'g> {
         visitor: Option<&mut dyn CargoLinkVisitor<'g>>,
         opts: &CargoOptions<'_>,
     ) -> Result<Self, Error> {
-        let build_state = CargoSetBuildState::new(initials.graph().package_graph, opts)?;
+        let graph = initials.graph().package_graph;
+        let build_state = CargoSetBuildState::new(graph, opts.resolve_package_ids(graph)?)?;
         Ok(build_state.build(initials, features_only, visitor))
     }
 
@@ -445,7 +468,8 @@ impl<'g> CargoSet<'g> {
         initials: &FeatureSet<'g>,
         opts: &CargoOptions<'_>,
     ) -> Result<CargoIntermediateSet<'g>, Error> {
-        let build_state = CargoSetBuildState::new(initials.graph().package_graph, opts)?;
+        let graph = initials.graph().package_graph;
+        let build_state = CargoSetBuildState::new(graph, opts.resolve_package_ids(graph)?)?;
         Ok(build_state.build_intermediate(initials.to_feature_query(DependencyDirection::Forward)))
     }
 
@@ -465,13 +489,10 @@ impl<'g> CargoSet<'g> {
         &self.initials
     }
 
-    /// Returns the packages and features that took part in feature unification but were not
-    /// considered part of the final result.
-    ///
-    /// For more about `features_only` and how it influences the build, see the documentation for
-    /// [`CargoSet::new`](CargoSet::new).
-    pub fn features_only(&self) -> &FeatureSet<'g> {
-        &self.features_only
+    /// Returns the inputs, other than the initials, from which this `CargoSet`
+    /// instance was constructed.
+    pub fn inputs(&self) -> &CargoSetInputs<'g> {
+        &self.inputs
     }
 
     /// Returns the feature set enabled on the target platform.

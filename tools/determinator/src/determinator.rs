@@ -365,7 +365,7 @@ impl<'g, 'a, 'b> BuildState<'g, 'a, 'b> {
 
         let old_result = BuildResult::new(old_package, cargo_options, features_only);
         let new_result = &self.build_cache.result_cache[package.id()];
-        new_result.is_changed(&old_result, cargo_options)
+        new_result.is_changed(&old_result)
     }
 }
 
@@ -521,13 +521,13 @@ impl<'g> BuildResult<'g> {
         target_set.union(&host_set).intersection(workspace_set)
     }
 
-    fn is_changed(&self, other: &BuildResult<'_>, cargo_options: &CargoOptions<'_>) -> bool {
+    fn is_changed(&self, other: &BuildResult<'_>) -> bool {
         for (a, b) in self.all_cargo_sets().zip(other.all_cargo_sets()) {
             let a_summary = a
-                .to_summary(cargo_options)
+                .to_summary()
                 .expect("custom platforms currently unsupported");
             let b_summary = b
-                .to_summary(cargo_options)
+                .to_summary()
                 .expect("custom platforms currently unsupported");
             let diff = a_summary.diff(&b_summary);
             if diff.is_changed() {
