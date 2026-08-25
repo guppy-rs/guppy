@@ -34,7 +34,7 @@ pre-release-replacements = [
 
 [dependencies]
 ahash = "0.8.12"
-camino = { version = "1.2.1", features = ["serde1"] }
+camino = { version = "1.2.5", features = ["serde1"] }
 cfg-if = "1.0.4"
 diffus = "0.10.0"
 toml = { version = "1.1.4", features = ["preserve_order"] }

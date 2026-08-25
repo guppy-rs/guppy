@@ -26,7 +26,7 @@ pre-release-replacements = [
 ]
 
 [dependencies]
-camino = "1.2.1"
+camino = "1.2.5"
 cfg-if = "1.0.4"
 clap = { version = "4.6.6", features = ["derive"] }
 # disable tracing integration since we don't use it
