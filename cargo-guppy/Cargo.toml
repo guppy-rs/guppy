@@ -13,7 +13,7 @@ camino = "1.2.5"
 color-eyre = { version = "0.6.5", default-features = false }
 clap = { version = "4.6.6", features = ["derive"] }
 dialoguer = "0.12.0"
-guppy = { version = "0.17.26", path = "../guppy", features = ["summaries"] }
+guppy = { version = "0.18.0", path = "../guppy", features = ["summaries"] }
 guppy-cmdlib = { path = "../guppy-cmdlib" }
 itertools.workspace = true
 pathdiff = { version = "0.2.3", features = ["camino"] }

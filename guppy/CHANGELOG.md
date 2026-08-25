@@ -3,6 +3,8 @@
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+## [0.18.0] - 2026-08-25
+
 ### Added
 
 - `PlatformSpec::Platforms`, a new variant holding a list of platforms
@@ -1046,6 +1048,7 @@ lazy_static = "0.2"
 - Initial release.
 
 <!-- next-url -->
+[0.18.0]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.18.0
 [0.17.26]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.26
 [0.17.25]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.25
 [0.17.24]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.24
