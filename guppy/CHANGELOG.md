@@ -5,123 +5,155 @@
 
 ### Added
 
-- `PlatformSpec::Platforms`, a new variant holding a list of platforms ([#438]),
-  and `PlatformSpec::platforms`, a constructor that accepts any iterator of
-  `Platform` or `Arc<Platform>`. A query against `Platforms` is enabled if it is
-  enabled on at least one of the platforms. `Platforms([])` is the union of no
-  platforms: nothing is enabled on it, not even unconditional dependencies.
+- `PlatformSpec::Platforms`, a new variant holding a list of platforms
+  ([#438], [#630]), and `PlatformSpec::platforms`, a constructor that accepts
+  any iterator of `Platform` or `Arc<Platform>`. A query against `Platforms` is
+  enabled if it is enabled on at least one of the platforms. `Platforms([])` is
+  the union of no platforms: nothing is enabled on it, not even unconditional
+  dependencies.
 
   Per-platform results are combined with the same [Kleene K3
   OR](https://en.wikipedia.org/wiki/Three-valued_logic#Kleene_and_Priest_logics)
   that `guppy` already uses to combine a dependency's target specs for a single
   platform: `Enabled` wins, then `Unknown`, then `Disabled`.
 
-### Fixed
-
-- With the `summaries` feature, rebuilding Cargo options from a summary no
-  longer silently drops the features-only set.
-- `FeatureSet::union`, `intersection`, `difference` and `symmetric_difference`
-  now panic, as documented, if the two sets were built from different package
-  graphs. Previously the check compared `self`'s graph against itself and could
-  never fire, so mismatched sets silently produced an invalid result. (The
-  corresponding `PackageSet` operations already checked this correctly.)
-
 ### Changed
 
-- MSRV updated to Rust 1.91, as required by dependencies.
-- With the `summaries` feature, `PlatformSpecSummary::to_platform_spec` now
-  returns `PlatformSpecSummaryError`, which names the platform that could not be
-  converted, instead of a bare `TargetSpecError`.
-- `CargoOptions::new` now defaults to [version 3 of the Cargo feature resolver](https://doc.rust-lang.org/cargo/reference/resolver.html#resolver-versions)
-  rather than version 1. To restore the old behavior, call
-  `set_resolver(CargoResolverVersion::V1)`.
-- `PackageQuery` and `FeatureQuery` are now represented as a set of initial
-  nodes plus a direction, sharing their internal bitset representation with
-  `PackageSet` and `FeatureSet`:
-  - `PackageQuery::initials` now returns a `&PackageSet`, and
-    `FeatureQuery::initials` a `&FeatureSet`, rather than iterators over
-    metadatas. To obtain the old iterators, use
-    `initials().packages(direction)` and `initials().features(direction)`.
-  - `PackageQuery::starts_from` and `FeatureQuery::starts_from` are removed.
-    Use `initials().contains(id)` instead, which returns the same
-    `Result<bool, Error>`.
-  - The `Debug` output of both query types now goes through the set types'
-    `Debug` impls. `PackageQuery`'s `Debug` no longer dumps the entire package
-    graph, and `FeatureQuery`'s now prints its initial packages with their
-    features.
-- The package and feature "resolver" traits are renamed and now receive an
-  opaque context ([#497]):
-  - `PackageResolver` is now `PackageLinkVisitor`, and `FeatureResolver` is now
-    `FeatureLinkVisitor`. The "resolver" name was easily confused with the Cargo
-    feature resolver, and the trait visits links rather than packages or features.
-  - `accept` is now `visit_link` on both traits.
-  - `visit_link` (and the closures passed to `PackageQuery::resolve_with_fn` and
-    `FeatureQuery::resolve_with_fn`) takes a `&PackageLinkContext` or
-    `&FeatureLinkContext` instead of a `&PackageQuery` or `&FeatureQuery`. The
-    query is available via `query()`; the context also provides `direction()`
-    and `starts_from_initial(&link)`.
-  - `CargoSet::with_package_resolver` is now `CargoSet::with_cargo_link_visitor`
-    and takes a new `CargoLinkVisitor` trait (in `guppy::graph::cargo`). Its
-    `CargoLinkContext` exposes which pass the link is being evaluated for
-    (`build_platform()`), the platform specs in effect (`platform_spec()` and
-    `build_dep_platform_spec()`), and whether dev and build dependencies are
-    under consideration for the link (`considers_dev_deps` and
-    `considers_build_deps` respectively).
-  - With the `proptest1` feature, `Prop010Resolver` is now `Prop010LinkVisitor`
-    and `PackageGraph::proptest1_resolver_strategy` is now
-    `proptest1_link_visitor_strategy`.
-- A new `CargoSetInputs` struct in `guppy::graph::cargo` combines `CargoOptions` and the features-only set.
-- `CargoSet` now keeps a copy of the inputs it was built with.
-  - With the `summaries` feature, `CargoSet::to_summary` uses the options the set was built with.
-  - `CargoSet::features_only` is removed. Use `CargoSet::inputs().features_only` instead.
-- `PlatformSpec::Platform` is removed in favor of `PlatformSpec::Platforms` (see
-  above). With the `summaries` feature, `PlatformSpecSummary::Platform` is
-  likewise replaced by `PlatformSpecSummary::Platforms(Vec<PlatformSummary>)`.
+- Queries and link visitors:
+  - `PackageQuery` and `FeatureQuery` are now represented as a set of initial
+    nodes plus a direction, sharing their internal bitset representation with
+    `PackageSet` and `FeatureSet` ([#609], [#610]).
+    - `PackageQuery::initials` now returns a `&PackageSet`, and
+      `FeatureQuery::initials` a `&FeatureSet`, rather than iterators over
+      metadatas. To obtain the old iterators, use
+      `initials().packages(direction)` and `initials().features(direction)`.
+    - `PackageQuery::starts_from` and `FeatureQuery::starts_from` are removed.
+      Use `initials().contains(id)` instead, which returns the same
+      `Result<bool, Error>`.
+    - The `Debug` output of both query types now goes through the set types'
+      `Debug` impls. `PackageQuery`'s `Debug` no longer dumps the entire
+      package graph, and `FeatureQuery`'s now prints its initial packages with
+      their features.
+  - The package and feature "resolver" traits are renamed and now receive an
+    opaque context ([#497], [#601], [#602], [#604]):
+    - `PackageResolver` is now `PackageLinkVisitor`, and `FeatureResolver` is
+      now `FeatureLinkVisitor`. The "resolver" name was easily confused with
+      the Cargo feature resolver, and the trait visits links rather than
+      packages or features.
+    - `accept` is now `visit_link` on both traits.
+    - `visit_link` (and the closures passed to `PackageQuery::resolve_with_fn`
+      and `FeatureQuery::resolve_with_fn`) takes a `&PackageLinkContext` or
+      `&FeatureLinkContext` instead of a `&PackageQuery` or `&FeatureQuery`.
+      The query is available via `query()`; the context also provides
+      `direction()` and `starts_from_initial(&link)`.
+    - `CargoSet::with_package_resolver` is now
+      `CargoSet::with_cargo_link_visitor` and takes a new `CargoLinkVisitor`
+      trait (in `guppy::graph::cargo`). Its `CargoLinkContext` exposes which
+      pass the link is being evaluated for (`build_platform()`), the platform
+      specs in effect (`platform_spec()` and `build_dep_platform_spec()`), and
+      whether dev and build dependencies are under consideration for the link
+      (`considers_dev_deps` and `considers_build_deps` respectively).
+    - With the `proptest1` feature, `Prop010Resolver` is now
+      `Prop010LinkVisitor` and `PackageGraph::proptest1_resolver_strategy` is
+      now `proptest1_link_visitor_strategy`.
+- Cargo sets and their inputs:
+  - `CargoOptions::new` now defaults to [version 3 of the Cargo feature
+    resolver](https://doc.rust-lang.org/cargo/reference/resolver.html#resolver-versions)
+    rather than version 1 ([#624]). To restore the old behavior, call
+    `set_resolver(CargoResolverVersion::V1)`.
+  - A new `CargoSetInputs` struct in `guppy::graph::cargo` combines
+    `CargoOptions` and the features-only set, and `CargoSet` now keeps a copy
+    of the inputs it was built with, available via `CargoSet::inputs`
+    ([#627]). `CargoSet::features_only` is removed; use
+    `inputs().features_only` instead.
+  - With the `summaries` feature, `CargoOptionsSummary` is renamed to
+    `CargoSetInputsSummary`, and `CargoSet::to_summary` uses the inputs the
+    set was built with ([#625]). Each `features-only` entry now records
+    whether the package's base feature is enabled, writing `base = false` when
+    it isn't ([#626]). The field defaults to true, so existing summaries
+    continue to work.
+- Platform specs:
+  - `PlatformSpec::Platform` is removed in favor of `PlatformSpec::Platforms`
+    (see above). With the `summaries` feature, `PlatformSpecSummary::Platform`
+    is likewise replaced by
+    `PlatformSpecSummary::Platforms(Vec<PlatformSummary>)` ([#630]).
   - A single platform is still serialized as-is, so existing serialized data
     continues to work. Zero or several platforms are serialized as an array
     (`target-platform = []` or `[[target-platform]]`), which older versions of
     `guppy` cannot read.
-  - Malformed platform specs now produce errors that name the offending element
-    or key, rather than serde's "data did not match any variant" message. The
-    following are rejected: `"always"` and `"any"` inside a list; `spec`
-    alongside any platform key such as `triple` or `target-features`; unknown
-    keys in a platform table; empty triples; and `spec` values other than
-    `"always"` or `"any"`. (Previously, `spec = "<triple>"` was silently treated
-    as that platform.)
-  - `PlatformSpecSummaryError` now records the position of the failing platform
-    within a list, available via its new `index` and `count` methods. Both its
-    `Display` output and `Error::InvalidPlatformSpecSummary`'s name the triple
-    and, for a list, the position.
-- With the `summaries` feature, `CargoOptionsSummary` is renamed to
-  `CargoSetInputsSummary`. Each `features-only` entry now records whether the
-  package's base feature is enabled, and `base = false` when it isn't. (The field
-  defaults to true, so existing summaries continue to work.)
-- With the `summaries` feature, `toml` is updated to 1.1.4. `Error::TomlSerializeError`
-  now wraps `toml` 1.x's `ser::Error`, a breaking change for code that names that type.
-  Summary parsing follows the TOML 1.1 specification strictly.
+  - With the `summaries` feature, `PlatformSpecSummary::to_platform_spec` now
+    returns `PlatformSpecSummaryError`, which names the platform that could not
+    be converted, instead of a bare `TargetSpecError` ([#628]). The error also
+    records the position of the failing platform within a list, available via
+    its `index` and `count` methods. Both its `Display` output and
+    `Error::InvalidPlatformSpecSummary`'s name the triple and, for a list, the
+    position.
+  - Malformed platform specs now produce errors that name the offending
+    element or key, rather than serde's "data did not match any variant"
+    message ([#629]). The following are rejected: `"always"` and `"any"` inside
+    a list; `spec` alongside any platform key such as `triple` or
+    `target-features`; unknown keys in a platform table; empty triples; and
+    `spec` values other than `"always"` or `"any"`. (Previously,
+    `spec = "<triple>"` was silently treated as that platform.)
 - `PackageMetadata::minimum_rust_version` is renamed to
-  `PackageMetadata::rust_version`, and the existing (deprecated) `rust_version`
-  method has been removed. As a result, `rust_version` now returns `Option<&Version>` rather
-  than `Option<&VersionReq>`.
-  - Code that calls `.matches(version)` on the old return value will fail to compile; use `version >= *rust_version` instead.
-  - For code that displays or serializes these versions, the output will change from a requirement such as `>=1.65.0`
-  to a plain version such as `1.65.0`.
+  `PackageMetadata::rust_version`, replacing the deprecated method of that
+  name ([#616]). As a result, `rust_version` now returns `Option<&Version>`
+  rather than `Option<&VersionReq>`.
+  - Code that calls `.matches(version)` on the old return value will fail to
+    compile; use `version >= *rust_version` instead.
+  - For code that displays or serializes these versions, the output will
+    change from a requirement such as `>=1.65.0` to a plain version such as
+    `1.65.0`.
+- With the `summaries` feature, `toml` is updated to 1.1.4 ([#600]).
+  `Error::TomlSerializeError` now wraps `toml` 1.x's `ser::Error`, a breaking
+  change for code that names that type. Summaries are parsed strictly
+  according to the TOML 1.1 specification; documents that the lenient `toml`
+  0.5 parser accepted but that are not valid TOML are now rejected.
+- MSRV updated to Rust 1.91, as required by dependencies.
 
 ### Removed
 
-- `PackageMetadata::rust_version`'s old form, deprecated since 0.17.1, which
-  returned an `Option<&VersionReq>`. The returned `VersionReq` always had a single `>=X.Y.Z` comparator synthesized from the `rust-version` field.
+The following deprecated APIs are removed ([#616]):
 
-  Use the renamed `PackageMetadata::rust_version` described above, which returns an `Option<&Version>`.
+- `PackageMetadata::rust_version`'s old form, deprecated since 0.17.1, which
+  returned an `Option<&VersionReq>` with a single `>=X.Y.Z` comparator
+  synthesized from the `rust-version` field. See the rename above for the
+  replacement.
 - `BuildTarget::doc_tests`, deprecated since 0.17.16. Use
   `BuildTarget::doctest_by_default` instead.
 - `PlatformSpec::current`, deprecated since 0.17.13. Use
   `PlatformSpec::build_target` instead.
 - The hidden re-export of the `debug_ignore` crate at the root of `guppy`.
-  Depend on [`debug-ignore`](https://crates.io/crates/debug-ignore) directly if you need it.
+  Depend on [`debug-ignore`](https://crates.io/crates/debug-ignore) directly if
+  you need it.
+
+### Fixed
+
+- `FeatureSet::union`, `intersection`, `difference` and `symmetric_difference`
+  now panic, as documented, if the two sets were built from different package
+  graphs ([#608]). Previously the check compared `self`'s graph against itself
+  and could never fire, so mismatched sets silently produced an invalid result.
+  (The corresponding `PackageSet` operations already checked this correctly.)
+- With the `summaries` feature, rebuilding Cargo set inputs from a summary no
+  longer silently drops the features-only set ([#625]).
 
 [#438]: https://github.com/guppy-rs/guppy/issues/438
-[#497]: https://github.com/guppy-rs/guppy/issues/497
+[#497]: https://github.com/guppy-rs/guppy/pull/497
+[#600]: https://github.com/guppy-rs/guppy/pull/600
+[#601]: https://github.com/guppy-rs/guppy/pull/601
+[#602]: https://github.com/guppy-rs/guppy/pull/602
+[#604]: https://github.com/guppy-rs/guppy/pull/604
+[#608]: https://github.com/guppy-rs/guppy/pull/608
+[#609]: https://github.com/guppy-rs/guppy/pull/609
+[#610]: https://github.com/guppy-rs/guppy/pull/610
+[#616]: https://github.com/guppy-rs/guppy/pull/616
+[#624]: https://github.com/guppy-rs/guppy/pull/624
+[#625]: https://github.com/guppy-rs/guppy/pull/625
+[#626]: https://github.com/guppy-rs/guppy/pull/626
+[#627]: https://github.com/guppy-rs/guppy/pull/627
+[#628]: https://github.com/guppy-rs/guppy/pull/628
+[#629]: https://github.com/guppy-rs/guppy/pull/629
+[#630]: https://github.com/guppy-rs/guppy/pull/630
 
 ## [0.17.26] - 2026-05-21
 

@@ -5,16 +5,27 @@
 
 ### Changed
 
-- MSRV updated to Rust 1.91, as required by dependencies.
 - Updated `toml` to 1.1.4 and `toml_edit` to 0.25.13.
   - `HakariConfig::from_str`, `HakariBuilderSummary::to_string` and
     `HakariBuilderSummary::write_to_string` now return error types from `toml`
-    1.x, and `TomlOutError::Toml` wraps `toml` 1.x's `ser::Error`.
-  - Configuration files are parsed according to the TOML 1.1 specification.
+    1.x, and `TomlOutError::Toml` wraps `toml` 1.x's `ser::Error`, a breaking
+    change for code that names those types.
+  - Configuration files are parsed strictly according to the TOML 1.1
+    specification; documents that the lenient `toml` 0.5 parser accepted but
+    that are not valid TOML are now rejected.
 - Updated the re-exported `diffy` to 0.5.1, so `HakariCargoToml::diff_toml`
   now returns `diffy` 0.5's `Patch`. `diffy` 0.5 is `no_std` by default and
   puts colored output behind a feature; hakari enables its `std` and `color`
   features so the re-exported API matches what 0.4 provided.
+- MSRV updated to Rust 1.91, as required by dependencies.
+
+### Fixed
+
+- Generated names for path and workspace dependencies no longer depend on
+  `camino`'s `Hash` implementation, which changed in `camino` 1.2.3. The
+  output now matches hakari built against `camino` 1.2.2 and earlier. Builds
+  of hakari 0.17.9 against `camino` 1.2.3 or later produced different names;
+  those revert to the original names with this release.
 
 ## [0.17.9] - 2025-12-26
 

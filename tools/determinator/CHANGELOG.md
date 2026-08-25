@@ -5,7 +5,6 @@
 
 ### Changed
 
-- MSRV updated to Rust 1.91, as required by dependencies.
 - `Determinator::default_cargo_options` now resolves features with version 3 of
   the Cargo feature resolver rather than version 1, following guppy's new
   default for `CargoOptions::new`. To restore the old behavior, build
@@ -13,8 +12,11 @@
   `set_resolver(CargoResolverVersion::V1)`, then pass them to
   `Determinator::set_cargo_options`.
 - Updated `toml` to 1.1.4. `DeterminatorRules::parse` now returns `toml` 1.x's
-  `de::Error`, a breaking change for code that names that type. Rules files are
-  parsed strictly according to the TOML 1.1 specification.
+  `de::Error`, a breaking change for code that names that type. Rules files
+  are parsed strictly according to the TOML 1.1 specification; documents that
+  the lenient `toml` 0.5 parser accepted but that are not valid TOML are now
+  rejected.
+- MSRV updated to Rust 1.91, as required by dependencies.
 
 ## [0.12.0] - 2023-06-25
 

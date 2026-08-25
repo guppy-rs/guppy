@@ -8,7 +8,17 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - Builtin targets updated to Rust 1.98.
+- `.config/hakari.toml` is now parsed strictly according to the TOML 1.1
+  specification; configuration that the lenient `toml` 0.5 parser accepted but
+  that is not valid TOML is now rejected.
 - MSRV updated to Rust 1.91, as required by dependencies.
+
+### Fixed
+
+- Generated names for path and workspace dependencies in the workspace-hack
+  package no longer depend on `camino`'s `Hash` implementation, which changed
+  in `camino` 1.2.3. The output is unchanged from cargo-hakari 0.9.38, so
+  upgrading does not churn existing workspace-hack packages.
 
 ## [0.9.38] - 2026-05-21
 
