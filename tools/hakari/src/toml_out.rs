@@ -11,7 +11,7 @@ use crate::{
     helpers::VersionDisplay,
 };
 use ahash::AHashMap;
-use camino::Utf8PathBuf;
+use camino::{Utf8Component, Utf8Path, Utf8PathBuf, Utf8Prefix};
 use cfg_if::cfg_if;
 use guppy::{
     PackageId,
@@ -512,10 +512,96 @@ fn make_hashed_name(dep: &PackageMetadata<'_>, dep_format: DepFormatVersion) -> 
         VersionDisplay::new(dep.version(), false, dep_format < DepFormatVersion::V3)
     );
     minimal_version.hash(&mut hasher);
-    dep.source().hash(&mut hasher);
+    hash_package_source(dep.source(), &mut hasher);
     let hash = hasher.finish();
 
     format!("{}-{:x}", dep.name(), hash)
+}
+
+// Hash algorithm for `PackageSource`.
+//
+// This matches what `derive(Hash)` on `PackageSource` produced with camino
+// 1.2.1. That was always a bit of an abuse of the `Hash` impl, since its exact
+// result for a type isn't part of the public API. Well, that's coming back to
+// bite us now, since camino 1.2.3 changed `Utf8Path`'s `Hash` impl.
+fn hash_package_source<H: Hasher>(source: PackageSource<'_>, hasher: &mut H) {
+    match source {
+        PackageSource::Workspace(path) => {
+            hash_discriminant(0, hasher);
+            hash_utf8_path(path, hasher);
+        }
+        PackageSource::Path(path) => {
+            hash_discriminant(1, hasher);
+            hash_utf8_path(path, hasher);
+        }
+        PackageSource::External(source) => {
+            hash_discriminant(2, hasher);
+            hash_str(source, hasher);
+        }
+    }
+}
+
+fn hash_utf8_path<H: Hasher>(path: &Utf8Path, hasher: &mut H) {
+    for component in path.components() {
+        match component {
+            Utf8Component::Prefix(prefix) => {
+                hash_discriminant(0, hasher);
+                hash_utf8_prefix(prefix.kind(), hasher);
+            }
+            Utf8Component::RootDir => hash_discriminant(1, hasher),
+            Utf8Component::CurDir => hash_discriminant(2, hasher),
+            Utf8Component::ParentDir => hash_discriminant(3, hasher),
+            Utf8Component::Normal(name) => {
+                hash_discriminant(4, hasher);
+                hash_str(name, hasher);
+            }
+        }
+    }
+}
+
+fn hash_utf8_prefix<H: Hasher>(prefix: Utf8Prefix<'_>, hasher: &mut H) {
+    match prefix {
+        Utf8Prefix::Verbatim(name) => {
+            hash_discriminant(0, hasher);
+            hash_os_str(name, hasher);
+        }
+        Utf8Prefix::VerbatimUNC(server, share) => {
+            hash_discriminant(1, hasher);
+            hash_os_str(server, hasher);
+            hash_os_str(share, hasher);
+        }
+        Utf8Prefix::VerbatimDisk(drive) => {
+            hash_discriminant(2, hasher);
+            hasher.write_u8(drive);
+        }
+        Utf8Prefix::DeviceNS(device) => {
+            hash_discriminant(3, hasher);
+            hash_os_str(device, hasher);
+        }
+        Utf8Prefix::UNC(server, share) => {
+            hash_discriminant(4, hasher);
+            hash_os_str(server, hasher);
+            hash_os_str(share, hasher);
+        }
+        Utf8Prefix::Disk(drive) => {
+            hash_discriminant(5, hasher);
+            hasher.write_u8(drive);
+        }
+    }
+}
+
+fn hash_discriminant<H: Hasher>(discriminant: isize, hasher: &mut H) {
+    hasher.write_isize(discriminant);
+}
+
+fn hash_str<H: Hasher>(s: &str, hasher: &mut H) {
+    hasher.write(s.as_bytes());
+    hasher.write_u8(0xff);
+}
+
+fn hash_os_str<H: Hasher>(s: &str, hasher: &mut H) {
+    hasher.write_usize(s.len());
+    hasher.write(s.as_bytes());
 }
 
 fn get_or_insert_table<'t>(parent: &'t mut Table, key: &str) -> &'t mut Table {
@@ -558,6 +644,77 @@ mod tests {
                     }
                 }
             }
+        }
+    }
+
+    #[test]
+    fn make_package_name_stable() {
+        let graph = JsonFixture::metadata2().graph();
+
+        let mut path_dep = None;
+        let mut external_dep = None;
+        for package in graph.resolve_all().packages(DependencyDirection::Forward) {
+            if package.name() != "walkdir" {
+                continue;
+            }
+            match package.source() {
+                // Workspace members never appear in the hakari output.
+                PackageSource::Workspace(_) => {}
+                PackageSource::Path(_) => {
+                    assert!(
+                        path_dep.replace(package).is_none(),
+                        "metadata2 has exactly one path walkdir"
+                    );
+                }
+                PackageSource::External(_) => {
+                    assert!(
+                        external_dep.replace(package).is_none(),
+                        "metadata2 has exactly one external walkdir"
+                    );
+                }
+            }
+        }
+
+        let path_dep = path_dep.expect("metadata2 has a path walkdir");
+        let external_dep = external_dep.expect("metadata2 has an external walkdir");
+
+        static EXPECTED: &[(DepFormatVersion, &str, &str)] = &[
+            (
+                DepFormatVersion::V1,
+                "walkdir-cd6c3afff8ff167c",
+                "walkdir-f595c2ba2a3f28df",
+            ),
+            (
+                DepFormatVersion::V2,
+                "walkdir-cd6c3afff8ff167c",
+                "walkdir-f595c2ba2a3f28df",
+            ),
+            (
+                DepFormatVersion::V3,
+                "walkdir-cd6c3afff8ff167c",
+                "walkdir-f595c2ba2a3f28df",
+            ),
+            (
+                DepFormatVersion::V4,
+                "walkdir-cd6c3afff8ff167c",
+                "walkdir-f595c2ba2a3f28df",
+            ),
+        ];
+
+        for &(dep_format, expected_path, expected_external) in EXPECTED {
+            assert_eq!(
+                make_hashed_name(&path_dep, dep_format),
+                expected_path,
+                "path walkdir name is stable at dep format {dep_format}; a \
+                 change here renames every workspace-hack entry for a path \
+                 dependency"
+            );
+            assert_eq!(
+                make_hashed_name(&external_dep, dep_format),
+                expected_external,
+                "external walkdir name is stable at dep format {dep_format}; \
+                 a change here renames every workspace-hack entry"
+            );
         }
     }
 
