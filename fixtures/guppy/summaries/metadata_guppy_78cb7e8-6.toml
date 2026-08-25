@@ -6,17 +6,34 @@ resolver = '2'
 include-dev = true
 initials-platform = 'standard'
 
-[metadata.host-platform]
-triple = 'thumbv7em-none-eabi'
-target-features = ['avx2', 'fma', 'sse4.1', 'ssse3']
-flags = ['foo']
+[[metadata.host-platform]]
+triple = 'i686-wrs-vxworks'
+target-features = ['aes', 'bmi1', 'xsaves']
+flags = ['bar', 'cargo_web']
 
-[metadata.target-platform]
-spec = 'any'
-[[metadata.omitted-packages.ids]]
-name = 'oorandom'
-version = '11.1.2'
-crates-io = true
+[[metadata.host-platform]]
+triple = 'armv7-wrs-vxworks-eabihf'
+target-features = 'all'
+
+[[metadata.host-platform]]
+triple = 'i686-unknown-helenos'
+target-features = ['avx2', 'ssse3']
+flags = ['bar', 'flag-test']
+
+[[metadata.target-platform]]
+triple = 'armv7r-none-eabihf'
+target-features = []
+flags = ['abc']
+
+[[metadata.target-platform]]
+triple = 'avr-none'
+target-features = ['sse4.2']
+flags = ['abc', 'foo']
+
+[[metadata.target-platform]]
+triple = 'riscv64gc-unknown-linux-musl'
+target-features = ['avx', 'sha']
+flags = ['abc', 'test-flag']
 
 [[target-package]]
 name = 'fixture-manager'
@@ -299,13 +316,6 @@ status = 'transitive'
 features = ['raw']
 
 [[target-package]]
-name = 'hermit-abi'
-version = '0.1.17'
-crates-io = true
-status = 'transitive'
-features = ['default']
-
-[[target-package]]
 name = 'itertools'
 version = '0.8.2'
 crates-io = true
@@ -339,13 +349,6 @@ version = '0.2.12'
 crates-io = true
 status = 'transitive'
 features = ['std']
-
-[[target-package]]
-name = 'output_vt100'
-version = '0.1.2'
-crates-io = true
-status = 'transitive'
-features = []
 
 [[target-package]]
 name = 'ppv-lite86'
@@ -385,22 +388,8 @@ features = ['alloc', 'getrandom', 'std']
 optional-deps = ['getrandom']
 
 [[target-package]]
-name = 'rand_hc'
-version = '0.2.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
 name = 'rand_xorshift'
 version = '0.2.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'redox_syscall'
-version = '0.1.57'
 crates-io = true
 status = 'transitive'
 features = []
@@ -490,34 +479,6 @@ crates-io = true
 status = 'transitive'
 features = []
 
-[[target-package]]
-name = 'wasi'
-version = '0.9.0+wasi-snapshot-preview1'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
-
-[[target-package]]
-name = 'winapi'
-version = '0.3.9'
-crates-io = true
-status = 'transitive'
-features = ['consoleapi', 'errhandlingapi', 'fileapi', 'handleapi', 'minwinbase', 'minwindef', 'processenv', 'std', 'winbase', 'winerror', 'winuser']
-
-[[target-package]]
-name = 'winapi-i686-pc-windows-gnu'
-version = '0.4.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'winapi-x86_64-pc-windows-gnu'
-version = '0.4.0'
-crates-io = true
-status = 'transitive'
-features = []
-
 [[host-package]]
 name = 'proptest-derive'
 version = '0.2.0'
@@ -528,13 +489,6 @@ features = []
 [[host-package]]
 name = 'autocfg'
 version = '1.0.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'ctor'
-version = '0.1.16'
 crates-io = true
 status = 'transitive'
 features = []

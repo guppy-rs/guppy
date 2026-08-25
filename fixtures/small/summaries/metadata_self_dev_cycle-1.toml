@@ -7,14 +7,12 @@ include-dev = false
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'armv7-unknown-linux-uclibceabihf'
-target-features = 'unknown'
-flags = ['abc', 'cargo_web']
+triple = 'wasm32-unknown-unknown'
+target-features = ['sse', 'xsavec']
+flags = ['cargo_web', 'test-flag']
 
 [metadata.target-platform]
-triple = 'aarch64-unknown-openbsd'
-target-features = 'unknown'
-flags = ['foo']
+spec = 'any'
 [[metadata.omitted-packages.ids]]
 name = 'self-dev-cycle-cycle-a'
 version = '0.1.0'

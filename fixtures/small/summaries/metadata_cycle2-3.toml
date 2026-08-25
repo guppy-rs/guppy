@@ -5,18 +5,26 @@
 resolver = '3'
 include-dev = false
 initials-platform = 'host'
+target-platform = []
 
-[metadata.host-platform]
-triple = 'powerpc64le-unknown-linux-gnu'
-target-features = ['sse4.2', 'xsave']
-flags = ['abc', 'flag-test']
+[[metadata.host-platform]]
+triple = 'thumbv4t-none-eabi'
+target-features = ['sse3']
+flags = ['abc', 'test-flag']
 
-[metadata.target-platform]
-spec = 'any'
+[[metadata.host-platform]]
+triple = 'armv6-none-eabihf'
+target-features = 'unknown'
+flags = ['cargo_web']
+
+[[metadata.host-platform]]
+triple = 'x86_64-unknown-hurd-gnu'
+target-features = ['sha']
+flags = ['cargo_web', 'test-flag']
 [[metadata.omitted-packages.ids]]
-name = 'upper-b'
+name = 'upper-a'
 version = '0.1.0'
-workspace-path = 'upper-b'
+workspace-path = 'upper-a'
 
 [[metadata.features-only]]
 name = 'lower-b'

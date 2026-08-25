@@ -6,15 +6,31 @@ resolver = '3'
 include-dev = false
 initials-platform = 'proc-macros-on-target'
 
-[metadata.host-platform]
-triple = 'i686-pc-windows-gnu'
-target-features = ['sha', 'sse4.2', 'ssse3', 'xsavec']
+[[metadata.host-platform]]
+triple = 'i686-pc-windows-msvc'
+target-features = ['bmi1', 'sse', 'sse4.2']
+flags = ['abc']
+
+[[metadata.host-platform]]
+triple = 'armv7-linux-androideabi'
+target-features = ['sse', 'sse3', 'sse4.1', 'xsave']
+flags = ['flag-test', 'test-flag']
 
 [metadata.target-platform]
-spec = 'always'
+spec = 'any'
 [[metadata.omitted-packages.ids]]
-name = 'tinytemplate'
-version = '1.1.0'
+name = 'num-traits'
+version = '0.2.12'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'pathdiff'
+version = '0.2.0'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'serde_json'
+version = '1.0.58'
 crates-io = true
 
 [[metadata.features-only]]
@@ -130,13 +146,6 @@ status = 'direct'
 features = ['default', 'std']
 
 [[target-package]]
-name = 'pathdiff'
-version = '0.2.0'
-crates-io = true
-status = 'direct'
-features = []
-
-[[target-package]]
 name = 'petgraph'
 version = '0.5.1'
 crates-io = true
@@ -166,13 +175,6 @@ crates-io = true
 status = 'direct'
 features = ['default', 'derive', 'serde_derive', 'std']
 optional-deps = ['serde_derive']
-
-[[target-package]]
-name = 'serde_json'
-version = '1.0.58'
-crates-io = true
-status = 'direct'
-features = ['default', 'std']
 
 [[target-package]]
 name = 'supercow'
@@ -259,13 +261,6 @@ status = 'transitive'
 features = ['default', 'use_std']
 
 [[target-package]]
-name = 'itoa'
-version = '0.4.6'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
 name = 'lazy_static'
 version = '1.4.0'
 crates-io = true
@@ -273,18 +268,18 @@ status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'num-traits'
-version = '0.2.12'
+name = 'libc'
+version = '0.2.79'
 crates-io = true
 status = 'transitive'
-features = ['std']
+features = ['default', 'std']
 
 [[target-package]]
 name = 'ppv-lite86'
 version = '0.2.9'
 crates-io = true
 status = 'transitive'
-features = ['simd']
+features = ['simd', 'std']
 
 [[target-package]]
 name = 'quick-error'
@@ -299,14 +294,14 @@ version = '0.7.3'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'getrandom', 'getrandom_package', 'libc', 'std']
-optional-deps = ['getrandom_package']
+optional-deps = ['getrandom_package', 'libc']
 
 [[target-package]]
 name = 'rand_chacha'
 version = '0.2.2'
 crates-io = true
 status = 'transitive'
-features = []
+features = ['std']
 
 [[target-package]]
 name = 'rand_core'
@@ -317,8 +312,22 @@ features = ['alloc', 'getrandom', 'std']
 optional-deps = ['getrandom']
 
 [[target-package]]
+name = 'rand_hc'
+version = '0.2.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
 name = 'rand_xorshift'
 version = '0.2.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'redox_syscall'
+version = '0.1.57'
 crates-io = true
 status = 'transitive'
 features = []
@@ -346,13 +355,6 @@ features = ['timeout', 'wait-timeout']
 optional-deps = ['wait-timeout']
 
 [[target-package]]
-name = 'ryu'
-version = '1.0.5'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
 name = 'semver-parser'
 version = '0.7.0'
 crates-io = true
@@ -376,6 +378,34 @@ features = []
 [[target-package]]
 name = 'wait-timeout'
 version = '0.2.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'wasi'
+version = '0.9.0+wasi-snapshot-preview1'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
+name = 'winapi'
+version = '0.3.9'
+crates-io = true
+status = 'transitive'
+features = ['consoleapi', 'errhandlingapi', 'fileapi', 'handleapi', 'processenv', 'std', 'winbase', 'winerror', 'winuser']
+
+[[target-package]]
+name = 'winapi-i686-pc-windows-gnu'
+version = '0.4.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'winapi-x86_64-pc-windows-gnu'
+version = '0.4.0'
 crates-io = true
 status = 'transitive'
 features = []
@@ -442,7 +472,7 @@ name = 'syn'
 version = '1.0.42'
 crates-io = true
 status = 'transitive'
-features = ['clone-impls', 'default', 'derive', 'parsing', 'printing', 'proc-macro', 'quote', 'visit']
+features = ['clone-impls', 'default', 'derive', 'full', 'parsing', 'printing', 'proc-macro', 'quote', 'visit']
 optional-deps = ['quote']
 
 [[host-package]]

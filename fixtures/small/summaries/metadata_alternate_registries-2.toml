@@ -5,22 +5,20 @@
 resolver = '3'
 include-dev = false
 initials-platform = 'proc-macros-on-target'
+target-platform = []
 
 [metadata.host-platform]
-spec = 'always'
-
-[metadata.target-platform]
-triple = 'x86_64-unknown-helenos'
-target-features = ['avx', 'sse2', 'ssse3']
-flags = ['foo', 'test-flag']
-[[metadata.omitted-packages.ids]]
-name = 'itoa'
-version = '0.4.8'
-crates-io = true
-
+triple = 'thumbv8m.main-nuttx-eabihf'
+target-features = ['aes', 'fma', 'sse2', 'xsave', 'xsavec']
+flags = ['test-flag']
 [[metadata.omitted-packages.ids]]
 name = 'syn'
 version = '1.0.80'
+source = 'registry+https://github.com/fakeorg/crates.io-index'
+
+[[metadata.omitted-packages.ids]]
+name = 'unicode-xid'
+version = '0.2.2'
 source = 'registry+https://github.com/fakeorg/crates.io-index'
 
 [[metadata.features-only]]
@@ -35,10 +33,3 @@ version = '1.0.1'
 workspace-path = ''
 status = 'initial'
 features = []
-
-[[target-package]]
-name = 'unicode-xid'
-version = '0.2.2'
-crates-io = true
-status = 'direct'
-features = ['default']

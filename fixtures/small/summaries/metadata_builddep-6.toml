@@ -7,12 +7,10 @@ include-dev = true
 initials-platform = 'host'
 
 [metadata.host-platform]
-spec = 'any'
+spec = 'always'
 
 [metadata.target-platform]
-triple = 'x86_64-wrs-vxworks'
-target-features = ['aes', 'avx', 'rdrand', 'sse']
-flags = ['abc']
+spec = 'any'
 
 [[metadata.features-only]]
 name = 'builddep'

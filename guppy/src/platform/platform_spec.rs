@@ -6,11 +6,24 @@ use crate::platform::EnabledTernary;
 use crate::{errors::TargetSpecError, platform::Platform};
 use std::sync::Arc;
 
-/// A specifier for a single platform, or for a range of platforms.
+/// A specifier for a set of platforms.
 ///
-/// Some uses of `guppy` care about a single platform, and others care about queries against the
-/// intersection of all hypothetical platforms, or against a union of any of them. `PlatformSpec`
-/// represents this notion.
+/// Some uses of `guppy` care about one or more specific platforms, and others
+/// care about queries against the intersection of all hypothetical platforms,
+/// or against a union of any of them. `PlatformSpec` represents this notion.
+///
+/// # Ordering
+///
+/// For any dependency status, the results of queries against these specs are
+/// ordered (by [`EnabledTernary`]'s `Ord` impl, where `Disabled < Unknown <
+/// Enabled`) as:
+///
+/// ```text
+/// Platforms([]) <= Always <= Platforms(non-empty) <= Any
+/// ```
+///
+/// `Platforms` over every known platform is still not the same as `Any`, since
+/// the latter also covers platforms that `guppy` does not know about.
 ///
 /// `PlatformSpec` does not currently support expressions, but it might in the future, using an
 /// [SMT solver](https://en.wikipedia.org/wiki/Satisfiability_modulo_theories).
@@ -28,12 +41,30 @@ pub enum PlatformSpec {
     /// solver would be able to handle such expressions.
     Always,
 
-    /// An individual platform.
+    /// The union of a set of individual platforms.
     ///
-    /// Dependency queries performed against this variant will return [`EnabledTernary::Enabled`] if
-    /// and only if a dependency is enabled on this platform. They may also return
-    /// [`EnabledTernary::Unknown`] if a platform is not enabled.
-    Platform(Arc<Platform>),
+    /// Dependency queries performed against this variant will return
+    /// [`EnabledTernary::Enabled`] if and only if a dependency is enabled on at
+    /// least one platform. They may also return [`EnabledTernary::Unknown`] if
+    /// the dependency isn't definitely enabled on any platform, but the status
+    /// is unknown on at least one platform (due to target features being
+    /// unknown).
+    ///
+    /// If the list is empty, every query against it returns
+    /// [`EnabledTernary::Disabled`], even for dependencies that are not
+    /// platform-dependent.
+    ///
+    /// Queries against this variant obey the following laws, where `|` is the
+    /// K3 OR on [`EnabledTernary`]:
+    ///
+    /// * The order of platforms doesn't matter, and duplicates don't change
+    ///   the result.
+    /// * `Platforms(a ++ b)` produces the same result as `Platforms(a) |
+    ///   Platforms(b)`.
+    /// * For platform-dependent statuses, `Platforms([p])` produces the same
+    ///   result as [`PlatformEval::eval`](crate::platform::PlatformEval::eval)
+    ///   against `p`.
+    Platforms(Vec<Arc<Platform>>),
 
     /// The union of all platforms.
     ///
@@ -53,13 +84,31 @@ impl PlatformSpec {
     /// Returns an error if the build target was unknown to the version of
     /// `target-spec` in use.
     pub fn build_target() -> Result<Self, TargetSpecError> {
-        Ok(PlatformSpec::Platform(Arc::new(Platform::build_target()?)))
+        Ok(PlatformSpec::from(Platform::build_target()?))
+    }
+
+    /// Returns a `PlatformSpec` that matches any of the given platforms.
+    ///
+    /// An empty iterator produces `Platforms([])`, in which case no
+    /// dependencies are enabled. Callers that build the list by filtering a
+    /// larger set should be careful about this case.
+    pub fn platforms<I, P>(platforms: I) -> Self
+    where
+        I: IntoIterator<Item = P>,
+        P: Into<Arc<Platform>>,
+    {
+        PlatformSpec::Platforms(
+            platforms
+                .into_iter()
+                .map(|platform| platform.into())
+                .collect(),
+        )
     }
 }
 
 impl<T: Into<Arc<Platform>>> From<T> for PlatformSpec {
     #[inline]
     fn from(platform: T) -> Self {
-        PlatformSpec::Platform(platform.into())
+        PlatformSpec::Platforms(vec![platform.into()])
     }
 }

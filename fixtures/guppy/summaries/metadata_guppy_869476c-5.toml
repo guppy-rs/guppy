@@ -7,17 +7,20 @@ include-dev = false
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'aarch64-unknown-netbsd'
-target-features = 'unknown'
-flags = ['abc']
+triple = 'riscv32em-unknown-none-elf'
+target-features = 'all'
 
-[metadata.target-platform]
-triple = 'thumbv8m.main-none-eabihf'
-target-features = ['bmi2', 'sha', 'sse4.1']
-flags = ['bar', 'test-flag']
+[[metadata.target-platform]]
+triple = 'xtensa-esp32s3-none-elf'
+target-features = 'unknown'
+flags = ['cargo_web', 'test-flag']
+
+[[metadata.target-platform]]
+triple = 'avr-none'
+target-features = ['avx2', 'xsave']
 [[metadata.omitted-packages.ids]]
-name = 'tinytemplate'
-version = '1.1.0'
+name = 'petgraph'
+version = '0.5.1'
 crates-io = true
 
 [[metadata.features-only]]
@@ -164,13 +167,6 @@ features = ['default', 'std']
 [[target-package]]
 name = 'pathdiff'
 version = '0.2.0'
-crates-io = true
-status = 'direct'
-features = []
-
-[[target-package]]
-name = 'petgraph'
-version = '0.5.1'
 crates-io = true
 status = 'direct'
 features = []

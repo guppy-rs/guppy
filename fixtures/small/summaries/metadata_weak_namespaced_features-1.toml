@@ -5,18 +5,17 @@
 resolver = '3'
 include-dev = true
 initials-platform = 'standard'
+host-platform = []
 
-[metadata.host-platform]
-triple = 'i686-pc-windows-msvc'
+[[metadata.target-platform]]
+triple = 'sparc64-unknown-helenos'
 target-features = 'unknown'
-flags = ['cargo_web']
+flags = ['bar', 'flag-test']
 
-[metadata.target-platform]
-spec = 'any'
-[[metadata.omitted-packages.ids]]
-name = 'pathdiff'
-version = '0.2.1'
-crates-io = true
+[[metadata.target-platform]]
+triple = 'i686-apple-darwin'
+target-features = 'all'
+flags = ['flag-test']
 
 [[metadata.features-only]]
 name = 'namespaced-weak'

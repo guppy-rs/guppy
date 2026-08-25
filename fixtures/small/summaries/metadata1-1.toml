@@ -6,20 +6,32 @@ resolver = '2'
 include-dev = true
 initials-platform = 'proc-macros-on-target'
 
-[metadata.host-platform]
-triple = 'armv7-unknown-linux-uclibceabi'
+[[metadata.host-platform]]
+triple = 'x86_64-pc-windows-gnullvm'
 target-features = 'unknown'
+flags = ['cargo_web', 'flag-test']
+
+[[metadata.host-platform]]
+triple = 's390x-unknown-none-softfloat'
+target-features = ['bmi1', 'fma', 'sha', 'ssse3', 'xsavec']
+
+[[metadata.host-platform]]
+triple = 'aarch64-unknown-uefi'
+target-features = ['bmi2', 'xsave']
+flags = ['bar', 'foo']
 
 [metadata.target-platform]
-spec = 'any'
+triple = 'mipsisa64r6-unknown-linux-gnuabi64'
+target-features = 'all'
+flags = ['bar', 'flag-test']
 [[metadata.omitted-packages.ids]]
-name = 'quote'
-version = '1.0.2'
+name = 'mach'
+version = '0.2.3'
 crates-io = true
 
 [[metadata.omitted-packages.ids]]
-name = 'winapi-util'
-version = '0.1.2'
+name = 'serde'
+version = '1.0.100'
 crates-io = true
 
 [[metadata.omitted-packages.ids]]
@@ -83,7 +95,7 @@ name = 'libc'
 version = '0.2.62'
 crates-io = true
 status = 'transitive'
-features = ['default', 'std', 'use_std']
+features = ['default', 'std']
 
 [[target-package]]
 name = 'linked-hash-map'
@@ -91,13 +103,6 @@ version = '0.5.2'
 crates-io = true
 status = 'transitive'
 features = []
-
-[[target-package]]
-name = 'mach'
-version = '0.2.3'
-crates-io = true
-status = 'transitive'
-features = ['default', 'deprecated', 'use_std']
 
 [[target-package]]
 name = 'memchr'
@@ -136,13 +141,6 @@ status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'serde'
-version = '1.0.100'
-crates-io = true
-status = 'transitive'
-features = ['default', 'std']
-
-[[target-package]]
 name = 'serde_yaml'
 version = '0.8.9'
 crates-io = true
@@ -160,27 +158,6 @@ features = []
 name = 'walkdir'
 version = '2.2.9'
 source = 'git+https://github.com/BurntSushi/walkdir?tag=2.2.9#7c7013259eb9db400b3e5c7bc60330ca08068826'
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'winapi'
-version = '0.3.8'
-crates-io = true
-status = 'transitive'
-features = ['basetsd', 'memoryapi', 'minwindef', 'std', 'sysinfoapi', 'winnt']
-
-[[target-package]]
-name = 'winapi-i686-pc-windows-gnu'
-version = '0.4.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'winapi-x86_64-pc-windows-gnu'
-version = '0.4.0'
-crates-io = true
 status = 'transitive'
 features = []
 

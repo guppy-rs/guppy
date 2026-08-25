@@ -6,22 +6,29 @@ resolver = 'install'
 include-dev = false
 initials-platform = 'proc-macros-on-target'
 
-[metadata.host-platform]
-triple = 'sparc64-unknown-linux-gnu'
-target-features = ['aes', 'avx2', 'sha', 'sse4.2', 'ssse3']
-flags = ['abc', 'foo']
+[[metadata.host-platform]]
+triple = 'csky-unknown-linux-gnuabiv2hf'
+target-features = 'unknown'
 
-[metadata.target-platform]
-spec = 'any'
-[[metadata.omitted-packages.ids]]
-name = 'dev-user'
-version = '0.1.0'
-workspace-path = 'dev-user'
+[[metadata.host-platform]]
+triple = 'thumbv6-none-eabi'
+target-features = []
+flags = ['flag-test']
 
-[[metadata.omitted-packages.ids]]
-name = 'normal-user'
-version = '0.1.0'
-workspace-path = 'normal-user'
+[[metadata.target-platform]]
+triple = 'armv7a-kmc-solid_asp3-eabihf'
+target-features = ['avx2', 'bmi2', 'fma']
+flags = ['abc', 'test-flag']
+
+[[metadata.target-platform]]
+triple = 'riscv64imac-unknown-nuttx-elf'
+target-features = 'unknown'
+flags = ['foo']
+
+[[metadata.target-platform]]
+triple = 'x86_64-pc-solaris'
+target-features = 'all'
+flags = ['cargo_web', 'foo']
 
 [[metadata.features-only]]
 name = 'normal-user'

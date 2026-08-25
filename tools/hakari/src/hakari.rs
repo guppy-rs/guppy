@@ -706,7 +706,7 @@ impl<'g> Hakari<'g> {
         let platform_specs: Vec<_> = builder
             .platforms
             .iter()
-            .map(|platform| PlatformSpec::Platform(platform.clone()))
+            .map(|platform| PlatformSpec::from(platform.clone()))
             .collect();
 
         let unify_target_host = builder.unify_target_host.to_impl(graph);
@@ -971,7 +971,7 @@ impl<'g, 'b> ComputedMapBuild<'g, 'b> {
                         .map(move |(idx, platform)| {
                             (
                                 Some(idx),
-                                PlatformSpec::Platform(platform.clone()),
+                                PlatformSpec::from(platform.clone()),
                                 features,
                                 include_dev,
                             )

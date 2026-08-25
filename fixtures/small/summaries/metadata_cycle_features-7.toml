@@ -6,9 +6,19 @@ resolver = '2'
 include-dev = true
 initials-platform = 'host'
 
-[metadata.host-platform]
-triple = 'xtensa-esp32s2-espidf'
+[[metadata.host-platform]]
+triple = 'powerpc64le-unknown-freebsd'
+target-features = 'unknown'
+flags = ['flag-test']
+
+[[metadata.host-platform]]
+triple = 'nvptx64-nvidia-cuda'
 target-features = 'all'
+
+[[metadata.host-platform]]
+triple = 'x86_64-unknown-trusty'
+target-features = ['bmi1', 'sse', 'xsave']
+flags = ['abc']
 
 [metadata.target-platform]
 spec = 'any'
@@ -16,11 +26,6 @@ spec = 'any'
 name = 'testcycles-base'
 version = '0.1.0'
 workspace-path = 'testcycles-base'
-
-[[metadata.omitted-packages.ids]]
-name = 'testcycles-helper'
-version = '0.1.0'
-workspace-path = 'testcycles-helper'
 
 [[metadata.features-only]]
 name = 'testcycles-base'

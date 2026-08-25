@@ -5,20 +5,8 @@
 resolver = '1'
 include-dev = true
 initials-platform = 'host'
-
-[metadata.host-platform]
-triple = 'riscv64-oe-linux-gnu'
-target-features = ['ssse3']
-flags = ['abc']
-
-[metadata.target-platform]
-triple = 'mipsisa32r6-unknown-linux-gnu'
-target-features = 'unknown'
-flags = ['flag-test']
-[[metadata.omitted-packages.ids]]
-name = 'testcycles-base'
-version = '0.1.0'
-workspace-path = ''
+host-platform = []
+target-platform = []
 
 [[metadata.features-only]]
 name = 'testcycles-base'
@@ -31,11 +19,4 @@ name = 'testcycles-base'
 version = '0.1.0'
 workspace-path = ''
 status = 'initial'
-features = []
-
-[[host-package]]
-name = 'testcycles-helper'
-version = '0.1.0'
-path = '../testcycles-helper'
-status = 'direct'
 features = []

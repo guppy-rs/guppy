@@ -6,17 +6,17 @@ resolver = '2'
 include-dev = false
 initials-platform = 'host'
 
-[metadata.host-platform]
-spec = 'always'
+[[metadata.host-platform]]
+triple = 'armv6-none-eabihf'
+target-features = 'all'
+flags = ['bar']
+
+[[metadata.host-platform]]
+triple = 'thumbv7neon-unknown-linux-musleabihf'
+target-features = ['aes', 'avx2', 'bmi1', 'fma', 'xsave']
 
 [metadata.target-platform]
-triple = 'powerpc64-unknown-linux-gnuelfv2'
-target-features = 'all'
-[[metadata.omitted-packages.ids]]
-name = 'self-dev-cycle-cycle-a'
-version = '0.1.0'
-workspace-path = 'cycle-a'
-
+spec = 'always'
 [[metadata.omitted-packages.ids]]
 name = 'self-dev-cycle-helper'
 version = '0.1.0'

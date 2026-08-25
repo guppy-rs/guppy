@@ -124,49 +124,72 @@ fn features_only_summary_round_trip() {
 fn invalid_platform_names_build_platform() {
     let graph = JsonFixture::metadata_guppy_c9b4f76().graph();
 
+    // TODO-RAINCLAUDE: (value, expected index, expected count, position suffix) for bare and list forms.
+    let forms = [
+        ("'x86_64-unknown-foo'", 0, 1, ""),
+        (
+            "['x86_64-unknown-linux-gnu', 'x86_64-unknown-foo']",
+            1,
+            2,
+            " (element 2 of 2)",
+        ),
+    ];
+
     for (key, expected) in [
         ("host-platform", BuildPlatform::Host),
         ("target-platform", BuildPlatform::Target),
     ] {
-        let metadata = format!(
-            "\
+        for (value, expected_index, expected_count, position) in forms {
+            let metadata = format!(
+                "\
 resolver = '2'
 include-dev = false
 initials-platform = 'standard'
-{key} = 'x86_64-unknown-foo'
+{key} = {value}
 "
-        );
-        let summary: CargoSetInputsSummary =
-            toml::from_str(&metadata).expect("summary parsed from TOML");
-        let err = summary
-            .to_cargo_set_inputs(graph)
-            .expect_err("unknown platform rejected");
+            );
+            let summary: CargoSetInputsSummary =
+                toml::from_str(&metadata).expect("summary parsed from TOML");
+            let err = summary
+                .to_cargo_set_inputs(graph)
+                .expect_err("unknown platform rejected");
 
-        #[cfg_attr(guppy_nightly, expect(non_exhaustive_omitted_patterns))]
-        match &err {
-            Error::InvalidPlatformSpecSummary {
-                build_platform,
-                error,
-            } => {
-                assert_eq!(*build_platform, expected, "{key} reported for {key}");
-                assert_eq!(
-                    error.triple(),
-                    "x86_64-unknown-foo",
-                    "error names the triple for {key}"
-                );
+            #[cfg_attr(guppy_nightly, expect(non_exhaustive_omitted_patterns))]
+            match &err {
+                Error::InvalidPlatformSpecSummary {
+                    build_platform,
+                    error,
+                } => {
+                    assert_eq!(
+                        *build_platform, expected,
+                        "{key} reported for {key} = {value}"
+                    );
+                    assert_eq!(
+                        error.triple(),
+                        "x86_64-unknown-foo",
+                        "error names the triple for {key} = {value}"
+                    );
+                    assert_eq!(
+                        (error.index(), error.count()),
+                        (expected_index, expected_count),
+                        "error records the position for {key} = {value}"
+                    );
+                }
+                other => panic!(
+                    "expected InvalidPlatformSpecSummary for {key} = {value}, found {other:?}"
+                ),
             }
-            other => panic!("expected InvalidPlatformSpecSummary for {key}, found {other:?}"),
-        }
 
-        let which = match expected {
-            BuildPlatform::Host => "host",
-            BuildPlatform::Target => "target",
-        };
-        assert_eq!(
-            err.to_string(),
-            format!("invalid {which} platform in summary"),
-            "top-level message for {key}"
-        );
+            let which = match expected {
+                BuildPlatform::Host => "host",
+                BuildPlatform::Target => "target",
+            };
+            assert_eq!(
+                err.to_string(),
+                format!("invalid {which} platform `x86_64-unknown-foo`{position} in summary"),
+                "top-level message for {key} = {value}"
+            );
+        }
     }
 }
 

@@ -6,21 +6,35 @@ resolver = '3'
 include-dev = false
 initials-platform = 'proc-macros-on-target'
 
-[metadata.host-platform]
-triple = 'x86_64-pc-windows-gnullvm'
+[[metadata.host-platform]]
+triple = 'thumbv6-none-eabi'
+target-features = ['avx', 'avx2', 'sha', 'sse3', 'sse4.1', 'ssse3', 'xsaveopt']
+
+[[metadata.host-platform]]
+triple = 'i686-unknown-netbsd'
 target-features = 'unknown'
-flags = ['abc', 'foo']
+flags = ['foo', 'test-flag']
 
-[metadata.target-platform]
-spec = 'always'
-[[metadata.omitted-packages.ids]]
-name = 'unicode-xid'
-version = '0.2.0'
-crates-io = true
+[[metadata.host-platform]]
+triple = 'x86_64-apple-ios'
+target-features = 'unknown'
 
+[[metadata.target-platform]]
+triple = 'x86_64-apple-ios'
+target-features = ['xsaveopt']
+flags = ['foo', 'test-flag']
+
+[[metadata.target-platform]]
+triple = 'riscv32im-unknown-none-elf'
+target-features = ['avx', 'avx2', 'rdrand', 'sha', 'sse4.2', 'xsaveopt']
+flags = ['test-flag']
+
+[[metadata.target-platform]]
+triple = 'i686-unknown-linux-musl'
+target-features = ['bmi2', 'sha', 'sse4.2', 'xsave', 'xsaves']
 [[metadata.omitted-packages.ids]]
-name = 'version_check'
-version = '0.9.1'
+name = 'ctor'
+version = '0.1.10'
 crates-io = true
 
 [[metadata.features-only]]
@@ -150,13 +164,6 @@ status = 'transitive'
 features = []
 
 [[host-package]]
-name = 'ctor'
-version = '0.1.10'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
 name = 'datatest-derive'
 version = '0.4.0'
 crates-io = true
@@ -182,5 +189,19 @@ name = 'syn'
 version = '1.0.5'
 crates-io = true
 status = 'transitive'
-features = ['clone-impls', 'default', 'derive', 'fold', 'full', 'parsing', 'printing', 'proc-macro', 'quote']
+features = ['clone-impls', 'default', 'derive', 'full', 'parsing', 'printing', 'proc-macro', 'quote']
 optional-deps = ['quote']
+
+[[host-package]]
+name = 'unicode-xid'
+version = '0.2.0'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[host-package]]
+name = 'version_check'
+version = '0.9.1'
+crates-io = true
+status = 'transitive'
+features = []

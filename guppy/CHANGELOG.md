@@ -3,6 +3,19 @@
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+### Added
+
+- `PlatformSpec::Platforms`, a new variant holding a list of platforms ([#438]),
+  and `PlatformSpec::platforms`, a constructor that accepts any iterator of
+  `Platform` or `Arc<Platform>`. A query against `Platforms` is enabled if it is
+  enabled on at least one of the platforms. `Platforms([])` is the union of no
+  platforms: nothing is enabled on it, not even unconditional dependencies.
+
+  Per-platform results are combined with the same [Kleene K3
+  OR](https://en.wikipedia.org/wiki/Three-valued_logic#Kleene_and_Priest_logics)
+  that `guppy` already uses to combine a dependency's target specs for a single
+  platform: `Enabled` wins, then `Unknown`, then `Disabled`.
+
 ### Fixed
 
 - With the `summaries` feature, rebuilding Cargo options from a summary no
@@ -61,6 +74,24 @@
 - `CargoSet` now keeps a copy of the inputs it was built with.
   - With the `summaries` feature, `CargoSet::to_summary` uses the options the set was built with.
   - `CargoSet::features_only` is removed. Use `CargoSet::inputs().features_only` instead.
+- `PlatformSpec::Platform` is removed in favor of `PlatformSpec::Platforms` (see
+  above). With the `summaries` feature, `PlatformSpecSummary::Platform` is
+  likewise replaced by `PlatformSpecSummary::Platforms(Vec<PlatformSummary>)`.
+  - A single platform is still serialized as-is, so existing serialized data
+    continues to work. Zero or several platforms are serialized as an array
+    (`target-platform = []` or `[[target-platform]]`), which older versions of
+    `guppy` cannot read.
+  - Malformed platform specs now produce errors that name the offending element
+    or key, rather than serde's "data did not match any variant" message. The
+    following are rejected: `"always"` and `"any"` inside a list; `spec`
+    alongside any platform key such as `triple` or `target-features`; unknown
+    keys in a platform table; empty triples; and `spec` values other than
+    `"always"` or `"any"`. (Previously, `spec = "<triple>"` was silently treated
+    as that platform.)
+  - `PlatformSpecSummaryError` now records the position of the failing platform
+    within a list, available via its new `index` and `count` methods. Both its
+    `Display` output and `Error::InvalidPlatformSpecSummary`'s name the triple
+    and, for a list, the position.
 - With the `summaries` feature, `CargoOptionsSummary` is renamed to
   `CargoSetInputsSummary`. Each `features-only` entry now records whether the
   package's base feature is enabled, and `base = false` when it isn't. (The field
@@ -89,6 +120,7 @@
 - The hidden re-export of the `debug_ignore` crate at the root of `guppy`.
   Depend on [`debug-ignore`](https://crates.io/crates/debug-ignore) directly if you need it.
 
+[#438]: https://github.com/guppy-rs/guppy/issues/438
 [#497]: https://github.com/guppy-rs/guppy/issues/497
 
 ## [0.17.26] - 2026-05-21

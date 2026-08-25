@@ -7,22 +7,23 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'csky-unknown-linux-gnuabiv2'
-target-features = ['avx', 'avx2', 'bmi1', 'bmi2']
+triple = 'i686-unknown-hurd-gnu'
+target-features = ['bmi2', 'sse', 'xsave']
+
+[[metadata.target-platform]]
+triple = 'aarch64v8r-unknown-none-softfloat'
+target-features = ['bmi2', 'sha', 'sse3', 'sse4.1', 'xsaves']
+flags = ['abc', 'cargo_web']
+
+[[metadata.target-platform]]
+triple = 'xtensa-esp32s2-espidf'
+target-features = 'unknown'
 flags = ['cargo_web']
 
-[metadata.target-platform]
-triple = 'xtensa-esp32s3-none-elf'
-target-features = ['bmi2', 'rdrand', 'sha', 'sse3', 'xsaves']
-[[metadata.omitted-packages.ids]]
-name = 'indexmap'
-version = '2.2.6'
-crates-io = true
-
-[[metadata.omitted-packages.ids]]
-name = 'termcolor'
-version = '1.4.1'
-crates-io = true
+[[metadata.target-platform]]
+triple = 'powerpc64-unknown-linux-musl'
+target-features = 'all'
+flags = ['foo']
 
 [[metadata.features-only]]
 name = 'hyper-util'
@@ -90,6 +91,13 @@ status = 'transitive'
 features = []
 
 [[target-package]]
+name = 'equivalent'
+version = '1.0.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
 name = 'fnv'
 version = '1.0.7'
 crates-io = true
@@ -132,6 +140,13 @@ status = 'transitive'
 features = []
 
 [[target-package]]
+name = 'hashbrown'
+version = '0.14.5'
+crates-io = true
+status = 'transitive'
+features = ['raw']
+
+[[target-package]]
 name = 'httparse'
 version = '1.9.4'
 crates-io = true
@@ -146,11 +161,25 @@ status = 'transitive'
 features = []
 
 [[target-package]]
+name = 'indexmap'
+version = '2.2.6'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
 name = 'itoa'
 version = '1.0.11'
 crates-io = true
 status = 'transitive'
 features = []
+
+[[target-package]]
+name = 'libc'
+version = '0.2.155'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
 
 [[target-package]]
 name = 'mio'
@@ -169,6 +198,13 @@ features = ['alloc', 'default', 'race', 'std']
 [[target-package]]
 name = 'pin-utils'
 version = '0.1.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'signal-hook-registry'
+version = '1.4.2'
 crates-io = true
 status = 'transitive'
 features = []

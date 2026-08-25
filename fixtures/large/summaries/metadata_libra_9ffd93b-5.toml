@@ -10,20 +10,22 @@ initials-platform = 'standard'
 spec = 'always'
 
 [metadata.target-platform]
-spec = 'always'
+triple = 'xtensa-esp32s3-none-elf'
+target-features = 'unknown'
+flags = ['abc', 'bar']
 [[metadata.omitted-packages.ids]]
-name = 'libra-util'
-version = '0.1.0'
-workspace-path = 'common/util'
-
-[[metadata.omitted-packages.ids]]
-name = 'rand_chacha'
-version = '0.1.1'
+name = 'constant_time_eq'
+version = '0.1.5'
 crates-io = true
 
 [[metadata.omitted-packages.ids]]
-name = 'version_check'
-version = '0.9.1'
+name = 'string'
+version = '0.2.1'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'tower-make'
+version = '0.3.0'
 crates-io = true
 
 [[target-package]]
@@ -520,6 +522,13 @@ status = 'direct'
 features = ['std', 'u64_backend']
 
 [[target-package]]
+name = 'ansi_term'
+version = '0.11.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
 name = 'arrayref'
 version = '0.3.6'
 crates-io = true
@@ -617,6 +626,13 @@ version = '0.3.1'
 crates-io = true
 status = 'transitive'
 features = []
+
+[[target-package]]
+name = 'c2-chacha'
+version = '0.2.3'
+crates-io = true
+status = 'transitive'
+features = ['simd', 'std']
 
 [[target-package]]
 name = 'c_linked_list'
@@ -1032,6 +1048,13 @@ status = 'transitive'
 features = []
 
 [[target-package]]
+name = 'ppv-lite86'
+version = '0.2.6'
+crates-io = true
+status = 'transitive'
+features = ['simd', 'std']
+
+[[target-package]]
 name = 'proc-macro-nested'
 version = '0.1.3'
 crates-io = true
@@ -1074,6 +1097,20 @@ version = '0.1.1'
 crates-io = true
 status = 'transitive'
 features = ['default', 'std']
+
+[[target-package]]
+name = 'rand_chacha'
+version = '0.1.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'rand_chacha'
+version = '0.2.1'
+crates-io = true
+status = 'transitive'
+features = ['std']
 
 [[target-package]]
 name = 'rand_core'
@@ -1363,14 +1400,6 @@ version = '0.3.0'
 crates-io = true
 status = 'transitive'
 features = []
-
-[[target-package]]
-name = 'tower-make'
-version = '0.3.0'
-crates-io = true
-status = 'transitive'
-features = ['connect', 'tokio']
-optional-deps = ['tokio']
 
 [[target-package]]
 name = 'tower-ready-cache'
@@ -1984,6 +2013,13 @@ version = '0.2.0'
 crates-io = true
 status = 'transitive'
 features = ['default']
+
+[[host-package]]
+name = 'version_check'
+version = '0.9.1'
+crates-io = true
+status = 'transitive'
+features = []
 
 [[host-package]]
 name = 'which'

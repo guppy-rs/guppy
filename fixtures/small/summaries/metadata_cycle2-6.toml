@@ -6,18 +6,25 @@ resolver = 'install'
 include-dev = true
 initials-platform = 'standard'
 
-[metadata.host-platform]
-triple = 'amdgcn-amd-amdhsa'
-target-features = 'unknown'
-flags = ['bar', 'test-flag']
+[[metadata.host-platform]]
+triple = 'powerpc64-unknown-linux-musl'
+target-features = ['bmi1', 'sse4.1']
 
-[metadata.target-platform]
+[[metadata.host-platform]]
 triple = 'thumbv8m.main-nuttx-eabi'
 target-features = 'unknown'
+
+[metadata.target-platform]
+spec = 'always'
 [[metadata.omitted-packages.ids]]
-name = 'lower-a'
+name = 'upper-a'
 version = '0.1.0'
-workspace-path = 'lower-a'
+workspace-path = 'upper-a'
+
+[[metadata.omitted-packages.ids]]
+name = 'upper-b'
+version = '0.1.0'
+workspace-path = 'upper-b'
 
 [[target-package]]
 name = 'lower-b'
@@ -34,8 +41,8 @@ status = 'initial'
 features = []
 
 [[target-package]]
-name = 'upper-b'
+name = 'lower-a'
 version = '0.1.0'
-workspace-path = 'upper-b'
+workspace-path = 'lower-a'
 status = 'workspace'
 features = []

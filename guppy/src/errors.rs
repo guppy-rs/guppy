@@ -209,12 +209,17 @@ impl fmt::Display for Error {
                 Ok(())
             }
             #[cfg(feature = "summaries")]
-            InvalidPlatformSpecSummary { build_platform, .. } => {
+            InvalidPlatformSpecSummary {
+                build_platform,
+                error,
+            } => {
                 let which = match build_platform {
                     crate::graph::cargo::BuildPlatform::Host => "host",
                     crate::graph::cargo::BuildPlatform::Target => "target",
                 };
-                write!(f, "invalid {which} platform in summary")
+                write!(f, "invalid {which} platform `{}`", error.triple())?;
+                error.fmt_position(f)?;
+                write!(f, " in summary")
             }
             #[cfg(feature = "summaries")]
             UnknownRegistryName {

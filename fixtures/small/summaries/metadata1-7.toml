@@ -5,18 +5,19 @@
 resolver = '3'
 include-dev = true
 initials-platform = 'proc-macros-on-target'
+host-platform = []
 
-[metadata.host-platform]
-triple = 'aarch64-linux-android'
-target-features = ['aes', 'avx']
-flags = ['bar', 'cargo_web']
+[[metadata.target-platform]]
+triple = 'aarch64-apple-tvos'
+target-features = 'unknown'
 
-[metadata.target-platform]
-triple = 'i686-unknown-netbsd'
-target-features = ['sha', 'sse2']
+[[metadata.target-platform]]
+triple = 'x86_64-unknown-hurd-gnu'
+target-features = 'all'
+flags = ['test-flag']
 [[metadata.omitted-packages.ids]]
-name = 'winapi-i686-pc-windows-gnu'
-version = '0.4.0'
+name = 'lazy_static'
+version = '1.4.0'
 crates-io = true
 
 [[metadata.features-only]]
@@ -57,13 +58,6 @@ features = ['default']
 [[target-package]]
 name = 'dtoa'
 version = '0.4.4'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'lazy_static'
-version = '1.4.0'
 crates-io = true
 status = 'transitive'
 features = []
@@ -163,42 +157,6 @@ features = []
 [[host-package]]
 name = 'datatest-derive'
 version = '0.4.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'proc-macro2'
-version = '1.0.3'
-crates-io = true
-status = 'transitive'
-features = ['default', 'proc-macro']
-
-[[host-package]]
-name = 'quote'
-version = '1.0.2'
-path = '../quote'
-status = 'transitive'
-features = ['default', 'proc-macro']
-
-[[host-package]]
-name = 'syn'
-version = '1.0.5'
-crates-io = true
-status = 'transitive'
-features = ['clone-impls', 'default', 'derive', 'fold', 'full', 'parsing', 'printing', 'proc-macro', 'quote']
-optional-deps = ['quote']
-
-[[host-package]]
-name = 'unicode-xid'
-version = '0.2.0'
-crates-io = true
-status = 'transitive'
-features = ['default']
-
-[[host-package]]
-name = 'version_check'
-version = '0.9.1'
 crates-io = true
 status = 'transitive'
 features = []

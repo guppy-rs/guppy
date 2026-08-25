@@ -6,10 +6,15 @@ resolver = 'install'
 include-dev = false
 initials-platform = 'standard'
 
-[metadata.host-platform]
-triple = 'aarch64-wrs-vxworks'
+[[metadata.host-platform]]
+triple = 'armv7-unknown-freebsd'
+target-features = ['bmi1', 'fma']
+flags = ['test-flag']
+
+[[metadata.host-platform]]
+triple = 'msp430-none-elf'
 target-features = 'all'
-flags = ['bar']
+flags = ['flag-test']
 
 [metadata.target-platform]
 spec = 'always'

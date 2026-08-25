@@ -7,11 +7,24 @@ include-dev = false
 initials-platform = 'standard'
 
 [metadata.host-platform]
-spec = 'any'
+spec = 'always'
 
 [metadata.target-platform]
-triple = 'x86_64-pc-cygwin'
-target-features = 'all'
+spec = 'any'
+[[metadata.omitted-packages.ids]]
+name = 'cargo-compare'
+version = '0.1.0'
+workspace-path = 'internal-tools/cargo-compare'
+
+[[metadata.omitted-packages.ids]]
+name = 'cargo-guppy'
+version = '0.1.0'
+workspace-path = 'cargo-guppy'
+
+[[metadata.omitted-packages.ids]]
+name = 'proptest-ext'
+version = '0.1.0'
+workspace-path = 'internal-tools/proptest-ext'
 
 [[metadata.features-only]]
 name = 'cargo-compare'

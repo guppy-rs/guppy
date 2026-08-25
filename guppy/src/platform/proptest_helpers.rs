@@ -17,7 +17,7 @@ impl PlatformSpec {
         prop_oneof![
             1 => Just(PlatformSpec::Any),
             1 => Just(PlatformSpec::Always),
-            2 => platform.prop_map(PlatformSpec::from),
+            4 => proptest::collection::vec(platform, 0..4).prop_map(PlatformSpec::platforms),
         ]
     }
 }

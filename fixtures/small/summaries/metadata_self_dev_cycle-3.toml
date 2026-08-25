@@ -6,13 +6,20 @@ resolver = '2'
 include-dev = true
 initials-platform = 'host'
 
-[metadata.host-platform]
-triple = 'aarch64-unknown-linux-ohos'
+[[metadata.host-platform]]
+triple = 'armv4t-unknown-linux-gnueabi'
 target-features = 'unknown'
+flags = ['foo']
+
+[[metadata.host-platform]]
+triple = 'mipsel-unknown-none'
+target-features = 'unknown'
+flags = ['test-flag']
 
 [metadata.target-platform]
-triple = 'armv7-sony-vita-newlibeabihf'
-target-features = 'unknown'
+triple = 'armv5te-unknown-linux-uclibceabi'
+target-features = []
+flags = ['bar', 'cargo_web']
 [[metadata.omitted-packages.ids]]
 name = 'self-dev-cycle-helper'
 version = '0.1.0'

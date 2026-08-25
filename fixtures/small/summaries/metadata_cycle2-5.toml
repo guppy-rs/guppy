@@ -7,11 +7,22 @@ include-dev = false
 initials-platform = 'host'
 
 [metadata.host-platform]
-triple = 'riscv32im-risc0-zkvm-elf'
-target-features = 'all'
+triple = 'xtensa-esp32s2-none-elf'
+target-features = 'unknown'
+flags = ['bar', 'test-flag']
 
-[metadata.target-platform]
-spec = 'always'
+[[metadata.target-platform]]
+triple = 'riscv32im-unknown-none-elf'
+target-features = ['aes', 'avx2', 'bmi2', 'sse3', 'sse4.2', 'xsaves']
+flags = ['foo', 'test-flag']
+
+[[metadata.target-platform]]
+triple = 'xtensa-esp32s3-none-elf'
+target-features = 'unknown'
+[[metadata.omitted-packages.ids]]
+name = 'lower-b'
+version = '0.1.0'
+workspace-path = 'lower-b'
 
 [[metadata.features-only]]
 name = 'upper-a'
@@ -30,12 +41,5 @@ features = []
 name = 'lower-a'
 version = '0.1.0'
 workspace-path = 'lower-a'
-status = 'workspace'
-features = []
-
-[[host-package]]
-name = 'lower-b'
-version = '0.1.0'
-workspace-path = 'lower-b'
 status = 'workspace'
 features = []

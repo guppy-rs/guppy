@@ -1,12 +1,18 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-//! Demonstration of how the `CargoSet` algorithm can accept links that ar
+//! Demonstration of how the `CargoSet` algorithm can accept links that are
 //! present on:
 //!
 //! 1) any/all platforms (using default `CargoOptions` and `CargoSet::new`)
 //! 2) a single platform (using `CargoOptions::set_target_platform`)
 //! 3) a set of platforms (using `CargoSet::with_cargo_link_visitor`)
+//!
+//! For case 3, consider using `PlatformSpec::platforms` for simpler cases. The
+//! visitor below shows how to write more complex logic, and it applies a
+//! stricter rule: a link is only accepted if it is definitely enabled
+//! (`EnabledTernary::Enabled`) on at least one platform, so links whose status
+//! is `Unknown` are dropped.
 //!
 //! The last example uses `CargoLinkVisitor` as a filter - this is a very
 //! generic mechanism and can be used to not only filter by platforms,
@@ -59,7 +65,7 @@ impl<'g> CargoLinkVisitor<'g> for PlatformSetLinkVisitor {
 }
 
 fn win32_platform_spec() -> PlatformSpec {
-    PlatformSpec::Platform(std::sync::Arc::new(target_spec::Platform::from_triple(
+    PlatformSpec::from(target_spec::Platform::from_triple(
         Triple::new_strict("i686-pc-windows-gnu").unwrap(),
         target_spec::TargetFeatures::features([
             // The full feature list for this target triple can be found with
@@ -68,11 +74,11 @@ fn win32_platform_spec() -> PlatformSpec {
             // `winapi` dependency selection).
             "windows",
         ]),
-    )))
+    ))
 }
 
 fn win64_platform_spec() -> PlatformSpec {
-    PlatformSpec::Platform(std::sync::Arc::new(target_spec::Platform::from_triple(
+    PlatformSpec::from(target_spec::Platform::from_triple(
         Triple::new_strict("x86_64-pc-windows-gnu").unwrap(),
         target_spec::TargetFeatures::features([
             // The full feature list for this target triple can be found with
@@ -81,7 +87,7 @@ fn win64_platform_spec() -> PlatformSpec {
             // `winapi` dependency selection).
             "windows",
         ]),
-    )))
+    ))
 }
 
 fn cargo_set_to_package_names(cargo_set: CargoSet) -> Vec<String> {

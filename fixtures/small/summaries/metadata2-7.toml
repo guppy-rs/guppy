@@ -7,10 +7,10 @@ include-dev = true
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-spec = 'any'
+spec = 'always'
 
 [metadata.target-platform]
-spec = 'any'
+spec = 'always'
 
 [[metadata.features-only]]
 name = 'testworkspace-crate'

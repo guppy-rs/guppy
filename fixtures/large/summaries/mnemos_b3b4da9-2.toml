@@ -6,13 +6,34 @@ resolver = '1'
 include-dev = false
 initials-platform = 'proc-macros-on-target'
 
-[metadata.host-platform]
-triple = 's390x-unknown-none-softfloat'
-target-features = 'unknown'
-flags = ['foo']
+[[metadata.host-platform]]
+triple = 'aarch64-kmc-solid_asp3'
+target-features = 'all'
+
+[[metadata.host-platform]]
+triple = 'aarch64-apple-visionos'
+target-features = ['bmi1', 'rdrand', 'xsave']
+
+[[metadata.host-platform]]
+triple = 'aarch64_be-unknown-none-softfloat'
+target-features = ['bmi2', 'sha']
 
 [metadata.target-platform]
 spec = 'any'
+[[metadata.omitted-packages.ids]]
+name = 'adler'
+version = '1.0.2'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'fsevent-sys'
+version = '4.1.0'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'ipconfig'
+version = '0.3.2'
+crates-io = true
 
 [[metadata.features-only]]
 name = 'dumbloader'
@@ -723,13 +744,6 @@ crates-io = true
 status = 'transitive'
 features = ['cpp_demangle', 'default', 'fallible-iterator', 'memmap2', 'object', 'rustc-demangle', 'smallvec', 'std', 'std-object']
 optional-deps = ['cpp_demangle', 'fallible-iterator', 'memmap2', 'object', 'rustc-demangle', 'smallvec']
-
-[[target-package]]
-name = 'adler'
-version = '1.0.2'
-crates-io = true
-status = 'transitive'
-features = []
 
 [[target-package]]
 name = 'adler32'
@@ -3504,18 +3518,19 @@ features = ['cpp_demangle', 'default', 'fallible-iterator', 'memmap2', 'object',
 optional-deps = ['cpp_demangle', 'fallible-iterator', 'memmap2', 'object', 'rustc-demangle', 'smallvec']
 
 [[host-package]]
-name = 'adler'
-version = '1.0.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
 name = 'aes'
 version = '0.8.3'
 crates-io = true
 status = 'transitive'
 features = []
+
+[[host-package]]
+name = 'ahash'
+version = '0.8.3'
+crates-io = true
+status = 'transitive'
+features = ['default', 'getrandom', 'runtime-rng', 'std']
+optional-deps = ['getrandom']
 
 [[host-package]]
 name = 'aho-corasick'
@@ -3563,8 +3578,22 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'arc-swap'
+version = '1.6.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'arrayvec'
 version = '0.5.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'async-io'
+version = '1.13.0'
 crates-io = true
 status = 'transitive'
 features = []
@@ -3663,6 +3692,13 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'base16ct'
+version = '0.2.0'
+crates-io = true
+status = 'transitive'
+features = ['alloc']
+
+[[host-package]]
 name = 'base64'
 version = '0.21.2'
 crates-io = true
@@ -3726,6 +3762,13 @@ status = 'transitive'
 features = ['std']
 
 [[host-package]]
+name = 'bitmaps'
+version = '2.1.0'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[host-package]]
 name = 'bitvec'
 version = '1.0.1'
 crates-io = true
@@ -3753,6 +3796,21 @@ crates-io = true
 status = 'transitive'
 features = ['lazy_static', 'regex-automata', 'unicode']
 optional-deps = ['lazy_static', 'regex-automata']
+
+[[host-package]]
+name = 'bstr'
+version = '1.6.0'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'default', 'std', 'unicode']
+optional-deps = ['regex-automata']
+
+[[host-package]]
+name = 'btoi'
+version = '0.4.3'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
 
 [[host-package]]
 name = 'bumpalo'
@@ -3798,6 +3856,13 @@ status = 'transitive'
 features = ['default', 'std']
 
 [[host-package]]
+name = 'bytesize'
+version = '1.3.0'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[host-package]]
 name = 'bzip2'
 version = '0.4.4'
 crates-io = true
@@ -3827,6 +3892,14 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'cargo'
+version = '0.72.2'
+crates-io = true
+status = 'transitive'
+features = ['openssl', 'vendored-openssl']
+optional-deps = ['openssl']
+
+[[host-package]]
 name = 'cargo-lock'
 version = '9.0.0'
 crates-io = true
@@ -3836,6 +3909,13 @@ features = []
 [[host-package]]
 name = 'cargo-platform'
 version = '0.1.3'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'cargo-util'
+version = '0.2.5'
 crates-io = true
 status = 'transitive'
 features = []
@@ -3952,6 +4032,13 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'clru'
+version = '0.6.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'color-eyre'
 version = '0.6.2'
 crates-io = true
@@ -3972,6 +4059,13 @@ crates-io = true
 status = 'transitive'
 features = ['crossterm', 'default', 'tty']
 optional-deps = ['crossterm']
+
+[[host-package]]
+name = 'concurrent-queue'
+version = '2.2.0'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
 
 [[host-package]]
 name = 'config'
@@ -4039,6 +4133,20 @@ status = 'transitive'
 features = ['alloc']
 
 [[host-package]]
+name = 'cpufeatures'
+version = '0.2.9'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'crates-io'
+version = '0.37.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'crc'
 version = '3.0.1'
 crates-io = true
@@ -4096,6 +4204,14 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'crypto-bigint'
+version = '0.5.2'
+crates-io = true
+status = 'transitive'
+features = ['generic-array', 'rand_core', 'zeroize']
+optional-deps = ['generic-array', 'rand_core', 'zeroize']
+
+[[host-package]]
 name = 'crypto-common'
 version = '0.1.6'
 crates-io = true
@@ -4131,11 +4247,34 @@ status = 'transitive'
 features = ['default']
 
 [[host-package]]
+name = 'ct-codecs'
+version = '1.1.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'ctrlc'
 version = '3.4.0'
 crates-io = true
 status = 'transitive'
 features = ['termination']
+
+[[host-package]]
+name = 'curl'
+version = '0.4.44'
+crates-io = true
+status = 'transitive'
+features = ['default', 'http2', 'openssl-probe', 'openssl-sys', 'ssl']
+optional-deps = ['openssl-probe', 'openssl-sys']
+
+[[host-package]]
+name = 'curl-sys'
+version = '0.4.65+curl-8.2.1'
+crates-io = true
+status = 'transitive'
+features = ['default', 'http2', 'libnghttp2-sys', 'openssl-sys', 'ssl']
+optional-deps = ['libnghttp2-sys', 'openssl-sys']
 
 [[host-package]]
 name = 'cvt'
@@ -4232,6 +4371,14 @@ features = ['proc-macro-crate', 'std']
 optional-deps = ['proc-macro-crate']
 
 [[host-package]]
+name = 'der'
+version = '0.7.8'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'oid', 'pem', 'std', 'zeroize']
+optional-deps = ['const-oid', 'pem-rfc7468', 'zeroize']
+
+[[host-package]]
 name = 'derivative'
 version = '2.2.0'
 crates-io = true
@@ -4319,6 +4466,22 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'ecdsa'
+version = '0.16.8'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'arithmetic', 'der', 'digest', 'hazmat', 'pem', 'pkcs8', 'rfc6979', 'signing', 'spki', 'std', 'verifying']
+optional-deps = ['der', 'digest', 'rfc6979', 'spki']
+
+[[host-package]]
+name = 'ed25519-compact'
+version = '2.0.4'
+crates-io = true
+status = 'transitive'
+features = ['getrandom', 'random']
+optional-deps = ['getrandom']
+
+[[host-package]]
 name = 'edit-distance'
 version = '2.1.0'
 crates-io = true
@@ -4331,6 +4494,14 @@ version = '1.9.0'
 crates-io = true
 status = 'transitive'
 features = ['default', 'use_std']
+
+[[host-package]]
+name = 'elliptic-curve'
+version = '0.13.5'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'arithmetic', 'digest', 'ecdh', 'ff', 'group', 'hazmat', 'pem', 'pkcs8', 'sec1', 'std']
+optional-deps = ['digest', 'ff', 'group', 'hkdf', 'pem-rfc7468', 'pkcs8', 'sec1']
 
 [[host-package]]
 name = 'embedded-graphics-core'
@@ -4456,6 +4627,14 @@ status = 'transitive'
 features = ['std']
 
 [[host-package]]
+name = 'faster-hex'
+version = '0.8.0'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'default', 'serde', 'std']
+optional-deps = ['serde']
+
+[[host-package]]
 name = 'fastrand'
 version = '1.9.0'
 crates-io = true
@@ -4463,11 +4642,32 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'fastrand'
+version = '2.0.0'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'default', 'std']
+
+[[host-package]]
 name = 'fatfs'
 version = '0.3.6'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'std']
+
+[[host-package]]
+name = 'ff'
+version = '0.13.0'
+crates-io = true
+status = 'transitive'
+features = ['alloc']
+
+[[host-package]]
+name = 'fiat-crypto'
+version = '0.1.20'
+crates-io = true
+status = 'transitive'
+features = []
 
 [[host-package]]
 name = 'file-id'
@@ -4681,6 +4881,328 @@ features = ['endian-reader', 'fallible-iterator', 'read', 'read-core', 'stable_d
 optional-deps = ['fallible-iterator', 'stable_deref_trait']
 
 [[host-package]]
+name = 'git2'
+version = '0.17.2'
+crates-io = true
+status = 'transitive'
+features = ['default', 'https', 'openssl-probe', 'openssl-sys', 'ssh', 'ssh_key_from_memory']
+optional-deps = ['openssl-probe', 'openssl-sys']
+
+[[host-package]]
+name = 'git2-curl'
+version = '0.18.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gix'
+version = '0.44.1'
+crates-io = true
+status = 'transitive'
+features = ['blocking-http-transport-curl', 'blocking-network-client', 'gix-protocol', 'gix-transport', 'prodash', 'progress-tree']
+optional-deps = ['gix-protocol', 'gix-transport', 'prodash']
+
+[[host-package]]
+name = 'gix-actor'
+version = '0.20.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gix-attributes'
+version = '0.12.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gix-bitmap'
+version = '0.2.7'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gix-chunk'
+version = '0.4.4'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gix-command'
+version = '0.2.9'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gix-config'
+version = '0.22.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gix-config-value'
+version = '0.12.5'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gix-credentials'
+version = '0.14.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gix-date'
+version = '0.5.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gix-diff'
+version = '0.29.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gix-discover'
+version = '0.18.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gix-features'
+version = '0.29.0'
+crates-io = true
+status = 'transitive'
+features = ['crc32', 'default', 'io-pipe', 'once_cell', 'parallel', 'progress', 'rustsha1', 'walkdir', 'zlib']
+optional-deps = ['bytes', 'crc32fast', 'crossbeam-channel', 'flate2', 'once_cell', 'parking_lot', 'prodash', 'sha1_smol', 'thiserror', 'walkdir']
+
+[[host-package]]
+name = 'gix-fs'
+version = '0.1.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gix-glob'
+version = '0.7.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gix-hash'
+version = '0.11.4'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gix-hashtable'
+version = '0.2.4'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gix-ignore'
+version = '0.2.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gix-index'
+version = '0.16.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gix-lock'
+version = '5.0.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gix-mailmap'
+version = '0.12.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gix-object'
+version = '0.29.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gix-odb'
+version = '0.45.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gix-pack'
+version = '0.35.0'
+crates-io = true
+status = 'transitive'
+features = ['object-cache-dynamic']
+optional-deps = ['clru']
+
+[[host-package]]
+name = 'gix-packetline'
+version = '0.16.5'
+crates-io = true
+status = 'transitive'
+features = ['blocking-io', 'default']
+
+[[host-package]]
+name = 'gix-path'
+version = '0.8.4'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gix-prompt'
+version = '0.5.5'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gix-protocol'
+version = '0.32.0'
+crates-io = true
+status = 'transitive'
+features = ['blocking-client']
+
+[[host-package]]
+name = 'gix-quote'
+version = '0.4.7'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gix-ref'
+version = '0.29.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gix-refspec'
+version = '0.10.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gix-revision'
+version = '0.13.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gix-sec'
+version = '0.8.4'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gix-tempfile'
+version = '5.0.3'
+crates-io = true
+status = 'transitive'
+features = ['signals']
+optional-deps = ['signal-hook', 'signal-hook-registry']
+
+[[host-package]]
+name = 'gix-trace'
+version = '0.1.3'
+crates-io = true
+status = 'transitive'
+features = ['default']
+
+[[host-package]]
+name = 'gix-transport'
+version = '0.31.0'
+crates-io = true
+status = 'transitive'
+features = ['base64', 'blocking-client', 'curl', 'default', 'gix-credentials', 'http-client', 'http-client-curl']
+optional-deps = ['base64', 'curl', 'gix-credentials']
+
+[[host-package]]
+name = 'gix-traverse'
+version = '0.25.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gix-url'
+version = '0.18.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gix-utils'
+version = '0.1.5'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gix-validate'
+version = '0.7.7'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gix-worktree'
+version = '0.17.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'glob'
+version = '0.3.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'globset'
+version = '0.4.13'
+crates-io = true
+status = 'transitive'
+features = ['default', 'log']
+optional-deps = ['log']
+
+[[host-package]]
 name = 'gloo-worker-macros'
 version = '0.1.0'
 crates-io = true
@@ -4693,6 +5215,13 @@ version = '3.1.0'
 crates-io = true
 status = 'transitive'
 features = []
+
+[[host-package]]
+name = 'group'
+version = '0.13.0'
+crates-io = true
+status = 'transitive'
+features = ['alloc']
 
 [[host-package]]
 name = 'guppy'
@@ -4752,6 +5281,13 @@ features = ['alloc', 'default', 'serde', 'std']
 optional-deps = ['serde']
 
 [[host-package]]
+name = 'hkdf'
+version = '0.12.3'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'hmac'
 version = '0.12.1'
 crates-io = true
@@ -4782,6 +5318,13 @@ features = []
 [[host-package]]
 name = 'http'
 version = '0.2.9'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'http-auth'
+version = '0.1.8'
 crates-io = true
 status = 'transitive'
 features = []
@@ -4851,6 +5394,13 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'iana-time-zone'
+version = '0.1.57'
+crates-io = true
+status = 'transitive'
+features = ['fallback']
+
+[[host-package]]
 name = 'ident_case'
 version = '1.0.1'
 crates-io = true
@@ -4870,6 +5420,27 @@ version = '0.4.0'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'std']
+
+[[host-package]]
+name = 'ignore'
+version = '0.4.20'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'im-rc'
+version = '15.1.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'imara-diff'
+version = '0.1.5'
+crates-io = true
+status = 'transitive'
+features = ['default', 'unified_diff']
 
 [[host-package]]
 name = 'indent_write'
@@ -4910,6 +5481,13 @@ optional-deps = ['unicode-width']
 [[host-package]]
 name = 'inout'
 version = '0.1.3'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'io-close'
+version = '0.3.7'
 crates-io = true
 status = 'transitive'
 features = []
@@ -4979,8 +5557,22 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'kstring'
+version = '2.0.0'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std', 'unsafe']
+
+[[host-package]]
 name = 'lazy_static'
 version = '1.4.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'lazycell'
+version = '1.3.0'
 crates-io = true
 status = 'transitive'
 features = []
@@ -5000,11 +5592,33 @@ status = 'transitive'
 features = ['default', 'extra_traits', 'std', 'use_std']
 
 [[host-package]]
+name = 'libgit2-sys'
+version = '0.15.2+1.6.4'
+crates-io = true
+status = 'transitive'
+features = ['https', 'libssh2-sys', 'openssl-sys', 'ssh', 'ssh_key_from_memory']
+optional-deps = ['libssh2-sys', 'openssl-sys']
+
+[[host-package]]
 name = 'libm'
 version = '0.2.7'
 crates-io = true
 status = 'transitive'
 features = ['default']
+
+[[host-package]]
+name = 'libnghttp2-sys'
+version = '0.1.8+1.55.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'libssh2-sys'
+version = '0.3.0'
+crates-io = true
+status = 'transitive'
+features = []
 
 [[host-package]]
 name = 'libz-sys'
@@ -5098,6 +5712,13 @@ version = '0.7.0'
 crates-io = true
 status = 'transitive'
 features = ['default']
+
+[[host-package]]
+name = 'maybe-async'
+version = '0.2.7'
+crates-io = true
+status = 'transitive'
+features = ['default', 'is_sync']
 
 [[host-package]]
 name = 'mbrman'
@@ -5358,6 +5979,13 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'num_threads'
+version = '0.1.6'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'number_prefix'
 version = '0.4.0'
 crates-io = true
@@ -5382,6 +6010,13 @@ features = ['alloc', 'default', 'race', 'std', 'unstable']
 [[host-package]]
 name = 'open'
 version = '5.0.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'opener'
+version = '0.5.2'
 crates-io = true
 status = 'transitive'
 features = []
@@ -5430,6 +6065,28 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'ordered-float'
+version = '2.10.0'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[host-package]]
+name = 'orion'
+version = '0.17.5'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'os_info'
+version = '3.7.0'
+crates-io = true
+status = 'transitive'
+features = ['default', 'serde']
+optional-deps = ['serde']
+
+[[host-package]]
 name = 'os_pipe'
 version = '1.1.4'
 crates-io = true
@@ -5450,6 +6107,14 @@ crates-io = true
 status = 'transitive'
 features = ['supports-color', 'supports-colors']
 optional-deps = ['supports-color']
+
+[[host-package]]
+name = 'p384'
+version = '0.13.0'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'arithmetic', 'default', 'digest', 'ecdh', 'ecdsa', 'ecdsa-core', 'pem', 'pkcs8', 'sha2', 'sha384', 'std']
+optional-deps = ['ecdsa-core', 'sha2']
 
 [[host-package]]
 name = 'parking'
@@ -5478,6 +6143,14 @@ version = '0.6.0'
 crates-io = true
 status = 'transitive'
 features = ['default']
+
+[[host-package]]
+name = 'pasetors'
+version = '0.6.7'
+crates-io = true
+status = 'transitive'
+features = ['default', 'ed25519-compact', 'orion', 'p384', 'paserk', 'rand_core', 'regex', 'serde', 'serde_json', 'sha2', 'std', 'time', 'v3', 'v4']
+optional-deps = ['ed25519-compact', 'orion', 'p384', 'rand_core', 'regex', 'serde', 'serde_json', 'sha2', 'time']
 
 [[host-package]]
 name = 'password-hash'
@@ -5509,6 +6182,13 @@ crates-io = true
 status = 'transitive'
 features = ['default', 'hmac', 'password-hash', 'sha2', 'simple']
 optional-deps = ['hmac', 'password-hash', 'sha2']
+
+[[host-package]]
+name = 'pem-rfc7468'
+version = '0.7.0'
+crates-io = true
+status = 'transitive'
+features = ['alloc']
 
 [[host-package]]
 name = 'percent-encoding'
@@ -5603,11 +6283,25 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'pkcs8'
+version = '0.10.2'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'pem', 'std']
+
+[[host-package]]
 name = 'pkg-config'
 version = '0.3.27'
 crates-io = true
 status = 'transitive'
 features = []
+
+[[host-package]]
+name = 'polling'
+version = '2.8.0'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
 
 [[host-package]]
 name = 'postcard-derive'
@@ -5626,6 +6320,13 @@ features = ['simd', 'std']
 [[host-package]]
 name = 'precomputed-hash'
 version = '0.1.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'primeorder'
+version = '0.13.2'
 crates-io = true
 status = 'transitive'
 features = []
@@ -5665,6 +6366,14 @@ version = '1.0.66'
 crates-io = true
 status = 'transitive'
 features = ['default', 'proc-macro']
+
+[[host-package]]
+name = 'prodash'
+version = '23.1.2'
+crates-io = true
+status = 'transitive'
+features = ['parking_lot', 'progress-tree']
+optional-deps = ['parking_lot']
 
 [[host-package]]
 name = 'prost-derive'
@@ -5769,6 +6478,13 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'rand_xoshiro'
+version = '0.6.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'raw-cpuid'
 version = '10.7.0'
 crates-io = true
@@ -5844,6 +6560,13 @@ features = ['hostname', 'system']
 optional-deps = ['hostname']
 
 [[host-package]]
+name = 'rfc6979'
+version = '0.4.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'ring'
 version = '0.16.20'
 crates-io = true
@@ -5894,12 +6617,26 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'rustfix'
+version = '0.6.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'rustix'
 version = '0.37.20'
 crates-io = true
 status = 'transitive'
 features = ['default', 'fs', 'io-lifetimes', 'libc', 'std', 'termios', 'use-libc-auxv']
 optional-deps = ['io-lifetimes', 'libc']
+
+[[host-package]]
+name = 'rustix'
+version = '0.38.8'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std', 'termios', 'use-libc-auxv']
 
 [[host-package]]
 name = 'rustls'
@@ -5980,6 +6717,14 @@ status = 'transitive'
 features = ['default']
 
 [[host-package]]
+name = 'sec1'
+version = '0.7.3'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'default', 'der', 'pem', 'pkcs8', 'point', 'std', 'subtle', 'zeroize']
+optional-deps = ['base16ct', 'der', 'generic-array', 'pkcs8', 'subtle', 'zeroize']
+
+[[host-package]]
 name = 'selectors'
 version = '0.22.0'
 crates-io = true
@@ -6005,6 +6750,13 @@ optional-deps = ['serde']
 [[host-package]]
 name = 'serde-big-array'
 version = '0.4.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'serde-value'
+version = '0.7.0'
 crates-io = true
 status = 'transitive'
 features = []
@@ -6082,6 +6834,13 @@ status = 'transitive'
 features = ['default', 'std']
 
 [[host-package]]
+name = 'sha1_smol'
+version = '1.0.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'sha2'
 version = '0.10.7'
 crates-io = true
@@ -6103,11 +6862,48 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'shell-escape'
+version = '0.1.5'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'shell-words'
 version = '1.1.0'
 crates-io = true
 status = 'transitive'
 features = ['default', 'std']
+
+[[host-package]]
+name = 'signal-hook'
+version = '0.3.17'
+crates-io = true
+status = 'transitive'
+features = ['channel', 'default', 'iterator']
+
+[[host-package]]
+name = 'signal-hook-mio'
+version = '0.2.3'
+crates-io = true
+status = 'transitive'
+features = ['mio-0_8', 'support-v0_8']
+optional-deps = ['mio-0_8']
+
+[[host-package]]
+name = 'signal-hook-registry'
+version = '1.4.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'signature'
+version = '2.1.0'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'digest', 'rand_core', 'std']
+optional-deps = ['digest', 'rand_core']
 
 [[host-package]]
 name = 'similar'
@@ -6120,6 +6916,13 @@ optional-deps = ['bstr', 'unicode-segmentation']
 [[host-package]]
 name = 'siphasher'
 version = '0.3.11'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[host-package]]
+name = 'sized-chunks'
+version = '0.6.5'
 crates-io = true
 status = 'transitive'
 features = ['default', 'std']
@@ -6180,6 +6983,13 @@ version = '0.4.9'
 crates-io = true
 status = 'transitive'
 features = ['all']
+
+[[host-package]]
+name = 'spki'
+version = '0.7.2'
+crates-io = true
+status = 'transitive'
+features = ['alloc', 'pem', 'std']
 
 [[host-package]]
 name = 'stable_deref_trait'
@@ -6716,6 +7526,13 @@ status = 'transitive'
 features = ['default', 'hardcoded-data', 'std']
 
 [[host-package]]
+name = 'unicode-bom'
+version = '2.0.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'unicode-ident'
 version = '1.0.11'
 crates-io = true
@@ -6941,6 +7758,13 @@ version = '0.5.1'
 crates-io = true
 status = 'transitive'
 features = []
+
+[[host-package]]
+name = 'xattr'
+version = '1.0.1'
+crates-io = true
+status = 'transitive'
+features = ['default', 'unsupported']
 
 [[host-package]]
 name = 'xmas-elf'

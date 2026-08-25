@@ -5,20 +5,25 @@
 resolver = '1'
 include-dev = false
 initials-platform = 'proc-macros-on-target'
+host-platform = []
 
-[metadata.host-platform]
-triple = 'x86_64-unknown-managarm-mlibc'
-target-features = 'all'
-flags = ['cargo_web', 'flag-test']
-
-[metadata.target-platform]
-triple = 'mips-unknown-linux-uclibc'
+[[metadata.target-platform]]
+triple = 'riscv64gc-unknown-fuchsia'
 target-features = 'unknown'
-flags = ['cargo_web', 'test-flag']
+
+[[metadata.target-platform]]
+triple = 'riscv64gc-unknown-redox'
+target-features = ['sse4.2']
+flags = ['flag-test']
+
+[[metadata.target-platform]]
+triple = 'thumbv7em-none-eabihf'
+target-features = ['bmi2', 'rdrand', 'sha', 'sse2', 'xsaves']
+flags = ['bar']
 [[metadata.omitted-packages.ids]]
-name = 'lower-b'
+name = 'upper-b'
 version = '0.1.0'
-workspace-path = 'lower-b'
+workspace-path = 'upper-b'
 
 [[metadata.features-only]]
 name = 'upper-a'
@@ -50,5 +55,12 @@ features = []
 name = 'lower-a'
 version = '0.1.0'
 workspace-path = 'lower-a'
+status = 'workspace'
+features = []
+
+[[target-package]]
+name = 'lower-b'
+version = '0.1.0'
+workspace-path = 'lower-b'
 status = 'workspace'
 features = []

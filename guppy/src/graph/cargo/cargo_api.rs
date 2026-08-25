@@ -23,7 +23,6 @@ pub struct CargoOptions<'a> {
     pub(crate) resolver: CargoResolverVersion,
     pub(crate) include_dev: bool,
     pub(crate) initials_platform: InitialsPlatform,
-    // Use Supercow here to ensure that owned Platform instances are boxed, to reduce stack size.
     pub(crate) host_platform: PlatformSpec,
     pub(crate) target_platform: PlatformSpec,
     pub(crate) omitted_packages: HashSet<&'a PackageId>,

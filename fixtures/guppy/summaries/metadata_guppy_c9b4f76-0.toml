@@ -5,21 +5,23 @@
 resolver = '3'
 include-dev = false
 initials-platform = 'host'
+target-platform = []
 
 [metadata.host-platform]
 spec = 'always'
-
-[metadata.target-platform]
-triple = 'x86_64-unknown-linux-ohos'
-target-features = 'unknown'
-[[metadata.omitted-packages.ids]]
-name = 'assert_matches'
-version = '1.4.0'
-crates-io = true
-
 [[metadata.omitted-packages.ids]]
 name = 'either'
 version = '1.6.1'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'git2'
+version = '0.13.11'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'rand_chacha'
+version = '0.2.2'
 crates-io = true
 
 [[host-package]]
@@ -382,13 +384,6 @@ status = 'transitive'
 features = ['std']
 
 [[host-package]]
-name = 'ppv-lite86'
-version = '0.2.9'
-crates-io = true
-status = 'transitive'
-features = ['simd']
-
-[[host-package]]
 name = 'proc-macro-error'
 version = '1.0.4'
 crates-io = true
@@ -445,13 +440,6 @@ crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'getrandom', 'getrandom_package', 'libc', 'std']
 optional-deps = ['getrandom_package']
-
-[[host-package]]
-name = 'rand_chacha'
-version = '0.2.2'
-crates-io = true
-status = 'transitive'
-features = []
 
 [[host-package]]
 name = 'rand_core'

@@ -6,16 +6,37 @@ resolver = '3'
 include-dev = false
 initials-platform = 'proc-macros-on-target'
 
-[metadata.host-platform]
-spec = 'always'
+[[metadata.host-platform]]
+triple = 'armv7a-kmc-solid_asp3-eabihf'
+target-features = 'unknown'
+
+[[metadata.host-platform]]
+triple = 'x86_64-uwp-windows-gnu'
+target-features = 'all'
+flags = ['bar']
+
+[[metadata.host-platform]]
+triple = 'aarch64-unknown-none-softfloat'
+target-features = ['rdrand', 'sse', 'sse4.1', 'sse4.2', 'xsave', 'xsaves']
+flags = ['flag-test', 'foo']
 
 [metadata.target-platform]
-triple = 'armv7a-none-eabihf'
-target-features = 'all'
-flags = ['test-flag']
+triple = 'arm64e-apple-tvos'
+target-features = 'unknown'
+flags = ['flag-test']
 [[metadata.omitted-packages.ids]]
-name = 'jemalloc-sys'
-version = '0.3.2'
+name = 'crossbeam'
+version = '0.7.3'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'dirs'
+version = '2.0.2'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'tokio-udp'
+version = '0.1.6'
 crates-io = true
 
 [[metadata.features-only]]
@@ -232,14 +253,6 @@ crates-io = true
 status = 'direct'
 features = ['serde', 'serialization']
 optional-deps = ['serde']
-
-[[target-package]]
-name = 'crossbeam'
-version = '0.7.3'
-crates-io = true
-status = 'direct'
-features = ['crossbeam-channel', 'crossbeam-deque', 'crossbeam-queue', 'default', 'std']
-optional-deps = ['crossbeam-channel', 'crossbeam-deque', 'crossbeam-queue']
 
 [[target-package]]
 name = 'curve25519-dalek'
@@ -487,7 +500,7 @@ version = '0.2.13'
 crates-io = true
 status = 'direct'
 features = ['blocking', 'default', 'dns', 'fnv', 'fs', 'full', 'futures-core', 'io-driver', 'io-std', 'io-util', 'iovec', 'lazy_static', 'libc', 'macros', 'memchr', 'mio', 'mio-named-pipes', 'mio-uds', 'net', 'num_cpus', 'process', 'rt-core', 'rt-threaded', 'rt-util', 'signal', 'signal-hook-registry', 'slab', 'stream', 'sync', 'tcp', 'time', 'tokio-macros', 'udp', 'uds']
-optional-deps = ['fnv', 'futures-core', 'iovec', 'lazy_static', 'memchr', 'mio', 'num_cpus', 'slab', 'tokio-macros']
+optional-deps = ['fnv', 'futures-core', 'iovec', 'lazy_static', 'libc', 'memchr', 'mio', 'mio-uds', 'num_cpus', 'signal-hook-registry', 'slab', 'tokio-macros']
 
 [[target-package]]
 name = 'toml'
@@ -535,6 +548,13 @@ features = ['default', 'std']
 [[target-package]]
 name = 'ansi_term'
 version = '0.11.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'arc-swap'
+version = '0.4.4'
 crates-io = true
 status = 'transitive'
 features = []
@@ -670,13 +690,6 @@ optional-deps = ['ansi_term', 'atty', 'strsim', 'vec_map']
 [[target-package]]
 name = 'clear_on_drop'
 version = '0.2.3'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'crossbeam-channel'
-version = '0.4.2'
 crates-io = true
 status = 'transitive'
 features = []
@@ -965,7 +978,7 @@ version = '0.5.7'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'getrandom', 'libc', 'mach_o_sys', 'use_os', 'winapi']
-optional-deps = ['getrandom']
+optional-deps = ['getrandom', 'libc']
 
 [[target-package]]
 name = 'mio'
@@ -973,6 +986,13 @@ version = '0.6.21'
 crates-io = true
 status = 'transitive'
 features = ['default', 'with-deprecated']
+
+[[target-package]]
+name = 'mio-uds'
+version = '0.6.7'
+crates-io = true
+status = 'transitive'
+features = []
 
 [[target-package]]
 name = 'net2'
@@ -1085,6 +1105,7 @@ version = '0.4.6'
 crates-io = true
 status = 'transitive'
 features = ['default', 'libc', 'std']
+optional-deps = ['libc']
 
 [[target-package]]
 name = 'rand'
@@ -1092,7 +1113,7 @@ version = '0.7.3'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'getrandom', 'getrandom_package', 'libc', 'rand_pcg', 'small_rng', 'std']
-optional-deps = ['getrandom_package', 'rand_pcg']
+optional-deps = ['getrandom_package', 'libc', 'rand_pcg']
 
 [[target-package]]
 name = 'rand04'
@@ -1260,6 +1281,13 @@ features = []
 [[target-package]]
 name = 'sha3'
 version = '0.8.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'signal-hook-registry'
+version = '1.2.0'
 crates-io = true
 status = 'transitive'
 features = []
@@ -1670,6 +1698,13 @@ status = 'transitive'
 features = ['default', 'std']
 
 [[host-package]]
+name = 'c2-chacha'
+version = '0.2.3'
+crates-io = true
+status = 'transitive'
+features = ['simd', 'std']
+
+[[host-package]]
 name = 'cc'
 version = '1.0.50'
 crates-io = true
@@ -1796,6 +1831,13 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'ppv-lite86'
+version = '0.2.6'
+crates-io = true
+status = 'transitive'
+features = ['simd', 'std']
+
+[[host-package]]
 name = 'proc-macro-error'
 version = '0.4.11'
 crates-io = true
@@ -1859,6 +1901,13 @@ crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'getrandom', 'getrandom_package', 'libc', 'std']
 optional-deps = ['getrandom_package']
+
+[[host-package]]
+name = 'rand_chacha'
+version = '0.2.1'
+crates-io = true
+status = 'transitive'
+features = ['std']
 
 [[host-package]]
 name = 'rand_core'
@@ -2036,3 +2085,10 @@ version = '3.1.0'
 crates-io = true
 status = 'transitive'
 features = []
+
+[[host-package]]
+name = 'winapi'
+version = '0.3.8'
+crates-io = true
+status = 'transitive'
+features = ['errhandlingapi', 'fileapi', 'handleapi', 'std', 'winbase', 'winerror']

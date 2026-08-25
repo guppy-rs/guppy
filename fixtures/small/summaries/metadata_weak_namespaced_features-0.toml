@@ -9,10 +9,28 @@ initials-platform = 'host'
 [metadata.host-platform]
 spec = 'always'
 
-[metadata.target-platform]
-triple = 'armv7-sony-vita-newlibeabihf'
-target-features = 'unknown'
-flags = ['abc']
+[[metadata.target-platform]]
+triple = 'thumbv8m.main-none-eabi'
+target-features = 'all'
+flags = ['flag-test', 'test-flag']
+
+[[metadata.target-platform]]
+triple = 'mipsel-unknown-none'
+target-features = 'all'
+
+[[metadata.target-platform]]
+triple = 'xtensa-esp32-none-elf'
+target-features = ['aes']
+flags = ['abc', 'test-flag']
+[[metadata.omitted-packages.ids]]
+name = 'pathdiff'
+version = '0.2.1'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'tinyvec'
+version = '1.5.1'
+crates-io = true
 
 [[metadata.features-only]]
 name = 'namespaced-weak'
@@ -35,13 +53,6 @@ version = '0.7.2'
 crates-io = true
 status = 'direct'
 features = ['std']
-
-[[host-package]]
-name = 'pathdiff'
-version = '0.2.1'
-crates-io = true
-status = 'direct'
-features = []
 
 [[host-package]]
 name = 'smallvec'

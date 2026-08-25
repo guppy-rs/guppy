@@ -5,20 +5,21 @@
 resolver = 'install'
 include-dev = false
 initials-platform = 'host'
-
-[metadata.host-platform]
-triple = 'arm64_32-apple-watchos'
-target-features = 'unknown'
-flags = ['cargo_web', 'foo']
+host-platform = []
 
 [metadata.target-platform]
-triple = 'x86_64-win7-windows-gnu'
-target-features = 'unknown'
-flags = ['abc', 'flag-test']
+triple = 'riscv32imafc-unknown-none-elf'
+target-features = ['avx2', 'sse4.2', 'ssse3', 'xsaves']
+flags = ['flag-test']
 [[metadata.omitted-packages.ids]]
-name = 'guppy-benchmarks'
+name = 'fixtures'
 version = '0.1.0'
-workspace-path = 'internal-tools/benchmarks'
+workspace-path = 'fixtures'
+
+[[metadata.omitted-packages.ids]]
+name = 'target-spec'
+version = '0.9.0'
+workspace-path = 'target-spec'
 
 [[metadata.features-only]]
 name = 'cargo-guppy'

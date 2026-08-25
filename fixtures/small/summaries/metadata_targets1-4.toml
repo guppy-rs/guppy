@@ -6,17 +6,32 @@ resolver = '1'
 include-dev = true
 initials-platform = 'standard'
 
-[metadata.host-platform]
-triple = 'x86_64-unknown-hermit'
-target-features = ['sse2']
-flags = ['cargo_web']
+[[metadata.host-platform]]
+triple = 'csky-unknown-linux-gnuabiv2hf'
+target-features = 'all'
+flags = ['abc', 'foo']
 
-[metadata.target-platform]
-spec = 'always'
-[[metadata.omitted-packages.ids]]
-name = 'bytes'
-version = '0.5.3'
-crates-io = true
+[[metadata.host-platform]]
+triple = 'i586-unknown-linux-musl'
+target-features = 'all'
+flags = ['abc', 'bar']
+
+[[metadata.host-platform]]
+triple = 'riscv64-wrs-vxworks'
+target-features = ['bmi1', 'sha', 'sse2', 'sse3', 'xsaves']
+
+[[metadata.target-platform]]
+triple = 'x86_64-unknown-linux-gnux32'
+target-features = 'all'
+
+[[metadata.target-platform]]
+triple = 'riscv64gc-unknown-redox'
+target-features = 'all'
+flags = ['foo']
+
+[[metadata.target-platform]]
+triple = 'aarch64v8r-unknown-none-softfloat'
+target-features = ['aes', 'bmi1', 'rdrand', 'sha', 'sse2', 'sse4.2']
 
 [[metadata.features-only]]
 name = 'testcrate-targets'
@@ -32,8 +47,37 @@ status = 'initial'
 features = []
 
 [[target-package]]
+name = 'bytes'
+version = '0.5.3'
+crates-io = true
+status = 'direct'
+features = ['default', 'serde', 'std']
+optional-deps = ['serde']
+
+[[target-package]]
+name = 'dep-a'
+version = '0.1.0'
+path = '../dep-a'
+status = 'direct'
+features = ['bar', 'baz', 'foo', 'quux']
+
+[[target-package]]
+name = 'lazy_static'
+version = '0.2.11'
+crates-io = true
+status = 'direct'
+features = []
+
+[[target-package]]
 name = 'lazy_static'
 version = '1.4.0'
 crates-io = true
 status = 'direct'
 features = []
+
+[[target-package]]
+name = 'serde'
+version = '1.0.105'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']

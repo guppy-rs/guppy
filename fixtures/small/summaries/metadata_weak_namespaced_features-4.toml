@@ -6,21 +6,36 @@ resolver = '2'
 include-dev = true
 initials-platform = 'proc-macros-on-target'
 
-[metadata.host-platform]
-triple = 'i686-win7-windows-msvc'
-target-features = ['avx', 'bmi2', 'rdrand', 'sse2', 'xsaves']
+[[metadata.host-platform]]
+triple = 'loongarch64-unknown-linux-gnu'
+target-features = 'unknown'
+
+[[metadata.host-platform]]
+triple = 'hexagon-unknown-linux-musl'
+target-features = 'all'
 flags = ['abc']
 
-[metadata.target-platform]
-spec = 'always'
-[[metadata.omitted-packages.ids]]
-name = 'namespaced-weak'
-version = '0.1.0'
-workspace-path = ''
+[[metadata.host-platform]]
+triple = 'riscv32gc-unknown-linux-gnu'
+target-features = 'unknown'
+flags = ['cargo_web', 'foo']
 
+[[metadata.target-platform]]
+triple = 'x86_64-oe-linux-gnu'
+target-features = ['avx2', 'bmi1', 'fma', 'sse3', 'sse4.1']
+flags = ['foo']
+
+[[metadata.target-platform]]
+triple = 'mips-unknown-linux-musl'
+target-features = 'unknown'
+flags = ['test-flag']
+
+[[metadata.target-platform]]
+triple = 'arm64e-apple-darwin'
+target-features = 'unknown'
 [[metadata.omitted-packages.ids]]
-name = 'smallvec'
-version = '1.8.0'
+name = 'pathdiff'
+version = '0.2.1'
 crates-io = true
 
 [[target-package]]

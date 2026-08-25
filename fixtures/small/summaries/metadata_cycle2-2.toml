@@ -6,20 +6,22 @@ resolver = '2'
 include-dev = false
 initials-platform = 'host'
 
-[metadata.host-platform]
-triple = 'riscv64gc-unknown-netbsd'
+[[metadata.host-platform]]
+triple = 'x86_64-unknown-linux-ohos'
+target-features = ['rdrand', 'sha', 'sse', 'xsaveopt', 'xsaves']
+
+[[metadata.host-platform]]
+triple = 'aarch64-unknown-nto-qnx710'
 target-features = 'unknown'
-flags = ['bar', 'foo']
+flags = ['foo']
+
+[[metadata.host-platform]]
+triple = 'thumbv8m.main-none-eabi'
+target-features = 'all'
+flags = ['test-flag']
 
 [metadata.target-platform]
-triple = 'sparc64-unknown-linux-gnu'
-target-features = 'all'
-flags = ['abc']
-[[metadata.omitted-packages.ids]]
-name = 'lower-a'
-version = '0.1.0'
-workspace-path = 'lower-a'
-
+spec = 'any'
 [[metadata.omitted-packages.ids]]
 name = 'lower-b'
 version = '0.1.0'

@@ -9,14 +9,15 @@ initials-platform = 'host'
 [metadata.host-platform]
 spec = 'always'
 
-[metadata.target-platform]
-triple = 'armv6-none-eabi'
-target-features = 'unknown'
-flags = ['flag-test', 'test-flag']
-[[metadata.omitted-packages.ids]]
-name = 'arrayvec'
-version = '0.7.2'
-crates-io = true
+[[metadata.target-platform]]
+triple = 'aarch64-unknown-nto-qnx700'
+target-features = ['avx2', 'sse4.1', 'xsavec']
+flags = ['flag-test']
+
+[[metadata.target-platform]]
+triple = 'thumbv6-none-eabi'
+target-features = ['sse', 'xsaves']
+flags = ['flag-test', 'foo']
 
 [[metadata.features-only]]
 name = 'namespaced-weak'

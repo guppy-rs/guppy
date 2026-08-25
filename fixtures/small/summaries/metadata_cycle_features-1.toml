@@ -6,12 +6,27 @@ resolver = '3'
 include-dev = false
 initials-platform = 'standard'
 
-[metadata.host-platform]
-spec = 'always'
+[[metadata.host-platform]]
+triple = 's390x-unknown-linux-musl'
+target-features = ['aes', 'avx2', 'bmi2', 'rdrand', 'sse2', 'xsave']
 
-[metadata.target-platform]
-triple = 'mipsel-mti-none-elf'
+[[metadata.host-platform]]
+triple = 'powerpc-unknown-linux-musl'
+target-features = ['sha', 'sse3', 'sse4.1', 'xsaveopt']
+
+[[metadata.host-platform]]
+triple = 'riscv64gc-unknown-fuchsia'
+target-features = 'all'
+flags = ['abc']
+
+[[metadata.target-platform]]
+triple = 'i586-unknown-redox'
 target-features = 'unknown'
+
+[[metadata.target-platform]]
+triple = 'xtensa-esp32s2-espidf'
+target-features = 'all'
+flags = ['flag-test']
 [[metadata.omitted-packages.ids]]
 name = 'testcycles-base'
 version = '0.1.0'

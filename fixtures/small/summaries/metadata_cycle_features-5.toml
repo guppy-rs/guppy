@@ -5,19 +5,16 @@
 resolver = '2'
 include-dev = true
 initials-platform = 'standard'
+target-platform = []
 
-[metadata.host-platform]
-triple = 'bpfel-unknown-none'
-target-features = ['xsave', 'xsaveopt']
+[[metadata.host-platform]]
+triple = 'riscv64-oe-linux-gnu'
+target-features = ['bmi1', 'rdrand', 'sha', 'sse2']
 
-[metadata.target-platform]
-triple = 'riscv64gc-unknown-freebsd'
-target-features = 'all'
-flags = ['bar']
-[[metadata.omitted-packages.ids]]
-name = 'testcycles-base'
-version = '0.1.0'
-workspace-path = 'testcycles-base'
+[[metadata.host-platform]]
+triple = 'powerpc64-unknown-linux-gnuelfv2'
+target-features = 'unknown'
+flags = ['cargo_web']
 
 [[metadata.features-only]]
 name = 'testcycles-base'

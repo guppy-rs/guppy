@@ -9,10 +9,24 @@ initials-platform = 'standard'
 [metadata.host-platform]
 spec = 'any'
 
-[metadata.target-platform]
-triple = 'avr-none'
-target-features = ['avx2', 'sse3', 'xsavec', 'xsaveopt']
-flags = ['foo']
+[[metadata.target-platform]]
+triple = 'csky-unknown-linux-gnuabiv2'
+target-features = []
+flags = ['cargo_web']
+
+[[metadata.target-platform]]
+triple = 'x86_64-unknown-linux-gnu'
+target-features = ['sse3']
+flags = ['abc']
+[[metadata.omitted-packages.ids]]
+name = 'lazy_static'
+version = '0.2.11'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'lazy_static'
+version = '1.4.0'
+crates-io = true
 
 [[metadata.features-only]]
 name = 'testcrate-targets'
@@ -43,20 +57,6 @@ version = '0.1.0'
 path = '../dep-a'
 status = 'direct'
 features = ['bar', 'baz', 'foo', 'quux']
-
-[[target-package]]
-name = 'lazy_static'
-version = '0.2.11'
-crates-io = true
-status = 'direct'
-features = []
-
-[[target-package]]
-name = 'lazy_static'
-version = '1.4.0'
-crates-io = true
-status = 'direct'
-features = []
 
 [[target-package]]
 name = 'serde'

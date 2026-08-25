@@ -6,16 +6,32 @@ resolver = '1'
 include-dev = true
 initials-platform = 'standard'
 
-[metadata.host-platform]
-triple = 'i686-unknown-haiku'
+[[metadata.host-platform]]
+triple = 'sparc-unknown-linux-gnu'
 target-features = 'all'
+flags = ['abc']
+
+[[metadata.host-platform]]
+triple = 'powerpc-unknown-helenos'
+target-features = 'unknown'
+flags = ['foo', 'test-flag']
+
+[[metadata.target-platform]]
+triple = 'aarch64-unknown-linux-pauthtest'
+target-features = 'unknown'
 flags = ['flag-test']
 
-[metadata.target-platform]
-spec = 'always'
+[[metadata.target-platform]]
+triple = 'riscv64a23-unknown-linux-gnu'
+target-features = ['bmi2', 'sha', 'xsave']
 [[metadata.omitted-packages.ids]]
-name = 'mach'
-version = '0.2.3'
+name = 'bitflags'
+version = '1.1.0'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'version_check'
+version = '0.9.1'
 crates-io = true
 
 [[metadata.omitted-packages.ids]]
@@ -54,13 +70,6 @@ status = 'transitive'
 features = ['default', 'std']
 
 [[target-package]]
-name = 'bitflags'
-version = '1.1.0'
-crates-io = true
-status = 'transitive'
-features = ['default']
-
-[[target-package]]
 name = 'dtoa'
 version = '0.4.4'
 crates-io = true
@@ -79,7 +88,7 @@ name = 'libc'
 version = '0.2.62'
 crates-io = true
 status = 'transitive'
-features = ['default', 'std']
+features = ['default', 'std', 'use_std']
 
 [[target-package]]
 name = 'linked-hash-map'
@@ -201,10 +210,3 @@ version = '0.2.0'
 crates-io = true
 status = 'transitive'
 features = ['default']
-
-[[host-package]]
-name = 'version_check'
-version = '0.9.1'
-crates-io = true
-status = 'transitive'
-features = []

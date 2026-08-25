@@ -6,16 +6,32 @@ resolver = '2'
 include-dev = true
 initials-platform = 'proc-macros-on-target'
 
-[metadata.host-platform]
-spec = 'always'
+[[metadata.host-platform]]
+triple = 'aarch64-unknown-helenos'
+target-features = ['avx2', 'bmi1', 'sse', 'sse3', 'sse4.1', 'xsaveopt']
+
+[[metadata.host-platform]]
+triple = 'xtensa-esp32s3-espidf'
+target-features = 'all'
+flags = ['abc', 'test-flag']
 
 [metadata.target-platform]
-triple = 'riscv32imc-unknown-none-elf'
-target-features = 'unknown'
-flags = ['abc', 'foo']
+triple = 'i586-unknown-netbsd'
+target-features = ['aes', 'fma', 'rdrand', 'ssse3']
+flags = ['bar', 'foo']
 [[metadata.omitted-packages.ids]]
-name = 'hkdf'
-version = '0.12.3'
+name = 'cargo_metadata'
+version = '0.15.4'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'gix-packetline'
+version = '0.16.5'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'memoffset'
+version = '0.9.0'
 crates-io = true
 
 [[metadata.features-only]]
@@ -173,7 +189,7 @@ version = '0.7.16'
 crates-io = true
 status = 'direct'
 features = ['atomic-polyfill', 'cas', 'default', 'defmt', 'defmt-impl', 'serde']
-optional-deps = ['atomic-polyfill', 'defmt', 'serde']
+optional-deps = ['defmt', 'serde']
 
 [[target-package]]
 name = 'input-mgr'
@@ -284,13 +300,6 @@ crates-io = true
 status = 'direct'
 features = ['serde']
 optional-deps = ['serde']
-
-[[target-package]]
-name = 'atomic-polyfill'
-version = '0.1.11'
-crates-io = true
-status = 'transitive'
-features = []
 
 [[target-package]]
 name = 'az'

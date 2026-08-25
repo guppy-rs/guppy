@@ -5,14 +5,20 @@
 resolver = '2'
 include-dev = true
 initials-platform = 'standard'
-
-[metadata.host-platform]
-triple = 'aarch64-unknown-managarm-mlibc'
-target-features = 'unknown'
-flags = ['flag-test', 'test-flag']
+host-platform = []
 
 [metadata.target-platform]
-spec = 'always'
+triple = 'x86_64-pc-nto-qnx710'
+target-features = 'unknown'
+[[metadata.omitted-packages.ids]]
+name = 'testcycles-base'
+version = '0.1.0'
+workspace-path = ''
+
+[[metadata.omitted-packages.ids]]
+name = 'testcycles-helper'
+version = '0.1.0'
+path = '../testcycles-helper'
 
 [[metadata.features-only]]
 name = 'testcycles-base'
@@ -25,11 +31,4 @@ name = 'testcycles-base'
 version = '0.1.0'
 workspace-path = ''
 status = 'initial'
-features = []
-
-[[target-package]]
-name = 'testcycles-helper'
-version = '0.1.0'
-path = '../testcycles-helper'
-status = 'direct'
 features = []

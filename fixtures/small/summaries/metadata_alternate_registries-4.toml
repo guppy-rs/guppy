@@ -5,19 +5,18 @@
 resolver = 'install'
 include-dev = true
 initials-platform = 'proc-macros-on-target'
-
-[metadata.host-platform]
-triple = 'x86_64-pc-cygwin'
-target-features = 'all'
-flags = ['abc']
+host-platform = []
 
 [metadata.target-platform]
-triple = 'thumbv8m.base-nuttx-eabi'
-target-features = 'all'
-flags = ['cargo_web']
+spec = 'always'
 [[metadata.omitted-packages.ids]]
 name = 'ryu'
 version = '1.0.5'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'serde'
+version = '1.0.130'
 crates-io = true
 
 [[metadata.features-only]]
@@ -53,10 +52,3 @@ version = '0.4.8'
 crates-io = true
 status = 'transitive'
 features = []
-
-[[target-package]]
-name = 'serde'
-version = '1.0.130'
-crates-io = true
-status = 'transitive'
-features = ['std']

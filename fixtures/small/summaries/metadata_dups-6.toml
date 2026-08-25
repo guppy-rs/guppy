@@ -6,19 +6,33 @@ resolver = 'install'
 include-dev = false
 initials-platform = 'standard'
 
-[metadata.host-platform]
-spec = 'always'
+[[metadata.host-platform]]
+triple = 'riscv32gc-unknown-linux-gnu'
+target-features = 'all'
+flags = ['abc']
 
-[metadata.target-platform]
-spec = 'any'
+[[metadata.host-platform]]
+triple = 'mipsisa32r6el-unknown-linux-gnu'
+target-features = ['rdrand', 'sha']
+flags = ['foo']
+
+[[metadata.target-platform]]
+triple = 'thumbv7a-pc-windows-msvc'
+target-features = 'unknown'
+flags = ['flag-test']
+
+[[metadata.target-platform]]
+triple = 'xtensa-esp32-none-elf'
+target-features = ['avx', 'rdrand', 'sse', 'sse2', 'sse4.2']
+flags = ['abc', 'bar']
+
+[[metadata.target-platform]]
+triple = 'mips64-openwrt-linux-musl'
+target-features = 'all'
+flags = ['abc']
 [[metadata.omitted-packages.ids]]
 name = 'bytes'
-version = '0.5.4'
-crates-io = true
-
-[[metadata.omitted-packages.ids]]
-name = 'lazy_static'
-version = '0.2.11'
+version = '0.3.0'
 crates-io = true
 
 [[metadata.features-only]]
@@ -33,6 +47,13 @@ version = '0.1.0'
 workspace-path = ''
 status = 'initial'
 features = []
+
+[[target-package]]
+name = 'bytes'
+version = '0.5.4'
+crates-io = true
+status = 'direct'
+features = ['default', 'std']
 
 [[target-package]]
 name = 'lazy_static'

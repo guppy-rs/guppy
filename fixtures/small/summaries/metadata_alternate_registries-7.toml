@@ -5,17 +5,25 @@
 resolver = '2'
 include-dev = true
 initials-platform = 'host'
+host-platform = []
 
-[metadata.host-platform]
-triple = 'mips64-unknown-linux-gnuabi64'
+[[metadata.target-platform]]
+triple = 'x86_64-pc-solaris'
 target-features = 'all'
-flags = ['abc', 'flag-test']
+flags = ['cargo_web']
 
-[metadata.target-platform]
-spec = 'any'
+[[metadata.target-platform]]
+triple = 'aarch64-apple-ios-sim'
+target-features = []
+flags = ['abc', 'bar']
 [[metadata.omitted-packages.ids]]
-name = 'proc-macro2'
-version = '1.0.29'
+name = 'serde'
+version = '1.0.130'
+source = 'registry+https://github.com/fakeorg/crates.io-index'
+
+[[metadata.omitted-packages.ids]]
+name = 'unicode-xid'
+version = '0.2.2'
 source = 'registry+https://github.com/fakeorg/crates.io-index'
 
 [[metadata.features-only]]
@@ -32,47 +40,3 @@ workspace-path = ''
 status = 'initial'
 features = ['serde']
 optional-deps = ['serde']
-
-[[host-package]]
-name = 'serde'
-version = '1.0.130'
-source = 'registry+https://github.com/fakeorg/crates.io-index'
-status = 'direct'
-features = ['derive', 'serde_derive']
-optional-deps = ['serde_derive']
-
-[[host-package]]
-name = 'unicode-xid'
-version = '0.2.2'
-crates-io = true
-status = 'direct'
-features = ['default']
-
-[[host-package]]
-name = 'quote'
-version = '1.0.10'
-source = 'registry+https://github.com/fakeorg/crates.io-index'
-status = 'transitive'
-features = ['default', 'proc-macro']
-
-[[host-package]]
-name = 'serde_derive'
-version = '1.0.130'
-source = 'registry+https://github.com/fakeorg/crates.io-index'
-status = 'transitive'
-features = ['default']
-
-[[host-package]]
-name = 'syn'
-version = '1.0.80'
-source = 'registry+https://github.com/fakeorg/crates.io-index'
-status = 'transitive'
-features = ['clone-impls', 'default', 'derive', 'parsing', 'printing', 'proc-macro', 'quote']
-optional-deps = ['quote']
-
-[[host-package]]
-name = 'unicode-xid'
-version = '0.2.2'
-source = 'registry+https://github.com/fakeorg/crates.io-index'
-status = 'transitive'
-features = ['default']

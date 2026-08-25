@@ -7,16 +7,29 @@ include-dev = true
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'x86_64-unknown-managarm-mlibc'
-target-features = 'unknown'
-flags = ['bar', 'test-flag']
+triple = 'mipsel-sony-psx'
+target-features = ['rdrand', 'xsave']
 
-[metadata.target-platform]
-triple = 'x86_64-unknown-netbsd'
-target-features = ['rdrand', 'sse']
+[[metadata.target-platform]]
+triple = 'i686-linux-android'
+target-features = 'all'
+
+[[metadata.target-platform]]
+triple = 'aarch64-unknown-none-softfloat'
+target-features = 'unknown'
 [[metadata.omitted-packages.ids]]
-name = 'rental-impl'
-version = '0.5.5'
+name = 'arc-swap'
+version = '0.4.4'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'c_linked_list'
+version = '1.1.1'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'data-encoding'
+version = '2.1.2'
 crates-io = true
 
 [[metadata.features-only]]
@@ -516,13 +529,6 @@ version = '1.0.26'
 crates-io = true
 status = 'direct'
 features = ['default', 'std']
-
-[[target-package]]
-name = 'arc-swap'
-version = '0.4.4'
-crates-io = true
-status = 'direct'
-features = []
 
 [[target-package]]
 name = 'backtrace'
@@ -1275,13 +1281,6 @@ status = 'transitive'
 features = ['simd', 'std']
 
 [[target-package]]
-name = 'c_linked_list'
-version = '1.1.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
 name = 'cfg-if'
 version = '0.1.10'
 crates-io = true
@@ -1411,13 +1410,6 @@ version = '2.0.0'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'std', 'u64_backend']
-
-[[target-package]]
-name = 'data-encoding'
-version = '2.1.2'
-crates-io = true
-status = 'transitive'
-features = []
 
 [[target-package]]
 name = 'dirs'
@@ -1551,6 +1543,13 @@ optional-deps = ['futures-channel', 'futures-io', 'futures-macro', 'futures-sink
 [[target-package]]
 name = 'generic-array'
 version = '0.12.3'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'get_if_addrs-sys'
+version = '0.1.1'
 crates-io = true
 status = 'transitive'
 features = []
@@ -2675,7 +2674,7 @@ name = 'syn'
 version = '1.0.14'
 crates-io = true
 status = 'direct'
-features = ['clone-impls', 'default', 'derive', 'extra-traits', 'full', 'parsing', 'printing', 'proc-macro', 'quote', 'visit', 'visit-mut']
+features = ['clone-impls', 'default', 'derive', 'extra-traits', 'fold', 'full', 'parsing', 'printing', 'proc-macro', 'quote', 'visit', 'visit-mut']
 optional-deps = ['quote']
 
 [[host-package]]
@@ -2808,6 +2807,13 @@ features = []
 [[host-package]]
 name = 'futures-macro'
 version = '0.3.4'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'gcc'
+version = '0.3.55'
 crates-io = true
 status = 'transitive'
 features = []
@@ -3035,6 +3041,13 @@ features = []
 [[host-package]]
 name = 'remove_dir_all'
 version = '0.5.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'rental-impl'
+version = '0.5.5'
 crates-io = true
 status = 'transitive'
 features = []

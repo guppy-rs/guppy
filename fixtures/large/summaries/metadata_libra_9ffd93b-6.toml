@@ -6,16 +6,23 @@ resolver = '2'
 include-dev = false
 initials-platform = 'standard'
 
-[metadata.host-platform]
-spec = 'always'
+[[metadata.host-platform]]
+triple = 'riscv32i-unknown-none-elf'
+target-features = 'all'
+flags = ['abc']
+
+[[metadata.host-platform]]
+triple = 'thumbv7r-none-eabi'
+target-features = ['avx2', 'bmi2', 'sse', 'sse4.2', 'xsaveopt']
+flags = ['abc', 'test-flag']
 
 [metadata.target-platform]
-triple = 'arm-unknown-linux-gnueabi'
+triple = 'thumbv7neon-unknown-linux-musleabihf'
 target-features = 'all'
-flags = ['test-flag']
+flags = ['abc']
 [[metadata.omitted-packages.ids]]
-name = 'void'
-version = '1.0.2'
+name = 'get_if_addrs'
+version = '0.5.3'
 crates-io = true
 
 [[metadata.features-only]]
@@ -538,13 +545,6 @@ crates-io = true
 status = 'direct'
 features = ['alloc', 'async-await', 'default', 'executor', 'futures-executor', 'std']
 optional-deps = ['futures-executor']
-
-[[target-package]]
-name = 'get_if_addrs'
-version = '0.5.3'
-crates-io = true
-status = 'direct'
-features = []
 
 [[target-package]]
 name = 'hex'
@@ -1122,13 +1122,6 @@ version = '0.2.3'
 crates-io = true
 status = 'transitive'
 features = ['simd', 'std']
-
-[[target-package]]
-name = 'c_linked_list'
-version = '1.1.1'
-crates-io = true
-status = 'transitive'
-features = []
 
 [[target-package]]
 name = 'cfg-if'
@@ -2791,6 +2784,13 @@ status = 'transitive'
 features = ['default', 'std']
 
 [[host-package]]
+name = 'ansi_term'
+version = '0.11.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'anyhow'
 version = '1.0.26'
 crates-io = true
@@ -2870,6 +2870,13 @@ status = 'transitive'
 features = ['default', 'std']
 
 [[host-package]]
+name = 'c2-chacha'
+version = '0.2.3'
+crates-io = true
+status = 'transitive'
+features = ['simd', 'std']
+
+[[host-package]]
 name = 'cc'
 version = '1.0.50'
 crates-io = true
@@ -2905,7 +2912,7 @@ version = '2.33.0'
 crates-io = true
 status = 'transitive'
 features = ['ansi_term', 'atty', 'color', 'default', 'strsim', 'suggestions', 'vec_map']
-optional-deps = ['atty', 'strsim', 'vec_map']
+optional-deps = ['ansi_term', 'atty', 'strsim', 'vec_map']
 
 [[host-package]]
 name = 'clear_on_drop'
@@ -3120,6 +3127,13 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'ppv-lite86'
+version = '0.2.6'
+crates-io = true
+status = 'transitive'
+features = ['simd', 'std']
+
+[[host-package]]
 name = 'proc-macro-error'
 version = '0.4.11'
 crates-io = true
@@ -3190,6 +3204,13 @@ crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'getrandom', 'getrandom_package', 'libc', 'std']
 optional-deps = ['getrandom_package']
+
+[[host-package]]
+name = 'rand_chacha'
+version = '0.2.1'
+crates-io = true
+status = 'transitive'
+features = ['std']
 
 [[host-package]]
 name = 'rand_core'

@@ -5,16 +5,24 @@
 resolver = '3'
 include-dev = true
 initials-platform = 'host'
+target-platform = []
 
-[metadata.host-platform]
-spec = 'always'
+[[metadata.host-platform]]
+triple = 'hexagon-unknown-linux-musl'
+target-features = 'unknown'
 
-[metadata.target-platform]
-spec = 'any'
+[[metadata.host-platform]]
+triple = 'armv7-linux-androideabi'
+target-features = 'unknown'
+
+[[metadata.host-platform]]
+triple = 'arm64ec-pc-windows-msvc'
+target-features = 'unknown'
+flags = ['abc', 'foo']
 [[metadata.omitted-packages.ids]]
-name = 'remove_dir_all'
-version = '0.5.2'
-crates-io = true
+name = 'libra-config'
+version = '0.1.0'
+workspace-path = 'config'
 
 [[metadata.features-only]]
 name = 'executable-helpers'
@@ -159,13 +167,6 @@ version = '0.1.0'
 workspace-path = 'common/lcs'
 status = 'workspace'
 features = []
-
-[[host-package]]
-name = 'libra-config'
-version = '0.1.0'
-workspace-path = 'config'
-status = 'workspace'
-features = ['default']
 
 [[host-package]]
 name = 'libra-crypto'
@@ -469,13 +470,6 @@ version = '0.3.0-alpha.19'
 crates-io = true
 status = 'direct'
 features = ['alloc', 'compat', 'default', 'std']
-
-[[host-package]]
-name = 'get_if_addrs'
-version = '0.5.3'
-crates-io = true
-status = 'direct'
-features = []
 
 [[host-package]]
 name = 'grpcio'
@@ -856,6 +850,13 @@ status = 'transitive'
 features = ['default', 'std']
 
 [[host-package]]
+name = 'ansi_term'
+version = '0.11.0'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'arrayref'
 version = '0.3.5'
 crates-io = true
@@ -969,11 +970,12 @@ status = 'transitive'
 features = []
 
 [[host-package]]
-name = 'c_linked_list'
-version = '1.1.1'
+name = 'c2-chacha'
+version = '0.2.2'
 crates-io = true
 status = 'transitive'
-features = []
+features = ['lazy_static', 'simd', 'std']
+optional-deps = ['lazy_static']
 
 [[host-package]]
 name = 'cc'
@@ -1010,7 +1012,7 @@ version = '2.33.0'
 crates-io = true
 status = 'transitive'
 features = ['ansi_term', 'atty', 'color', 'default', 'strsim', 'suggestions', 'vec_map']
-optional-deps = ['atty', 'strsim', 'vec_map']
+optional-deps = ['ansi_term', 'atty', 'strsim', 'vec_map']
 
 [[host-package]]
 name = 'clear_on_drop'
@@ -1406,6 +1408,13 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'kernel32-sys'
+version = '0.2.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'libc'
 version = '0.2.62'
 crates-io = true
@@ -1455,7 +1464,7 @@ version = '0.5.6'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'getrandom', 'libc', 'mach_o_sys', 'use_os', 'winapi']
-optional-deps = ['getrandom']
+optional-deps = ['getrandom', 'libc', 'winapi']
 
 [[host-package]]
 name = 'mime'
@@ -1486,6 +1495,13 @@ status = 'transitive'
 features = ['default', 'with-deprecated']
 
 [[host-package]]
+name = 'miow'
+version = '0.2.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'multimap'
 version = '0.4.0'
 crates-io = true
@@ -1502,6 +1518,13 @@ features = ['default', 'duration']
 [[host-package]]
 name = 'nibble_vec'
 version = '0.0.4'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'nix'
+version = '0.14.1'
 crates-io = true
 status = 'transitive'
 features = []
@@ -1678,6 +1701,13 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'ppv-lite86'
+version = '0.2.5'
+crates-io = true
+status = 'transitive'
+features = ['default', 'simd', 'std']
+
+[[host-package]]
 name = 'proc-macro-crate'
 version = '0.1.4'
 crates-io = true
@@ -1774,6 +1804,7 @@ version = '0.4.6'
 crates-io = true
 status = 'transitive'
 features = ['default', 'libc', 'std']
+optional-deps = ['libc']
 
 [[host-package]]
 name = 'rand'
@@ -1803,6 +1834,13 @@ version = '0.1.1'
 crates-io = true
 status = 'transitive'
 features = []
+
+[[host-package]]
+name = 'rand_chacha'
+version = '0.2.1'
+crates-io = true
+status = 'transitive'
+features = ['default', 'simd', 'std']
 
 [[host-package]]
 name = 'rand_core'
@@ -1881,6 +1919,13 @@ version = '0.6.12'
 crates-io = true
 status = 'transitive'
 features = ['default', 'unicode', 'unicode-age', 'unicode-bool', 'unicode-case', 'unicode-gencat', 'unicode-perl', 'unicode-script', 'unicode-segment']
+
+[[host-package]]
+name = 'remove_dir_all'
+version = '0.5.2'
+crates-io = true
+status = 'transitive'
+features = []
 
 [[host-package]]
 name = 'rental-impl'
@@ -2286,6 +2331,13 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'utf8parse'
+version = '0.1.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
 name = 'uuid'
 version = '0.7.4'
 crates-io = true
@@ -2308,6 +2360,13 @@ status = 'transitive'
 features = []
 
 [[host-package]]
+name = 'void'
+version = '1.0.2'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[host-package]]
 name = 'wait-timeout'
 version = '0.2.0'
 crates-io = true
@@ -2324,6 +2383,55 @@ features = []
 [[host-package]]
 name = 'which'
 version = '2.0.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'winapi'
+version = '0.2.8'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'winapi'
+version = '0.3.8'
+crates-io = true
+status = 'transitive'
+features = ['consoleapi', 'errhandlingapi', 'fileapi', 'handleapi', 'impl-debug', 'impl-default', 'knownfolders', 'libloaderapi', 'memoryapi', 'minwinbase', 'minwindef', 'ntdef', 'ntsecapi', 'ntstatus', 'objbase', 'processenv', 'processthreadsapi', 'profileapi', 'shlobj', 'std', 'sysinfoapi', 'timezoneapi', 'winbase', 'wincon', 'winerror', 'winnt', 'winreg', 'winsock2', 'winuser', 'ws2def', 'ws2ipdef', 'ws2tcpip']
+
+[[host-package]]
+name = 'winapi-build'
+version = '0.1.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'winapi-util'
+version = '0.1.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'wincolor'
+version = '1.0.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'winreg'
+version = '0.6.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'ws2_32-sys'
+version = '0.2.1'
 crates-io = true
 status = 'transitive'
 features = []

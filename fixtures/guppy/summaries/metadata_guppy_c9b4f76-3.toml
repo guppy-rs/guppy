@@ -5,18 +5,28 @@
 resolver = '3'
 include-dev = true
 initials-platform = 'standard'
+host-platform = []
 
-[metadata.host-platform]
-triple = 'thumbv7m-none-eabi'
-target-features = 'all'
+[[metadata.target-platform]]
+triple = 'i686-uwp-windows-gnu'
+target-features = []
 
-[metadata.target-platform]
-triple = 'riscv64a23-unknown-linux-gnu'
+[[metadata.target-platform]]
+triple = 'loongarch64-unknown-linux-musl'
 target-features = 'all'
-flags = ['abc']
 [[metadata.omitted-packages.ids]]
-name = 'atty'
-version = '0.2.14'
+name = 'bstr'
+version = '0.2.13'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'crossbeam-channel'
+version = '0.4.4'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'unicode-width'
+version = '0.1.8'
 crates-io = true
 
 [[target-package]]
@@ -307,6 +317,13 @@ status = 'transitive'
 features = ['std']
 
 [[target-package]]
+name = 'atty'
+version = '0.2.14'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
 name = 'bit-set'
 version = '0.5.2'
 crates-io = true
@@ -333,14 +350,6 @@ version = '2.1.0'
 crates-io = true
 status = 'transitive'
 features = ['default', 'std']
-
-[[target-package]]
-name = 'bstr'
-version = '0.2.13'
-crates-io = true
-status = 'transitive'
-features = ['default', 'lazy_static', 'regex-automata', 'serde', 'serde1', 'serde1-nostd', 'std', 'unicode']
-optional-deps = ['lazy_static', 'regex-automata', 'serde']
 
 [[target-package]]
 name = 'byteorder'
@@ -383,7 +392,7 @@ version = '0.4.19'
 crates-io = true
 status = 'transitive'
 features = ['clock', 'default', 'libc', 'oldtime', 'std', 'time', 'winapi']
-optional-deps = ['libc', 'time']
+optional-deps = ['libc', 'time', 'winapi']
 
 [[target-package]]
 name = 'combine'
@@ -398,7 +407,7 @@ version = '0.11.3'
 crates-io = true
 status = 'transitive'
 features = ['ansi-parsing', 'default', 'regex', 'unicode-width', 'winapi-util', 'windows-console-colors']
-optional-deps = ['regex', 'unicode-width']
+optional-deps = ['regex', 'unicode-width', 'winapi-util']
 
 [[target-package]]
 name = 'crates-io'
@@ -417,13 +426,6 @@ features = ['default', 'std']
 [[target-package]]
 name = 'criterion-plot'
 version = '0.4.3'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
-name = 'crossbeam-channel'
-version = '0.4.4'
 crates-io = true
 status = 'transitive'
 features = []
@@ -496,6 +498,13 @@ status = 'transitive'
 features = ['default']
 
 [[target-package]]
+name = 'encode_unicode'
+version = '0.3.6'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
+
+[[target-package]]
 name = 'env_logger'
 version = '0.7.1'
 crates-io = true
@@ -535,6 +544,13 @@ features = []
 [[target-package]]
 name = 'foreign-types-shared'
 version = '0.1.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'fwdansi'
+version = '1.1.0'
 crates-io = true
 status = 'transitive'
 features = []
@@ -760,6 +776,13 @@ status = 'transitive'
 features = ['default']
 
 [[target-package]]
+name = 'miow'
+version = '0.3.5'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
 name = 'num-integer'
 version = '0.1.43'
 crates-io = true
@@ -811,6 +834,13 @@ features = []
 [[target-package]]
 name = 'openssl-sys'
 version = '0.9.58'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
+name = 'output_vt100'
+version = '0.1.2'
 crates-io = true
 status = 'transitive'
 features = []
@@ -901,13 +931,6 @@ crates-io = true
 status = 'transitive'
 features = ['aho-corasick', 'default', 'memchr', 'perf', 'perf-cache', 'perf-dfa', 'perf-inline', 'perf-literal', 'std', 'thread_local', 'unicode', 'unicode-age', 'unicode-bool', 'unicode-case', 'unicode-gencat', 'unicode-perl', 'unicode-script', 'unicode-segment']
 optional-deps = ['aho-corasick', 'memchr', 'thread_local']
-
-[[target-package]]
-name = 'regex-automata'
-version = '0.1.9'
-crates-io = true
-status = 'transitive'
-features = []
 
 [[target-package]]
 name = 'regex-syntax'
@@ -1114,13 +1137,6 @@ status = 'transitive'
 features = ['default', 'std']
 
 [[target-package]]
-name = 'unicode-width'
-version = '0.1.8'
-crates-io = true
-status = 'transitive'
-features = ['default']
-
-[[target-package]]
 name = 'unicode-xid'
 version = '0.2.1'
 crates-io = true
@@ -1183,6 +1199,20 @@ crates-io = true
 status = 'transitive'
 features = []
 
+[[target-package]]
+name = 'winapi'
+version = '0.3.9'
+crates-io = true
+status = 'transitive'
+features = ['basetsd', 'consoleapi', 'errhandlingapi', 'fileapi', 'handleapi', 'ioapiset', 'jobapi', 'jobapi2', 'memoryapi', 'minwinbase', 'minwindef', 'namedpipeapi', 'ntdef', 'ntstatus', 'processenv', 'processthreadsapi', 'profileapi', 'psapi', 'shellapi', 'shlobj', 'std', 'synchapi', 'sysinfoapi', 'timezoneapi', 'winbase', 'wincon', 'wincrypt', 'winerror', 'winnt', 'winsock2', 'winuser', 'ws2def', 'ws2ipdef', 'ws2tcpip']
+
+[[target-package]]
+name = 'winapi-util'
+version = '0.1.5'
+crates-io = true
+status = 'transitive'
+features = []
+
 [[host-package]]
 name = 'proptest-derive'
 version = '0.2.0'
@@ -1191,101 +1221,8 @@ status = 'direct'
 features = []
 
 [[host-package]]
-name = 'autocfg'
-version = '1.0.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'cc'
-version = '1.0.61'
-crates-io = true
-status = 'transitive'
-features = ['jobserver', 'parallel']
-optional-deps = ['jobserver']
-
-[[host-package]]
-name = 'heck'
-version = '0.3.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'jobserver'
-version = '0.1.21'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'pkg-config'
-version = '0.3.18'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'proc-macro-error'
-version = '1.0.4'
-crates-io = true
-status = 'transitive'
-features = ['default', 'syn', 'syn-error']
-optional-deps = ['syn']
-
-[[host-package]]
-name = 'proc-macro-error-attr'
-version = '1.0.4'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'proc-macro2'
-version = '0.4.30'
-crates-io = true
-status = 'transitive'
-features = ['default', 'proc-macro']
-
-[[host-package]]
-name = 'proc-macro2'
-version = '1.0.24'
-crates-io = true
-status = 'transitive'
-features = ['default', 'proc-macro']
-
-[[host-package]]
-name = 'quote'
-version = '0.6.13'
-crates-io = true
-status = 'transitive'
-features = ['default', 'proc-macro']
-
-[[host-package]]
-name = 'quote'
-version = '1.0.7'
-crates-io = true
-status = 'transitive'
-features = ['default', 'proc-macro']
-
-[[host-package]]
-name = 'rustc_version'
-version = '0.2.3'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'semver'
-version = '0.9.0'
-crates-io = true
-status = 'transitive'
-features = ['default']
-
-[[host-package]]
-name = 'semver-parser'
-version = '0.7.0'
+name = 'ctor'
+version = '0.1.16'
 crates-io = true
 status = 'transitive'
 features = []
@@ -1300,50 +1237,6 @@ features = ['default']
 [[host-package]]
 name = 'structopt-derive'
 version = '0.4.12'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'syn'
-version = '0.15.44'
-crates-io = true
-status = 'transitive'
-features = ['clone-impls', 'default', 'derive', 'extra-traits', 'full', 'parsing', 'printing', 'proc-macro', 'quote', 'visit']
-optional-deps = ['quote']
-
-[[host-package]]
-name = 'syn'
-version = '1.0.42'
-crates-io = true
-status = 'transitive'
-features = ['clone-impls', 'default', 'derive', 'full', 'parsing', 'printing', 'proc-macro', 'quote', 'visit']
-optional-deps = ['quote']
-
-[[host-package]]
-name = 'unicode-segmentation'
-version = '1.6.0'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'unicode-xid'
-version = '0.1.0'
-crates-io = true
-status = 'transitive'
-features = ['default']
-
-[[host-package]]
-name = 'unicode-xid'
-version = '0.2.1'
-crates-io = true
-status = 'transitive'
-features = ['default']
-
-[[host-package]]
-name = 'version_check'
-version = '0.9.2'
 crates-io = true
 status = 'transitive'
 features = []
