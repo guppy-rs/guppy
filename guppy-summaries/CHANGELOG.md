@@ -3,6 +3,8 @@
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+## [0.8.0] - 2026-08-25
+
 ### Changed
 
 - Updated `toml` to 1.1.4. The on-disk format written by
@@ -116,6 +118,7 @@ This is a minor breaking change that should not affect most consumers.
 Initial release.
 
 <!-- next-url -->
+[0.8.0]: https://github.com/guppy-rs/guppy/releases/tag/guppy-summaries-0.8.0
 [0.7.1]: https://github.com/guppy-rs/guppy/releases/tag/guppy-summaries-0.7.1
 [0.7.0]: https://github.com/guppy-rs/guppy/releases/tag/guppy-summaries-0.7.0
 [0.6.1]: https://github.com/guppy-rs/guppy/releases/tag/guppy-summaries-0.6.1
