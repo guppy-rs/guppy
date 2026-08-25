@@ -7,12 +7,12 @@ publish = false  # this is a private crate
 
 [dependencies]
 guppy = { path = "../../guppy", features = ["proptest1"] }
-proptest = "1.7.0"
+proptest = "1.11.0"
 proptest-ext = { path = "../proptest-ext" }
 guppy-workspace-hack.workspace = true
 
 [dev-dependencies]
-criterion = "0.5.1"
+criterion = "0.8.2"
 
 [[bench]]
 name = "package_graph"

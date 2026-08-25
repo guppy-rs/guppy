@@ -176,11 +176,43 @@ impl HakariCargoToml {
     /// Computes the diff between the contents on disk and the provided TOML output.
     ///
     /// This returns a `diffy::Patch`, which can be formatted through methods provided by `diffy`.
-    /// `diffy` is re-exported at the top level of this crate.
+    /// `diffy` is re-exported at the top level of this crate. A patch with no hunks means the
+    /// generated section is already up to date.
     ///
     /// # Examples
     ///
-    /// TODO
+    /// ```
+    /// use hakari::{HakariCargoToml, diffy::PatchFormatter};
+    ///
+    /// // The Cargo.toml as it currently exists on disk, with the generated section
+    /// // delimited by `BEGIN_SECTION` and `END_SECTION`.
+    /// let mut contents =
+    ///     String::from("[package]\nname = \"workspace-hack\"\nversion = \"0.1.0\"\n");
+    /// contents.push_str(HakariCargoToml::BEGIN_SECTION);
+    /// contents.push_str(
+    ///     "[dependencies]\nserde = { version = \"1.0.228\", features = [\"derive\"] }\n",
+    /// );
+    /// contents.push_str(HakariCargoToml::END_SECTION);
+    /// let cargo_toml = HakariCargoToml::new_in_memory("workspace-hack/Cargo.toml", contents)?;
+    ///
+    /// // The newly generated section, typically obtained from `Hakari::to_toml_string`.
+    /// let new_toml = "\
+    /// [dependencies]
+    /// serde = { version = \"1.0.229\", features = [\"derive\"] }
+    /// ";
+    ///
+    /// let patch = cargo_toml.diff_toml(new_toml);
+    /// assert_eq!(patch.hunks().len(), 1, "one changed line produces one hunk");
+    ///
+    /// let formatted = PatchFormatter::new().fmt_patch(&patch).to_string();
+    /// assert!(formatted.contains("-serde = { version = \"1.0.228\""));
+    /// assert!(formatted.contains("+serde = { version = \"1.0.229\""));
+    ///
+    /// // Diffing against the current contents produces an empty patch.
+    /// let unchanged = cargo_toml.diff_toml(cargo_toml.generated_contents());
+    /// assert!(unchanged.hunks().is_empty());
+    /// # Ok::<(), hakari::CargoTomlError>(())
+    /// ```
     pub fn diff_toml<'a>(&'a self, toml: &'a str) -> Patch<'a, str> {
         diffy::create_patch(self.generated_contents(), toml)
     }

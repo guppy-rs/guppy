@@ -11,6 +11,10 @@
     `HakariBuilderSummary::write_to_string` now return error types from `toml`
     1.x, and `TomlOutError::Toml` wraps `toml` 1.x's `ser::Error`.
   - Configuration files are parsed according to the TOML 1.1 specification.
+- Updated the re-exported `diffy` to 0.5.1, so `HakariCargoToml::diff_toml`
+  now returns `diffy` 0.5's `Patch`. `diffy` 0.5 is `no_std` by default and
+  puts colored output behind a feature; hakari enables its `std` and `color`
+  features so the re-exported API matches what 0.4 provided.
 
 ## [0.17.9] - 2025-12-26
 

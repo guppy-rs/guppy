@@ -11,12 +11,12 @@ cargo = { version = "0.99.0", features = ["vendored-libgit2"] }
 clap = { version = "4.6.6", features = ["derive"] }
 color-eyre = { version = "0.6.5", default-features = false }
 diffus = "0.10.0"
-either = "1.15.0"
+either = "1.18.0"
 fs_extra = "1.3.0"
 itertools.workspace = true
 guppy = { path = "../../guppy" }
 guppy-cmdlib = { path = "../../guppy-cmdlib", features = ["proptest1"] }
-tempfile = "3.20.0"
-once_cell = "1.21.3"
+tempfile = "3.27.0"
+once_cell = "1.21.4"
 pathdiff = "0.2.3"
-proptest = "1.7.0"
+proptest = "1.11.0"
