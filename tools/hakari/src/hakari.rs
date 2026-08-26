@@ -783,6 +783,13 @@ impl<'g> Hakari<'g> {
                             feature_set.packages_with_features(DependencyDirection::Forward)
                         {
                             let dep = feature_list.package();
+                            if is_never_unified(dep) {
+                                // Third-party deps can reach workspace members
+                                // (e.g. via [patch]) -- skip over these to
+                                // ensure we don't accidentally introduce
+                                // cycles.
+                                continue;
+                            }
                             let dep_id = dep.id();
                             // This is "get or insert" because we could be adding whole new
                             // dependencies here rather than just new features to existing
@@ -1655,7 +1662,10 @@ impl UnifyTargetHost {
 mod tests {
     use super::*;
     use crate::UnifyTargetHost;
-    use fixtures::json::JsonFixture;
+    use fixtures::json::{
+        JsonFixture, METADATA_HAKARI_REVERSE_DEP_MEMBER_B_DEP,
+        METADATA_HAKARI_REVERSE_DEP_MEMBER_C_DEP, METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER,
+    };
 
     #[test]
     fn unify_target_host_auto() {
@@ -1685,5 +1695,68 @@ mod tests {
             UnifyTargetHostImpl::ReplicateTargetOnHost,
             "internal build deps => replicate target on host"
         );
+    }
+
+    #[test]
+    fn fixpoint_never_adds_workspace_packages() {
+        // This fixture has third-party-to-member edges:
+        //
+        // * hrd-member-c-dep -> hrd-member-c
+        // * hrd-via-member -> hrd-member-d
+        // * hrd-member-b-dep -> hrd-member-b
+        //
+        // so the fixpoint loop reaches workspace members.
+        let fixture = JsonFixture::metadata_hakari_reverse_dep();
+        let graph = fixture.graph();
+        let hakari_id = fixture
+            .details()
+            .hakari_package()
+            .expect("hakari-reverse-dep fixture names a hakari package");
+
+        let mut builder =
+            HakariBuilder::new(graph, Some(hakari_id)).expect("hakari builder is created");
+        // The fixpoint loop only runs when this is false. (This is the default,
+        // but let's be explicit anyway.)
+        builder.set_output_single_feature(false);
+        let hakari = builder.compute();
+
+        // The packages that bridge to workspace members must be present.
+        let computed_ids: BTreeSet<&PackageId> = hakari
+            .computed_map
+            .keys()
+            .map(|(_, package_id)| *package_id)
+            .collect();
+        for bridge_id in [
+            METADATA_HAKARI_REVERSE_DEP_MEMBER_B_DEP,
+            METADATA_HAKARI_REVERSE_DEP_MEMBER_C_DEP,
+            METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER,
+        ] {
+            assert!(
+                computed_ids.contains(&PackageId::new(bridge_id)),
+                "{bridge_id} depends on a workspace member and is computed, so \
+                 the fixpoint loop reaches that member"
+            );
+        }
+
+        for &(platform_idx, package_id) in hakari.computed_map.keys() {
+            let package = graph.metadata(package_id).expect("package is in the graph");
+            assert!(
+                !package.in_workspace(),
+                "the computed map only has third-party packages, but {} \
+                 is a workspace member (platform_idx: {platform_idx:?})",
+                package.name()
+            );
+        }
+
+        for (output_key, inner_map) in &hakari.output_map {
+            for (package, _) in inner_map.values() {
+                assert!(
+                    !package.in_workspace(),
+                    "the output map only has third-party packages, but {} \
+                     is a workspace member (output key: {output_key:?})",
+                    package.name()
+                );
+            }
+        }
     }
 }

@@ -15,6 +15,9 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+- `cargo hakari generate` no longer adds workspace packages to the
+  workspace-hack. Previously, a workspace member depended on by a third-party
+  package could be added to the workspace-hack, which would form a cycle.
 - Generated names for path and workspace dependencies in the workspace-hack
   package no longer depend on `camino`'s `Hash` implementation, which changed
   in `camino` 1.2.3. The output is unchanged from cargo-hakari 0.9.38, so
