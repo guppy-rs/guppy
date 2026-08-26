@@ -1,0 +1,86 @@
+# This summary was @generated. To regenerate, run:
+#   cargo run -p fixture-manager -- generate-summaries --fixture metadata_hakari_reverse_dep
+
+[metadata]
+resolver = 'install'
+include-dev = true
+initials-platform = 'standard'
+target-platform = []
+
+[[metadata.host-platform]]
+triple = 'aarch64-apple-watchos'
+target-features = 'unknown'
+flags = ['bar']
+
+[[metadata.host-platform]]
+triple = 'i686-win7-windows-msvc'
+target-features = []
+flags = ['test-flag']
+[[metadata.omitted-packages.ids]]
+name = 'hrd-leaf'
+version = '0.1.0'
+path = '../leaf'
+
+[[metadata.omitted-packages.ids]]
+name = 'hrd-member-d'
+version = '0.1.0'
+workspace-path = 'member-d'
+
+[[metadata.omitted-packages.ids]]
+name = 'hrd-via-member'
+version = '0.1.0'
+path = '../via-member'
+
+[[metadata.features-only]]
+name = 'hrd-member-d'
+version = '0.1.0'
+workspace-path = 'member-d'
+features = []
+
+[[metadata.features-only]]
+name = 'hrd-member-e'
+version = '0.1.0'
+workspace-path = 'member-e'
+features = []
+
+[[target-package]]
+name = 'hrd-member-a'
+version = '0.1.0'
+workspace-path = 'member-a'
+status = 'initial'
+features = []
+
+[[target-package]]
+name = 'hrd-member-b'
+version = '0.1.0'
+workspace-path = 'member-b'
+status = 'initial'
+features = []
+
+[[target-package]]
+name = 'hrd-member-c'
+version = '0.1.0'
+workspace-path = 'member-c'
+status = 'initial'
+features = []
+
+[[target-package]]
+name = 'hrd-member-d'
+version = '0.1.0'
+workspace-path = 'member-d'
+status = 'initial'
+features = []
+
+[[target-package]]
+name = 'hrd-member-e'
+version = '0.1.0'
+workspace-path = 'member-e'
+status = 'initial'
+features = []
+
+[[target-package]]
+name = 'hrd-workspace-hack'
+version = '0.1.0'
+workspace-path = 'workspace-hack'
+status = 'initial'
+features = []

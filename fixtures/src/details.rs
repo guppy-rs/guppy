@@ -26,6 +26,7 @@ use std::collections::BTreeMap;
 /// lazily as tests are filled out -- feel free to add more details as necessary!
 pub struct FixtureDetails {
     workspace_members: Option<BTreeMap<Utf8PathBuf, PackageId>>,
+    hakari_package: Option<PackageId>,
     package_details: AHashMap<PackageId, PackageDetails>,
     link_details: AHashMap<(PackageId, PackageId), LinkDetails>,
     feature_graph_warnings: Vec<FeatureGraphWarning>,
@@ -36,6 +37,7 @@ impl FixtureDetails {
     pub fn new(package_details: AHashMap<PackageId, PackageDetails>) -> Self {
         Self {
             workspace_members: None,
+            hakari_package: None,
             package_details,
             link_details: AHashMap::new(),
             feature_graph_warnings: vec![],
@@ -54,6 +56,19 @@ impl FixtureDetails {
                 .collect(),
         );
         self
+    }
+
+    /// Sets the hakari package for this fixture, if any.
+    ///
+    /// Some fixtures have a hakari package which can be used to test
+    /// hakari-specific behaviors.
+    pub fn with_hakari_package(mut self, id: &'static str) -> Self {
+        self.hakari_package = Some(package_id(id));
+        self
+    }
+
+    pub fn hakari_package(&self) -> Option<&PackageId> {
+        self.hakari_package.as_ref()
     }
 
     pub fn with_link_details(
@@ -112,6 +127,19 @@ impl FixtureDetails {
                     "members_by_name returns consistent results"
                 );
             }
+        }
+
+        if let Some(hakari_package) = &self.hakari_package {
+            assert!(
+                workspace.member_ids().any(|id| id == hakari_package),
+                "hakari package {hakari_package} should be a workspace member \
+                 (actual members: {})",
+                workspace
+                    .member_ids()
+                    .map(|id| id.to_string())
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            );
         }
     }
 

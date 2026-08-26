@@ -38,9 +38,8 @@ impl<'g> ContextImpl<'g> for HakariTomlContext {
         let mut generator = ValueGenerator::from_seed(fixture.name());
 
         let graph = fixture.graph();
-        // TODO: add tests for hakari id -- none of our fixtures appear to have a
-        // workspace-hack or other Hakari package
-        let hakari_builder_strategy = HakariBuilder::proptest1_strategy(graph, Just(None));
+        let hakari_builder_strategy =
+            HakariBuilder::proptest1_strategy(graph, Just(fixture.details().hakari_package()));
 
         let iter = (0..count).map(move |idx| {
             // The partial clones mean that a change to the algorithm in part of the strategy won't

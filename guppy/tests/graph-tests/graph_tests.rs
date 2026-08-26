@@ -507,6 +507,14 @@ mod small {
 
     proptest_suite!(metadata_self_dev_cycle);
 
+    #[test]
+    fn metadata_hakari_reverse_dep() {
+        let metadata_hakari_reverse_dep = JsonFixture::metadata_hakari_reverse_dep();
+        metadata_hakari_reverse_dep.verify();
+    }
+
+    proptest_suite!(metadata_hakari_reverse_dep);
+
     // Test Windows path handling in fixtures with path dependencies.
     #[test]
     fn metadata_cycle1_windows() {

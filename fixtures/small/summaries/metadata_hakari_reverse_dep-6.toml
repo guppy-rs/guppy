@@ -1,0 +1,48 @@
+# This summary was @generated. To regenerate, run:
+#   cargo run -p fixture-manager -- generate-summaries --fixture metadata_hakari_reverse_dep
+
+[metadata]
+resolver = 'install'
+include-dev = false
+initials-platform = 'host'
+host-platform = []
+
+[metadata.target-platform]
+spec = 'any'
+[[metadata.omitted-packages.ids]]
+name = 'hrd-hack-dep'
+version = '0.1.0'
+path = '../hack-dep'
+
+[[metadata.features-only]]
+name = 'hrd-member-c'
+version = '0.1.0'
+workspace-path = 'member-c'
+features = []
+
+[[metadata.features-only]]
+name = 'hrd-workspace-hack'
+version = '0.1.0'
+workspace-path = 'workspace-hack'
+features = []
+
+[[host-package]]
+name = 'hrd-member-a'
+version = '0.1.0'
+workspace-path = 'member-a'
+status = 'initial'
+features = []
+
+[[host-package]]
+name = 'hrd-member-c'
+version = '0.1.0'
+workspace-path = 'member-c'
+status = 'initial'
+features = []
+
+[[host-package]]
+name = 'hrd-member-e'
+version = '0.1.0'
+workspace-path = 'member-e'
+status = 'initial'
+features = []
