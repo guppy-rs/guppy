@@ -383,12 +383,14 @@ impl<'g> WorkspaceOp<'g, '_> {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 enum DependencySection {
     Normal,
+    Dev,
 }
 
 impl DependencySection {
     fn key(self) -> &'static str {
         match self {
             DependencySection::Normal => "dependencies",
+            DependencySection::Dev => "dev-dependencies",
         }
     }
 }
@@ -412,6 +414,12 @@ impl ManifestEditError {
 
 /// Adds or replaces the entry for `name` in `[dependencies]`, creating the
 /// section if needed.
+///
+/// Also drops `name` from `[dev-dependencies]`. A dev dependency is a strict
+/// subset of a normal one.
+///
+/// `[build-dependencies]` is left alone since it has meaningfully different
+/// semantics. (We may want to also remove them in the future, though.)
 fn add_dependency_to_document(
     doc: &mut DocumentMut,
     name: &str,
@@ -419,6 +427,9 @@ fn add_dependency_to_document(
 ) -> Result<(), ManifestEditError> {
     let dep_table = get_or_insert_dependency_section(doc, DependencySection::Normal)?;
     dep_table.insert(name, Item::Value(Value::InlineTable(dep)));
+    if let Some(dev_table) = get_dependency_section(doc, DependencySection::Dev)? {
+        dev_table.remove(name);
+    }
     Ok(())
 }
 
@@ -432,6 +443,21 @@ fn remove_dependency_from_document(
     let dep_table = get_or_insert_dependency_section(doc, DependencySection::Normal)?;
     dep_table.remove(name);
     Ok(())
+}
+
+/// Returns the given dependency section, or `None` if it doesn't exist.
+fn get_dependency_section(
+    doc: &mut DocumentMut,
+    section: DependencySection,
+) -> Result<Option<&mut dyn TableLike>, ManifestEditError> {
+    let key = section.key();
+    match doc.as_table_mut().get_mut(key) {
+        Some(item) => match item.as_table_like_mut() {
+            Some(table) => Ok(Some(table)),
+            None => Err(ManifestEditError::NotATable { section }),
+        },
+        None => Ok(None),
+    }
 }
 
 fn get_or_insert_dependency_section(
@@ -823,6 +849,54 @@ workspace-hack = { version = "0.1", path = "../workspace-hack" }
 other = "1"
 "#,
             "the existing line is replaced in place"
+        );
+    }
+
+    #[test]
+    fn add_dependency_drops_dev_dependency_line() {
+        let mut doc = parse(
+            r#"[package]
+name = "foo"
+
+[dev-dependencies]
+workspace-hack = { path = "../workspace-hack" }
+other = "1"
+
+[build-dependencies]
+workspace-hack = { path = "../workspace-hack" }
+"#,
+        );
+        add_dependency_to_document(&mut doc, "workspace-hack", hack_dep())
+            .expect("[dependencies] is created");
+        assert_eq!(
+            doc.to_string(),
+            r#"[package]
+name = "foo"
+
+[dev-dependencies]
+other = "1"
+
+[build-dependencies]
+workspace-hack = { path = "../workspace-hack" }
+
+[dependencies]
+workspace-hack = { version = "0.1", path = "../workspace-hack" }
+"#,
+            "the dev-dependency line is dropped, the build-dependency line is kept"
+        );
+    }
+
+    #[test]
+    fn add_dependency_rejects_non_table_dev_section() {
+        let mut doc = parse(
+            "dev-dependencies = 1
+",
+        );
+        assert_eq!(
+            add_dependency_to_document(&mut doc, "workspace-hack", hack_dep()),
+            Err(ManifestEditError::NotATable {
+                section: DependencySection::Dev
+            }),
         );
     }
 
