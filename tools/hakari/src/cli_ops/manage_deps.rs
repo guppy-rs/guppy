@@ -40,13 +40,25 @@ impl<'g> HakariBuilder<'g> {
                 match (link_opt, should_be_included) {
                     (None, true) => Some(true),
                     (Some(_), false) => Some(false),
-                    (Some(link), true) => match self.dep_format_version {
-                        DepFormatVersion::V1 => None,
-                        DepFormatVersion::V2 | DepFormatVersion::V3 | DepFormatVersion::V4 => {
-                            needs_update_v2(hakari_package, link, self.workspace_hack_line_style)
-                                .then_some(true)
+                    (Some(link), true) => {
+                        // A dev-only or build-only link doesn't unify features
+                        // for regular builds, so treat it the same as no link
+                        // at all. (Do this regardless of dep format version.)
+                        if !link.normal().is_present() {
+                            return Some(true);
                         }
-                    },
+                        match self.dep_format_version {
+                            DepFormatVersion::V1 => None,
+                            DepFormatVersion::V2 | DepFormatVersion::V3 | DepFormatVersion::V4 => {
+                                needs_update_v2(
+                                    hakari_package,
+                                    link,
+                                    self.workspace_hack_line_style,
+                                )
+                                .then_some(true)
+                            }
+                        }
+                    }
                     (None, false) => None,
                 }
             });
@@ -185,10 +197,13 @@ mod tests {
     use fixtures::{
         json::{
             JsonFixture, METADATA_HAKARI_REVERSE_DEP_HACK_DEP,
-            METADATA_HAKARI_REVERSE_DEP_MEMBER_B, METADATA_HAKARI_REVERSE_DEP_MEMBER_D,
+            METADATA_HAKARI_REVERSE_DEP_MEMBER_B, METADATA_HAKARI_REVERSE_DEP_MEMBER_C,
+            METADATA_HAKARI_REVERSE_DEP_MEMBER_D, METADATA_HAKARI_REVERSE_DEP_MEMBER_E,
+            METADATA_HAKARI_REVERSE_DEP_MEMBER_F, METADATA_HAKARI_REVERSE_DEP_MEMBER_G,
         },
         package_id,
     };
+    use guppy::PackageId;
     use std::collections::BTreeSet;
 
     #[test]
@@ -208,12 +223,14 @@ mod tests {
 
         // * hrd-member-d is a workspace member without a dependency on the hakari package.
         // * hrd-member-b is a workspace member that depends on the hakari package with `req = "*"`.
+        // * hrd-member-c is a workspace member whose only dependency on the hakari package is dev-only.
         // * hrd-hack-dep is a non-workspace package that depends on the hakari package.
         let member_d_id = package_id(METADATA_HAKARI_REVERSE_DEP_MEMBER_D);
         let member_b_id = package_id(METADATA_HAKARI_REVERSE_DEP_MEMBER_B);
+        let member_c_id = package_id(METADATA_HAKARI_REVERSE_DEP_MEMBER_C);
         let hack_dep_id = package_id(METADATA_HAKARI_REVERSE_DEP_HACK_DEP);
         let package_set = graph
-            .resolve_ids([&member_d_id, &member_b_id, &hack_dep_id])
+            .resolve_ids([&member_d_id, &member_b_id, &member_c_id, &hack_dep_id])
             .expect("all package IDs are known to the graph");
 
         let ops = builder
@@ -245,12 +262,94 @@ mod tests {
 
         let add_to = add_to.expect("an add op is generated");
         let add_ids: BTreeSet<_> = add_to.package_ids(DependencyDirection::Forward).collect();
-        let expected_ids: BTreeSet<_> = [&member_d_id, &member_b_id].into_iter().collect();
+        let expected_ids: BTreeSet<_> = [&member_d_id, &member_b_id, &member_c_id]
+            .into_iter()
+            .collect();
         assert_eq!(
             add_ids, expected_ids,
-            "hrd-member-d has no dependency on the hack and hrd-member-b's \
-             `req = \"*\"` needs updating under dep format V4, so both are \
-             added to; hrd-hack-dep is outside the workspace, so it is ignored"
+            "hrd-member-d has no dependency on the hack, hrd-member-b's \
+             `req = \"*\"` needs updating under dep format V4, and \
+             hrd-member-c's only dependency on the hack is dev-only, so all \
+             three are added to; hrd-hack-dep is outside the workspace, so it \
+             is ignored"
         );
+    }
+
+    #[test]
+    fn manage_dep_ops_requires_normal_dep() {
+        let fixture = JsonFixture::metadata_hakari_reverse_dep();
+        let graph = fixture.graph();
+        let hakari_id = fixture
+            .details()
+            .hakari_package()
+            .expect("hakari-reverse-dep fixture names a hakari package");
+        let builder =
+            HakariBuilder::new(graph, Some(hakari_id)).expect("hakari builder is created");
+        // V1 never rewrites an existing dependency line, so the shape of the
+        // link is the only reason an add op could be generated here.
+        assert_eq!(
+            builder.dep_format_version(),
+            DepFormatVersion::V1,
+            "dep format version defaults to V1"
+        );
+
+        // (member, its link to the hakari package, whether an add op is expected)
+        //
+        // Note that platform-specific dependencies still count as managed,
+        // since some workspaces deliberately gate the hakari package behind a
+        // `cfg`.
+        let cases = [
+            (METADATA_HAKARI_REVERSE_DEP_MEMBER_C, "dev-only", true),
+            (METADATA_HAKARI_REVERSE_DEP_MEMBER_F, "build-only", true),
+            (
+                METADATA_HAKARI_REVERSE_DEP_MEMBER_G,
+                "cfg(windows)-only",
+                false,
+            ),
+            (
+                METADATA_HAKARI_REVERSE_DEP_MEMBER_E,
+                "unconditional normal",
+                false,
+            ),
+        ];
+        let ids: Vec<PackageId> = cases.iter().map(|(id, _, _)| package_id(*id)).collect();
+        let package_set = graph
+            .resolve_ids(&ids)
+            .expect("all package IDs are known to the graph");
+
+        let ops = builder
+            .manage_dep_ops(&package_set)
+            .expect("hakari package was specified, so ops are returned");
+        let mut add_ids: BTreeSet<PackageId> = BTreeSet::new();
+        for op in ops.ops() {
+            match op {
+                WorkspaceOp::AddDependency { add_to, .. } => {
+                    add_ids.extend(add_to.package_ids(DependencyDirection::Forward).cloned());
+                }
+                WorkspaceOp::RemoveDependency { remove_from, .. } => {
+                    let remove_ids: Vec<_> = remove_from
+                        .package_ids(DependencyDirection::Forward)
+                        .collect();
+                    panic!(
+                        "all of these members are managed, so nothing should have \
+                         the hack removed, but got a remove op for {remove_ids:?}"
+                    );
+                }
+                WorkspaceOp::NewCrate { .. } => {
+                    panic!("manage-deps never creates crates");
+                }
+            }
+        }
+
+        for (id, description, expect_add) in cases {
+            let id = package_id(id);
+            assert_eq!(
+                add_ids.contains(&id),
+                expect_add,
+                "{id} has a {description} link on the hakari package, so an add op is \
+                 {}generated",
+                if expect_add { "" } else { "not " }
+            );
+        }
     }
 }

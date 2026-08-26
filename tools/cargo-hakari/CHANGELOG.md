@@ -15,6 +15,10 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+- `cargo hakari manage-deps` now adds a normal `workspace-hack` dependency to
+  workspace members whose existing dependency on it is dev-only or build-only.
+  Previously such members were treated as already managed, even though their
+  normal builds weren't unified.
 - `cargo hakari generate` no longer adds workspace packages to the
   workspace-hack. Previously, a workspace member depended on by a third-party
   package could be added to the workspace-hack, which would form a cycle.
