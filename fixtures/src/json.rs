@@ -1054,69 +1054,75 @@ impl FixtureDetails {
     }
 
     pub(crate) fn metadata_hakari_reverse_dep() -> Self {
-        // This is a fixture that tests guppy-rs/guppy#499 (i.e. that hakari
-        // doesn't introduce cycles via the workspace hack):
+        // This fixture tests guppy-rs/guppy#499: hakari must not unify a
+        // package that already depends on the workspace-hack, directly or
+        // transitively, since adding it to the workspace-hack would form a
+        // cycle.
+        //
+        // Legend:
         //
         // * [x] = workspace member
         // * (x) = non-workspace path package, standing in for a crates.io
         //         package redirected into the tree via [patch].
         //
         // Arrows point from dependent to dependency; unlabeled arrows are
-        // normal dependencies. All crates have an "hrd-" prefix that isn't
-        // shown here.
+        // unconditional normal dependencies. Every crate has an "hrd-" prefix
+        // that isn't shown here. Names describe each package's path to the
+        // hack: members are named after their own link to it, third-party
+        // packages with a direct link are <link>-on-hack, and third-party
+        // packages that reach the hack through something else are
+        // via-<that package>.
         //
-        //   [member-features], [member-published] --> every (x) below, and
-        //                                             [workspace-hack]
-        //   [member-normal] --> (via-member-published), [workspace-hack]
-        //   [member-unlinked] --> nothing at all
-        //   [member-build] --- build ---------> [workspace-hack]
-        //   [member-cfg] --- cfg(windows) --> [workspace-hack]
+        // Third-party packages that must be excluded. Each one reaches the
+        // workspace-hack, or a member that hakari manages, through a
+        // different kind of path:
         //
-        //   (via-normal-on-hack) --> (normal-on-hack) --> (leaf)
-        //                                    |
-        //                                    +----------------------+
-        //                                                           |
-        //   (build-on-hack) ----- build ------------------------+   |
-        //                                                       |   |
-        //   (cfg-on-hack) ------- cfg(windows) -------------+   |   |
-        //                                                   |   |   |
-        //   (via-member-dev) --> [member-dev] -- dev ---+   |   |   |
-        //          ^                                    |   |   |   |
-        //          |                                    v   v   v   v
-        //          |                                  [workspace-hack]
-        //          |                                    |           |
-        //          +------------------------------------+           v
-        //                                                         (leaf)
-        //
+        //   (normal-on-hack) -------------------------------> [workspace-hack]
+        //   (via-normal-on-hack) --> (normal-on-hack) ------> [workspace-hack]
+        //   (build-on-hack) -- build -----------------------> [workspace-hack]
+        //   (cfg-on-hack) -- cfg(windows) ------------------> [workspace-hack]
         //   (via-member-published) --> [member-published] --> [workspace-hack]
-        //                                                      (+ every (x))
-        //
+        //   (via-member-dev) --> [member-dev] -- dev -------> [workspace-hack]
         //   (via-member-unlinked) --> [member-unlinked]
         //
-        // Unifying any (x) that reaches [workspace-hack] through non-dev edges
-        // would complete a cycle:
+        // * via-normal-on-hack and via-member-published show that the path
+        //   may be indirect. via-member-published is the canonical [patch]
+        //   shape: a published workspace member redirected back into the
+        //   workspace.
+        // * build-on-hack and cfg-on-hack show that build-only and
+        //   cfg(windows)-only edges count just like unconditional ones.
+        // * via-member-dev and via-member-unlinked have no normal or build
+        //   path to the hack at all: member-dev's edge is dev-only and
+        //   member-unlinked has no dependencies. They are excluded anyway,
+        //   because hakari manages both members and manage-deps would give
+        //   each one a normal dependency on the hack. Once those members are
+        //   no longer managed, both packages are unified.
         //
-        // * normal-on-hack: direct reverse dep. via-normal-on-hack: same, but
-        //   two hops away.
-        // * build-on-hack / cfg-on-hack: build-only and cfg(windows)-only edges
-        //   still count.
-        // * via-member-published: the canonical [patch] shape (published member
-        //   redirected back into the workspace), reaching the hack through
-        //   member-published rather than directly.
+        // Third-party packages that must be unified:
         //
-        // member-dev, member-build and member-cfg are workspace members whose
-        // only link to the hack isn't an unconditional normal dependency
-        // (dev-only, build-only and cfg(windows)-only respectively). They
-        // exercise how manage-deps treats members that already have some link
-        // to the hack.
+        //   (leaf) has no dependencies and is the only package that ends up
+        //   in the hack's output. [workspace-hack] and (normal-on-hack)
+        //   depend on it, as do [member-features] and [member-published].
         //
-        // member-features enables extra on hrd-normal-on-hack and
-        // hrd-via-member-dev, feat1 on hrd-leaf, and f1 on hrd-build-on-hack,
-        // hrd-cfg-on-hack, hrd-via-member-published, hrd-via-normal-on-hack
-        // and hrd-via-member-unlinked, while member-published and
-        // member-normal enable none
-        // of them. Each of these packages would be unified if it weren't
-        // excluded.
+        // [workspace-hack] also depends on (via-member-dev), closing a cycle
+        // through [member-dev]'s dev-only edge. Cargo permits that cycle.
+        //
+        // Workspace members:
+        //
+        // * [member-features] depends on every (x) above and on
+        //   [workspace-hack]. [member-published] does too, except for
+        //   (via-member-published). member-features enables features on each
+        //   (x) while member-published enables none, so every (x) would be
+        //   unified if it weren't excluded: extra on normal-on-hack and
+        //   via-member-dev, feat1 on leaf, and f1 on the rest.
+        // * [member-normal] depends on (via-member-published) and
+        //   [workspace-hack].
+        // * [member-unlinked] has no dependencies.
+        // * [member-dev], [member-build] and [member-cfg] each have a single
+        //   link to [workspace-hack] that isn't an unconditional normal
+        //   dependency: dev-only, build-only and cfg(windows)-only
+        //   respectively. They exercise how manage-deps treats members that
+        //   already have some link to the hack.
         let mut details = AHashMap::new();
 
         PackageDetails::new(

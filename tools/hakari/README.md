@@ -79,6 +79,11 @@ This computation is done in a parallel fashion, using the [Rayon](rayon) library
 
 The result of this computation is a `Hakari` instance.
 
+Third-party packages that depend on the workspace-hack, or on a workspace
+member that hakari manages, are never unified, since adding them would form
+a cycle. These are called [_structural excludes_](Hakari::structural_excludes).
+Note that their own dependencies are still unified as usual.
+
 ### 3. Serialization
 
 The last step is to serialize the contents of the output map into the `workspace-hack` package's

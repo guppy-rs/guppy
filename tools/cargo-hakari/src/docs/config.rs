@@ -160,6 +160,13 @@
 //! ]
 //! ```
 //!
+//! ### A note on structural excludes
+//!
+//! Separately from these options, third-party crates that would form a
+//! dependency cycle are excluded from the output automatically. These are
+//! called _structural excludes_. For more, see [Crates that depend on the
+//! workspace-hack](crate::patch_directive#crates-that-depend-on-the-workspace-hack).
+//!
 //! ## registries
 //!
 //! Alternate registries,

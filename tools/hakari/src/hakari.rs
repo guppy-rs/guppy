@@ -249,6 +249,8 @@ impl<'g> HakariBuilder<'g> {
     /// Also returns true for the Hakari package if specified. This is because the Hakari package is
     /// treated as excluded by the algorithm.
     ///
+    /// This does not cover [structural excludes](Hakari::structural_excludes).
+    ///
     /// Returns an error if this package ID isn't known to the underlying graph.
     #[inline]
     pub fn is_excluded(&self, package_id: &PackageId) -> Result<bool, guppy::Error> {
@@ -261,21 +263,24 @@ impl<'g> HakariBuilder<'g> {
     /// This consists of workspace packages that satisfy all of the following
     /// criteria:
     ///
-    /// * Note the hakari package itself.
+    /// * Not the hakari package itself.
     /// * Not part of traversal excludes.
     /// * Not part of final excludes.
-    #[cfg_attr(not(feature = "cli-support"), allow(dead_code))]
+    ///
+    /// Returns false if no hakari package was specified, since nothing is
+    /// managed in that case.
     pub(crate) fn is_managed_member(&self, package: &PackageMetadata<'g>) -> bool {
         debug_assert!(
             std::ptr::eq(package.graph(), *self.graph),
             "package is from the same graph as this builder"
         );
+        let Some(hakari_package) = self.hakari_package else {
+            return false;
+        };
         // In verify mode, make_traversal_excludes leaves the hakari package in,
         // so is_excluded alone is not enough here -- we have to check
         // explicitly for the hakari package ID.
-        let is_hakari_package = self
-            .hakari_package
-            .is_some_and(|hakari_package| hakari_package.id() == package.id());
+        let is_hakari_package = hakari_package.id() == package.id();
         package.in_workspace()
             && !is_hakari_package
             && !self
@@ -386,6 +391,33 @@ impl<'g> HakariBuilder<'g> {
             excludes: &self.traversal_excludes,
             hakari_package,
         }
+    }
+
+    pub(crate) fn make_structural_excludes(&self) -> StructuralExcludes<'g> {
+        let cycle_forming = match &self.hakari_package {
+            Some(hakari_package) => {
+                let roots = std::iter::once(hakari_package.id()).chain(
+                    self.graph
+                        .workspace()
+                        .iter()
+                        .filter(|member| self.is_managed_member(member))
+                        .map(|member| member.id()),
+                );
+                self.graph
+                    .query_reverse(roots)
+                    .expect("roots are package IDs from this graph")
+                    .resolve_with_fn(|_, link| !link.dev_only())
+                    // The direction of the package IDs here doesn't matter since we
+                    // collect into a set anyway.
+                    .packages(DependencyDirection::Reverse)
+                    .filter(|package| !package.in_workspace())
+                    .map(|package| package.id())
+                    .collect()
+            }
+            None => BTreeSet::new(),
+        };
+
+        StructuralExcludes { cycle_forming }
     }
 
     fn make_features_only<'b>(&'b self) -> FeatureSet<'g> {
@@ -655,14 +687,62 @@ pub struct Hakari<'g> {
 
     /// The complete map of dependency build results built by Hakari.
     ///
+    /// The map does not include workspace packages or the packages reported by
+    /// [`structural_excludes`](Self::structural_excludes).
+    ///
     /// This map is not used to generate the TOML output.
     pub computed_map: ComputedMap<'g>,
+
+    structural_excludes: StructuralExcludes<'g>,
 }
 
 impl<'g> Hakari<'g> {
     /// Returns the `HakariBuilder` used to create this instance.
     pub fn builder(&self) -> &HakariBuilder<'g> {
         &self.builder
+    }
+
+    /// Returns the *structural excludes*: third-party packages that depend on
+    /// the Hakari package, or on a workspace member that Hakari manages,
+    /// directly or transitively through normal or build dependencies.
+    ///
+    /// Unlike traversal and final excludes, which come from configuration,
+    /// structural excludes are determined by the shape of the dependency graph
+    /// and can't be configured away.
+    ///
+    /// These packages are never added to the Hakari package, because doing so
+    /// would form a dependency cycle (assuming the `manage-deps` command says
+    /// the workspace is up-to-date). This typically happens when a workspace
+    /// member is also published on a registry such as crates.io, and a
+    /// `[patch]` directive redirects the published version's Hakari dependency
+    /// back into the workspace.
+    ///
+    /// * Dev-only dependencies are not followed, because Cargo permits cycles
+    ///   through them.
+    /// * Target-specific dependencies are followed, no matter which platforms
+    ///   this builder is configured with, because Cargo rejects these cycles
+    ///   even on platforms where the dependency isn't enabled.
+    ///
+    /// Unlike [`traversal_excludes`](HakariBuilder::traversal_excludes), these packages
+    /// are still considered while simulating builds, so their own dependencies
+    /// are unified as usual.
+    ///
+    /// Returns an empty iterator if the builder had no Hakari package
+    /// specified.
+    pub fn structural_excludes(&self) -> impl Iterator<Item = &'g PackageId> + '_ {
+        self.structural_excludes.cycle_forming.iter().copied()
+    }
+
+    /// Returns true if `package_id` is one of the
+    /// [`structural_excludes`](Self::structural_excludes).
+    ///
+    /// Note that this returns `Ok(false)` for workspace members, even though
+    /// those are structurally excluded as well.
+    ///
+    /// Returns an error if this package ID isn't known to the underlying graph.
+    pub fn is_structural_excluded(&self, package_id: &PackageId) -> Result<bool, guppy::Error> {
+        self.builder.graph().metadata(package_id)?;
+        Ok(self.structural_excludes.cycle_forming.contains(package_id))
     }
 
     /// Reads the existing TOML file for the Hakari package from disk, returning a
@@ -783,11 +863,7 @@ impl<'g> Hakari<'g> {
                             feature_set.packages_with_features(DependencyDirection::Forward)
                         {
                             let dep = feature_list.package();
-                            if is_never_unified(dep) {
-                                // Third-party deps can reach workspace members
-                                // (e.g. via [patch]) -- skip over these to
-                                // ensure we don't accidentally introduce
-                                // cycles.
+                            if computed_map_build.structural_excludes.never_unified(dep) {
                                 continue;
                             }
                             let dep_id = dep.id();
@@ -836,7 +912,11 @@ impl<'g> Hakari<'g> {
             }
         }
 
-        let computed_map = computed_map_build.computed_map;
+        let ComputedMapBuild {
+            structural_excludes,
+            computed_map,
+            ..
+        } = computed_map_build;
         let output_map = map_build.finish(
             &builder.final_excludes,
             builder.dep_format_version,
@@ -847,6 +927,7 @@ impl<'g> Hakari<'g> {
             builder,
             output_map,
             computed_map,
+            structural_excludes,
         }
     }
 }
@@ -941,17 +1022,34 @@ impl<'g, 'b> TraversalExcludes<'g, 'b> {
     }
 }
 
-/// Returns true if `package` must never be unified into the Hakari package.
+/// Packages that can never be unified into the Hakari package, regardless of
+/// configuration.
 ///
-/// Hakari only unifies third-party packages.
-fn is_never_unified(package: &PackageMetadata<'_>) -> bool {
-    package.in_workspace()
+/// For the definition, and how these differ from [`TraversalExcludes`], see
+/// [`Hakari::structural_excludes`].
+#[derive(Clone, Debug)]
+pub(crate) struct StructuralExcludes<'g> {
+    /// The third-party packages reported by [`Hakari::structural_excludes`].
+    ///
+    /// Workspace packages (including the Hakari package itself) are never in
+    /// this set; [`Self::never_unified`] handles them.
+    pub(crate) cycle_forming: BTreeSet<&'g PackageId>,
+}
+
+impl<'g> StructuralExcludes<'g> {
+    /// Returns true if `package` must never be unified into the Hakari
+    /// package: it is a workspace package (Hakari only unifies third-party
+    /// dependencies), or a member of [`Self::cycle_forming`].
+    fn never_unified(&self, package: &PackageMetadata<'g>) -> bool {
+        package.in_workspace() || self.cycle_forming.contains(package.id())
+    }
 }
 
 /// Intermediate build state used by Hakari.
 #[derive(Debug)]
 struct ComputedMapBuild<'g, 'b> {
     traversal_excludes: TraversalExcludes<'g, 'b>,
+    structural_excludes: StructuralExcludes<'g>,
     computed_map: ComputedMap<'g>,
 }
 
@@ -1023,8 +1121,10 @@ impl<'g, 'b> ComputedMapBuild<'g, 'b> {
 
         let workspace = builder.graph.workspace();
         let traversal_excludes = builder.make_traversal_excludes();
+        let structural_excludes = builder.make_structural_excludes();
         let features_only = builder.make_features_only();
         let traversal_excludes_ref = &traversal_excludes;
+        let structural_excludes_ref = &structural_excludes;
         let features_only_ref = &features_only;
 
         let computed_map: ComputedMap<'g> = platforms_features
@@ -1059,7 +1159,7 @@ impl<'g, 'b> ComputedMapBuild<'g, 'b> {
                             .packages_with_features(DependencyDirection::Forward)
                             .filter_map(move |feature_list| {
                                 let dep = feature_list.package();
-                                if is_never_unified(dep) {
+                                if structural_excludes_ref.never_unified(dep) {
                                     return None;
                                 }
 
@@ -1111,6 +1211,7 @@ impl<'g, 'b> ComputedMapBuild<'g, 'b> {
 
         Self {
             traversal_excludes,
+            structural_excludes,
             computed_map,
         }
     }
@@ -1662,11 +1763,7 @@ impl UnifyTargetHost {
 mod tests {
     use super::*;
     use crate::UnifyTargetHost;
-    use fixtures::json::{
-        JsonFixture, METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_DEV,
-        METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_PUBLISHED,
-        METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_UNLINKED,
-    };
+    use fixtures::json::*;
 
     #[test]
     fn unify_target_host_auto() {
@@ -1707,35 +1804,36 @@ mod tests {
         // * hrd-via-member-published -> hrd-member-published
         //
         // so the fixpoint loop reaches workspace members.
-        let fixture = JsonFixture::metadata_hakari_reverse_dep();
-        let graph = fixture.graph();
-        let hakari_id = fixture
-            .details()
-            .hakari_package()
-            .expect("hakari-reverse-dep fixture names a hakari package");
-
-        let mut builder =
-            HakariBuilder::new(graph, Some(hakari_id)).expect("hakari builder is created");
+        let mut builder = reverse_dep_builder();
+        let graph = builder.graph();
         // The fixpoint loop only runs when this is false. (This is the default,
         // but let's be explicit anyway.)
         builder.set_output_single_feature(false);
+
+        let member_dev_id = PackageId::new(METADATA_HAKARI_REVERSE_DEP_MEMBER_DEV);
+        let member_unlinked_id = PackageId::new(METADATA_HAKARI_REVERSE_DEP_MEMBER_UNLINKED);
+        builder
+            .add_final_excludes([&member_dev_id, &member_unlinked_id])
+            .expect("final excludes are known to the graph");
         let hakari = builder.compute();
 
-        // The packages that bridge to workspace members must be present.
-        let computed_ids: BTreeSet<&PackageId> = hakari
-            .computed_map
-            .keys()
-            .map(|(_, package_id)| *package_id)
-            .collect();
+        // Guard against the test becoming vacuous -- the fixpoint loop iterates
+        // over the output feature sets, so ensure the corresponding packages
+        // are present in the output map.
+        let target_key = OutputKey {
+            platform_idx: None,
+            build_platform: BuildPlatform::Target,
+        };
+        let output_ids: BTreeSet<&PackageId> =
+            hakari.output_map[&target_key].keys().copied().collect();
         for bridge_id in [
-            METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_PUBLISHED,
             METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_DEV,
             METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_UNLINKED,
         ] {
             assert!(
-                computed_ids.contains(&PackageId::new(bridge_id)),
-                "{bridge_id} depends on a workspace member and is computed, so \
-                 the fixpoint loop reaches that member"
+                output_ids.contains(&PackageId::new(bridge_id)),
+                "{bridge_id} depends on a workspace member and is in the output \
+                 map, so the fixpoint loop reaches that member"
             );
         }
 
@@ -1759,5 +1857,247 @@ mod tests {
                 );
             }
         }
+    }
+
+    #[test]
+    fn hakari_reverse_deps_not_unified() {
+        let builder = reverse_dep_builder();
+        let graph = builder.graph();
+        let leaf_id = PackageId::new(METADATA_HAKARI_REVERSE_DEP_LEAF);
+        let hakari = builder.compute();
+
+        let expected_excludes = expected_structural_excludes();
+        let structural_excludes: BTreeSet<PackageId> =
+            hakari.structural_excludes().cloned().collect();
+        assert_eq!(
+            structural_excludes, expected_excludes,
+            "structural excludes are exactly the third-party packages that would form a cycle"
+        );
+        for package_id in &expected_excludes {
+            assert!(
+                hakari
+                    .is_structural_excluded(package_id)
+                    .expect("package ID is known"),
+                "{package_id} is structurally excluded"
+            );
+        }
+        assert!(
+            !hakari
+                .is_structural_excluded(&leaf_id)
+                .expect("package ID is known"),
+            "{leaf_id} is not structurally excluded"
+        );
+        for package in graph.workspace().iter() {
+            assert!(
+                !hakari
+                    .is_structural_excluded(package.id())
+                    .expect("package ID is known"),
+                "workspace package {} is not structurally excluded (workspace packages are \
+                 handled separately)",
+                package.name()
+            );
+        }
+        assert!(
+            hakari
+                .is_structural_excluded(&PackageId::new("unknown-package 0.1.0"))
+                .is_err(),
+            "unknown package IDs are an error"
+        );
+
+        let computed_ids: BTreeSet<&PackageId> = hakari
+            .computed_map
+            .keys()
+            .map(|(_, package_id)| *package_id)
+            .collect();
+        for package_id in &expected_excludes {
+            assert!(
+                !computed_ids.contains(package_id),
+                "{package_id} is structurally excluded so it is never computed: {computed_ids:?}"
+            );
+        }
+        for package in graph.workspace().iter() {
+            assert!(
+                !computed_ids.contains(package.id()),
+                "workspace package {} is never computed",
+                package.name()
+            );
+        }
+
+        let target_key = OutputKey {
+            platform_idx: None,
+            build_platform: BuildPlatform::Target,
+        };
+        let host_key = OutputKey {
+            platform_idx: None,
+            build_platform: BuildPlatform::Host,
+        };
+        let output_keys: BTreeSet<OutputKey> = hakari.output_map.keys().copied().collect();
+        assert_eq!(
+            output_keys,
+            [target_key, host_key].into_iter().collect(),
+            "hrd-member-build's build-dependency on the hakari package makes \
+             UnifyTargetHost::Auto resolve to replicate-target-on-host, so leaf's target \
+             entry is replicated under the always/host key alongside always/target"
+        );
+        for key in [target_key, host_key] {
+            let map = &hakari.output_map[&key];
+            let output_ids: BTreeSet<&PackageId> = map.keys().copied().collect();
+            let expected_ids: BTreeSet<&PackageId> = [&leaf_id].into_iter().collect();
+            assert_eq!(
+                output_ids, expected_ids,
+                "[{key:?}] only leaf is unified: its features differ across workspace \
+                 members, and every other third-party package would form a cycle"
+            );
+            assert_eq!(
+                map[&leaf_id].1,
+                ["feat1", "feat2"].into_iter().collect::<BTreeSet<_>>(),
+                "[{key:?}] leaf features unified"
+            );
+        }
+
+        // The fixture's workspace-hack is up-to-date, so verify should pass.
+        if let Err(errs) = hakari.builder().clone().verify() {
+            panic!("verify failed for packages: {:?}", errs.dependency_ids);
+        }
+    }
+
+    #[test]
+    fn unmanaged_members_are_not_cycle_roots() {
+        let member_dev_id = PackageId::new(METADATA_HAKARI_REVERSE_DEP_MEMBER_DEV);
+        let member_unlinked_id = PackageId::new(METADATA_HAKARI_REVERSE_DEP_MEMBER_UNLINKED);
+
+        let mut final_excluded = reverse_dep_builder();
+        final_excluded
+            .add_final_excludes([&member_dev_id, &member_unlinked_id])
+            .expect("final excludes are known to the graph");
+        assert_unmanaged_members_unified(final_excluded, "final-excluded");
+
+        let mut traversal_excluded = reverse_dep_builder();
+        traversal_excluded
+            .add_traversal_excludes([&member_dev_id, &member_unlinked_id])
+            .expect("traversal excludes are known to the graph");
+        assert_unmanaged_members_unified(traversal_excluded, "traversal-excluded");
+    }
+
+    fn assert_unmanaged_members_unified(builder: HakariBuilder<'_>, scenario: &str) {
+        let via_member_published_id =
+            PackageId::new(METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_PUBLISHED);
+        let via_member_dev_id = PackageId::new(METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_DEV);
+        let via_member_unlinked_id =
+            PackageId::new(METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_UNLINKED);
+        let leaf_id = PackageId::new(METADATA_HAKARI_REVERSE_DEP_LEAF);
+        let hakari = builder.compute();
+
+        // member-dev is no longer managed, and its only link to the hakari
+        // package is a dev-dependency; member-unlinked is no longer managed
+        // and has no link to the hakari package at all.
+        for package_id in [&via_member_dev_id, &via_member_unlinked_id] {
+            assert!(
+                !hakari
+                    .is_structural_excluded(package_id)
+                    .expect("package ID is known"),
+                "[{scenario}] {package_id} only reaches unmanaged members, so it is \
+                 not structurally excluded"
+            );
+        }
+        // member-published is still managed, so via-member-published would
+        // still form a cycle.
+        assert!(
+            hakari
+                .is_structural_excluded(&via_member_published_id)
+                .expect("package ID is known"),
+            "[{scenario}] {via_member_published_id} reaches managed member hrd-member-published, so it \
+             is structurally excluded"
+        );
+
+        let target_key = OutputKey {
+            platform_idx: None,
+            build_platform: BuildPlatform::Target,
+        };
+        let target_map = &hakari.output_map[&target_key];
+        let output_ids: BTreeSet<&PackageId> = target_map.keys().copied().collect();
+        let expected_ids: BTreeSet<&PackageId> =
+            [&leaf_id, &via_member_dev_id, &via_member_unlinked_id]
+                .into_iter()
+                .collect();
+        assert_eq!(
+            output_ids, expected_ids,
+            "[{scenario}] via-member-dev and via-member-unlinked are unified now that they can't \
+             form a cycle"
+        );
+    }
+
+    #[test]
+    fn hakari_reverse_deps_verify_failure() {
+        let fixture = JsonFixture::metadata_hakari_reverse_dep();
+        let hakari_id = fixture
+            .details()
+            .hakari_package()
+            .expect("fixture declares a hakari package");
+
+        // Make the fixture's workspace-hack stale by dropping the features it
+        // requests from hrd-leaf. This will make verify fail for hrd-leaf.
+        let leaf_dep_unified = r#""name":"hrd-leaf","source":null,"req":"*","kind":null,"rename":null,"optional":false,"uses_default_features":true,"features":["feat1","feat2"]"#;
+        let leaf_dep_stale = leaf_dep_unified.replace(r#"["feat1","feat2"]"#, "[]");
+        let json = fixture.json();
+        assert_eq!(
+            json.matches(leaf_dep_unified).count(),
+            1,
+            "hakari package's dependency on hrd-leaf occurs exactly once"
+        );
+        let stale_json = json.replace(leaf_dep_unified, &leaf_dep_stale);
+        let graph = PackageGraph::from_json(stale_json).expect("stale fixture parsed");
+
+        let builder = HakariBuilder::new(&graph, Some(hakari_id)).expect("builder created");
+        let structural_excludes: BTreeSet<PackageId> = builder
+            .clone()
+            .compute()
+            .structural_excludes()
+            .cloned()
+            .collect();
+        let errs = builder
+            .verify()
+            .expect_err("stale hakari package fails verification");
+
+        let leaf_id = PackageId::new(METADATA_HAKARI_REVERSE_DEP_LEAF);
+        assert_eq!(
+            errs.dependency_ids,
+            [&leaf_id].into_iter().collect::<BTreeSet<_>>(),
+            "only hrd-leaf is reported: the structurally excluded packages are \
+             built with more than one feature set too, but verify skips them"
+        );
+        assert_eq!(
+            structural_excludes,
+            expected_structural_excludes(),
+            "the cycle-forming packages really are structurally excluded here, so the check \
+             above isn't tautological"
+        );
+    }
+
+    // The third-party packages in the metadata_hakari_reverse_dep fixture that
+    // reach the hakari package or a managed member. See the fixture's
+    // definition for the graph and why each one counts.
+    fn expected_structural_excludes() -> BTreeSet<PackageId> {
+        [
+            METADATA_HAKARI_REVERSE_DEP_NORMAL_ON_HACK,
+            METADATA_HAKARI_REVERSE_DEP_VIA_NORMAL_ON_HACK,
+            METADATA_HAKARI_REVERSE_DEP_BUILD_ON_HACK,
+            METADATA_HAKARI_REVERSE_DEP_CFG_ON_HACK,
+            METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_PUBLISHED,
+            METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_DEV,
+            METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_UNLINKED,
+        ]
+        .into_iter()
+        .map(PackageId::new)
+        .collect()
+    }
+
+    fn reverse_dep_builder() -> HakariBuilder<'static> {
+        let fixture = JsonFixture::metadata_hakari_reverse_dep();
+        let hakari_id = fixture
+            .details()
+            .hakari_package()
+            .expect("hakari-reverse-dep fixture names a hakari package");
+        HakariBuilder::new(fixture.graph(), Some(hakari_id)).expect("hakari builder is created")
     }
 }

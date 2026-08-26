@@ -3,6 +3,12 @@
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+### Added
+
+- `Hakari::structural_excludes` and `Hakari::is_structural_excluded` report
+  the *structural excludes*: the packages that are never added to the
+  workspace-hack, described under Fixed below.
+
 ### Changed
 
 - Updated `toml` to 1.1.4 and `toml_edit` to 0.25.13.
@@ -21,6 +27,13 @@
 
 ### Fixed
 
+- Hakari no longer adds third-party packages that depend on the workspace-hack
+  package, or on a workspace member that hakari manages, directly or
+  transitively through normal or build dependencies. (Dev-only dependencies are
+  ignored, since Cargo permits cycles through them.) This typically happens when a
+  workspace member is also published and a `[patch]` section redirects the
+  published version's workspace-hack dependency back into the workspace. In
+  that case hakari would end up introducing a cycle ([#499]).
 - The fixpoint step of the computation no longer adds workspace packages to
   `Hakari::computed_map` or `Hakari::output_map`. Previously, a third-party
   package that depended on a workspace member could cause that member to be
@@ -30,6 +43,8 @@
   output now matches hakari built against `camino` 1.2.2 and earlier. Builds
   of hakari 0.17.9 against `camino` 1.2.3 or later produced different names;
   those revert to the original names with this release.
+
+[#499]: https://github.com/guppy-rs/guppy/issues/499
 
 ## [0.17.9] - 2025-12-26
 
