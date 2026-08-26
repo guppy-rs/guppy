@@ -15,9 +15,9 @@ version = '0.1.0'
 path = '../hack-dep'
 
 [[metadata.features-only]]
-name = 'hrd-member-c'
+name = 'hrd-member-d'
 version = '0.1.0'
-workspace-path = 'member-c'
+workspace-path = 'member-d'
 features = []
 
 [[metadata.features-only]]
@@ -34,15 +34,15 @@ status = 'initial'
 features = []
 
 [[host-package]]
-name = 'hrd-member-c'
+name = 'hrd-member-d'
 version = '0.1.0'
-workspace-path = 'member-c'
+workspace-path = 'member-d'
 status = 'initial'
 features = []
 
 [[host-package]]
-name = 'hrd-member-e'
+name = 'hrd-member-g'
 version = '0.1.0'
-workspace-path = 'member-e'
+workspace-path = 'member-g'
 status = 'initial'
 features = []

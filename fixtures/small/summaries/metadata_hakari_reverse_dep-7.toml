@@ -22,9 +22,9 @@ version = '0.1.0'
 path = '../leaf'
 
 [[metadata.omitted-packages.ids]]
-name = 'hrd-member-d'
+name = 'hrd-member-e'
 version = '0.1.0'
-workspace-path = 'member-d'
+workspace-path = 'member-e'
 
 [[metadata.omitted-packages.ids]]
 name = 'hrd-via-member'
@@ -32,15 +32,15 @@ version = '0.1.0'
 path = '../via-member'
 
 [[metadata.features-only]]
-name = 'hrd-member-d'
-version = '0.1.0'
-workspace-path = 'member-d'
-features = []
-
-[[metadata.features-only]]
 name = 'hrd-member-e'
 version = '0.1.0'
 workspace-path = 'member-e'
+features = []
+
+[[metadata.features-only]]
+name = 'hrd-member-f'
+version = '0.1.0'
+workspace-path = 'member-f'
 features = []
 
 [[target-package]]
@@ -75,6 +75,20 @@ features = []
 name = 'hrd-member-e'
 version = '0.1.0'
 workspace-path = 'member-e'
+status = 'initial'
+features = []
+
+[[target-package]]
+name = 'hrd-member-f'
+version = '0.1.0'
+workspace-path = 'member-f'
+status = 'initial'
+features = []
+
+[[target-package]]
+name = 'hrd-member-g'
+version = '0.1.0'
+workspace-path = 'member-g'
 status = 'initial'
 features = []
 
