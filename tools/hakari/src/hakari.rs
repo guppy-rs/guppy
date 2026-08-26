@@ -742,7 +742,7 @@ impl<'g> Hakari<'g> {
                         .set_initials_platform(initials_platform)
                         .set_platform(platform_spec)
                         .set_resolver(builder.resolver)
-                        .add_omitted_packages(computed_map_build.excludes.iter());
+                        .add_omitted_packages(computed_map_build.traversal_excludes.iter());
                     let cargo_set = features
                         .into_cargo_set(&cargo_opts)
                         .expect("into_cargo_set processed successfully");
@@ -906,10 +906,17 @@ impl<'g, 'b> TraversalExcludes<'g, 'b> {
     }
 }
 
+/// Returns true if `package` must never be unified into the Hakari package.
+///
+/// Hakari only unifies third-party packages.
+fn is_never_unified(package: &PackageMetadata<'_>) -> bool {
+    package.in_workspace()
+}
+
 /// Intermediate build state used by Hakari.
 #[derive(Debug)]
 struct ComputedMapBuild<'g, 'b> {
-    excludes: TraversalExcludes<'g, 'b>,
+    traversal_excludes: TraversalExcludes<'g, 'b>,
     computed_map: ComputedMap<'g>,
 }
 
@@ -980,9 +987,9 @@ impl<'g, 'b> ComputedMapBuild<'g, 'b> {
         let platforms_features: Vec<_> = always_features.chain(specified_features).collect();
 
         let workspace = builder.graph.workspace();
-        let excludes = builder.make_traversal_excludes();
+        let traversal_excludes = builder.make_traversal_excludes();
         let features_only = builder.make_features_only();
-        let excludes_ref = &excludes;
+        let traversal_excludes_ref = &traversal_excludes;
         let features_only_ref = &features_only;
 
         let computed_map: ComputedMap<'g> = platforms_features
@@ -995,10 +1002,10 @@ impl<'g, 'b> ComputedMapBuild<'g, 'b> {
                     .set_include_dev(include_dev)
                     .set_resolver(builder.resolver)
                     .set_platform(platform_spec)
-                    .add_omitted_packages(excludes.iter());
+                    .add_omitted_packages(traversal_excludes.iter());
 
                 workspace.par_iter().map(move |workspace_package| {
-                    if excludes_ref.is_excluded(workspace_package.id()) {
+                    if traversal_excludes_ref.is_excluded(workspace_package.id()) {
                         // Skip this package since it was excluded during traversal.
                         return BTreeMap::new();
                     }
@@ -1017,8 +1024,7 @@ impl<'g, 'b> ComputedMapBuild<'g, 'b> {
                             .packages_with_features(DependencyDirection::Forward)
                             .filter_map(move |feature_list| {
                                 let dep = feature_list.package();
-                                if dep.in_workspace() {
-                                    // Only looking at third-party packages for hakari.
+                                if is_never_unified(dep) {
                                     return None;
                                 }
 
@@ -1069,7 +1075,7 @@ impl<'g, 'b> ComputedMapBuild<'g, 'b> {
             });
 
         Self {
-            excludes,
+            traversal_excludes,
             computed_map,
         }
     }
