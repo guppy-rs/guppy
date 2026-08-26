@@ -20,6 +20,32 @@ impl<'g> HakariBuilder<'g> {
     ///
     /// Also includes remove operations for the workspace-hack dependency from excluded crates.
     ///
+    /// A workspace crate is *managed* if it isn't the hakari package itself and isn't
+    /// [excluded](Self::is_excluded). For each crate in `workspace_set`, the operation depends
+    /// on its existing dependency on the hakari package:
+    ///
+    /// | Crate    | Existing dependency on the hakari package | Operation |
+    /// |----------|-------------------------------------------|-----------|
+    /// | managed  | none | add to `[dependencies]` |
+    /// | managed  | only `[dev-dependencies]` and/or `[build-dependencies]`, top-level or under `[target.*]` | add to `[dependencies]`, and remove the `[dev-dependencies]` line |
+    /// | managed  | unconditional `[dependencies]` | keep; update the line if needed (see below) |
+    /// | managed  | only under `[target.*]`, or `optional` | keep as is |
+    /// | excluded | any | remove from every section, including `[target.*]` |
+    /// | excluded | none | nothing |
+    ///
+    /// A line needs updating (with [`DepFormatVersion::V2`] or later) if its
+    /// version requirement doesn't match the hakari package's version, or if it
+    /// has no version requirement and the [`WorkspaceHackLineStyle`] isn't
+    /// `WorkspaceDotted`.
+    ///
+    /// Platform-specific lines under `[target.*]` and optional lines count as
+    /// present and are never rewritten, so crates that deliberately gate the
+    /// hakari package behind a `cfg` are left alone. A `[build-dependencies]`
+    /// line is retained when adding dependency lines, since it pulls the hakari
+    /// package into the host build on purpose.
+    ///
+    /// Packages outside the workspace are ignored.
+    ///
     /// Returns `None` if the hakari package wasn't specified at construction time.
     ///
     /// Requires the `cli-support` feature to be enabled.

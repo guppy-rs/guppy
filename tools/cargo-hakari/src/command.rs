@@ -187,6 +187,37 @@ enum CommandWithBuilder {
     ///
     /// * Add the dependency to all non-excluded workspace crates.
     /// * Remove the dependency from all excluded workspace crates.
+    ///
+    /// A workspace crate is *managed* if it isn't the workspace-hack itself and
+    /// isn't listed in `traversal-excludes` or `final-excludes`. For each
+    /// selected crate, what happens depends on its existing dependency on the
+    /// workspace-hack, if any:
+    ///
+    /// ```text
+    /// Crate     Existing dependency on workspace-hack    Action
+    /// --------  ---------------------------------------  ---------------------------
+    /// managed   none                                     add to [dependencies]
+    /// managed   only [dev-dependencies] and/or           add to [dependencies], and
+    ///           [build-dependencies] (top-level or       remove the [dev-dependencies]
+    ///           under [target.*])                        line
+    /// managed   unconditional [dependencies]             keep; update the line if
+    ///                                                    needed (see below)
+    /// managed   only under [target.*], or optional       keep as is
+    /// excluded  any                                      remove from every section,
+    ///                                                    including [target.*]
+    /// excluded  none                                     nothing
+    /// ```
+    ///
+    /// A line needs updating if its version requirement doesn't match the
+    /// workspace-hack's version, or if it has no version requirement and
+    /// `workspace-hack-line-style` isn't `"workspace-dotted"`.
+    ///
+    /// Platform-specific lines under `[target.*]` and optional lines count as
+    /// present and are never rewritten, so crates that deliberately gate the
+    /// workspace-hack (for example, to keep it out of builds on certain
+    /// platforms) are left alone. A `[build-dependencies]` line is retained
+    /// when adding dependency lines, since it pulls the workspace-hack into the
+    /// host build on purpose.
     ManageDeps {
         #[clap(flatten)]
         packages: PackageSelection,
@@ -204,6 +235,10 @@ enum CommandWithBuilder {
     },
 
     /// Remove dependencies from workspace crates to workspace-hack.
+    ///
+    /// The dependency is removed from every section it appears in, including
+    /// `[dev-dependencies]`, `[build-dependencies]` and the sections under
+    /// `[target.*]`.
     RemoveDeps {
         #[clap(flatten)]
         packages: PackageSelection,
