@@ -3,25 +3,27 @@
 
 use crate::{
     helpers::{read_contents, regenerate_lockfile},
-    output::{OutputContext, OutputOpts},
+    output::{OutputContext, OutputOpts, Styles},
     publish::publish_hakari,
 };
 use camino::{Utf8Path, Utf8PathBuf};
 use clap::Parser;
 use color_eyre::eyre::{Result, WrapErr, bail};
 use guppy::{
-    MetadataCommand,
-    graph::{PackageGraph, PackageSet},
+    MetadataCommand, PackageId, Version,
+    graph::{PackageGraph, PackageMetadata, PackageSet},
 };
 use hakari::{
-    DepFormatVersion, HakariBuilder, HakariCargoToml, HakariOutputOptions, TomlOutError,
+    DepFormatVersion, HakariBuilder, HakariCargoToml, HakariOutputOptions, TomlNameEntry,
+    TomlOutError,
     cli_ops::{HakariInit, WorkspaceOps},
     diffy::PatchFormatter,
     summaries::{DEFAULT_CONFIG_PATH, FALLBACK_CONFIG_PATH, HakariConfig},
 };
+use iddqd::{IdOrdItem, IdOrdMap, id_upcast};
 use log::{error, info};
 use owo_colors::OwoColorize;
-use std::convert::TryFrom;
+use std::{collections::BTreeMap, convert::TryFrom, fmt};
 
 /// The comment to add to the top of the config file.
 pub static CONFIG_COMMENT: &str = r#"# This file contains settings for `cargo hakari`.
@@ -431,11 +433,15 @@ impl CommandWithBuilder {
                 let hakari = builder.compute();
                 let toml_name_map = hakari.toml_name_map();
                 let Some(dep) = toml_name_map.get(crate_name.as_str()) else {
+                    let reason = NotFoundReason::classify(
+                        hakari.builder(),
+                        &toml_name_map,
+                        &hakari_package,
+                        &crate_name,
+                    )?;
                     error!(
-                        "crate name '{}' not found in workspace-hack\n\
-                         (hint: check spelling, or regenerate workspace-hack with \
-                         `cargo hakari generate`)",
-                        crate_name
+                        "{}",
+                        reason.display(&hakari_package, &crate_name, &output.styles)
                     );
                     return Ok(1);
                 };
@@ -489,6 +495,207 @@ impl PackageSelection {
 // ---
 // Helper methods
 // ---
+
+/// The reason a crate name wasn't found in the workspace hack.
+#[derive(Debug, PartialEq, Eq)]
+enum NotFoundReason {
+    /// The crate has more than one version in the workspace hack.
+    MultipleVersions {
+        /// The hashed names and versions of crates.
+        hashed_names: BTreeMap<String, Version>,
+    },
+    /// The crate is excluded by the configuration.
+    ConfigExcluded {
+        /// All packages with this name excluded by the configuration.
+        packages: IdOrdMap<ExcludedPackage>,
+    },
+    /// The crate is a workspace member and so is ineligible to be included in
+    /// the workspace hack.
+    WorkspaceMember { id: PackageId, version: Version },
+    /// This crate name is unknown.
+    Unknown,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+struct ExcludedPackage {
+    id: PackageId,
+    version: Version,
+    by: ExcludedBy,
+}
+
+impl IdOrdItem for ExcludedPackage {
+    type Key<'a> = &'a PackageId;
+
+    fn key(&self) -> Self::Key<'_> {
+        &self.id
+    }
+
+    id_upcast!();
+}
+
+#[derive(Debug, PartialEq, Eq)]
+enum ExcludedBy {
+    TraversalExcludes,
+    FinalExcludes,
+    Both,
+}
+
+impl NotFoundReason {
+    fn classify<'g>(
+        builder: &HakariBuilder<'g>,
+        toml_name_map: &IdOrdMap<TomlNameEntry<'g>>,
+        hakari_package: &PackageMetadata<'g>,
+        crate_name: &str,
+    ) -> Result<Self, guppy::Error> {
+        let hashed_names: BTreeMap<String, Version> = toml_name_map
+            .iter()
+            .filter(|entry| entry.package().name() == crate_name)
+            .map(|entry| {
+                (
+                    entry.toml_name().as_str().to_owned(),
+                    entry.package().version().clone(),
+                )
+            })
+            .collect();
+        if !hashed_names.is_empty() {
+            return Ok(Self::MultipleVersions { hashed_names });
+        }
+
+        let mut packages = IdOrdMap::new();
+        for package in builder.graph().packages() {
+            // The hakari package is treated as excluded by the algorithm, so
+            // skip it here.
+            if package.name() != crate_name || package.id() == hakari_package.id() {
+                continue;
+            }
+            let traversal = builder.is_traversal_excluded(package.id())?;
+            let final_ = builder.is_final_excluded(package.id())?;
+            let by = match (traversal, final_) {
+                (true, true) => ExcludedBy::Both,
+                (true, false) => ExcludedBy::TraversalExcludes,
+                (false, true) => ExcludedBy::FinalExcludes,
+                (false, false) => continue,
+            };
+            packages
+                .insert_unique(ExcludedPackage {
+                    id: package.id().clone(),
+                    version: package.version().clone(),
+                    by,
+                })
+                .expect("package IDs within a graph are unique");
+        }
+        if !packages.is_empty() {
+            return Ok(Self::ConfigExcluded { packages });
+        }
+
+        // member_by_name only fails with UnknownWorkspaceName, but it returns
+        // the general error type.
+        #[cfg_attr(guppy_nightly, expect(non_exhaustive_omitted_patterns))]
+        match builder.graph().workspace().member_by_name(crate_name) {
+            Ok(package) => Ok(Self::WorkspaceMember {
+                id: package.id().clone(),
+                version: package.version().clone(),
+            }),
+            Err(guppy::Error::UnknownWorkspaceName(_)) => Ok(Self::Unknown),
+            Err(error) => Err(error),
+        }
+    }
+
+    fn display<'a>(
+        &'a self,
+        hakari_package: &'a PackageMetadata<'_>,
+        crate_name: &'a str,
+        styles: &'a Styles,
+    ) -> NotFoundReasonDisplay<'a> {
+        NotFoundReasonDisplay {
+            reason: self,
+            hakari_name: hakari_package.name(),
+            crate_name,
+            styles,
+        }
+    }
+}
+
+/// A display formatter for [`NotFoundReason`].
+#[derive(Clone, Copy, Debug)]
+struct NotFoundReasonDisplay<'a> {
+    reason: &'a NotFoundReason,
+    hakari_name: &'a str,
+    crate_name: &'a str,
+    styles: &'a Styles,
+}
+
+impl fmt::Display for NotFoundReasonDisplay<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let crate_name = self.crate_name.style(self.styles.package_name);
+        let hakari_name = self.hakari_name.style(self.styles.package_name);
+        match self.reason {
+            NotFoundReason::MultipleVersions { hashed_names } => {
+                write!(
+                    f,
+                    "crate '{crate_name}' has multiple versions in {hakari_name}; \
+                     specify one of: "
+                )?;
+                for (i, (toml_name, version)) in hashed_names.iter().enumerate() {
+                    if i > 0 {
+                        f.write_str(", ")?;
+                    }
+                    write!(
+                        f,
+                        "{toml_name} (v{})",
+                        version.style(self.styles.package_version)
+                    )?;
+                }
+                Ok(())
+            }
+            NotFoundReason::ConfigExcluded { packages } => {
+                write!(
+                    f,
+                    "crate '{crate_name}' is excluded by `hakari.toml`, \
+                     so it is never added to {hakari_name}: "
+                )?;
+                for (i, package) in packages.iter().enumerate() {
+                    if i > 0 {
+                        f.write_str(", ")?;
+                    }
+                    write!(
+                        f,
+                        "v{} ({})",
+                        package.version.style(self.styles.package_version),
+                        package.by.config_keys(),
+                    )?;
+                }
+                Ok(())
+            }
+            NotFoundReason::WorkspaceMember { id: _, version } => {
+                write!(
+                    f,
+                    "crate '{crate_name}' v{} is a workspace member; hakari only adds \
+                     third-party dependencies to {hakari_name}",
+                    version.style(self.styles.package_version),
+                )
+            }
+            NotFoundReason::Unknown => {
+                write!(
+                    f,
+                    "crate name '{crate_name}' not found in workspace-hack\n\
+                     (hint: check spelling, or regenerate workspace-hack with \
+                     `cargo hakari generate`)"
+                )
+            }
+        }
+    }
+}
+
+impl ExcludedBy {
+    fn config_keys(&self) -> &'static str {
+        match self {
+            Self::TraversalExcludes => "traversal-excludes",
+            Self::FinalExcludes => "final-excludes",
+            Self::Both => "traversal-excludes and final-excludes",
+        }
+    }
+}
 
 fn cwd_rel_to_workspace_rel(path: &Utf8Path, workspace_root: &Utf8Path) -> Result<Utf8PathBuf> {
     let abs_path = if path.is_absolute() {
@@ -602,5 +809,73 @@ fn apply_on_dialog(
         Ok(0)
     } else {
         Ok(1)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use fixtures::json::{
+        JsonFixture, METADATA_HAKARI_REVERSE_DEP_LEAF, METADATA_HAKARI_REVERSE_DEP_MEMBER_FEATURES,
+    };
+
+    // Classify `crate_name` against the hakari-reverse-dep fixture, optionally
+    // with hrd-leaf final-excluded. The fixture has no multi-version crates, so
+    // the name map is always empty here.
+    fn reason_for(crate_name: &str, final_exclude_leaf: bool) -> NotFoundReason {
+        let fixture = JsonFixture::metadata_hakari_reverse_dep();
+        let graph = fixture.graph();
+        let hakari_id = fixture
+            .details()
+            .hakari_package()
+            .expect("hakari-reverse-dep fixture names a hakari package");
+        let mut builder =
+            HakariBuilder::new(graph, Some(hakari_id)).expect("hakari builder is created");
+        if final_exclude_leaf {
+            let leaf_id = PackageId::new(METADATA_HAKARI_REVERSE_DEP_LEAF);
+            builder
+                .add_final_excludes([&leaf_id])
+                .expect("hrd-leaf is known to the graph");
+        }
+        let hakari_package = graph
+            .metadata(hakari_id)
+            .expect("hakari package is in the graph");
+
+        NotFoundReason::classify(&builder, &IdOrdMap::new(), &hakari_package, crate_name)
+            .expect("reason is classified without a graph error")
+    }
+
+    #[test]
+    fn explain_not_found_workspace_member() {
+        assert_eq!(
+            reason_for("hrd-member-features", false),
+            NotFoundReason::WorkspaceMember {
+                id: PackageId::new(METADATA_HAKARI_REVERSE_DEP_MEMBER_FEATURES),
+                version: Version::new(0, 1, 0),
+            },
+        );
+    }
+
+    #[test]
+    fn explain_not_found_config_excluded() {
+        assert_eq!(
+            reason_for("hrd-leaf", true),
+            NotFoundReason::ConfigExcluded {
+                packages: IdOrdMap::from_iter_unique([ExcludedPackage {
+                    id: PackageId::new(METADATA_HAKARI_REVERSE_DEP_LEAF),
+                    version: Version::new(0, 1, 0),
+                    by: ExcludedBy::FinalExcludes,
+                }])
+                .expect("expected excluded packages have unique IDs"),
+            },
+        );
+    }
+
+    #[test]
+    fn explain_not_found_unknown() {
+        assert_eq!(
+            reason_for("hrd-not-a-real-crate", false),
+            NotFoundReason::Unknown,
+        );
     }
 }
