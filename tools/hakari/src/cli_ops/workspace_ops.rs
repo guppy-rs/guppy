@@ -384,29 +384,50 @@ impl<'g> WorkspaceOp<'g, '_> {
 enum DependencySection {
     Normal,
     Dev,
+    Build,
 }
 
 impl DependencySection {
+    const ALL: [Self; 3] = [Self::Normal, Self::Dev, Self::Build];
+
     fn key(self) -> &'static str {
         match self {
             DependencySection::Normal => "dependencies",
             DependencySection::Dev => "dev-dependencies",
+            DependencySection::Build => "build-dependencies",
         }
     }
 }
 
-/// An error while editing a manifest document.
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-enum ManifestEditError {
-    /// A dependency section exists but is not a table.
-    NotATable { section: DependencySection },
+/// An error while editing a manifest document: an entry that should be a
+/// table isn't one.
+#[derive(Clone, Debug, Eq, PartialEq)]
+enum NotATableError {
+    /// A top-level dependency section.
+    Section { section: DependencySection },
+    /// The `[target]` table.
+    Target,
+    /// A `[target.<platform>]` entry.
+    Platform { platform: String },
+    /// A `[target.<platform>.<section>]` entry.
+    PlatformSection {
+        platform: String,
+        section: DependencySection,
+    },
 }
 
-impl ManifestEditError {
-    fn message(self) -> String {
+impl NotATableError {
+    fn message(&self) -> String {
         match self {
-            ManifestEditError::NotATable { section } => {
+            NotATableError::Section { section } => {
                 format!("[{}] is not a table", section.key())
+            }
+            NotATableError::Target => "[target] is not a table".to_owned(),
+            NotATableError::Platform { platform } => {
+                format!("[target.'{platform}'] is not a table")
+            }
+            NotATableError::PlatformSection { platform, section } => {
+                format!("[target.'{platform}'.{}] is not a table", section.key())
             }
         }
     }
@@ -424,7 +445,7 @@ fn add_dependency_to_document(
     doc: &mut DocumentMut,
     name: &str,
     dep: InlineTable,
-) -> Result<(), ManifestEditError> {
+) -> Result<(), NotATableError> {
     let dep_table = get_or_insert_dependency_section(doc, DependencySection::Normal)?;
     dep_table.insert(name, Item::Value(Value::InlineTable(dep)));
     if let Some(dev_table) = get_dependency_section(doc, DependencySection::Dev)? {
@@ -433,15 +454,46 @@ fn add_dependency_to_document(
     Ok(())
 }
 
-/// Removes the entry for `name` from `[dependencies]`, if present.
+/// Removes the entry for `name` from every dependency section it appears in,
+/// including the platform-specific sections under `[target]`.
 fn remove_dependency_from_document(
     doc: &mut DocumentMut,
     name: &str,
-) -> Result<(), ManifestEditError> {
+) -> Result<(), NotATableError> {
     // TODO: someone might have added the workspace-hack package under a different name.
     // Handle that if someone complains.
-    let dep_table = get_or_insert_dependency_section(doc, DependencySection::Normal)?;
-    dep_table.remove(name);
+    for section in DependencySection::ALL {
+        if let Some(dep_table) = get_dependency_section(doc, section)? {
+            dep_table.remove(name);
+        }
+    }
+
+    let Some(target_item) = doc.as_table_mut().get_mut("target") else {
+        return Ok(());
+    };
+    let Some(target_table) = target_item.as_table_like_mut() else {
+        return Err(NotATableError::Target);
+    };
+    for (platform, platform_item) in target_table.iter_mut() {
+        let platform = platform.get();
+        let Some(platform_table) = platform_item.as_table_like_mut() else {
+            return Err(NotATableError::Platform {
+                platform: platform.to_owned(),
+            });
+        };
+        for section in DependencySection::ALL {
+            let Some(section_item) = platform_table.get_mut(section.key()) else {
+                continue;
+            };
+            let Some(dep_table) = section_item.as_table_like_mut() else {
+                return Err(NotATableError::PlatformSection {
+                    platform: platform.to_owned(),
+                    section,
+                });
+            };
+            dep_table.remove(name);
+        }
+    }
     Ok(())
 }
 
@@ -449,12 +501,12 @@ fn remove_dependency_from_document(
 fn get_dependency_section(
     doc: &mut DocumentMut,
     section: DependencySection,
-) -> Result<Option<&mut dyn TableLike>, ManifestEditError> {
+) -> Result<Option<&mut dyn TableLike>, NotATableError> {
     let key = section.key();
     match doc.as_table_mut().get_mut(key) {
         Some(item) => match item.as_table_like_mut() {
             Some(table) => Ok(Some(table)),
-            None => Err(ManifestEditError::NotATable { section }),
+            None => Err(NotATableError::Section { section }),
         },
         None => Ok(None),
     }
@@ -463,7 +515,7 @@ fn get_dependency_section(
 fn get_or_insert_dependency_section(
     doc: &mut DocumentMut,
     section: DependencySection,
-) -> Result<&mut dyn TableLike, ManifestEditError> {
+) -> Result<&mut dyn TableLike, NotATableError> {
     let key = section.key();
     let doc_table = doc.as_table_mut();
 
@@ -474,7 +526,7 @@ fn get_or_insert_dependency_section(
             .as_table_like_mut()
         {
             Some(table) => Ok(table),
-            None => Err(ManifestEditError::NotATable { section }),
+            None => Err(NotATableError::Section { section }),
         }
     } else {
         // Add the table.
@@ -894,7 +946,7 @@ workspace-hack = { version = "0.1", path = "../workspace-hack" }
         );
         assert_eq!(
             add_dependency_to_document(&mut doc, "workspace-hack", hack_dep()),
-            Err(ManifestEditError::NotATable {
+            Err(NotATableError::Section {
                 section: DependencySection::Dev
             }),
         );
@@ -908,7 +960,7 @@ workspace-hack = { version = "0.1", path = "../workspace-hack" }
         );
         assert_eq!(
             add_dependency_to_document(&mut doc, "workspace-hack", hack_dep()),
-            Err(ManifestEditError::NotATable {
+            Err(NotATableError::Section {
                 section: DependencySection::Normal
             }),
         );
@@ -933,17 +985,120 @@ other = "1"
     }
 
     #[test]
+    fn remove_dependency_removes_from_every_section() {
+        let mut doc = parse(
+            r#"[dependencies]
+workspace-hack = { path = "../workspace-hack" }
+
+[dev-dependencies]
+workspace-hack = { path = "../workspace-hack" }
+other = "1"
+
+[build-dependencies]
+workspace-hack = { path = "../workspace-hack" }
+"#,
+        );
+        remove_dependency_from_document(&mut doc, "workspace-hack")
+            .expect("all sections are tables");
+        assert_eq!(
+            doc.to_string(),
+            r#"[dependencies]
+
+[dev-dependencies]
+other = "1"
+
+[build-dependencies]
+"#,
+        );
+    }
+
+    #[test]
+    fn remove_dependency_removes_platform_specific_lines() {
+        let mut doc = parse(
+            r#"[dependencies]
+other = "1"
+
+[target.'cfg(windows)'.dependencies]
+workspace-hack = { path = "../workspace-hack" }
+
+[target.'cfg(unix)'.dependencies]
+workspace-hack = { path = "../workspace-hack" }
+other = "1"
+
+[target.'cfg(unix)'.dev-dependencies]
+workspace-hack = { path = "../workspace-hack" }
+
+[target.'cfg(unix)'.build-dependencies]
+workspace-hack = { path = "../workspace-hack" }
+"#,
+        );
+        remove_dependency_from_document(&mut doc, "workspace-hack")
+            .expect("all sections are tables");
+        assert_eq!(
+            doc.to_string(),
+            r#"[dependencies]
+other = "1"
+
+[target.'cfg(windows)'.dependencies]
+
+[target.'cfg(unix)'.dependencies]
+other = "1"
+
+[target.'cfg(unix)'.dev-dependencies]
+
+[target.'cfg(unix)'.build-dependencies]
+"#,
+        );
+    }
+
+    #[test]
+    fn remove_dependency_rejects_non_table_platform_section() {
+        let mut doc = parse("target = 1\n");
+        assert_eq!(
+            remove_dependency_from_document(&mut doc, "workspace-hack"),
+            Err(NotATableError::Target),
+        );
+
+        let mut doc = parse("[target]\n'cfg(unix)' = 1\n");
+        assert_eq!(
+            remove_dependency_from_document(&mut doc, "workspace-hack"),
+            Err(NotATableError::Platform {
+                platform: "cfg(unix)".to_owned()
+            }),
+        );
+
+        let mut doc = parse("[target.'cfg(unix)']\ndev-dependencies = 1\n");
+        assert_eq!(
+            remove_dependency_from_document(&mut doc, "workspace-hack"),
+            Err(NotATableError::PlatformSection {
+                platform: "cfg(unix)".to_owned(),
+                section: DependencySection::Dev,
+            }),
+        );
+    }
+
+    #[test]
     fn remove_dependency_without_section_is_noop() {
         let toml = r#"[package]
 name = "foo"
 "#;
         let mut doc = parse(toml);
         remove_dependency_from_document(&mut doc, "workspace-hack")
-            .expect("a missing section is fine");
+            .expect("missing sections are fine");
+        assert_eq!(doc.to_string(), toml, "no sections are added");
+    }
+
+    #[test]
+    fn remove_dependency_rejects_non_table_section() {
+        let mut doc = parse(
+            "build-dependencies = 1
+",
+        );
         assert_eq!(
-            doc.to_string(),
-            toml,
-            "an implicit empty [dependencies] table isn't written out"
+            remove_dependency_from_document(&mut doc, "workspace-hack"),
+            Err(NotATableError::Section {
+                section: DependencySection::Build
+            }),
         );
     }
 

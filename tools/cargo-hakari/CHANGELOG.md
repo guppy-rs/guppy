@@ -20,6 +20,11 @@ All notable changes to this project will be documented in this file.
   Previously such members were treated as already managed, even though their
   normal builds weren't unified. A `[dev-dependencies]` line is removed at the
   same time, since it is redundant once the normal dependency exists.
+- `cargo hakari manage-deps` now removes the `workspace-hack` dependency from
+  the `[dev-dependencies]`, `[build-dependencies]` and platform-specific
+  `[target.*]` sections of excluded crates. Previously only `[dependencies]`
+  was edited, so a crate with a dev-, build- or platform-specific dependency on
+  the workspace-hack was reported as needing a change on every run.
 - `cargo hakari manage-deps` no longer adds an unconditional `workspace-hack`
   dependency to a crate whose only `[dependencies]` line for it is
   platform-specific or optional and has no version requirement. Previously,
