@@ -19,6 +19,12 @@ All notable changes to this project will be documented in this file.
   workspace members whose existing dependency on it is dev-only or build-only.
   Previously such members were treated as already managed, even though their
   normal builds weren't unified.
+- `cargo hakari manage-deps` no longer adds an unconditional `workspace-hack`
+  dependency to a crate whose only `[dependencies]` line for it is
+  platform-specific or optional and has no version requirement. Previously,
+  with `dep-format-version` 2 or later and a `workspace-hack-line-style` other
+  than `workspace-dotted`, such a line was treated as needing an update, and the
+  update was written as a new unconditional line rather than in place.
 - `cargo hakari generate` no longer adds workspace packages to the
   workspace-hack. Previously, a workspace member depended on by a third-party
   package could be added to the workspace-hack, which would form a cycle.
