@@ -21,6 +21,10 @@
 
 ### Fixed
 
+- The fixpoint step of the computation no longer adds workspace packages to
+  `Hakari::computed_map` or `Hakari::output_map`. Previously, a third-party
+  package that depended on a workspace member could cause that member to be
+  added to the workspace-hack, which would form a cycle.
 - Generated names for path and workspace dependencies no longer depend on
   `camino`'s `Hash` implementation, which changed in `camino` 1.2.3. The
   output now matches hakari built against `camino` 1.2.2 and earlier. Builds
