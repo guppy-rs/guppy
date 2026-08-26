@@ -11,6 +11,7 @@ use crate::{
 use guppy::{
     VersionReq,
     graph::{DependencyDirection, PackageLink, PackageMetadata, PackageSet},
+    platform::{EnabledTernary, PlatformSpec},
 };
 
 impl<'g> HakariBuilder<'g> {
@@ -46,6 +47,16 @@ impl<'g> HakariBuilder<'g> {
                         // at all. (Do this regardless of dep format version.)
                         if !link.normal().is_present() {
                             return Some(true);
+                        }
+                        // A platform-specific or optional line is deliberate,
+                        // and the add operation only writes to the top-level
+                        // [dependencies] table, so "updating" it would add a
+                        // duplicate dependency line next to it. Leave such
+                        // lines alone.
+                        if link.normal().status().required_on(&PlatformSpec::Always)
+                            != EnabledTernary::Enabled
+                        {
+                            return None;
                         }
                         match self.dep_format_version {
                             DepFormatVersion::V1 => None,
@@ -272,6 +283,58 @@ mod tests {
              hrd-member-c's only dependency on the hack is dev-only, so all \
              three are added to; hrd-hack-dep is outside the workspace, so it \
              is ignored"
+        );
+    }
+
+    // A platform-specific line with no version requirement should not be
+    // updated.
+    #[test]
+    fn manage_dep_ops_never_updates_platform_specific_lines() {
+        let fixture = JsonFixture::metadata_hakari_reverse_dep();
+        let graph = fixture.graph();
+        let hakari_id = fixture
+            .details()
+            .hakari_package()
+            .expect("hakari-reverse-dep fixture names a hakari package");
+        let mut builder =
+            HakariBuilder::new(graph, Some(hakari_id)).expect("hakari builder is created");
+        builder.set_dep_format_version(DepFormatVersion::V4);
+        assert_eq!(
+            builder.workspace_hack_line_style(),
+            WorkspaceHackLineStyle::Full,
+            "the full line style requires a version, so a `*` requirement needs updating"
+        );
+
+        // Both members depend on the hakari package with `req = "*"`, but
+        // hrd-member-g's line is cfg(windows)-only.
+        let member_b_id = package_id(METADATA_HAKARI_REVERSE_DEP_MEMBER_B);
+        let member_g_id = package_id(METADATA_HAKARI_REVERSE_DEP_MEMBER_G);
+        let package_set = graph
+            .resolve_ids([&member_b_id, &member_g_id])
+            .expect("all package IDs are known to the graph");
+
+        let ops = builder
+            .manage_dep_ops(&package_set)
+            .expect("hakari package was specified, so ops are returned");
+        let mut add_ids: BTreeSet<PackageId> = BTreeSet::new();
+        for op in ops.ops() {
+            match op {
+                WorkspaceOp::AddDependency { add_to, .. } => {
+                    add_ids.extend(add_to.package_ids(DependencyDirection::Forward).cloned());
+                }
+                WorkspaceOp::RemoveDependency { .. } => {
+                    panic!("both members are managed, so nothing should be removed");
+                }
+                WorkspaceOp::NewCrate { .. } => {
+                    panic!("manage-deps never creates crates");
+                }
+            }
+        }
+        assert_eq!(
+            add_ids,
+            [member_b_id].into_iter().collect(),
+            "hrd-member-b's unconditional `*` line is updated; hrd-member-g's \
+             cfg(windows)-only line is left alone"
         );
     }
 
