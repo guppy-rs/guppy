@@ -255,6 +255,34 @@ impl<'g> HakariBuilder<'g> {
         Ok(self.is_traversal_excluded(package_id)? || self.is_final_excluded(package_id)?)
     }
 
+    /// Returns true if `package` is a workspace member that hakari manages,
+    /// i.e. one that should depend on the hakari package.
+    ///
+    /// This consists of workspace packages that satisfy all of the following
+    /// criteria:
+    ///
+    /// * Note the hakari package itself.
+    /// * Not part of traversal excludes.
+    /// * Not part of final excludes.
+    #[cfg_attr(not(feature = "cli-support"), allow(dead_code))]
+    pub(crate) fn is_managed_member(&self, package: &PackageMetadata<'g>) -> bool {
+        debug_assert!(
+            std::ptr::eq(package.graph(), *self.graph),
+            "package is from the same graph as this builder"
+        );
+        // In verify mode, make_traversal_excludes leaves the hakari package in,
+        // so is_excluded alone is not enough here -- we have to check
+        // explicitly for the hakari package ID.
+        let is_hakari_package = self
+            .hakari_package
+            .is_some_and(|hakari_package| hakari_package.id() == package.id());
+        package.in_workspace()
+            && !is_hakari_package
+            && !self
+                .is_excluded(package.id())
+                .expect("package is from the same graph as this builder")
+    }
+
     /// Add alternate registries by (name, URL) pairs.
     ///
     /// This is a temporary workaround until [Cargo issue #9052](https://github.com/rust-lang/cargo/issues/9052)
