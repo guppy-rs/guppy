@@ -124,9 +124,11 @@ fn features_only_summary_round_trip() {
 fn invalid_platform_names_build_platform() {
     let graph = JsonFixture::metadata_guppy_c9b4f76().graph();
 
-    // TODO-RAINCLAUDE: (value, expected index, expected count, position suffix) for bare and list forms.
+    // (value, expected index, expected count, position suffix)
     let forms = [
+        // Bare form.
         ("'x86_64-unknown-foo'", 0, 1, ""),
+        // List form.
         (
             "['x86_64-unknown-linux-gnu', 'x86_64-unknown-foo']",
             1,

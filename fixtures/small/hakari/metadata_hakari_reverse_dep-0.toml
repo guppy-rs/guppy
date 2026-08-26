@@ -1,0 +1,57 @@
+# This file is @generated. To regenerate, run:
+#    cargo run -p fixture-manager -- generate-hakari --fixture metadata_hakari_reverse_dep
+
+### BEGIN HAKARI SECTION
+# hakari-package = 'hrd-workspace-hack'
+# resolver = '1'
+# unify-target-host = 'replicate-target-on-host'
+# output-single-feature = false
+# dep-format-version = '4'
+# workspace-hack-line-style = 'full'
+# platforms = ['aarch64-uwp-windows-msvc', 'x86_64-apple-ios-macabi', 'i686-unknown-freebsd']
+# [[traversal-excludes.ids]]
+# name = 'hrd-build-dep'
+# version = '0.1.0'
+# path = '../build-dep'
+# [[final-excludes.ids]]
+# name = 'hrd-build-dep'
+# version = '0.1.0'
+# path = '../build-dep'
+#
+# [[final-excludes.ids]]
+# name = 'hrd-hack-dep'
+# version = '0.1.0'
+# path = '../hack-dep'
+#
+# [[final-excludes.ids]]
+# name = 'hrd-member-b'
+# version = '0.1.0'
+# workspace-path = 'member-b'
+#
+# [[final-excludes.ids]]
+# name = 'hrd-member-b-dep'
+# version = '0.1.0'
+# path = '../member-b-dep'
+#
+# [[final-excludes.ids]]
+# name = 'hrd-member-c'
+# version = '0.1.0'
+# workspace-path = 'member-c'
+
+[dependencies]
+hrd-cfg-dep = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../cfg-dep", default-features = false, features = ["f1"] }
+hrd-leaf = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../leaf", default-features = false, features = ["feat1", "feat2"] }
+hrd-member-c-dep = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../member-c-dep", default-features = false, features = ["extra"] }
+hrd-mid = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../mid", default-features = false, features = ["f1"] }
+hrd-via-member = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../via-member", default-features = false, features = ["f1"] }
+
+[build-dependencies]
+hrd-cfg-dep = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../cfg-dep", default-features = false, features = ["f1"] }
+hrd-leaf = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../leaf", default-features = false, features = ["feat1", "feat2"] }
+hrd-member-c-dep = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../member-c-dep", default-features = false, features = ["extra"] }
+hrd-mid = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../mid", default-features = false, features = ["f1"] }
+hrd-via-member = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../via-member", default-features = false, features = ["f1"] }
+
+### END HAKARI SECTION
+
+# This part of the file should be preserved at the end.

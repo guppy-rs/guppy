@@ -1,0 +1,58 @@
+# This file is @generated. To regenerate, run:
+#    cargo run -p fixture-manager -- generate-hakari --fixture metadata_hakari_reverse_dep
+
+### BEGIN HAKARI SECTION
+# hakari-package = 'hrd-workspace-hack'
+# resolver = '3'
+# unify-target-host = 'none'
+# output-single-feature = false
+# dep-format-version = '3'
+# workspace-hack-line-style = 'workspace-dotted'
+# platforms = []
+# [[traversal-excludes.ids]]
+# name = 'hrd-build-dep'
+# version = '0.1.0'
+# path = '../build-dep'
+#
+# [[traversal-excludes.ids]]
+# name = 'hrd-member-a'
+# version = '0.1.0'
+# workspace-path = 'member-a'
+#
+# [[traversal-excludes.ids]]
+# name = 'hrd-member-b'
+# version = '0.1.0'
+# workspace-path = 'member-b'
+#
+# [[traversal-excludes.ids]]
+# name = 'hrd-member-d'
+# version = '0.1.0'
+# workspace-path = 'member-d'
+#
+# [[traversal-excludes.ids]]
+# name = 'hrd-via-member'
+# version = '0.1.0'
+# path = '../via-member'
+# [[final-excludes.ids]]
+# name = 'hrd-cfg-dep'
+# version = '0.1.0'
+# path = '../cfg-dep'
+#
+# [[final-excludes.ids]]
+# name = 'hrd-member-b'
+# version = '0.1.0'
+# workspace-path = 'member-b'
+#
+# [[final-excludes.ids]]
+# name = 'hrd-member-e'
+# version = '0.1.0'
+# workspace-path = 'member-e'
+#
+# [[final-excludes.ids]]
+# name = 'hrd-via-member'
+# version = '0.1.0'
+# path = '../via-member'
+
+### END HAKARI SECTION
+
+# This part of the file should be preserved at the end.

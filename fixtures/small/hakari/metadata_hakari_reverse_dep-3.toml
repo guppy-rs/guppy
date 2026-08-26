@@ -1,0 +1,53 @@
+# This file is @generated. To regenerate, run:
+#    cargo run -p fixture-manager -- generate-hakari --fixture metadata_hakari_reverse_dep
+
+### BEGIN HAKARI SECTION
+# hakari-package = 'hrd-workspace-hack'
+# resolver = '1'
+# unify-target-host = 'replicate-target-on-host'
+# output-single-feature = false
+# dep-format-version = '4'
+# workspace-hack-line-style = 'version-only'
+# platforms = []
+# [[traversal-excludes.ids]]
+# name = 'hrd-hack-dep'
+# version = '0.1.0'
+# path = '../hack-dep'
+#
+# [[traversal-excludes.ids]]
+# name = 'hrd-member-b'
+# version = '0.1.0'
+# workspace-path = 'member-b'
+#
+# [[traversal-excludes.ids]]
+# name = 'hrd-member-c'
+# version = '0.1.0'
+# workspace-path = 'member-c'
+#
+# [[traversal-excludes.ids]]
+# name = 'hrd-member-d'
+# version = '0.1.0'
+# workspace-path = 'member-d'
+# [[final-excludes.ids]]
+# name = 'hrd-member-b-dep'
+# version = '0.1.0'
+# path = '../member-b-dep'
+#
+# [[final-excludes.ids]]
+# name = 'hrd-mid'
+# version = '0.1.0'
+# path = '../mid'
+#
+# [[final-excludes.ids]]
+# name = 'hrd-via-member'
+# version = '0.1.0'
+# path = '../via-member'
+#
+# [[final-excludes.ids]]
+# name = 'hrd-workspace-hack'
+# version = '0.1.0'
+# workspace-path = 'workspace-hack'
+
+### END HAKARI SECTION
+
+# This part of the file should be preserved at the end.
