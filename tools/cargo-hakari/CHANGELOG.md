@@ -18,7 +18,8 @@ All notable changes to this project will be documented in this file.
 - `cargo hakari manage-deps` now adds a normal `workspace-hack` dependency to
   workspace members whose existing dependency on it is dev-only or build-only.
   Previously such members were treated as already managed, even though their
-  normal builds weren't unified.
+  normal builds weren't unified. A `[dev-dependencies]` line is removed at the
+  same time, since it is redundant once the normal dependency exists.
 - `cargo hakari manage-deps` no longer adds an unconditional `workspace-hack`
   dependency to a crate whose only `[dependencies]` line for it is
   platform-specific or optional and has no version requirement. Previously,
