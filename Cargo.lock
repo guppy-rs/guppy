@@ -778,8 +778,10 @@ version = "4.6.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d012d2b9d65aca7f18f4d9878a045bc17899bba951561ba5ec3c2ba1eed9a061"
 dependencies = [
+ "anstyle",
  "heck",
  "proc-macro2",
+ "pulldown-cmark",
  "quote",
  "syn 3.0.4",
 ]
@@ -2692,9 +2694,11 @@ dependencies = [
  "anstyle",
  "bit-set",
  "bit-vec",
+ "bitflags 2.13.1",
  "camino",
  "clap",
  "clap_builder",
+ "clap_derive",
  "foldhash 0.2.0",
  "getrandom 0.3.4",
  "hashbrown 0.17.1",
@@ -2702,6 +2706,7 @@ dependencies = [
  "indexmap",
  "libc",
  "log",
+ "memchr",
  "miette",
  "num-traits",
  "once_cell",
@@ -4085,6 +4090,17 @@ dependencies = [
  "guppy-workspace-hack",
  "proptest",
  "twox-hash",
+]
+
+[[package]]
+name = "pulldown-cmark"
+version = "0.13.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e9f068eba8e7071c5f9511831b44f32c740d5adf574e990f946ddb53db2f314e"
+dependencies = [
+ "bitflags 2.13.1",
+ "memchr",
+ "unicase",
 ]
 
 [[package]]
