@@ -28,10 +28,15 @@ impl<'g> HakariBuilder<'g> {
 
         let (add_to, remove_from) =
             workspace_set.filter_partition(DependencyDirection::Reverse, |package| {
+                // manage-deps only rewrites manifests inside the workspace.
+                // Ignore anything else.
+                if !package.in_workspace() {
+                    return None;
+                }
                 let link_opt = package
                     .link_to(hakari_package.id())
                     .expect("valid package ID");
-                let should_be_included = !self.is_excluded(package.id()).expect("valid package ID");
+                let should_be_included = self.is_managed_member(&package);
                 match (link_opt, should_be_included) {
                     (None, true) => Some(true),
                     (Some(_), false) => Some(false),
@@ -170,5 +175,82 @@ fn needs_update_v2(
         }
     } else {
         false
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::cli_ops::WorkspaceOp;
+    use fixtures::{
+        json::{
+            JsonFixture, METADATA_HAKARI_REVERSE_DEP_HACK_DEP,
+            METADATA_HAKARI_REVERSE_DEP_MEMBER_B, METADATA_HAKARI_REVERSE_DEP_MEMBER_D,
+        },
+        package_id,
+    };
+    use std::collections::BTreeSet;
+
+    #[test]
+    fn manage_dep_ops_skips_non_workspace_packages() {
+        let fixture = JsonFixture::metadata_hakari_reverse_dep();
+        let graph = fixture.graph();
+        let hakari_id = fixture
+            .details()
+            .hakari_package()
+            .expect("hakari-reverse-dep fixture names a hakari package");
+        let mut builder =
+            HakariBuilder::new(graph, Some(hakari_id)).expect("hakari builder is created");
+        // V1 doesn't rewrite existing dependency lines, so set the format
+        // version to v4 to also exercise the "already depends on the hack, but
+        // needs an update" path.
+        builder.set_dep_format_version(DepFormatVersion::V4);
+
+        // * hrd-member-d is a workspace member without a dependency on the hakari package.
+        // * hrd-member-b is a workspace member that depends on the hakari package with `req = "*"`.
+        // * hrd-hack-dep is a non-workspace package that depends on the hakari package.
+        let member_d_id = package_id(METADATA_HAKARI_REVERSE_DEP_MEMBER_D);
+        let member_b_id = package_id(METADATA_HAKARI_REVERSE_DEP_MEMBER_B);
+        let hack_dep_id = package_id(METADATA_HAKARI_REVERSE_DEP_HACK_DEP);
+        let package_set = graph
+            .resolve_ids([&member_d_id, &member_b_id, &hack_dep_id])
+            .expect("all package IDs are known to the graph");
+
+        let ops = builder
+            .manage_dep_ops(&package_set)
+            .expect("hakari package was specified, so ops are returned");
+        let mut add_to = None;
+        for op in ops.ops() {
+            match op {
+                WorkspaceOp::AddDependency { add_to: set, .. } => {
+                    assert!(add_to.is_none(), "at most one add op is generated");
+                    add_to = Some(set);
+                }
+                WorkspaceOp::RemoveDependency { remove_from, .. } => {
+                    let remove_ids: Vec<_> = remove_from
+                        .package_ids(DependencyDirection::Forward)
+                        .collect();
+                    panic!(
+                        "hrd-hack-dep is outside the workspace and the other two \
+                         packages are managed members, so nothing in the set \
+                         should have the hack removed, but got a remove op for \
+                         {remove_ids:?}"
+                    );
+                }
+                WorkspaceOp::NewCrate { .. } => {
+                    panic!("manage-deps never creates crates");
+                }
+            }
+        }
+
+        let add_to = add_to.expect("an add op is generated");
+        let add_ids: BTreeSet<_> = add_to.package_ids(DependencyDirection::Forward).collect();
+        let expected_ids: BTreeSet<_> = [&member_d_id, &member_b_id].into_iter().collect();
+        assert_eq!(
+            add_ids, expected_ids,
+            "hrd-member-d has no dependency on the hack and hrd-member-b's \
+             `req = \"*\"` needs updating under dep format V4, so both are \
+             added to; hrd-hack-dep is outside the workspace, so it is ignored"
+        );
     }
 }

@@ -35,6 +35,11 @@ impl<'g, 'a> WorkspaceOps<'g, 'a> {
         }
     }
 
+    #[cfg(test)]
+    pub(crate) fn ops(&self) -> &[WorkspaceOp<'g, 'a>] {
+        &self.ops
+    }
+
     /// Returns a displayer for the workspace operations.
     #[inline]
     pub fn display<'ops>(&'ops self) -> WorkspaceOpsDisplay<'g, 'a, 'ops> {
