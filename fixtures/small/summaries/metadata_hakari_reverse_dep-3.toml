@@ -10,25 +10,25 @@ target-platform = []
 [metadata.host-platform]
 spec = 'any'
 [[metadata.omitted-packages.ids]]
-name = 'hrd-member-b-dep'
-version = '0.1.0'
-path = '../member-b-dep'
-
-[[metadata.omitted-packages.ids]]
-name = 'hrd-member-c-dep'
-version = '0.1.0'
-path = '../member-c-dep'
-
-[[metadata.features-only]]
 name = 'hrd-member-c'
 version = '0.1.0'
 workspace-path = 'member-c'
-features = []
+
+[[metadata.omitted-packages.ids]]
+name = 'hrd-member-d'
+version = '0.1.0'
+workspace-path = 'member-d'
 
 [[metadata.features-only]]
 name = 'hrd-member-d'
 version = '0.1.0'
 workspace-path = 'member-d'
+features = []
+
+[[metadata.features-only]]
+name = 'hrd-member-e'
+version = '0.1.0'
+workspace-path = 'member-e'
 features = []
 
 [[target-package]]

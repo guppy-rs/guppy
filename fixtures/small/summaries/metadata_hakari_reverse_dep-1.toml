@@ -12,14 +12,14 @@ triple = 'armv4t-none-eabi'
 target-features = 'all'
 flags = ['bar']
 [[metadata.omitted-packages.ids]]
-name = 'hrd-leaf'
+name = 'hrd-member-a'
 version = '0.1.0'
-path = '../leaf'
+workspace-path = 'member-a'
 
 [[metadata.omitted-packages.ids]]
-name = 'hrd-member-c'
+name = 'hrd-member-c-dep'
 version = '0.1.0'
-workspace-path = 'member-c'
+path = '../member-c-dep'
 
 [[metadata.features-only]]
 name = 'hrd-member-a'
@@ -48,9 +48,9 @@ status = 'initial'
 features = []
 
 [[target-package]]
-name = 'hrd-member-d'
+name = 'hrd-member-e'
 version = '0.1.0'
-workspace-path = 'member-d'
+workspace-path = 'member-e'
 status = 'initial'
 features = []
 
@@ -58,6 +58,13 @@ features = []
 name = 'hrd-member-b'
 version = '0.1.0'
 workspace-path = 'member-b'
+status = 'workspace'
+features = []
+
+[[target-package]]
+name = 'hrd-member-d'
+version = '0.1.0'
+workspace-path = 'member-d'
 status = 'workspace'
 features = []
 
@@ -90,18 +97,18 @@ status = 'direct'
 features = ['extra']
 
 [[target-package]]
+name = 'hrd-leaf'
+version = '0.1.0'
+path = '../leaf'
+status = 'direct'
+features = ['feat1', 'feat2']
+
+[[target-package]]
 name = 'hrd-member-b-dep'
 version = '0.1.0'
 path = '../member-b-dep'
 status = 'direct'
 features = ['f1']
-
-[[target-package]]
-name = 'hrd-member-c-dep'
-version = '0.1.0'
-path = '../member-c-dep'
-status = 'direct'
-features = ['extra']
 
 [[target-package]]
 name = 'hrd-mid'

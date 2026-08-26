@@ -15,19 +15,24 @@
 # path = '../build-dep'
 #
 # [[traversal-excludes.ids]]
-# name = 'hrd-member-a'
-# version = '0.1.0'
-# workspace-path = 'member-a'
-#
-# [[traversal-excludes.ids]]
 # name = 'hrd-member-b'
 # version = '0.1.0'
 # workspace-path = 'member-b'
 #
 # [[traversal-excludes.ids]]
-# name = 'hrd-member-d'
+# name = 'hrd-member-b-dep'
 # version = '0.1.0'
-# workspace-path = 'member-d'
+# path = '../member-b-dep'
+#
+# [[traversal-excludes.ids]]
+# name = 'hrd-member-e'
+# version = '0.1.0'
+# workspace-path = 'member-e'
+#
+# [[traversal-excludes.ids]]
+# name = 'hrd-member-f'
+# version = '0.1.0'
+# workspace-path = 'member-f'
 #
 # [[traversal-excludes.ids]]
 # name = 'hrd-via-member'
@@ -39,14 +44,14 @@
 # path = '../cfg-dep'
 #
 # [[final-excludes.ids]]
-# name = 'hrd-member-b'
+# name = 'hrd-member-b-dep'
 # version = '0.1.0'
-# workspace-path = 'member-b'
+# path = '../member-b-dep'
 #
 # [[final-excludes.ids]]
-# name = 'hrd-member-e'
+# name = 'hrd-member-f'
 # version = '0.1.0'
-# workspace-path = 'member-e'
+# workspace-path = 'member-f'
 #
 # [[final-excludes.ids]]
 # name = 'hrd-via-member'

@@ -91,6 +91,8 @@ pub static METADATA_HAKARI_REVERSE_DEP_MEMBER_B_DEP: &str = "path+file:///Users/
 pub static METADATA_HAKARI_REVERSE_DEP_MEMBER_C: &str = "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/member-c#hrd-member-c@0.1.0";
 pub static METADATA_HAKARI_REVERSE_DEP_MEMBER_D: &str = "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/member-d#hrd-member-d@0.1.0";
 pub static METADATA_HAKARI_REVERSE_DEP_MEMBER_E: &str = "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/member-e#hrd-member-e@0.1.0";
+pub static METADATA_HAKARI_REVERSE_DEP_MEMBER_F: &str = "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/member-f#hrd-member-f@0.1.0";
+pub static METADATA_HAKARI_REVERSE_DEP_MEMBER_G: &str = "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/member-g#hrd-member-g@0.1.0";
 pub static METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK: &str = "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/workspace-hack#hrd-workspace-hack@0.1.0";
 pub static METADATA_HAKARI_REVERSE_DEP_HACK_DEP: &str =
     "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/hack-dep#hrd-hack-dep@0.1.0";
@@ -1070,6 +1072,8 @@ impl FixtureDetails {
         //   [member-a], [member-b] --> every (x) below, and [workspace-hack]
         //   [member-e] --> (member-b-dep), [workspace-hack]
         //   [member-d] --> nothing at all
+        //   [member-f] --- build ---------> [workspace-hack]
+        //   [member-g] --- cfg(windows) --> [workspace-hack]
         //
         //   (mid) --> (hack-dep) --> (leaf)
         //                 |
@@ -1101,6 +1105,11 @@ impl FixtureDetails {
         //   redirected back into the workspace), reaching the hack through
         //   member-b rather than directly.
         //
+        // member-c, member-f and member-g are workspace members whose only link
+        // to the hack isn't an unconditional normal dependency (dev-only,
+        // build-only and cfg(windows)-only respectively). They exercise how
+        // manage-deps treats members that already have some link to the hack.
+        //
         // member-a enables extra on hrd-hack-dep and hrd-member-c-dep, feat1 on
         // hrd-leaf, and f1 on hrd-build-dep, hrd-cfg-dep, hrd-member-b-dep,
         // hrd-mid and hrd-via-member, while member-b and member-e enable none
@@ -1129,6 +1138,8 @@ impl FixtureDetails {
             ("hrd-workspace-hack", METADATA_HAKARI_REVERSE_DEP_MEMBER_B),
             ("hrd-workspace-hack", METADATA_HAKARI_REVERSE_DEP_MEMBER_C),
             ("hrd-workspace-hack", METADATA_HAKARI_REVERSE_DEP_MEMBER_E),
+            ("hrd-workspace-hack", METADATA_HAKARI_REVERSE_DEP_MEMBER_F),
+            ("hrd-workspace-hack", METADATA_HAKARI_REVERSE_DEP_MEMBER_G),
         ])
         .with_named_features(vec![])
         .insert_into(&mut details);
@@ -1383,6 +1394,40 @@ impl FixtureDetails {
         .insert_into(&mut details);
 
         PackageDetails::new(
+            METADATA_HAKARI_REVERSE_DEP_MEMBER_F,
+            "hrd-member-f",
+            "0.1.0",
+            vec![FAKE_AUTHOR],
+            None,
+            None,
+        )
+        .with_workspace_path("member-f")
+        .with_deps(vec![(
+            "hrd-workspace-hack",
+            METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK,
+        )])
+        .with_reverse_deps(vec![])
+        .with_named_features(vec![])
+        .insert_into(&mut details);
+
+        PackageDetails::new(
+            METADATA_HAKARI_REVERSE_DEP_MEMBER_G,
+            "hrd-member-g",
+            "0.1.0",
+            vec![FAKE_AUTHOR],
+            None,
+            None,
+        )
+        .with_workspace_path("member-g")
+        .with_deps(vec![(
+            "hrd-workspace-hack",
+            METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK,
+        )])
+        .with_reverse_deps(vec![])
+        .with_named_features(vec![])
+        .insert_into(&mut details);
+
+        PackageDetails::new(
             METADATA_HAKARI_REVERSE_DEP_LEAF,
             "hrd-leaf",
             "0.1.0",
@@ -1522,6 +1567,61 @@ impl FixtureDetails {
             PlatformResults::new((Disabled, Disabled), (Disabled, Disabled)),
         )
         .insert_into(&mut link_details);
+        // hrd-member-f -> hrd-workspace-hack.
+        // A build-only dependency from a workspace member.
+        LinkDetails::new(
+            package_id(METADATA_HAKARI_REVERSE_DEP_MEMBER_F),
+            package_id(METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK),
+        )
+        .with_platform_status(
+            DependencyKind::Build,
+            x86_64_linux.clone(),
+            PlatformResults::new((Enabled, Enabled), (Enabled, Enabled)),
+        )
+        .with_platform_status(
+            DependencyKind::Build,
+            x86_64_windows.clone(),
+            PlatformResults::new((Enabled, Enabled), (Enabled, Enabled)),
+        )
+        .with_platform_status(
+            DependencyKind::Normal,
+            x86_64_linux.clone(),
+            PlatformResults::new((Disabled, Disabled), (Disabled, Disabled)),
+        )
+        .with_platform_status(
+            DependencyKind::Development,
+            x86_64_linux.clone(),
+            PlatformResults::new((Disabled, Disabled), (Disabled, Disabled)),
+        )
+        .insert_into(&mut link_details);
+        // hrd-member-g -> hrd-workspace-hack.
+        // A normal dependency from a workspace member, but only on
+        // cfg(windows).
+        LinkDetails::new(
+            package_id(METADATA_HAKARI_REVERSE_DEP_MEMBER_G),
+            package_id(METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK),
+        )
+        .with_platform_status(
+            DependencyKind::Normal,
+            x86_64_linux.clone(),
+            PlatformResults::new((Disabled, Disabled), (Disabled, Disabled)),
+        )
+        .with_platform_status(
+            DependencyKind::Normal,
+            x86_64_windows.clone(),
+            PlatformResults::new((Enabled, Enabled), (Enabled, Enabled)),
+        )
+        .with_platform_status(
+            DependencyKind::Build,
+            x86_64_windows.clone(),
+            PlatformResults::new((Disabled, Disabled), (Disabled, Disabled)),
+        )
+        .with_platform_status(
+            DependencyKind::Development,
+            x86_64_windows.clone(),
+            PlatformResults::new((Disabled, Disabled), (Disabled, Disabled)),
+        )
+        .insert_into(&mut link_details);
 
         Self::new(details)
             .with_workspace_members(vec![
@@ -1530,6 +1630,8 @@ impl FixtureDetails {
                 ("member-c", METADATA_HAKARI_REVERSE_DEP_MEMBER_C),
                 ("member-d", METADATA_HAKARI_REVERSE_DEP_MEMBER_D),
                 ("member-e", METADATA_HAKARI_REVERSE_DEP_MEMBER_E),
+                ("member-f", METADATA_HAKARI_REVERSE_DEP_MEMBER_F),
+                ("member-g", METADATA_HAKARI_REVERSE_DEP_MEMBER_G),
                 ("workspace-hack", METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK),
             ])
             .with_hakari_package(METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK)
