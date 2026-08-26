@@ -297,7 +297,6 @@ impl<'g> WorkspaceOp<'g, '_> {
     ) -> Result<(), ApplyError> {
         let manifest_path = package.manifest_path();
         let mut doc = read_toml(manifest_path)?;
-        let dep_table = Self::get_or_insert_dependencies_table(manifest_path, &mut doc)?;
 
         let package_path = package
             .source()
@@ -309,7 +308,8 @@ impl<'g> WorkspaceOp<'g, '_> {
 
         let path_table = Self::inline_table_for_add(version, dep_format, line_style, &path);
 
-        dep_table.insert(name, Item::Value(Value::InlineTable(path_table)));
+        add_dependency_to_document(&mut doc, name, path_table)
+            .map_err(|error| ApplyError::misc(error.message(), manifest_path))?;
 
         write_document(&doc, manifest_path)
     }
@@ -368,44 +368,99 @@ impl<'g> WorkspaceOp<'g, '_> {
     fn remove_from_cargo_toml(name: &str, package: PackageMetadata<'g>) -> Result<(), ApplyError> {
         let manifest_path = package.manifest_path();
         let mut doc = read_toml(manifest_path)?;
-        let dep_table = Self::get_or_insert_dependencies_table(manifest_path, &mut doc)?;
-        // TODO: someone might have added the workspace-hack package under a different name.
-        // Handle that if someone complains.
-        dep_table.remove(name);
+        remove_dependency_from_document(&mut doc, name)
+            .map_err(|error| ApplyError::misc(error.message(), manifest_path))?;
 
         write_document(&doc, manifest_path)
     }
+}
 
-    fn get_or_insert_dependencies_table<'doc>(
-        manifest_path: &Utf8Path,
-        doc: &'doc mut DocumentMut,
-    ) -> Result<&'doc mut dyn TableLike, ApplyError> {
-        let doc_table = doc.as_table_mut();
+// ---
+// Manifest edits
+// ---
 
-        if doc_table.contains_key("dependencies") {
-            match doc_table
-                .get_mut("dependencies")
-                .expect("just checked for presence of dependencies")
-                .as_table_like_mut()
-            {
-                Some(table) => Ok(table),
-                None => Err(ApplyError::misc(
-                    "[dependencies] is not a table",
-                    manifest_path,
-                )),
-            }
-        } else {
-            // Add the dependencies table.
-            let mut new_table = Table::new();
-            new_table.set_implicit(true);
-            doc_table.insert("dependencies", Item::Table(new_table));
-            let table = doc_table
-                .get_mut("dependencies")
-                .expect("was just inserted")
-                .as_table_like_mut()
-                .expect("was just inserted");
-            Ok(table)
+/// The name of a `Cargo.toml` dependency section.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum DependencySection {
+    Normal,
+}
+
+impl DependencySection {
+    fn key(self) -> &'static str {
+        match self {
+            DependencySection::Normal => "dependencies",
         }
+    }
+}
+
+/// An error while editing a manifest document.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum ManifestEditError {
+    /// A dependency section exists but is not a table.
+    NotATable { section: DependencySection },
+}
+
+impl ManifestEditError {
+    fn message(self) -> String {
+        match self {
+            ManifestEditError::NotATable { section } => {
+                format!("[{}] is not a table", section.key())
+            }
+        }
+    }
+}
+
+/// Adds or replaces the entry for `name` in `[dependencies]`, creating the
+/// section if needed.
+fn add_dependency_to_document(
+    doc: &mut DocumentMut,
+    name: &str,
+    dep: InlineTable,
+) -> Result<(), ManifestEditError> {
+    let dep_table = get_or_insert_dependency_section(doc, DependencySection::Normal)?;
+    dep_table.insert(name, Item::Value(Value::InlineTable(dep)));
+    Ok(())
+}
+
+/// Removes the entry for `name` from `[dependencies]`, if present.
+fn remove_dependency_from_document(
+    doc: &mut DocumentMut,
+    name: &str,
+) -> Result<(), ManifestEditError> {
+    // TODO: someone might have added the workspace-hack package under a different name.
+    // Handle that if someone complains.
+    let dep_table = get_or_insert_dependency_section(doc, DependencySection::Normal)?;
+    dep_table.remove(name);
+    Ok(())
+}
+
+fn get_or_insert_dependency_section(
+    doc: &mut DocumentMut,
+    section: DependencySection,
+) -> Result<&mut dyn TableLike, ManifestEditError> {
+    let key = section.key();
+    let doc_table = doc.as_table_mut();
+
+    if doc_table.contains_key(key) {
+        match doc_table
+            .get_mut(key)
+            .expect("just checked for presence of section")
+            .as_table_like_mut()
+        {
+            Some(table) => Ok(table),
+            None => Err(ManifestEditError::NotATable { section }),
+        }
+    } else {
+        // Add the table.
+        let mut new_table = Table::new();
+        new_table.set_implicit(true);
+        doc_table.insert(key, Item::Table(new_table));
+        let table = doc_table
+            .get_mut(key)
+            .expect("was just inserted")
+            .as_table_like_mut()
+            .expect("was just inserted");
+        Ok(table)
     }
 }
 
@@ -717,6 +772,106 @@ fn package_names_paths<'g>(package_set: &PackageSet<'g>) -> Vec<(&'g str, &'g Ut
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn hack_dep() -> InlineTable {
+        WorkspaceOp::inline_table_for_add(
+            &"0.1.0".parse().expect("valid version"),
+            DepFormatVersion::V4,
+            WorkspaceHackLineStyle::Full,
+            "../workspace-hack".into(),
+        )
+    }
+
+    fn parse(toml: &str) -> DocumentMut {
+        toml.parse().expect("test manifest is valid TOML")
+    }
+
+    #[test]
+    fn add_dependency_creates_section() {
+        let mut doc = parse(
+            r#"[package]
+name = "foo"
+"#,
+        );
+        add_dependency_to_document(&mut doc, "workspace-hack", hack_dep())
+            .expect("[dependencies] is created");
+        assert_eq!(
+            doc.to_string(),
+            r#"[package]
+name = "foo"
+
+[dependencies]
+workspace-hack = { version = "0.1", path = "../workspace-hack" }
+"#,
+        );
+    }
+
+    #[test]
+    fn add_dependency_replaces_existing_line() {
+        let mut doc = parse(
+            r#"[dependencies]
+workspace-hack = { path = "../old" }
+other = "1"
+"#,
+        );
+        add_dependency_to_document(&mut doc, "workspace-hack", hack_dep())
+            .expect("[dependencies] is a table");
+        assert_eq!(
+            doc.to_string(),
+            r#"[dependencies]
+workspace-hack = { version = "0.1", path = "../workspace-hack" }
+other = "1"
+"#,
+            "the existing line is replaced in place"
+        );
+    }
+
+    #[test]
+    fn add_dependency_rejects_non_table_section() {
+        let mut doc = parse(
+            "dependencies = 1
+",
+        );
+        assert_eq!(
+            add_dependency_to_document(&mut doc, "workspace-hack", hack_dep()),
+            Err(ManifestEditError::NotATable {
+                section: DependencySection::Normal
+            }),
+        );
+    }
+
+    #[test]
+    fn remove_dependency_removes_line() {
+        let mut doc = parse(
+            r#"[dependencies]
+workspace-hack = { path = "../workspace-hack" }
+other = "1"
+"#,
+        );
+        remove_dependency_from_document(&mut doc, "workspace-hack")
+            .expect("[dependencies] is a table");
+        assert_eq!(
+            doc.to_string(),
+            r#"[dependencies]
+other = "1"
+"#,
+        );
+    }
+
+    #[test]
+    fn remove_dependency_without_section_is_noop() {
+        let toml = r#"[package]
+name = "foo"
+"#;
+        let mut doc = parse(toml);
+        remove_dependency_from_document(&mut doc, "workspace-hack")
+            .expect("a missing section is fine");
+        assert_eq!(
+            doc.to_string(),
+            toml,
+            "an implicit empty [dependencies] table isn't written out"
+        );
+    }
 
     #[test]
     fn test_inline_table_for_add() {
