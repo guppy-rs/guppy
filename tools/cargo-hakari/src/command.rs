@@ -93,7 +93,7 @@ enum Command {
         dry_run: bool,
 
         /// Proceed with the operation without prompting for confirmation.
-        #[clap(long, short, conflicts_with = "dry-run")]
+        #[clap(long, short, conflicts_with = "dry_run")]
         yes: bool,
     },
 
