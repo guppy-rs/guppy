@@ -22,20 +22,20 @@ target-features = 'all'
 [metadata.target-platform]
 spec = 'always'
 [[metadata.omitted-packages.ids]]
-name = 'hrd-member-b'
+name = 'hrd-member-published'
 version = '0.1.0'
-workspace-path = 'member-b'
+workspace-path = 'member-published'
 
 [[metadata.features-only]]
-name = 'hrd-member-a'
+name = 'hrd-member-build'
 version = '0.1.0'
-workspace-path = 'member-a'
+workspace-path = 'member-build'
 features = []
 
 [[metadata.features-only]]
-name = 'hrd-member-g'
+name = 'hrd-member-unlinked'
 version = '0.1.0'
-workspace-path = 'member-g'
+workspace-path = 'member-unlinked'
 features = []
 
 [[metadata.features-only]]
@@ -45,17 +45,24 @@ workspace-path = 'workspace-hack'
 features = []
 
 [[target-package]]
-name = 'hrd-member-c'
+name = 'hrd-member-dev'
 version = '0.1.0'
-workspace-path = 'member-c'
+workspace-path = 'member-dev'
 status = 'initial'
 features = []
 
 [[target-package]]
-name = 'hrd-member-f'
+name = 'hrd-member-published'
 version = '0.1.0'
-workspace-path = 'member-f'
+workspace-path = 'member-published'
 status = 'initial'
+features = []
+
+[[target-package]]
+name = 'hrd-member-unlinked'
+version = '0.1.0'
+workspace-path = 'member-unlinked'
+status = 'workspace'
 features = []
 
 [[target-package]]
@@ -66,6 +73,20 @@ status = 'workspace'
 features = []
 
 [[target-package]]
+name = 'hrd-build-on-hack'
+version = '0.1.0'
+path = '../build-on-hack'
+status = 'direct'
+features = []
+
+[[target-package]]
+name = 'hrd-cfg-on-hack'
+version = '0.1.0'
+path = '../cfg-on-hack'
+status = 'direct'
+features = []
+
+[[target-package]]
 name = 'hrd-leaf'
 version = '0.1.0'
 path = '../leaf'
@@ -73,8 +94,29 @@ status = 'direct'
 features = ['feat1', 'feat2']
 
 [[target-package]]
-name = 'hrd-member-c-dep'
+name = 'hrd-normal-on-hack'
 version = '0.1.0'
-path = '../member-c-dep'
+path = '../normal-on-hack'
+status = 'direct'
+features = []
+
+[[target-package]]
+name = 'hrd-via-member-dev'
+version = '0.1.0'
+path = '../via-member-dev'
 status = 'direct'
 features = ['extra']
+
+[[target-package]]
+name = 'hrd-via-member-unlinked'
+version = '0.1.0'
+path = '../via-member-unlinked'
+status = 'direct'
+features = []
+
+[[target-package]]
+name = 'hrd-via-normal-on-hack'
+version = '0.1.0'
+path = '../via-normal-on-hack'
+status = 'direct'
+features = []

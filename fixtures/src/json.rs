@@ -85,27 +85,23 @@ pub static METADATA_SELF_DEV_CYCLE_CYCLE_A: &str = "self-dev-cycle-cycle-a 0.1.0
 pub static METADATA_SELF_DEV_CYCLE_CYCLE_B: &str = "self-dev-cycle-cycle-b 0.1.0 (path+file:///Users/fakeuser/local/testcrates/self-dev-cycle/cycle-b)";
 
 pub static METADATA_HAKARI_REVERSE_DEP_PATH: &str = "../small/metadata_hakari_reverse_dep.json";
-pub static METADATA_HAKARI_REVERSE_DEP_MEMBER_A: &str = "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/member-a#hrd-member-a@0.1.0";
-pub static METADATA_HAKARI_REVERSE_DEP_MEMBER_B: &str = "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/member-b#hrd-member-b@0.1.0";
-pub static METADATA_HAKARI_REVERSE_DEP_MEMBER_B_DEP: &str = "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/member-b-dep#hrd-member-b-dep@0.1.0";
-pub static METADATA_HAKARI_REVERSE_DEP_MEMBER_C: &str = "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/member-c#hrd-member-c@0.1.0";
-pub static METADATA_HAKARI_REVERSE_DEP_MEMBER_D: &str = "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/member-d#hrd-member-d@0.1.0";
-pub static METADATA_HAKARI_REVERSE_DEP_MEMBER_E: &str = "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/member-e#hrd-member-e@0.1.0";
-pub static METADATA_HAKARI_REVERSE_DEP_MEMBER_F: &str = "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/member-f#hrd-member-f@0.1.0";
-pub static METADATA_HAKARI_REVERSE_DEP_MEMBER_G: &str = "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/member-g#hrd-member-g@0.1.0";
+pub static METADATA_HAKARI_REVERSE_DEP_MEMBER_FEATURES: &str = "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/member-features#hrd-member-features@0.1.0";
+pub static METADATA_HAKARI_REVERSE_DEP_MEMBER_PUBLISHED: &str = "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/member-published#hrd-member-published@0.1.0";
+pub static METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_PUBLISHED: &str = "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/via-member-published#hrd-via-member-published@0.1.0";
+pub static METADATA_HAKARI_REVERSE_DEP_MEMBER_DEV: &str = "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/member-dev#hrd-member-dev@0.1.0";
+pub static METADATA_HAKARI_REVERSE_DEP_MEMBER_UNLINKED: &str = "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/member-unlinked#hrd-member-unlinked@0.1.0";
+pub static METADATA_HAKARI_REVERSE_DEP_MEMBER_NORMAL: &str = "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/member-normal#hrd-member-normal@0.1.0";
+pub static METADATA_HAKARI_REVERSE_DEP_MEMBER_BUILD: &str = "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/member-build#hrd-member-build@0.1.0";
+pub static METADATA_HAKARI_REVERSE_DEP_MEMBER_CFG: &str = "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/member-cfg#hrd-member-cfg@0.1.0";
 pub static METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK: &str = "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/workspace-hack#hrd-workspace-hack@0.1.0";
-pub static METADATA_HAKARI_REVERSE_DEP_HACK_DEP: &str =
-    "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/hack-dep#hrd-hack-dep@0.1.0";
-pub static METADATA_HAKARI_REVERSE_DEP_MEMBER_C_DEP: &str = "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/member-c-dep#hrd-member-c-dep@0.1.0";
+pub static METADATA_HAKARI_REVERSE_DEP_NORMAL_ON_HACK: &str = "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/normal-on-hack#hrd-normal-on-hack@0.1.0";
+pub static METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_DEV: &str = "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/via-member-dev#hrd-via-member-dev@0.1.0";
 pub static METADATA_HAKARI_REVERSE_DEP_LEAF: &str =
     "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/leaf#hrd-leaf@0.1.0";
-pub static METADATA_HAKARI_REVERSE_DEP_MID: &str =
-    "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/mid#hrd-mid@0.1.0";
-pub static METADATA_HAKARI_REVERSE_DEP_BUILD_DEP: &str =
-    "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/build-dep#hrd-build-dep@0.1.0";
-pub static METADATA_HAKARI_REVERSE_DEP_CFG_DEP: &str =
-    "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/cfg-dep#hrd-cfg-dep@0.1.0";
-pub static METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER: &str = "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/via-member#hrd-via-member@0.1.0";
+pub static METADATA_HAKARI_REVERSE_DEP_VIA_NORMAL_ON_HACK: &str = "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/via-normal-on-hack#hrd-via-normal-on-hack@0.1.0";
+pub static METADATA_HAKARI_REVERSE_DEP_BUILD_ON_HACK: &str = "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/build-on-hack#hrd-build-on-hack@0.1.0";
+pub static METADATA_HAKARI_REVERSE_DEP_CFG_ON_HACK: &str = "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/cfg-on-hack#hrd-cfg-on-hack@0.1.0";
+pub static METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_UNLINKED: &str = "path+file:///Users/fakeuser/local/testcrates/hakari-reverse-dep/via-member-unlinked#hrd-via-member-unlinked@0.1.0";
 
 pub static METADATA_TARGETS1_PATH: &str = "../small/metadata_targets1.json";
 pub static METADATA_TARGETS1_TESTCRATE: &str =
@@ -1069,50 +1065,56 @@ impl FixtureDetails {
         // normal dependencies. All crates have an "hrd-" prefix that isn't
         // shown here.
         //
-        //   [member-a], [member-b] --> every (x) below, and [workspace-hack]
-        //   [member-e] --> (member-b-dep), [workspace-hack]
-        //   [member-d] --> nothing at all
-        //   [member-f] --- build ---------> [workspace-hack]
-        //   [member-g] --- cfg(windows) --> [workspace-hack]
+        //   [member-features], [member-published] --> every (x) below, and
+        //                                             [workspace-hack]
+        //   [member-normal] --> (via-member-published), [workspace-hack]
+        //   [member-unlinked] --> nothing at all
+        //   [member-build] --- build ---------> [workspace-hack]
+        //   [member-cfg] --- cfg(windows) --> [workspace-hack]
         //
-        //   (mid) --> (hack-dep) --> (leaf)
-        //                 |
-        //                 +-----------------------------------------+
+        //   (via-normal-on-hack) --> (normal-on-hack) --> (leaf)
+        //                                    |
+        //                                    +----------------------+
         //                                                           |
-        //   (build-dep) ----- build ----------------------------+   |
+        //   (build-on-hack) ----- build ------------------------+   |
         //                                                       |   |
-        //   (cfg-dep) ------- cfg(windows) -----------------+   |   |
+        //   (cfg-on-hack) ------- cfg(windows) -------------+   |   |
         //                                                   |   |   |
-        //   (member-c-dep) --> [member-c] ------ dev ---+   |   |   |
+        //   (via-member-dev) --> [member-dev] -- dev ---+   |   |   |
         //          ^                                    |   |   |   |
         //          |                                    v   v   v   v
         //          |                                  [workspace-hack]
         //          |                                    |           |
         //          +------------------------------------+           v
-        //                                                        (leaf)
+        //                                                         (leaf)
         //
-        //   (member-b-dep) --> [member-b] --> [workspace-hack] (+ every (x))
+        //   (via-member-published) --> [member-published] --> [workspace-hack]
+        //                                                      (+ every (x))
         //
-        //   (via-member) --> [member-d]
+        //   (via-member-unlinked) --> [member-unlinked]
         //
         // Unifying any (x) that reaches [workspace-hack] through non-dev edges
         // would complete a cycle:
         //
-        // * hack-dep: direct reverse dep. mid: same, but two hops away.
-        // * build-dep / cfg-dep: build-only and cfg(windows)-only edges
+        // * normal-on-hack: direct reverse dep. via-normal-on-hack: same, but
+        //   two hops away.
+        // * build-on-hack / cfg-on-hack: build-only and cfg(windows)-only edges
         //   still count.
-        // * member-b-dep: the canonical [patch] shape (published member
+        // * via-member-published: the canonical [patch] shape (published member
         //   redirected back into the workspace), reaching the hack through
-        //   member-b rather than directly.
+        //   member-published rather than directly.
         //
-        // member-c, member-f and member-g are workspace members whose only link
-        // to the hack isn't an unconditional normal dependency (dev-only,
-        // build-only and cfg(windows)-only respectively). They exercise how
-        // manage-deps treats members that already have some link to the hack.
+        // member-dev, member-build and member-cfg are workspace members whose
+        // only link to the hack isn't an unconditional normal dependency
+        // (dev-only, build-only and cfg(windows)-only respectively). They
+        // exercise how manage-deps treats members that already have some link
+        // to the hack.
         //
-        // member-a enables extra on hrd-hack-dep and hrd-member-c-dep, feat1 on
-        // hrd-leaf, and f1 on hrd-build-dep, hrd-cfg-dep, hrd-member-b-dep,
-        // hrd-mid and hrd-via-member, while member-b and member-e enable none
+        // member-features enables extra on hrd-normal-on-hack and
+        // hrd-via-member-dev, feat1 on hrd-leaf, and f1 on hrd-build-on-hack,
+        // hrd-cfg-on-hack, hrd-via-member-published, hrd-via-normal-on-hack
+        // and hrd-via-member-unlinked, while member-published and
+        // member-normal enable none
         // of them. Each of these packages would be unified if it weren't
         // excluded.
         let mut details = AHashMap::new();
@@ -1128,31 +1130,55 @@ impl FixtureDetails {
         .with_workspace_path("workspace-hack")
         .with_deps(vec![
             ("hrd-leaf", METADATA_HAKARI_REVERSE_DEP_LEAF),
-            ("hrd-member-c-dep", METADATA_HAKARI_REVERSE_DEP_MEMBER_C_DEP),
+            (
+                "hrd-via-member-dev",
+                METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_DEV,
+            ),
         ])
         .with_reverse_deps(vec![
-            ("hrd-workspace-hack", METADATA_HAKARI_REVERSE_DEP_BUILD_DEP),
-            ("hrd-workspace-hack", METADATA_HAKARI_REVERSE_DEP_CFG_DEP),
-            ("hrd-workspace-hack", METADATA_HAKARI_REVERSE_DEP_HACK_DEP),
-            ("hrd-workspace-hack", METADATA_HAKARI_REVERSE_DEP_MEMBER_A),
-            ("hrd-workspace-hack", METADATA_HAKARI_REVERSE_DEP_MEMBER_B),
-            ("hrd-workspace-hack", METADATA_HAKARI_REVERSE_DEP_MEMBER_C),
-            ("hrd-workspace-hack", METADATA_HAKARI_REVERSE_DEP_MEMBER_E),
-            ("hrd-workspace-hack", METADATA_HAKARI_REVERSE_DEP_MEMBER_F),
-            ("hrd-workspace-hack", METADATA_HAKARI_REVERSE_DEP_MEMBER_G),
+            (
+                "hrd-workspace-hack",
+                METADATA_HAKARI_REVERSE_DEP_BUILD_ON_HACK,
+            ),
+            (
+                "hrd-workspace-hack",
+                METADATA_HAKARI_REVERSE_DEP_CFG_ON_HACK,
+            ),
+            (
+                "hrd-workspace-hack",
+                METADATA_HAKARI_REVERSE_DEP_NORMAL_ON_HACK,
+            ),
+            (
+                "hrd-workspace-hack",
+                METADATA_HAKARI_REVERSE_DEP_MEMBER_FEATURES,
+            ),
+            (
+                "hrd-workspace-hack",
+                METADATA_HAKARI_REVERSE_DEP_MEMBER_PUBLISHED,
+            ),
+            ("hrd-workspace-hack", METADATA_HAKARI_REVERSE_DEP_MEMBER_DEV),
+            (
+                "hrd-workspace-hack",
+                METADATA_HAKARI_REVERSE_DEP_MEMBER_NORMAL,
+            ),
+            (
+                "hrd-workspace-hack",
+                METADATA_HAKARI_REVERSE_DEP_MEMBER_BUILD,
+            ),
+            ("hrd-workspace-hack", METADATA_HAKARI_REVERSE_DEP_MEMBER_CFG),
         ])
         .with_named_features(vec![])
         .insert_into(&mut details);
 
         PackageDetails::new(
-            METADATA_HAKARI_REVERSE_DEP_HACK_DEP,
-            "hrd-hack-dep",
+            METADATA_HAKARI_REVERSE_DEP_NORMAL_ON_HACK,
+            "hrd-normal-on-hack",
             "0.1.0",
             vec![FAKE_AUTHOR],
             None,
             None,
         )
-        .with_local_path("../hack-dep")
+        .with_local_path("../normal-on-hack")
         .with_deps(vec![
             ("hrd-leaf", METADATA_HAKARI_REVERSE_DEP_LEAF),
             (
@@ -1161,85 +1187,124 @@ impl FixtureDetails {
             ),
         ])
         .with_reverse_deps(vec![
-            ("hrd-hack-dep", METADATA_HAKARI_REVERSE_DEP_MEMBER_A),
-            ("hrd-hack-dep", METADATA_HAKARI_REVERSE_DEP_MEMBER_B),
-            ("hrd-hack-dep", METADATA_HAKARI_REVERSE_DEP_MID),
+            (
+                "hrd-normal-on-hack",
+                METADATA_HAKARI_REVERSE_DEP_MEMBER_FEATURES,
+            ),
+            (
+                "hrd-normal-on-hack",
+                METADATA_HAKARI_REVERSE_DEP_MEMBER_PUBLISHED,
+            ),
+            (
+                "hrd-normal-on-hack",
+                METADATA_HAKARI_REVERSE_DEP_VIA_NORMAL_ON_HACK,
+            ),
         ])
         .with_named_features(vec!["extra"])
         .insert_into(&mut details);
 
         PackageDetails::new(
-            METADATA_HAKARI_REVERSE_DEP_MID,
-            "hrd-mid",
+            METADATA_HAKARI_REVERSE_DEP_VIA_NORMAL_ON_HACK,
+            "hrd-via-normal-on-hack",
             "0.1.0",
             vec![FAKE_AUTHOR],
             None,
             None,
         )
-        .with_local_path("../mid")
-        .with_deps(vec![("hrd-hack-dep", METADATA_HAKARI_REVERSE_DEP_HACK_DEP)])
-        .with_reverse_deps(vec![
-            ("hrd-mid", METADATA_HAKARI_REVERSE_DEP_MEMBER_A),
-            ("hrd-mid", METADATA_HAKARI_REVERSE_DEP_MEMBER_B),
-        ])
-        .with_named_features(vec!["f1"])
-        .insert_into(&mut details);
-
-        PackageDetails::new(
-            METADATA_HAKARI_REVERSE_DEP_BUILD_DEP,
-            "hrd-build-dep",
-            "0.1.0",
-            vec![FAKE_AUTHOR],
-            None,
-            None,
-        )
-        .with_local_path("../build-dep")
+        .with_local_path("../via-normal-on-hack")
         .with_deps(vec![(
-            "hrd-workspace-hack",
-            METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK,
+            "hrd-normal-on-hack",
+            METADATA_HAKARI_REVERSE_DEP_NORMAL_ON_HACK,
         )])
         .with_reverse_deps(vec![
-            ("hrd-build-dep", METADATA_HAKARI_REVERSE_DEP_MEMBER_A),
-            ("hrd-build-dep", METADATA_HAKARI_REVERSE_DEP_MEMBER_B),
-        ])
-        .with_named_features(vec!["f1"])
-        .insert_into(&mut details);
-
-        PackageDetails::new(
-            METADATA_HAKARI_REVERSE_DEP_CFG_DEP,
-            "hrd-cfg-dep",
-            "0.1.0",
-            vec![FAKE_AUTHOR],
-            None,
-            None,
-        )
-        .with_local_path("../cfg-dep")
-        .with_deps(vec![(
-            "hrd-workspace-hack",
-            METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK,
-        )])
-        .with_reverse_deps(vec![
-            ("hrd-cfg-dep", METADATA_HAKARI_REVERSE_DEP_MEMBER_A),
-            ("hrd-cfg-dep", METADATA_HAKARI_REVERSE_DEP_MEMBER_B),
-        ])
-        .with_named_features(vec!["f1"])
-        .insert_into(&mut details);
-
-        PackageDetails::new(
-            METADATA_HAKARI_REVERSE_DEP_MEMBER_C_DEP,
-            "hrd-member-c-dep",
-            "0.1.0",
-            vec![FAKE_AUTHOR],
-            None,
-            None,
-        )
-        .with_local_path("../member-c-dep")
-        .with_deps(vec![("hrd-member-c", METADATA_HAKARI_REVERSE_DEP_MEMBER_C)])
-        .with_reverse_deps(vec![
-            ("hrd-member-c-dep", METADATA_HAKARI_REVERSE_DEP_MEMBER_A),
-            ("hrd-member-c-dep", METADATA_HAKARI_REVERSE_DEP_MEMBER_B),
             (
-                "hrd-member-c-dep",
+                "hrd-via-normal-on-hack",
+                METADATA_HAKARI_REVERSE_DEP_MEMBER_FEATURES,
+            ),
+            (
+                "hrd-via-normal-on-hack",
+                METADATA_HAKARI_REVERSE_DEP_MEMBER_PUBLISHED,
+            ),
+        ])
+        .with_named_features(vec!["f1"])
+        .insert_into(&mut details);
+
+        PackageDetails::new(
+            METADATA_HAKARI_REVERSE_DEP_BUILD_ON_HACK,
+            "hrd-build-on-hack",
+            "0.1.0",
+            vec![FAKE_AUTHOR],
+            None,
+            None,
+        )
+        .with_local_path("../build-on-hack")
+        .with_deps(vec![(
+            "hrd-workspace-hack",
+            METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK,
+        )])
+        .with_reverse_deps(vec![
+            (
+                "hrd-build-on-hack",
+                METADATA_HAKARI_REVERSE_DEP_MEMBER_FEATURES,
+            ),
+            (
+                "hrd-build-on-hack",
+                METADATA_HAKARI_REVERSE_DEP_MEMBER_PUBLISHED,
+            ),
+        ])
+        .with_named_features(vec!["f1"])
+        .insert_into(&mut details);
+
+        PackageDetails::new(
+            METADATA_HAKARI_REVERSE_DEP_CFG_ON_HACK,
+            "hrd-cfg-on-hack",
+            "0.1.0",
+            vec![FAKE_AUTHOR],
+            None,
+            None,
+        )
+        .with_local_path("../cfg-on-hack")
+        .with_deps(vec![(
+            "hrd-workspace-hack",
+            METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK,
+        )])
+        .with_reverse_deps(vec![
+            (
+                "hrd-cfg-on-hack",
+                METADATA_HAKARI_REVERSE_DEP_MEMBER_FEATURES,
+            ),
+            (
+                "hrd-cfg-on-hack",
+                METADATA_HAKARI_REVERSE_DEP_MEMBER_PUBLISHED,
+            ),
+        ])
+        .with_named_features(vec!["f1"])
+        .insert_into(&mut details);
+
+        PackageDetails::new(
+            METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_DEV,
+            "hrd-via-member-dev",
+            "0.1.0",
+            vec![FAKE_AUTHOR],
+            None,
+            None,
+        )
+        .with_local_path("../via-member-dev")
+        .with_deps(vec![(
+            "hrd-member-dev",
+            METADATA_HAKARI_REVERSE_DEP_MEMBER_DEV,
+        )])
+        .with_reverse_deps(vec![
+            (
+                "hrd-via-member-dev",
+                METADATA_HAKARI_REVERSE_DEP_MEMBER_FEATURES,
+            ),
+            (
+                "hrd-via-member-dev",
+                METADATA_HAKARI_REVERSE_DEP_MEMBER_PUBLISHED,
+            ),
+            (
+                "hrd-via-member-dev",
                 METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK,
             ),
         ])
@@ -1247,57 +1312,84 @@ impl FixtureDetails {
         .insert_into(&mut details);
 
         PackageDetails::new(
-            METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER,
-            "hrd-via-member",
+            METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_UNLINKED,
+            "hrd-via-member-unlinked",
             "0.1.0",
             vec![FAKE_AUTHOR],
             None,
             None,
         )
-        .with_local_path("../via-member")
-        .with_deps(vec![("hrd-member-d", METADATA_HAKARI_REVERSE_DEP_MEMBER_D)])
+        .with_local_path("../via-member-unlinked")
+        .with_deps(vec![(
+            "hrd-member-unlinked",
+            METADATA_HAKARI_REVERSE_DEP_MEMBER_UNLINKED,
+        )])
         .with_reverse_deps(vec![
-            ("hrd-via-member", METADATA_HAKARI_REVERSE_DEP_MEMBER_A),
-            ("hrd-via-member", METADATA_HAKARI_REVERSE_DEP_MEMBER_B),
+            (
+                "hrd-via-member-unlinked",
+                METADATA_HAKARI_REVERSE_DEP_MEMBER_FEATURES,
+            ),
+            (
+                "hrd-via-member-unlinked",
+                METADATA_HAKARI_REVERSE_DEP_MEMBER_PUBLISHED,
+            ),
         ])
         .with_named_features(vec!["f1"])
         .insert_into(&mut details);
 
         PackageDetails::new(
-            METADATA_HAKARI_REVERSE_DEP_MEMBER_D,
-            "hrd-member-d",
+            METADATA_HAKARI_REVERSE_DEP_MEMBER_UNLINKED,
+            "hrd-member-unlinked",
             "0.1.0",
             vec![FAKE_AUTHOR],
             None,
             None,
         )
-        .with_workspace_path("member-d")
+        .with_workspace_path("member-unlinked")
         .with_deps(vec![])
         .with_reverse_deps(vec![(
-            "hrd-member-d",
-            METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER,
+            "hrd-member-unlinked",
+            METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_UNLINKED,
         )])
         .with_named_features(vec![])
         .insert_into(&mut details);
 
         PackageDetails::new(
-            METADATA_HAKARI_REVERSE_DEP_MEMBER_A,
-            "hrd-member-a",
+            METADATA_HAKARI_REVERSE_DEP_MEMBER_FEATURES,
+            "hrd-member-features",
             "0.1.0",
             vec![FAKE_AUTHOR],
             None,
             None,
         )
-        .with_workspace_path("member-a")
+        .with_workspace_path("member-features")
         .with_deps(vec![
-            ("hrd-build-dep", METADATA_HAKARI_REVERSE_DEP_BUILD_DEP),
-            ("hrd-cfg-dep", METADATA_HAKARI_REVERSE_DEP_CFG_DEP),
-            ("hrd-hack-dep", METADATA_HAKARI_REVERSE_DEP_HACK_DEP),
+            (
+                "hrd-build-on-hack",
+                METADATA_HAKARI_REVERSE_DEP_BUILD_ON_HACK,
+            ),
+            ("hrd-cfg-on-hack", METADATA_HAKARI_REVERSE_DEP_CFG_ON_HACK),
+            (
+                "hrd-normal-on-hack",
+                METADATA_HAKARI_REVERSE_DEP_NORMAL_ON_HACK,
+            ),
             ("hrd-leaf", METADATA_HAKARI_REVERSE_DEP_LEAF),
-            ("hrd-member-b-dep", METADATA_HAKARI_REVERSE_DEP_MEMBER_B_DEP),
-            ("hrd-member-c-dep", METADATA_HAKARI_REVERSE_DEP_MEMBER_C_DEP),
-            ("hrd-mid", METADATA_HAKARI_REVERSE_DEP_MID),
-            ("hrd-via-member", METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER),
+            (
+                "hrd-via-member-published",
+                METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_PUBLISHED,
+            ),
+            (
+                "hrd-via-member-dev",
+                METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_DEV,
+            ),
+            (
+                "hrd-via-normal-on-hack",
+                METADATA_HAKARI_REVERSE_DEP_VIA_NORMAL_ON_HACK,
+            ),
+            (
+                "hrd-via-member-unlinked",
+                METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_UNLINKED,
+            ),
             (
                 "hrd-workspace-hack",
                 METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK,
@@ -1308,82 +1400,109 @@ impl FixtureDetails {
         .insert_into(&mut details);
 
         PackageDetails::new(
-            METADATA_HAKARI_REVERSE_DEP_MEMBER_B_DEP,
-            "hrd-member-b-dep",
+            METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_PUBLISHED,
+            "hrd-via-member-published",
             "0.1.0",
             vec![FAKE_AUTHOR],
             None,
             None,
         )
-        .with_local_path("../member-b-dep")
-        .with_deps(vec![("hrd-member-b", METADATA_HAKARI_REVERSE_DEP_MEMBER_B)])
+        .with_local_path("../via-member-published")
+        .with_deps(vec![(
+            "hrd-member-published",
+            METADATA_HAKARI_REVERSE_DEP_MEMBER_PUBLISHED,
+        )])
         .with_reverse_deps(vec![
-            ("hrd-member-b-dep", METADATA_HAKARI_REVERSE_DEP_MEMBER_A),
-            ("hrd-member-b-dep", METADATA_HAKARI_REVERSE_DEP_MEMBER_E),
+            (
+                "hrd-via-member-published",
+                METADATA_HAKARI_REVERSE_DEP_MEMBER_FEATURES,
+            ),
+            (
+                "hrd-via-member-published",
+                METADATA_HAKARI_REVERSE_DEP_MEMBER_NORMAL,
+            ),
         ])
         .with_named_features(vec!["f1"])
         .insert_into(&mut details);
 
         PackageDetails::new(
-            METADATA_HAKARI_REVERSE_DEP_MEMBER_B,
-            "hrd-member-b",
+            METADATA_HAKARI_REVERSE_DEP_MEMBER_PUBLISHED,
+            "hrd-member-published",
             "0.1.0",
             vec![FAKE_AUTHOR],
             None,
             None,
         )
-        .with_workspace_path("member-b")
+        .with_workspace_path("member-published")
         .with_deps(vec![
-            ("hrd-build-dep", METADATA_HAKARI_REVERSE_DEP_BUILD_DEP),
-            ("hrd-cfg-dep", METADATA_HAKARI_REVERSE_DEP_CFG_DEP),
-            ("hrd-hack-dep", METADATA_HAKARI_REVERSE_DEP_HACK_DEP),
+            (
+                "hrd-build-on-hack",
+                METADATA_HAKARI_REVERSE_DEP_BUILD_ON_HACK,
+            ),
+            ("hrd-cfg-on-hack", METADATA_HAKARI_REVERSE_DEP_CFG_ON_HACK),
+            (
+                "hrd-normal-on-hack",
+                METADATA_HAKARI_REVERSE_DEP_NORMAL_ON_HACK,
+            ),
             ("hrd-leaf", METADATA_HAKARI_REVERSE_DEP_LEAF),
-            ("hrd-member-c-dep", METADATA_HAKARI_REVERSE_DEP_MEMBER_C_DEP),
-            ("hrd-mid", METADATA_HAKARI_REVERSE_DEP_MID),
-            ("hrd-via-member", METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER),
+            (
+                "hrd-via-member-dev",
+                METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_DEV,
+            ),
+            (
+                "hrd-via-normal-on-hack",
+                METADATA_HAKARI_REVERSE_DEP_VIA_NORMAL_ON_HACK,
+            ),
+            (
+                "hrd-via-member-unlinked",
+                METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_UNLINKED,
+            ),
             (
                 "hrd-workspace-hack",
                 METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK,
             ),
         ])
         .with_reverse_deps(vec![(
-            "hrd-member-b",
-            METADATA_HAKARI_REVERSE_DEP_MEMBER_B_DEP,
+            "hrd-member-published",
+            METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_PUBLISHED,
         )])
         .with_named_features(vec![])
         .insert_into(&mut details);
 
         PackageDetails::new(
-            METADATA_HAKARI_REVERSE_DEP_MEMBER_C,
-            "hrd-member-c",
+            METADATA_HAKARI_REVERSE_DEP_MEMBER_DEV,
+            "hrd-member-dev",
             "0.1.0",
             vec![FAKE_AUTHOR],
             None,
             None,
         )
-        .with_workspace_path("member-c")
+        .with_workspace_path("member-dev")
         .with_deps(vec![(
             "hrd-workspace-hack",
             METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK,
         )])
         .with_reverse_deps(vec![(
-            "hrd-member-c",
-            METADATA_HAKARI_REVERSE_DEP_MEMBER_C_DEP,
+            "hrd-member-dev",
+            METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_DEV,
         )])
         .with_named_features(vec![])
         .insert_into(&mut details);
 
         PackageDetails::new(
-            METADATA_HAKARI_REVERSE_DEP_MEMBER_E,
-            "hrd-member-e",
+            METADATA_HAKARI_REVERSE_DEP_MEMBER_NORMAL,
+            "hrd-member-normal",
             "0.1.0",
             vec![FAKE_AUTHOR],
             None,
             None,
         )
-        .with_workspace_path("member-e")
+        .with_workspace_path("member-normal")
         .with_deps(vec![
-            ("hrd-member-b-dep", METADATA_HAKARI_REVERSE_DEP_MEMBER_B_DEP),
+            (
+                "hrd-via-member-published",
+                METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_PUBLISHED,
+            ),
             (
                 "hrd-workspace-hack",
                 METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK,
@@ -1394,14 +1513,14 @@ impl FixtureDetails {
         .insert_into(&mut details);
 
         PackageDetails::new(
-            METADATA_HAKARI_REVERSE_DEP_MEMBER_F,
-            "hrd-member-f",
+            METADATA_HAKARI_REVERSE_DEP_MEMBER_BUILD,
+            "hrd-member-build",
             "0.1.0",
             vec![FAKE_AUTHOR],
             None,
             None,
         )
-        .with_workspace_path("member-f")
+        .with_workspace_path("member-build")
         .with_deps(vec![(
             "hrd-workspace-hack",
             METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK,
@@ -1411,14 +1530,14 @@ impl FixtureDetails {
         .insert_into(&mut details);
 
         PackageDetails::new(
-            METADATA_HAKARI_REVERSE_DEP_MEMBER_G,
-            "hrd-member-g",
+            METADATA_HAKARI_REVERSE_DEP_MEMBER_CFG,
+            "hrd-member-cfg",
             "0.1.0",
             vec![FAKE_AUTHOR],
             None,
             None,
         )
-        .with_workspace_path("member-g")
+        .with_workspace_path("member-cfg")
         .with_deps(vec![(
             "hrd-workspace-hack",
             METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK,
@@ -1438,9 +1557,9 @@ impl FixtureDetails {
         .with_local_path("../leaf")
         .with_deps(vec![])
         .with_reverse_deps(vec![
-            ("hrd-leaf", METADATA_HAKARI_REVERSE_DEP_HACK_DEP),
-            ("hrd-leaf", METADATA_HAKARI_REVERSE_DEP_MEMBER_A),
-            ("hrd-leaf", METADATA_HAKARI_REVERSE_DEP_MEMBER_B),
+            ("hrd-leaf", METADATA_HAKARI_REVERSE_DEP_NORMAL_ON_HACK),
+            ("hrd-leaf", METADATA_HAKARI_REVERSE_DEP_MEMBER_FEATURES),
+            ("hrd-leaf", METADATA_HAKARI_REVERSE_DEP_MEMBER_PUBLISHED),
             ("hrd-leaf", METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK),
         ])
         .with_named_features(vec!["feat1", "feat2"])
@@ -1455,11 +1574,11 @@ impl FixtureDetails {
 
         use EnabledTernary::*;
 
-        // hrd-hack-dep -> hrd-workspace-hack.
+        // hrd-normal-on-hack -> hrd-workspace-hack.
         // An ordinary, unconditional normal dependency: a control for the
         // edges below.
         LinkDetails::new(
-            package_id(METADATA_HAKARI_REVERSE_DEP_HACK_DEP),
+            package_id(METADATA_HAKARI_REVERSE_DEP_NORMAL_ON_HACK),
             package_id(METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK),
         )
         .with_platform_status(
@@ -1484,10 +1603,10 @@ impl FixtureDetails {
         )
         .insert_into(&mut link_details);
 
-        // hrd-member-c -> hrd-workspace-hack.
+        // hrd-member-dev -> hrd-workspace-hack.
         // A dev-only dependency: the cycle through this edge is permitted.
         LinkDetails::new(
-            package_id(METADATA_HAKARI_REVERSE_DEP_MEMBER_C),
+            package_id(METADATA_HAKARI_REVERSE_DEP_MEMBER_DEV),
             package_id(METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK),
         )
         .with_platform_status(
@@ -1512,10 +1631,10 @@ impl FixtureDetails {
         )
         .insert_into(&mut link_details);
 
-        // hrd-build-dep -> hrd-workspace-hack.
+        // hrd-build-on-hack -> hrd-workspace-hack.
         // A build-only dependency.
         LinkDetails::new(
-            package_id(METADATA_HAKARI_REVERSE_DEP_BUILD_DEP),
+            package_id(METADATA_HAKARI_REVERSE_DEP_BUILD_ON_HACK),
             package_id(METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK),
         )
         .with_platform_status(
@@ -1540,10 +1659,10 @@ impl FixtureDetails {
         )
         .insert_into(&mut link_details);
 
-        // hrd-cfg-dep -> hrd-workspace-hack.
+        // hrd-cfg-on-hack -> hrd-workspace-hack.
         // A normal dependency, but only on cfg(windows).
         LinkDetails::new(
-            package_id(METADATA_HAKARI_REVERSE_DEP_CFG_DEP),
+            package_id(METADATA_HAKARI_REVERSE_DEP_CFG_ON_HACK),
             package_id(METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK),
         )
         .with_platform_status(
@@ -1567,10 +1686,10 @@ impl FixtureDetails {
             PlatformResults::new((Disabled, Disabled), (Disabled, Disabled)),
         )
         .insert_into(&mut link_details);
-        // hrd-member-f -> hrd-workspace-hack.
+        // hrd-member-build -> hrd-workspace-hack.
         // A build-only dependency from a workspace member.
         LinkDetails::new(
-            package_id(METADATA_HAKARI_REVERSE_DEP_MEMBER_F),
+            package_id(METADATA_HAKARI_REVERSE_DEP_MEMBER_BUILD),
             package_id(METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK),
         )
         .with_platform_status(
@@ -1594,11 +1713,11 @@ impl FixtureDetails {
             PlatformResults::new((Disabled, Disabled), (Disabled, Disabled)),
         )
         .insert_into(&mut link_details);
-        // hrd-member-g -> hrd-workspace-hack.
+        // hrd-member-cfg -> hrd-workspace-hack.
         // A normal dependency from a workspace member, but only on
         // cfg(windows).
         LinkDetails::new(
-            package_id(METADATA_HAKARI_REVERSE_DEP_MEMBER_G),
+            package_id(METADATA_HAKARI_REVERSE_DEP_MEMBER_CFG),
             package_id(METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK),
         )
         .with_platform_status(
@@ -1625,21 +1744,30 @@ impl FixtureDetails {
 
         Self::new(details)
             .with_workspace_members(vec![
-                ("member-a", METADATA_HAKARI_REVERSE_DEP_MEMBER_A),
-                ("member-b", METADATA_HAKARI_REVERSE_DEP_MEMBER_B),
-                ("member-c", METADATA_HAKARI_REVERSE_DEP_MEMBER_C),
-                ("member-d", METADATA_HAKARI_REVERSE_DEP_MEMBER_D),
-                ("member-e", METADATA_HAKARI_REVERSE_DEP_MEMBER_E),
-                ("member-f", METADATA_HAKARI_REVERSE_DEP_MEMBER_F),
-                ("member-g", METADATA_HAKARI_REVERSE_DEP_MEMBER_G),
+                (
+                    "member-features",
+                    METADATA_HAKARI_REVERSE_DEP_MEMBER_FEATURES,
+                ),
+                (
+                    "member-published",
+                    METADATA_HAKARI_REVERSE_DEP_MEMBER_PUBLISHED,
+                ),
+                ("member-dev", METADATA_HAKARI_REVERSE_DEP_MEMBER_DEV),
+                (
+                    "member-unlinked",
+                    METADATA_HAKARI_REVERSE_DEP_MEMBER_UNLINKED,
+                ),
+                ("member-normal", METADATA_HAKARI_REVERSE_DEP_MEMBER_NORMAL),
+                ("member-build", METADATA_HAKARI_REVERSE_DEP_MEMBER_BUILD),
+                ("member-cfg", METADATA_HAKARI_REVERSE_DEP_MEMBER_CFG),
                 ("workspace-hack", METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK),
             ])
             .with_hakari_package(METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK)
             .with_link_details(link_details)
             .with_cycles(vec![vec![
                 METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK,
-                METADATA_HAKARI_REVERSE_DEP_MEMBER_C_DEP,
-                METADATA_HAKARI_REVERSE_DEP_MEMBER_C,
+                METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_DEV,
+                METADATA_HAKARI_REVERSE_DEP_MEMBER_DEV,
             ]])
     }
 

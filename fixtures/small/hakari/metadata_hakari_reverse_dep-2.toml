@@ -10,53 +10,53 @@
 # workspace-hack-line-style = 'workspace-dotted'
 # platforms = []
 # [[traversal-excludes.ids]]
-# name = 'hrd-build-dep'
+# name = 'hrd-build-on-hack'
 # version = '0.1.0'
-# path = '../build-dep'
+# path = '../build-on-hack'
 #
 # [[traversal-excludes.ids]]
-# name = 'hrd-member-b'
+# name = 'hrd-member-build'
 # version = '0.1.0'
-# workspace-path = 'member-b'
+# workspace-path = 'member-build'
 #
 # [[traversal-excludes.ids]]
-# name = 'hrd-member-b-dep'
+# name = 'hrd-member-normal'
 # version = '0.1.0'
-# path = '../member-b-dep'
+# workspace-path = 'member-normal'
 #
 # [[traversal-excludes.ids]]
-# name = 'hrd-member-e'
+# name = 'hrd-member-published'
 # version = '0.1.0'
-# workspace-path = 'member-e'
+# workspace-path = 'member-published'
 #
 # [[traversal-excludes.ids]]
-# name = 'hrd-member-f'
+# name = 'hrd-via-member-published'
 # version = '0.1.0'
-# workspace-path = 'member-f'
+# path = '../via-member-published'
 #
 # [[traversal-excludes.ids]]
-# name = 'hrd-via-member'
+# name = 'hrd-via-member-unlinked'
 # version = '0.1.0'
-# path = '../via-member'
+# path = '../via-member-unlinked'
 # [[final-excludes.ids]]
-# name = 'hrd-cfg-dep'
+# name = 'hrd-cfg-on-hack'
 # version = '0.1.0'
-# path = '../cfg-dep'
-#
-# [[final-excludes.ids]]
-# name = 'hrd-member-b-dep'
-# version = '0.1.0'
-# path = '../member-b-dep'
+# path = '../cfg-on-hack'
 #
 # [[final-excludes.ids]]
-# name = 'hrd-member-f'
+# name = 'hrd-member-build'
 # version = '0.1.0'
-# workspace-path = 'member-f'
+# workspace-path = 'member-build'
 #
 # [[final-excludes.ids]]
-# name = 'hrd-via-member'
+# name = 'hrd-via-member-published'
 # version = '0.1.0'
-# path = '../via-member'
+# path = '../via-member-published'
+#
+# [[final-excludes.ids]]
+# name = 'hrd-via-member-unlinked'
+# version = '0.1.0'
+# path = '../via-member-unlinked'
 
 ### END HAKARI SECTION
 

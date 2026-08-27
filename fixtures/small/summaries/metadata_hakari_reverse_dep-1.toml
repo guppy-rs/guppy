@@ -12,19 +12,19 @@ triple = 'armv4t-none-eabi'
 target-features = 'all'
 flags = ['bar']
 [[metadata.omitted-packages.ids]]
-name = 'hrd-member-a'
+name = 'hrd-member-features'
 version = '0.1.0'
-workspace-path = 'member-a'
+workspace-path = 'member-features'
 
 [[metadata.omitted-packages.ids]]
-name = 'hrd-member-c-dep'
+name = 'hrd-via-member-dev'
 version = '0.1.0'
-path = '../member-c-dep'
+path = '../via-member-dev'
 
 [[metadata.features-only]]
-name = 'hrd-member-a'
+name = 'hrd-member-build'
 version = '0.1.0'
-workspace-path = 'member-a'
+workspace-path = 'member-build'
 features = []
 
 [[metadata.features-only]]
@@ -34,37 +34,37 @@ workspace-path = 'workspace-hack'
 features = []
 
 [[target-package]]
-name = 'hrd-member-a'
+name = 'hrd-member-build'
 version = '0.1.0'
-workspace-path = 'member-a'
+workspace-path = 'member-build'
 status = 'initial'
 features = []
 
 [[target-package]]
-name = 'hrd-member-c'
+name = 'hrd-member-dev'
 version = '0.1.0'
-workspace-path = 'member-c'
+workspace-path = 'member-dev'
 status = 'initial'
 features = []
 
 [[target-package]]
-name = 'hrd-member-e'
+name = 'hrd-member-normal'
 version = '0.1.0'
-workspace-path = 'member-e'
+workspace-path = 'member-normal'
 status = 'initial'
 features = []
 
 [[target-package]]
-name = 'hrd-member-b'
+name = 'hrd-member-published'
 version = '0.1.0'
-workspace-path = 'member-b'
+workspace-path = 'member-published'
 status = 'workspace'
 features = []
 
 [[target-package]]
-name = 'hrd-member-d'
+name = 'hrd-member-unlinked'
 version = '0.1.0'
-workspace-path = 'member-d'
+workspace-path = 'member-unlinked'
 status = 'workspace'
 features = []
 
@@ -76,25 +76,18 @@ status = 'workspace'
 features = []
 
 [[target-package]]
-name = 'hrd-build-dep'
+name = 'hrd-build-on-hack'
 version = '0.1.0'
-path = '../build-dep'
+path = '../build-on-hack'
 status = 'direct'
-features = ['f1']
+features = []
 
 [[target-package]]
-name = 'hrd-cfg-dep'
+name = 'hrd-cfg-on-hack'
 version = '0.1.0'
-path = '../cfg-dep'
+path = '../cfg-on-hack'
 status = 'direct'
-features = ['f1']
-
-[[target-package]]
-name = 'hrd-hack-dep'
-version = '0.1.0'
-path = '../hack-dep'
-status = 'direct'
-features = ['extra']
+features = []
 
 [[target-package]]
 name = 'hrd-leaf'
@@ -104,22 +97,29 @@ status = 'direct'
 features = ['feat1', 'feat2']
 
 [[target-package]]
-name = 'hrd-member-b-dep'
+name = 'hrd-normal-on-hack'
 version = '0.1.0'
-path = '../member-b-dep'
+path = '../normal-on-hack'
 status = 'direct'
-features = ['f1']
+features = []
 
 [[target-package]]
-name = 'hrd-mid'
+name = 'hrd-via-member-published'
 version = '0.1.0'
-path = '../mid'
+path = '../via-member-published'
 status = 'direct'
-features = ['f1']
+features = []
 
 [[target-package]]
-name = 'hrd-via-member'
+name = 'hrd-via-member-unlinked'
 version = '0.1.0'
-path = '../via-member'
+path = '../via-member-unlinked'
 status = 'direct'
-features = ['f1']
+features = []
+
+[[target-package]]
+name = 'hrd-via-normal-on-hack'
+version = '0.1.0'
+path = '../via-normal-on-hack'
+status = 'direct'
+features = []

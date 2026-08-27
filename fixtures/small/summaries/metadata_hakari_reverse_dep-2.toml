@@ -10,39 +10,25 @@ host-platform = []
 [metadata.target-platform]
 spec = 'any'
 [[metadata.omitted-packages.ids]]
-name = 'hrd-member-c-dep'
+name = 'hrd-via-member-dev'
 version = '0.1.0'
-path = '../member-c-dep'
+path = '../via-member-dev'
 
 [[metadata.features-only]]
-name = 'hrd-member-b'
+name = 'hrd-member-cfg'
 version = '0.1.0'
-workspace-path = 'member-b'
+workspace-path = 'member-cfg'
 features = []
 
 [[metadata.features-only]]
-name = 'hrd-member-c'
+name = 'hrd-member-dev'
 version = '0.1.0'
-workspace-path = 'member-c'
+workspace-path = 'member-dev'
 features = []
 
 [[target-package]]
-name = 'hrd-member-g'
+name = 'hrd-member-unlinked'
 version = '0.1.0'
-workspace-path = 'member-g'
+workspace-path = 'member-unlinked'
 status = 'initial'
 features = []
-
-[[target-package]]
-name = 'hrd-workspace-hack'
-version = '0.1.0'
-workspace-path = 'workspace-hack'
-status = 'workspace'
-features = []
-
-[[target-package]]
-name = 'hrd-leaf'
-version = '0.1.0'
-path = '../leaf'
-status = 'direct'
-features = ['feat1', 'feat2']
