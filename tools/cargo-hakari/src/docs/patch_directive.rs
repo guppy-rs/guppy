@@ -63,7 +63,7 @@
 //!
 //! This option lets you specify the path to the workspace-hack crate, once, in the root
 //! `Cargo.toml`. You may prefer this if you've standardized on this format in your workspace.
-//!  
+//!
 //! Update `hakari.toml` with:
 //!
 //! ```toml
@@ -104,6 +104,16 @@
 //! This ensures that while building within the workspace, the real workspace-hack is used. When
 //! building outside of the workspace, such as via a Git or path dependency, the `[patch]` directive
 //! is inactive, and the stub crate from crates.io is used.
+//!
+//! ## Crates that depend on the workspace-hack
+//!
+//! `cargo hakari` does not add crates to the workspace-hack that introduce a dependency cycle.
+//! This can occur with `[patch]` directives in the following scenarios:
+//!
+//! - A third-party crate that depends on the workspace-hack.
+//! - A third-party crate that depends on a managed workspace member.
+//!
+//! To see whether this applies to a crate, run `cargo hakari explain <crate>`.
 //!
 //! # Example
 //!

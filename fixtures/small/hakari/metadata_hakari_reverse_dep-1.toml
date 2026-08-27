@@ -17,22 +17,10 @@
 # path = '../via-normal-on-hack'
 
 [dependencies]
-hrd-build-on-hack = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../build-on-hack", default-features = false, features = ["f1"] }
-hrd-cfg-on-hack = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../cfg-on-hack", default-features = false, features = ["f1"] }
 hrd-leaf = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../leaf", default-features = false, features = ["feat1", "feat2"] }
-hrd-normal-on-hack = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../normal-on-hack", default-features = false, features = ["extra"] }
-hrd-via-member-dev = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../via-member-dev", default-features = false, features = ["extra"] }
-hrd-via-member-published = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../via-member-published", default-features = false, features = ["f1"] }
-hrd-via-member-unlinked = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../via-member-unlinked", default-features = false, features = ["f1"] }
 
 [build-dependencies]
-hrd-build-on-hack = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../build-on-hack", default-features = false, features = ["f1"] }
-hrd-cfg-on-hack = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../cfg-on-hack", default-features = false, features = ["f1"] }
 hrd-leaf = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../leaf", default-features = false, features = ["feat1", "feat2"] }
-hrd-normal-on-hack = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../normal-on-hack", default-features = false, features = ["extra"] }
-hrd-via-member-dev = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../via-member-dev", default-features = false, features = ["extra"] }
-hrd-via-member-published = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../via-member-published", default-features = false, features = ["f1"] }
-hrd-via-member-unlinked = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../via-member-unlinked", default-features = false, features = ["f1"] }
 
 ### END HAKARI SECTION
 

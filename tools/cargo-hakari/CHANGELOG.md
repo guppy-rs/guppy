@@ -15,6 +15,13 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+- `cargo hakari generate` no longer adds third-party packages that depend on
+  the workspace-hack package, or on a workspace member that hakari manages,
+  directly or transitively through normal or build dependencies. (Dev-only
+  dependencies are ignored, since Cargo permits cycles through them.) This
+  happens when a workspace member is also published and a `[patch]` section
+  redirects the published version's workspace-hack dependency back into the
+  workspace. In that case hakari would end up introducing a cycle ([#499]).
 - `cargo hakari manage-deps` now adds a normal `workspace-hack` dependency to
   workspace members whose existing dependency on it is dev-only or build-only.
   Previously such members were treated as already managed, even though their
@@ -38,6 +45,8 @@ All notable changes to this project will be documented in this file.
   package no longer depend on `camino`'s `Hash` implementation, which changed
   in `camino` 1.2.3. The output is unchanged from cargo-hakari 0.9.38, so
   upgrading does not churn existing workspace-hack packages.
+
+[#499]: https://github.com/guppy-rs/guppy/issues/499
 
 ## [0.9.38] - 2026-05-21
 

@@ -35,13 +35,9 @@
 
 [dependencies]
 hrd-leaf = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../leaf", default-features = false, features = ["feat1", "feat2"] }
-hrd-via-member-unlinked = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../via-member-unlinked", default-features = false, features = ["f1"] }
-hrd-via-normal-on-hack = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../via-normal-on-hack", default-features = false, features = ["f1"] }
 
 [build-dependencies]
 hrd-leaf = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../leaf", default-features = false, features = ["feat1", "feat2"] }
-hrd-via-member-unlinked = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../via-member-unlinked", default-features = false, features = ["f1"] }
-hrd-via-normal-on-hack = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../via-normal-on-hack", default-features = false, features = ["f1"] }
 
 ### END HAKARI SECTION
 

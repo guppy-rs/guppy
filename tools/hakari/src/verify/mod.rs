@@ -14,6 +14,10 @@
 //! in feature resolution (with default features), through the `features_only` argument to
 //! [`CargoSet::new`](guppy::graph::cargo::CargoSet::new). If, in the result, the
 //! [`output_map`](crate::Hakari::output_map) is empty, then features were unified.
+//!
+//! [Structural excludes](Hakari::structural_excludes) can never be unified, so
+//! verification skips them even if they are built with more than one feature
+//! set.
 
 #[cfg(feature = "cli-support")]
 mod display;
@@ -30,6 +34,7 @@ impl<'g> HakariBuilder<'g> {
     ///
     /// Returns `Ok(())` if only one version of every third-party dependency was built, or a list of
     /// errors if at least one third-party dependency had more than one version built.
+    /// [Structural excludes](Hakari::structural_excludes) are skipped.
     ///
     /// For more about how this works, see the documentation for the [`verify`](crate::verify)
     /// module.
