@@ -1663,8 +1663,9 @@ mod tests {
     use super::*;
     use crate::UnifyTargetHost;
     use fixtures::json::{
-        JsonFixture, METADATA_HAKARI_REVERSE_DEP_MEMBER_B_DEP,
-        METADATA_HAKARI_REVERSE_DEP_MEMBER_C_DEP, METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER,
+        JsonFixture, METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_DEV,
+        METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_PUBLISHED,
+        METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_UNLINKED,
     };
 
     #[test]
@@ -1701,9 +1702,9 @@ mod tests {
     fn fixpoint_never_adds_workspace_packages() {
         // This fixture has third-party-to-member edges:
         //
-        // * hrd-member-c-dep -> hrd-member-c
-        // * hrd-via-member -> hrd-member-d
-        // * hrd-member-b-dep -> hrd-member-b
+        // * hrd-via-member-dev -> hrd-member-dev
+        // * hrd-via-member-unlinked -> hrd-member-unlinked
+        // * hrd-via-member-published -> hrd-member-published
         //
         // so the fixpoint loop reaches workspace members.
         let fixture = JsonFixture::metadata_hakari_reverse_dep();
@@ -1727,9 +1728,9 @@ mod tests {
             .map(|(_, package_id)| *package_id)
             .collect();
         for bridge_id in [
-            METADATA_HAKARI_REVERSE_DEP_MEMBER_B_DEP,
-            METADATA_HAKARI_REVERSE_DEP_MEMBER_C_DEP,
-            METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER,
+            METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_PUBLISHED,
+            METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_DEV,
+            METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_UNLINKED,
         ] {
             assert!(
                 computed_ids.contains(&PackageId::new(bridge_id)),

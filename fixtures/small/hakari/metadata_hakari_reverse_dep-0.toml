@@ -10,38 +10,38 @@
 # workspace-hack-line-style = 'full'
 # platforms = ['aarch64-uwp-windows-msvc', 'x86_64-apple-ios-macabi', 'i686-unknown-freebsd']
 # [[traversal-excludes.ids]]
-# name = 'hrd-cfg-dep'
+# name = 'hrd-cfg-on-hack'
 # version = '0.1.0'
-# path = '../cfg-dep'
+# path = '../cfg-on-hack'
 # [[final-excludes.ids]]
-# name = 'hrd-build-dep'
+# name = 'hrd-build-on-hack'
 # version = '0.1.0'
-# path = '../build-dep'
+# path = '../build-on-hack'
 #
 # [[final-excludes.ids]]
-# name = 'hrd-hack-dep'
+# name = 'hrd-normal-on-hack'
 # version = '0.1.0'
-# path = '../hack-dep'
+# path = '../normal-on-hack'
 #
 # [[final-excludes.ids]]
-# name = 'hrd-member-b-dep'
+# name = 'hrd-via-member-dev'
 # version = '0.1.0'
-# path = '../member-b-dep'
+# path = '../via-member-dev'
 #
 # [[final-excludes.ids]]
-# name = 'hrd-member-c-dep'
+# name = 'hrd-via-member-published'
 # version = '0.1.0'
-# path = '../member-c-dep'
+# path = '../via-member-published'
 
 [dependencies]
 hrd-leaf = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../leaf", default-features = false, features = ["feat1", "feat2"] }
-hrd-mid = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../mid", default-features = false, features = ["f1"] }
-hrd-via-member = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../via-member", default-features = false, features = ["f1"] }
+hrd-via-member-unlinked = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../via-member-unlinked", default-features = false, features = ["f1"] }
+hrd-via-normal-on-hack = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../via-normal-on-hack", default-features = false, features = ["f1"] }
 
 [build-dependencies]
 hrd-leaf = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../leaf", default-features = false, features = ["feat1", "feat2"] }
-hrd-mid = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../mid", default-features = false, features = ["f1"] }
-hrd-via-member = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../via-member", default-features = false, features = ["f1"] }
+hrd-via-member-unlinked = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../via-member-unlinked", default-features = false, features = ["f1"] }
+hrd-via-normal-on-hack = { path = "/Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace/../via-normal-on-hack", default-features = false, features = ["f1"] }
 
 ### END HAKARI SECTION
 

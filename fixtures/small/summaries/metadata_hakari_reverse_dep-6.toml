@@ -10,14 +10,14 @@ host-platform = []
 [metadata.target-platform]
 spec = 'any'
 [[metadata.omitted-packages.ids]]
-name = 'hrd-hack-dep'
+name = 'hrd-normal-on-hack'
 version = '0.1.0'
-path = '../hack-dep'
+path = '../normal-on-hack'
 
 [[metadata.features-only]]
-name = 'hrd-member-d'
+name = 'hrd-member-features'
 version = '0.1.0'
-workspace-path = 'member-d'
+workspace-path = 'member-features'
 features = []
 
 [[metadata.features-only]]
@@ -27,22 +27,22 @@ workspace-path = 'workspace-hack'
 features = []
 
 [[host-package]]
-name = 'hrd-member-a'
+name = 'hrd-member-build'
 version = '0.1.0'
-workspace-path = 'member-a'
+workspace-path = 'member-build'
 status = 'initial'
 features = []
 
 [[host-package]]
-name = 'hrd-member-d'
+name = 'hrd-member-features'
 version = '0.1.0'
-workspace-path = 'member-d'
+workspace-path = 'member-features'
 status = 'initial'
 features = []
 
 [[host-package]]
-name = 'hrd-member-g'
+name = 'hrd-member-unlinked'
 version = '0.1.0'
-workspace-path = 'member-g'
+workspace-path = 'member-unlinked'
 status = 'initial'
 features = []

@@ -233,10 +233,12 @@ mod tests {
     use crate::cli_ops::WorkspaceOp;
     use fixtures::{
         json::{
-            JsonFixture, METADATA_HAKARI_REVERSE_DEP_HACK_DEP,
-            METADATA_HAKARI_REVERSE_DEP_MEMBER_B, METADATA_HAKARI_REVERSE_DEP_MEMBER_C,
-            METADATA_HAKARI_REVERSE_DEP_MEMBER_D, METADATA_HAKARI_REVERSE_DEP_MEMBER_E,
-            METADATA_HAKARI_REVERSE_DEP_MEMBER_F, METADATA_HAKARI_REVERSE_DEP_MEMBER_G,
+            JsonFixture, METADATA_HAKARI_REVERSE_DEP_MEMBER_BUILD,
+            METADATA_HAKARI_REVERSE_DEP_MEMBER_CFG, METADATA_HAKARI_REVERSE_DEP_MEMBER_DEV,
+            METADATA_HAKARI_REVERSE_DEP_MEMBER_NORMAL,
+            METADATA_HAKARI_REVERSE_DEP_MEMBER_PUBLISHED,
+            METADATA_HAKARI_REVERSE_DEP_MEMBER_UNLINKED,
+            METADATA_HAKARI_REVERSE_DEP_NORMAL_ON_HACK,
         },
         package_id,
     };
@@ -258,16 +260,25 @@ mod tests {
         // needs an update" path.
         builder.set_dep_format_version(DepFormatVersion::V4);
 
-        // * hrd-member-d is a workspace member without a dependency on the hakari package.
-        // * hrd-member-b is a workspace member that depends on the hakari package with `req = "*"`.
-        // * hrd-member-c is a workspace member whose only dependency on the hakari package is dev-only.
-        // * hrd-hack-dep is a non-workspace package that depends on the hakari package.
-        let member_d_id = package_id(METADATA_HAKARI_REVERSE_DEP_MEMBER_D);
-        let member_b_id = package_id(METADATA_HAKARI_REVERSE_DEP_MEMBER_B);
-        let member_c_id = package_id(METADATA_HAKARI_REVERSE_DEP_MEMBER_C);
-        let hack_dep_id = package_id(METADATA_HAKARI_REVERSE_DEP_HACK_DEP);
+        // * hrd-member-unlinked is a workspace member without a dependency on
+        //   the hakari package.
+        // * hrd-member-published is a workspace member that depends on the
+        //   hakari package with `req = "*"`.
+        // * hrd-member-dev is a workspace member whose only dependency on the
+        //   hakari package is dev-only.
+        // * hrd-normal-on-hack is a non-workspace package that depends on the
+        //   hakari package.
+        let member_unlinked_id = package_id(METADATA_HAKARI_REVERSE_DEP_MEMBER_UNLINKED);
+        let member_published_id = package_id(METADATA_HAKARI_REVERSE_DEP_MEMBER_PUBLISHED);
+        let member_dev_id = package_id(METADATA_HAKARI_REVERSE_DEP_MEMBER_DEV);
+        let normal_on_hack_id = package_id(METADATA_HAKARI_REVERSE_DEP_NORMAL_ON_HACK);
         let package_set = graph
-            .resolve_ids([&member_d_id, &member_b_id, &member_c_id, &hack_dep_id])
+            .resolve_ids([
+                &member_unlinked_id,
+                &member_published_id,
+                &member_dev_id,
+                &normal_on_hack_id,
+            ])
             .expect("all package IDs are known to the graph");
 
         let ops = builder
@@ -285,7 +296,7 @@ mod tests {
                         .package_ids(DependencyDirection::Forward)
                         .collect();
                     panic!(
-                        "hrd-hack-dep is outside the workspace and the other two \
+                        "hrd-normal-on-hack is outside the workspace and the other two \
                          packages are managed members, so nothing in the set \
                          should have the hack removed, but got a remove op for \
                          {remove_ids:?}"
@@ -299,15 +310,15 @@ mod tests {
 
         let add_to = add_to.expect("an add op is generated");
         let add_ids: BTreeSet<_> = add_to.package_ids(DependencyDirection::Forward).collect();
-        let expected_ids: BTreeSet<_> = [&member_d_id, &member_b_id, &member_c_id]
+        let expected_ids: BTreeSet<_> = [&member_unlinked_id, &member_published_id, &member_dev_id]
             .into_iter()
             .collect();
         assert_eq!(
             add_ids, expected_ids,
-            "hrd-member-d has no dependency on the hack, hrd-member-b's \
+            "hrd-member-unlinked has no dependency on the hack, hrd-member-published's \
              `req = \"*\"` needs updating under dep format V4, and \
-             hrd-member-c's only dependency on the hack is dev-only, so all \
-             three are added to; hrd-hack-dep is outside the workspace, so it \
+             hrd-member-dev's only dependency on the hack is dev-only, so all \
+             three are added to; hrd-normal-on-hack is outside the workspace, so it \
              is ignored"
         );
     }
@@ -332,11 +343,11 @@ mod tests {
         );
 
         // Both members depend on the hakari package with `req = "*"`, but
-        // hrd-member-g's line is cfg(windows)-only.
-        let member_b_id = package_id(METADATA_HAKARI_REVERSE_DEP_MEMBER_B);
-        let member_g_id = package_id(METADATA_HAKARI_REVERSE_DEP_MEMBER_G);
+        // hrd-member-cfg's line is cfg(windows)-only.
+        let member_published_id = package_id(METADATA_HAKARI_REVERSE_DEP_MEMBER_PUBLISHED);
+        let member_cfg_id = package_id(METADATA_HAKARI_REVERSE_DEP_MEMBER_CFG);
         let package_set = graph
-            .resolve_ids([&member_b_id, &member_g_id])
+            .resolve_ids([&member_published_id, &member_cfg_id])
             .expect("all package IDs are known to the graph");
 
         let ops = builder
@@ -358,8 +369,8 @@ mod tests {
         }
         assert_eq!(
             add_ids,
-            [member_b_id].into_iter().collect(),
-            "hrd-member-b's unconditional `*` line is updated; hrd-member-g's \
+            [member_published_id].into_iter().collect(),
+            "hrd-member-published's unconditional `*` line is updated; hrd-member-cfg's \
              cfg(windows)-only line is left alone"
         );
     }
@@ -388,15 +399,15 @@ mod tests {
         // since some workspaces deliberately gate the hakari package behind a
         // `cfg`.
         let cases = [
-            (METADATA_HAKARI_REVERSE_DEP_MEMBER_C, "dev-only", true),
-            (METADATA_HAKARI_REVERSE_DEP_MEMBER_F, "build-only", true),
+            (METADATA_HAKARI_REVERSE_DEP_MEMBER_DEV, "dev-only", true),
+            (METADATA_HAKARI_REVERSE_DEP_MEMBER_BUILD, "build-only", true),
             (
-                METADATA_HAKARI_REVERSE_DEP_MEMBER_G,
+                METADATA_HAKARI_REVERSE_DEP_MEMBER_CFG,
                 "cfg(windows)-only",
                 false,
             ),
             (
-                METADATA_HAKARI_REVERSE_DEP_MEMBER_E,
+                METADATA_HAKARI_REVERSE_DEP_MEMBER_NORMAL,
                 "unconditional normal",
                 false,
             ),

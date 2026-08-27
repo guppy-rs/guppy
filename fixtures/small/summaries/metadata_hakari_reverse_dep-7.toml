@@ -22,73 +22,73 @@ version = '0.1.0'
 path = '../leaf'
 
 [[metadata.omitted-packages.ids]]
-name = 'hrd-member-e'
+name = 'hrd-member-normal'
 version = '0.1.0'
-workspace-path = 'member-e'
+workspace-path = 'member-normal'
 
 [[metadata.omitted-packages.ids]]
-name = 'hrd-via-member'
+name = 'hrd-via-member-unlinked'
 version = '0.1.0'
-path = '../via-member'
+path = '../via-member-unlinked'
 
 [[metadata.features-only]]
-name = 'hrd-member-e'
+name = 'hrd-member-normal'
 version = '0.1.0'
-workspace-path = 'member-e'
+workspace-path = 'member-normal'
 features = []
 
 [[metadata.features-only]]
-name = 'hrd-member-f'
+name = 'hrd-member-published'
 version = '0.1.0'
-workspace-path = 'member-f'
+workspace-path = 'member-published'
 features = []
 
 [[target-package]]
-name = 'hrd-member-a'
+name = 'hrd-member-build'
 version = '0.1.0'
-workspace-path = 'member-a'
+workspace-path = 'member-build'
 status = 'initial'
 features = []
 
 [[target-package]]
-name = 'hrd-member-b'
+name = 'hrd-member-cfg'
 version = '0.1.0'
-workspace-path = 'member-b'
+workspace-path = 'member-cfg'
 status = 'initial'
 features = []
 
 [[target-package]]
-name = 'hrd-member-c'
+name = 'hrd-member-dev'
 version = '0.1.0'
-workspace-path = 'member-c'
+workspace-path = 'member-dev'
 status = 'initial'
 features = []
 
 [[target-package]]
-name = 'hrd-member-d'
+name = 'hrd-member-features'
 version = '0.1.0'
-workspace-path = 'member-d'
+workspace-path = 'member-features'
 status = 'initial'
 features = []
 
 [[target-package]]
-name = 'hrd-member-e'
+name = 'hrd-member-normal'
 version = '0.1.0'
-workspace-path = 'member-e'
+workspace-path = 'member-normal'
 status = 'initial'
 features = []
 
 [[target-package]]
-name = 'hrd-member-f'
+name = 'hrd-member-published'
 version = '0.1.0'
-workspace-path = 'member-f'
+workspace-path = 'member-published'
 status = 'initial'
 features = []
 
 [[target-package]]
-name = 'hrd-member-g'
+name = 'hrd-member-unlinked'
 version = '0.1.0'
-workspace-path = 'member-g'
+workspace-path = 'member-unlinked'
 status = 'initial'
 features = []
 
