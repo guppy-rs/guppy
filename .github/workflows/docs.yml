@@ -32,7 +32,7 @@ jobs:
       - uses: taiki-e/install-action@ae666e311a8d98d0043e81161903fc9f9beb8689 # just
       - name: Setup Pages
         id: pages
-        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
       - name: Build rustdoc
         run: just rustdoc
       - name: Organize
