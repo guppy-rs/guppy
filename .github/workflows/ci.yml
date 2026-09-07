@@ -21,15 +21,15 @@ jobs:
           components: rustfmt, clippy
       - uses: Swatinem/rust-cache@98c8021b550208e191a6a3145459bfc9fb29c4c0 # v2
       - name: Install just
-        uses: taiki-e/install-action@0fcb49d29f9345a853257a633d34efac54f50c7a # just
+        uses: taiki-e/install-action@8843680a62f683628ca6e78f7c28376526f567a4 # just
       - name: Lint (clippy)
         run: just bootstrap clippy
       - name: Install cargo-hack
-        uses: taiki-e/install-action@a659e3f8011e8f4fe0c24f1fe7c711df3a62d1c1 # cargo-hack
+        uses: taiki-e/install-action@e560967ee1f1aadf752ca6a4cbc56cd25d1b0b42 # cargo-hack
       - name: Lint (rustfmt)
         run: cargo xfmt --check
       - name: Install cargo readme
-        uses: taiki-e/install-action@7b8d4719ee4aaa279bdf55df38dacb9ebfe12a6c # v2
+        uses: taiki-e/install-action@84f5ac3124727fb3d284d4d22ee9ab3654fd09a6 # v2
         with:
           tool: cargo-readme
       - name: Generate readmes
@@ -105,7 +105,7 @@ jobs:
       - name: Run doctests
         run: cargo test --doc --all-features --workspace --exclude cargo-compare
       - name: Install latest nextest release
-        uses: taiki-e/install-action@ef6302df50adb496d123b03ae2b53322d688ffa1 # nextest
+        uses: taiki-e/install-action@17b0f1b83b2b97f6f3d36b952dd70ed7cff5d824 # nextest
       - name: Run all other tests
         run: cargo nextest run --all-targets --all-features --workspace --exclude cargo-compare
 
