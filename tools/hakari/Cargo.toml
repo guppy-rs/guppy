@@ -38,7 +38,7 @@ atomicwrites = "0.4.4"
 camino = "1.2.5"
 cfg-if = "1.0.4"
 debug-ignore = "1.0.5"
-diffy = { version = "0.5.1", features = ["color", "std"] }
+diffy = { version = "0.5.2", features = ["color", "std"] }
 guppy = { version = "0.18.0", path = "../../guppy", features = ["rayon1"] }
 iddqd.workspace = true
 include_dir = { version = "0.7.4", features = ["glob"], optional = true }
