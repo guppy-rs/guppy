@@ -24,7 +24,7 @@ cargo_metadata = "0.23.1"
 cfg-expr = "0.20.9"
 datatest-stable = { version = "0.3.3", features = ["include-dir"] }
 guppy-workspace-hack = "0.1.0"
-iddqd = "0.4.6"
+iddqd = "0.5.0"
 include_dir = "0.7.4"
 miette = "7.6.0"
 snapbox = { version = "1.2.2", features = ["term-svg"] }
