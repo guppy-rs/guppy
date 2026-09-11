@@ -18,6 +18,7 @@ use guppy::{
     errors::TargetSpecError,
     graph::{ExternalSource, GitReq, PackageMetadata, PackageSource, cargo::BuildPlatform},
 };
+use iddqd::{IdOrdItem, IdOrdMap, id_upcast};
 use std::{
     borrow::Cow,
     collections::HashSet,
@@ -175,12 +176,74 @@ pub enum TomlOutError {
     },
 }
 
+/// The name a dependency is written out under in the workspace-hack's
+/// `Cargo.toml`.
+#[derive(Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
+pub enum TomlName<'g> {
+    /// The package name, used when the workspace-hack contains one version
+    /// of the package.
+    Plain(&'g str),
+
+    /// The package name with a hash appended, used when the workspace-hack
+    /// contains more than one version of the package.
+    Hashed(Box<str>),
+}
+
+impl TomlName<'_> {
+    /// Returns the name as a string.
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Plain(name) => name,
+            Self::Hashed(name) => name,
+        }
+    }
+}
+
+impl fmt::Display for TomlName<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+/// A dependency line in the workspace-hack's `Cargo.toml`, keyed by the name
+/// it is written out under.
+#[derive(Clone, Debug)]
+pub struct TomlNameEntry<'g> {
+    toml_name: TomlName<'g>,
+    package: PackageMetadata<'g>,
+}
+
+impl<'g> TomlNameEntry<'g> {
+    /// Returns the name this dependency is written out under.
+    pub fn toml_name(&self) -> &TomlName<'g> {
+        &self.toml_name
+    }
+
+    /// Returns the package this dependency line refers to.
+    pub fn package(&self) -> &PackageMetadata<'g> {
+        &self.package
+    }
+}
+
+impl<'g> IdOrdItem for TomlNameEntry<'g> {
+    type Key<'a>
+        = &'a str
+    where
+        Self: 'a;
+
+    fn key(&self) -> Self::Key<'_> {
+        self.toml_name.as_str()
+    }
+
+    id_upcast!();
+}
+
 /// Returns a map from dependency names as present in the workspace `Cargo.toml` to their
 /// corresponding package metadatas.
 pub(crate) fn toml_name_map<'g>(
     output_map: &OutputMap<'g>,
     dep_format: DepFormatVersion,
-) -> AHashMap<Cow<'g, str>, PackageMetadata<'g>> {
+) -> IdOrdMap<TomlNameEntry<'g>> {
     let mut packages_by_name: AHashMap<&'g str, AHashMap<_, _>> = AHashMap::new();
     for vals in output_map.values() {
         for (&package_id, (package, _)) in vals {
@@ -191,19 +254,30 @@ pub(crate) fn toml_name_map<'g>(
         }
     }
 
-    let mut toml_name_map = AHashMap::new();
+    // A hashed name colliding with another TOML name would already produce a
+    // duplicate key in the written-out Cargo.toml, so treat it as an invariant
+    // violation here rather than silently dropping a line. (We should consider
+    // handling this better in the future.)
+    let mut toml_name_map = IdOrdMap::new();
     for (name, packages) in packages_by_name {
         if packages.len() > 1 {
             // Make hashed names for each package.
             for (_, package) in packages {
                 let hashed_name = make_hashed_name(package, dep_format);
-                toml_name_map.insert(Cow::Owned(hashed_name), *package);
+                toml_name_map
+                    .insert_unique(TomlNameEntry {
+                        toml_name: TomlName::Hashed(hashed_name.into_boxed_str()),
+                        package: *package,
+                    })
+                    .expect("hashed names are unique within the workspace-hack");
             }
         } else {
-            toml_name_map.insert(
-                Cow::Borrowed(name),
-                *packages.into_values().next().expect("at least 1 element"),
-            );
+            toml_name_map
+                .insert_unique(TomlNameEntry {
+                    toml_name: TomlName::Plain(name),
+                    package: *packages.into_values().next().expect("at least 1 element"),
+                })
+                .expect("package names are unique within the workspace-hack");
         }
     }
 
