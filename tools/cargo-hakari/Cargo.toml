@@ -36,7 +36,7 @@ color-eyre = { version = "0.6.5", default-features = false }
 dialoguer = "0.12.0"
 # duct's default features enable wait_timeout/wait_deadline, which pull in
 # signal-hook via SIGCHLD. cargo-hakari only ever calls run().
-duct = { version = "1.1.1", default-features = false }
+duct = { version = "1.1.2", default-features = false }
 enable-ansi-support = "0.3.1"
 env_logger = "0.11.11"
 guppy = { version = "0.18.0", path = "../../guppy" }
