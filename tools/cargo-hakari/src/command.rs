@@ -11,10 +11,10 @@ use clap::Parser;
 use color_eyre::eyre::{Result, WrapErr, bail};
 use guppy::{
     MetadataCommand, PackageId, Version,
-    graph::{PackageGraph, PackageMetadata, PackageSet},
+    graph::{PackageGraph, PackageSet},
 };
 use hakari::{
-    DepFormatVersion, HakariBuilder, HakariCargoToml, HakariOutputOptions, TomlNameEntry,
+    DepFormatVersion, Hakari, HakariBuilder, HakariCargoToml, HakariOutputOptions, TomlNameEntry,
     TomlOutError,
     cli_ops::{HakariInit, WorkspaceOps},
     diffy::PatchFormatter,
@@ -432,14 +432,15 @@ impl CommandWithBuilder {
             } => {
                 let hakari = builder.compute();
                 let toml_name_map = hakari.toml_name_map();
-                let Some(dep) = toml_name_map.get(crate_name.as_str()) else {
-                    let reason =
-                        NotFoundReason::classify(hakari.builder(), &toml_name_map, &crate_name)?;
-                    error!(
-                        "{}",
-                        reason.display(&hakari_package, &crate_name, &output.styles)
-                    );
-                    return Ok(1);
+                let dep = match CrateLookup::lookup(&hakari, &toml_name_map, &crate_name)? {
+                    CrateLookup::Found(entry) => entry,
+                    CrateLookup::NotFound(reason) => {
+                        error!(
+                            "{}",
+                            reason.display(hakari_package.name(), &crate_name, &output.styles)
+                        );
+                        return Ok(1);
+                    }
                 };
 
                 let explain = hakari
@@ -492,6 +493,83 @@ impl PackageSelection {
 // Helper methods
 // ---
 
+/// The result of looking up a crate name in the workspace-hack.
+#[derive(Debug)]
+enum CrateLookup<'g, 'a> {
+    /// The crate is written out under this entry.
+    Found(&'a TomlNameEntry<'g>),
+    /// The crate is not in the workspace-hack, and this is why.
+    NotFound(NotFoundReason),
+}
+
+impl<'g, 'a> CrateLookup<'g, 'a> {
+    fn lookup(
+        hakari: &Hakari<'g>,
+        toml_name_map: &'a IdOrdMap<TomlNameEntry<'g>>,
+        crate_name: &str,
+    ) -> Result<Self, guppy::Error> {
+        if let Some(entry) = toml_name_map.get(crate_name) {
+            return Ok(Self::Found(entry));
+        }
+
+        let hashed_names: BTreeMap<String, Version> = toml_name_map
+            .iter()
+            .filter(|entry| entry.package().name() == crate_name)
+            .map(|entry| {
+                (
+                    entry.toml_name().as_str().to_owned(),
+                    entry.package().version().clone(),
+                )
+            })
+            .collect();
+        if !hashed_names.is_empty() {
+            return Ok(Self::NotFound(NotFoundReason::MultipleVersions {
+                hashed_names,
+            }));
+        }
+
+        let builder = hakari.builder();
+        let mut packages = IdOrdMap::new();
+        for package in builder.graph().packages() {
+            // Workspace members, including the hakari package, can never be
+            // added regardless of configuration, so they're reported via
+            // member_by_name below rather than as excluded.
+            if package.name() != crate_name || package.in_workspace() {
+                continue;
+            }
+            let traversal = builder.is_traversal_excluded(package.id())?;
+            let final_ = builder.is_final_excluded(package.id())?;
+            let Some(by) = ExcludedBy::from_flags(traversal, final_) else {
+                continue;
+            };
+            packages
+                .insert_unique(ExcludedPackage {
+                    id: package.id().clone(),
+                    version: package.version().clone(),
+                    by,
+                })
+                .expect("package IDs within a graph are unique");
+        }
+        if !packages.is_empty() {
+            return Ok(Self::NotFound(NotFoundReason::ConfigExcluded { packages }));
+        }
+
+        // member_by_name only fails with UnknownWorkspaceName, but it returns
+        // the general error type.
+        #[cfg_attr(guppy_nightly, expect(non_exhaustive_omitted_patterns))]
+        match builder.graph().workspace().member_by_name(crate_name) {
+            Ok(package) => Ok(Self::NotFound(NotFoundReason::WorkspaceMember {
+                id: package.id().clone(),
+                version: package.version().clone(),
+            })),
+            Err(guppy::Error::UnknownWorkspaceName(_)) => {
+                Ok(Self::NotFound(NotFoundReason::Unknown))
+            }
+            Err(error) => Err(error),
+        }
+    }
+}
+
 /// The reason a crate name wasn't found in the workspace hack.
 #[derive(Debug, PartialEq, Eq)]
 enum NotFoundReason {
@@ -537,75 +615,15 @@ enum ExcludedBy {
 }
 
 impl NotFoundReason {
-    fn classify<'g>(
-        builder: &HakariBuilder<'g>,
-        toml_name_map: &IdOrdMap<TomlNameEntry<'g>>,
-        crate_name: &str,
-    ) -> Result<Self, guppy::Error> {
-        let hashed_names: BTreeMap<String, Version> = toml_name_map
-            .iter()
-            .filter(|entry| entry.package().name() == crate_name)
-            .map(|entry| {
-                (
-                    entry.toml_name().as_str().to_owned(),
-                    entry.package().version().clone(),
-                )
-            })
-            .collect();
-        if !hashed_names.is_empty() {
-            return Ok(Self::MultipleVersions { hashed_names });
-        }
-
-        let mut packages = IdOrdMap::new();
-        for package in builder.graph().packages() {
-            // Workspace members, including the hakari package, can never be
-            // added regardless of configuration, so they're reported via
-            // member_by_name below rather than as excluded.
-            if package.name() != crate_name || package.in_workspace() {
-                continue;
-            }
-            let traversal = builder.is_traversal_excluded(package.id())?;
-            let final_ = builder.is_final_excluded(package.id())?;
-            let by = match (traversal, final_) {
-                (true, true) => ExcludedBy::Both,
-                (true, false) => ExcludedBy::TraversalExcludes,
-                (false, true) => ExcludedBy::FinalExcludes,
-                (false, false) => continue,
-            };
-            packages
-                .insert_unique(ExcludedPackage {
-                    id: package.id().clone(),
-                    version: package.version().clone(),
-                    by,
-                })
-                .expect("package IDs within a graph are unique");
-        }
-        if !packages.is_empty() {
-            return Ok(Self::ConfigExcluded { packages });
-        }
-
-        // member_by_name only fails with UnknownWorkspaceName, but it returns
-        // the general error type.
-        #[cfg_attr(guppy_nightly, expect(non_exhaustive_omitted_patterns))]
-        match builder.graph().workspace().member_by_name(crate_name) {
-            Ok(package) => Ok(Self::WorkspaceMember {
-                id: package.id().clone(),
-                version: package.version().clone(),
-            }),
-            Err(guppy::Error::UnknownWorkspaceName(_)) => Ok(Self::Unknown),
-            Err(error) => Err(error),
-        }
-    }
-
     fn display<'a>(
         &'a self,
-        hakari_package: &'a PackageMetadata<'_>,
+        hakari_name: &'a str,
         crate_name: &'a str,
         styles: &'a Styles,
     ) -> NotFoundReasonDisplay<'a> {
         NotFoundReasonDisplay {
             reason: self,
-            hakari_name: hakari_package.name(),
+            hakari_name,
             crate_name,
             styles,
         }
@@ -684,6 +702,15 @@ impl fmt::Display for NotFoundReasonDisplay<'_> {
 }
 
 impl ExcludedBy {
+    fn from_flags(traversal: bool, final_: bool) -> Option<Self> {
+        match (traversal, final_) {
+            (true, true) => Some(Self::Both),
+            (true, false) => Some(Self::TraversalExcludes),
+            (false, true) => Some(Self::FinalExcludes),
+            (false, false) => None,
+        }
+    }
+
     fn config_keys(&self) -> &'static str {
         match self {
             Self::TraversalExcludes => "traversal-excludes",
@@ -815,7 +842,6 @@ mod tests {
         JsonFixture, METADATA_HAKARI_REVERSE_DEP_LEAF, METADATA_HAKARI_REVERSE_DEP_MEMBER_FEATURES,
         METADATA_HAKARI_REVERSE_DEP_MEMBER_NORMAL, METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK,
     };
-    use hakari::Hakari;
 
     /// Configuration excludes to apply to the hakari-reverse-dep fixture, as
     /// package IDs.
@@ -855,8 +881,35 @@ mod tests {
 
     fn not_found_reason(hakari: &Hakari<'_>, crate_name: &str) -> NotFoundReason {
         let toml_name_map = hakari.toml_name_map();
-        NotFoundReason::classify(hakari.builder(), &toml_name_map, crate_name)
-            .expect("reason is classified without a graph error")
+        match CrateLookup::lookup(hakari, &toml_name_map, crate_name)
+            .expect("lookup completes without a graph error")
+        {
+            CrateLookup::Found(entry) => panic!(
+                "crate '{crate_name}' is unexpectedly in the workspace-hack as '{}'",
+                entry.toml_name()
+            ),
+            CrateLookup::NotFound(reason) => reason,
+        }
+    }
+
+    #[test]
+    fn explain_found() {
+        let hakari = reverse_dep_hakari(Excludes::default());
+        let toml_name_map = hakari.toml_name_map();
+        match CrateLookup::lookup(&hakari, &toml_name_map, "hrd-leaf")
+            .expect("lookup completes without a graph error")
+        {
+            CrateLookup::Found(entry) => {
+                assert_eq!(entry.toml_name().as_str(), "hrd-leaf");
+                assert_eq!(
+                    entry.package().id(),
+                    &PackageId::new(METADATA_HAKARI_REVERSE_DEP_LEAF)
+                );
+            }
+            CrateLookup::NotFound(reason) => {
+                panic!("hrd-leaf should be in the workspace-hack, but got {reason:?}")
+            }
+        }
     }
 
     #[test]
