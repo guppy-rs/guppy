@@ -8,7 +8,7 @@ use crate::{
 };
 use camino::{Utf8Path, Utf8PathBuf};
 use clap::Parser;
-use color_eyre::eyre::{Result, WrapErr, bail, eyre};
+use color_eyre::eyre::{Result, WrapErr, bail};
 use guppy::{
     MetadataCommand,
     graph::{PackageGraph, PackageSet},
@@ -430,13 +430,15 @@ impl CommandWithBuilder {
             } => {
                 let hakari = builder.compute();
                 let toml_name_map = hakari.toml_name_map();
-                let dep = toml_name_map.get(crate_name.as_str()).ok_or_else(|| {
-                    eyre!(
+                let Some(dep) = toml_name_map.get(crate_name.as_str()) else {
+                    error!(
                         "crate name '{}' not found in workspace-hack\n\
-                        (hint: check spelling, or regenerate workspace-hack with `cargo hakari generate`)",
+                         (hint: check spelling, or regenerate workspace-hack with \
+                         `cargo hakari generate`)",
                         crate_name
-                    )
-                })?;
+                    );
+                    return Ok(1);
+                };
 
                 let explain = hakari
                     .explain(dep.package().id())
