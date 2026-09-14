@@ -1027,4 +1027,20 @@ mod tests {
             NotFoundReason::Unknown,
         );
     }
+
+    fn render(reason: &NotFoundReason, crate_name: &str) -> String {
+        reason
+            .display("my-workspace-hack", crate_name, &Styles::default())
+            .to_string()
+    }
+
+    #[test]
+    fn explain_not_found_display_unknown() {
+        assert_eq!(
+            render(&NotFoundReason::Unknown, "foo"),
+            "crate name 'foo' not found in workspace-hack\n\
+             (hint: check spelling, or regenerate workspace-hack with \
+             `cargo hakari generate`)",
+        );
+    }
 }
