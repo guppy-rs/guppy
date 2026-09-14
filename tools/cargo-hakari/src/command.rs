@@ -512,92 +512,77 @@ impl<'g, 'a> CrateLookup<'g, 'a> {
             return Ok(Self::Found(entry));
         }
 
-        let hashed_names: BTreeMap<String, Version> = toml_name_map
+        // Build a reverse map of package IDs to the (possibly hashed) version
+        // of their names.
+        let toml_names: BTreeMap<&PackageId, &str> = toml_name_map
             .iter()
             .filter(|entry| entry.package().name() == crate_name)
-            .map(|entry| {
-                (
-                    entry.toml_name().as_str().to_owned(),
-                    entry.package().version().clone(),
-                )
-            })
+            .map(|entry| (entry.package().id(), entry.toml_name().as_str()))
             .collect();
-        if !hashed_names.is_empty() {
-            return Ok(Self::NotFound(NotFoundReason::MultipleVersions {
-                hashed_names,
-            }));
-        }
 
         let builder = hakari.builder();
-        let mut packages = IdOrdMap::new();
+        let mut versions = IdOrdMap::new();
         for package in builder.graph().packages() {
-            // Workspace members, including the hakari package, can never be
-            // added regardless of configuration, so they're reported via
-            // member_by_name below rather than as excluded.
-            if package.name() != crate_name || package.in_workspace() {
+            if package.name() != crate_name {
                 continue;
             }
-            let traversal = builder.is_traversal_excluded(package.id())?;
-            let final_ = builder.is_final_excluded(package.id())?;
-            let Some(by) = ExcludedBy::from_flags(traversal, final_) else {
-                continue;
+            let status = if let Some(toml_name) = toml_names.get(package.id()) {
+                VersionStatus::InWorkspaceHack {
+                    toml_name: (*toml_name).to_owned(),
+                }
+            } else if package.in_workspace() {
+                // If a package is in the workspace, it can't be added to the
+                // workspace-hack no matter what.
+                VersionStatus::WorkspaceMember
+            } else {
+                let traversal = builder.is_traversal_excluded(package.id())?;
+                let final_ = builder.is_final_excluded(package.id())?;
+                match ExcludedBy::from_flags(traversal, final_) {
+                    Some(by) => VersionStatus::ConfigExcluded { by },
+                    // This function doesn't know why this crate isn't present,
+                    // so we fall back to a generic unknown status.
+                    None => continue,
+                }
             };
-            packages
-                .insert_unique(ExcludedPackage {
+            versions
+                .insert_unique(NotFoundCrateVersion {
                     id: package.id().clone(),
                     version: package.version().clone(),
-                    by,
+                    status,
                 })
                 .expect("package IDs within a graph are unique");
         }
-        if !packages.is_empty() {
-            return Ok(Self::NotFound(NotFoundReason::ConfigExcluded { packages }));
-        }
 
-        // member_by_name only fails with UnknownWorkspaceName, but it returns
-        // the general error type.
-        #[cfg_attr(guppy_nightly, expect(non_exhaustive_omitted_patterns))]
-        match builder.graph().workspace().member_by_name(crate_name) {
-            Ok(package) => Ok(Self::NotFound(NotFoundReason::WorkspaceMember {
-                id: package.id().clone(),
-                version: package.version().clone(),
-            })),
-            Err(guppy::Error::UnknownWorkspaceName(_)) => {
-                Ok(Self::NotFound(NotFoundReason::Unknown))
-            }
-            Err(error) => Err(error),
-        }
+        let reason = if versions.is_empty() {
+            NotFoundReason::Unknown
+        } else {
+            NotFoundReason::InGraph { versions }
+        };
+        Ok(Self::NotFound(reason))
     }
 }
 
 /// The reason a crate name wasn't found in the workspace hack.
 #[derive(Debug, PartialEq, Eq)]
 enum NotFoundReason {
-    /// The crate has more than one version in the workspace hack.
-    MultipleVersions {
-        /// The hashed names and versions of crates.
-        hashed_names: BTreeMap<String, Version>,
+    /// The crate name was found in the graph, but not in the workspace hack.
+    InGraph {
+        /// The versions of the crate name found in the graph.
+        versions: IdOrdMap<NotFoundCrateVersion>,
     },
-    /// The crate is excluded by the configuration.
-    ConfigExcluded {
-        /// All packages with this name excluded by the configuration.
-        packages: IdOrdMap<ExcludedPackage>,
-    },
-    /// The crate is a workspace member and so is ineligible to be included in
-    /// the workspace hack.
-    WorkspaceMember { id: PackageId, version: Version },
-    /// This crate name is unknown.
+    /// No package in the graph has this name.
     Unknown,
 }
 
+/// A version of a particular crate, and why it wasn't found by name.
 #[derive(Debug, PartialEq, Eq)]
-struct ExcludedPackage {
+struct NotFoundCrateVersion {
     id: PackageId,
     version: Version,
-    by: ExcludedBy,
+    status: VersionStatus,
 }
 
-impl IdOrdItem for ExcludedPackage {
+impl IdOrdItem for NotFoundCrateVersion {
     type Key<'a> = &'a PackageId;
 
     fn key(&self) -> Self::Key<'_> {
@@ -605,6 +590,31 @@ impl IdOrdItem for ExcludedPackage {
     }
 
     id_upcast!();
+}
+
+#[derive(Debug, PartialEq, Eq)]
+enum VersionStatus {
+    InWorkspaceHack {
+        /// The name of the crate as it appears in the workspace-hack.
+        ///
+        /// This is always a hashed name, since `VersionStatus` is only used in
+        /// ambiguous cases.
+        toml_name: String,
+    },
+    WorkspaceMember,
+    ConfigExcluded {
+        by: ExcludedBy,
+    },
+}
+
+impl VersionStatus {
+    fn display_rank(&self) -> u8 {
+        match self {
+            Self::InWorkspaceHack { .. } => 0,
+            Self::ConfigExcluded { .. } => 1,
+            Self::WorkspaceMember => 2,
+        }
+    }
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -644,50 +654,37 @@ impl fmt::Display for NotFoundReasonDisplay<'_> {
         let crate_name = self.crate_name.style(self.styles.package_name);
         let hakari_name = self.hakari_name.style(self.styles.package_name);
         match self.reason {
-            NotFoundReason::MultipleVersions { hashed_names } => {
-                write!(
-                    f,
-                    "crate '{crate_name}' has multiple versions in {hakari_name}; \
-                     specify one of: "
-                )?;
-                for (i, (toml_name, version)) in hashed_names.iter().enumerate() {
-                    if i > 0 {
-                        f.write_str(", ")?;
+            NotFoundReason::InGraph { versions } => {
+                let groups = group_by_status(versions);
+
+                let mut toml_name_hint = false;
+                for (status, _) in &groups {
+                    match status {
+                        VersionStatus::InWorkspaceHack { .. } => toml_name_hint = true,
+                        VersionStatus::WorkspaceMember | VersionStatus::ConfigExcluded { .. } => {}
                     }
+                }
+
+                write!(f, "crate '{crate_name}' is not in {hakari_name}")?;
+                if toml_name_hint {
+                    f.write_str(" under that name")?;
+                }
+                f.write_str(":")?;
+                for (status, group) in &groups {
+                    f.write_str("\n  ")?;
+                    write_version_list(f, group, self.styles)?;
+                    f.write_str(": ")?;
+                    self.write_status(f, status)?;
+                }
+
+                if toml_name_hint {
                     write!(
                         f,
-                        "{toml_name} (v{})",
-                        version.style(self.styles.package_version)
+                        "\n(hint: to explain a version that is in {hakari_name}, \
+                         pass the name listed for it)"
                     )?;
                 }
                 Ok(())
-            }
-            NotFoundReason::ConfigExcluded { packages } => {
-                write!(
-                    f,
-                    "crate '{crate_name}' is excluded by `hakari.toml`, \
-                     so it is never added to {hakari_name}: "
-                )?;
-                for (i, package) in packages.iter().enumerate() {
-                    if i > 0 {
-                        f.write_str(", ")?;
-                    }
-                    write!(
-                        f,
-                        "v{} ({})",
-                        package.version.style(self.styles.package_version),
-                        package.by.config_keys(),
-                    )?;
-                }
-                Ok(())
-            }
-            NotFoundReason::WorkspaceMember { id: _, version } => {
-                write!(
-                    f,
-                    "crate '{crate_name}' v{} is a workspace member; hakari only adds \
-                     third-party dependencies to {hakari_name}",
-                    version.style(self.styles.package_version),
-                )
             }
             NotFoundReason::Unknown => {
                 write!(
@@ -699,6 +696,71 @@ impl fmt::Display for NotFoundReasonDisplay<'_> {
             }
         }
     }
+}
+
+impl NotFoundReasonDisplay<'_> {
+    fn write_status(&self, f: &mut fmt::Formatter<'_>, status: &VersionStatus) -> fmt::Result {
+        let hakari_name = self.hakari_name.style(self.styles.package_name);
+        match status {
+            VersionStatus::InWorkspaceHack { toml_name } => {
+                write!(
+                    f,
+                    "in {hakari_name} as '{}'",
+                    toml_name.style(self.styles.package_name)
+                )
+            }
+            VersionStatus::WorkspaceMember => {
+                write!(
+                    f,
+                    "workspace member; hakari only adds third-party dependencies \
+                     to {hakari_name}"
+                )
+            }
+            VersionStatus::ConfigExcluded { by } => {
+                write!(f, "excluded by {} in `hakari.toml`", by.config_keys())
+            }
+        }
+    }
+}
+
+/// Returns one line per status, ordered by rank then version.
+fn group_by_status(
+    versions: &IdOrdMap<NotFoundCrateVersion>,
+) -> Vec<(&VersionStatus, Vec<&Version>)> {
+    let mut sorted: Vec<&NotFoundCrateVersion> = versions.iter().collect();
+    sorted.sort_by(|a, b| {
+        a.status
+            .display_rank()
+            .cmp(&b.status.display_rank())
+            .then_with(|| a.version.cmp(&b.version))
+            .then_with(|| a.id.cmp(&b.id))
+    });
+
+    let mut groups: Vec<(&VersionStatus, Vec<&Version>)> = Vec::new();
+    for crate_version in sorted {
+        match groups
+            .iter_mut()
+            .find(|(status, _)| **status == crate_version.status)
+        {
+            Some((_, group)) => group.push(&crate_version.version),
+            None => groups.push((&crate_version.status, vec![&crate_version.version])),
+        }
+    }
+    groups
+}
+
+fn write_version_list(
+    f: &mut fmt::Formatter<'_>,
+    versions: &[&Version],
+    styles: &Styles,
+) -> fmt::Result {
+    for (i, version) in versions.iter().enumerate() {
+        if i > 0 {
+            f.write_str(", ")?;
+        }
+        write!(f, "v{}", version.style(styles.package_version))?;
+    }
+    Ok(())
 }
 
 impl ExcludedBy {
@@ -713,9 +775,9 @@ impl ExcludedBy {
 
     fn config_keys(&self) -> &'static str {
         match self {
-            Self::TraversalExcludes => "traversal-excludes",
-            Self::FinalExcludes => "final-excludes",
-            Self::Both => "traversal-excludes and final-excludes",
+            Self::TraversalExcludes => "`traversal-excludes`",
+            Self::FinalExcludes => "`final-excludes`",
+            Self::Both => "`traversal-excludes` and `final-excludes`",
         }
     }
 }
@@ -892,6 +954,25 @@ mod tests {
         }
     }
 
+    fn in_graph(
+        versions: impl IntoIterator<Item = (&'static str, Version, VersionStatus)>,
+    ) -> NotFoundReason {
+        NotFoundReason::InGraph {
+            versions: IdOrdMap::from_iter_unique(versions.into_iter().map(
+                |(id, version, status)| NotFoundCrateVersion {
+                    id: PackageId::new(id),
+                    version,
+                    status,
+                },
+            ))
+            .expect("expected versions have unique IDs"),
+        }
+    }
+
+    fn v0_1_0() -> Version {
+        Version::new(0, 1, 0)
+    }
+
     #[test]
     fn explain_found() {
         let hakari = reverse_dep_hakari(Excludes::default());
@@ -917,10 +998,11 @@ mod tests {
         let hakari = reverse_dep_hakari(Excludes::default());
         assert_eq!(
             not_found_reason(&hakari, "hrd-member-features"),
-            NotFoundReason::WorkspaceMember {
-                id: PackageId::new(METADATA_HAKARI_REVERSE_DEP_MEMBER_FEATURES),
-                version: Version::new(0, 1, 0),
-            },
+            in_graph([(
+                METADATA_HAKARI_REVERSE_DEP_MEMBER_FEATURES,
+                v0_1_0(),
+                VersionStatus::WorkspaceMember,
+            )]),
         );
     }
 
@@ -931,10 +1013,11 @@ mod tests {
         let hakari = reverse_dep_hakari(Excludes::default());
         assert_eq!(
             not_found_reason(&hakari, "hrd-workspace-hack"),
-            NotFoundReason::WorkspaceMember {
-                id: PackageId::new(METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK),
-                version: Version::new(0, 1, 0),
-            },
+            in_graph([(
+                METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK,
+                v0_1_0(),
+                VersionStatus::WorkspaceMember,
+            )]),
         );
     }
 
@@ -946,10 +1029,11 @@ mod tests {
         });
         assert_eq!(
             not_found_reason(&hakari, "hrd-member-normal"),
-            NotFoundReason::WorkspaceMember {
-                id: PackageId::new(METADATA_HAKARI_REVERSE_DEP_MEMBER_NORMAL),
-                version: Version::new(0, 1, 0),
-            },
+            in_graph([(
+                METADATA_HAKARI_REVERSE_DEP_MEMBER_NORMAL,
+                v0_1_0(),
+                VersionStatus::WorkspaceMember,
+            )]),
         );
     }
 
@@ -983,14 +1067,11 @@ mod tests {
             let hakari = reverse_dep_hakari(excludes);
             assert_eq!(
                 not_found_reason(&hakari, "hrd-leaf"),
-                NotFoundReason::ConfigExcluded {
-                    packages: IdOrdMap::from_iter_unique([ExcludedPackage {
-                        id: PackageId::new(METADATA_HAKARI_REVERSE_DEP_LEAF),
-                        version: Version::new(0, 1, 0),
-                        by,
-                    }])
-                    .expect("expected excluded packages have unique IDs"),
-                },
+                in_graph([(
+                    METADATA_HAKARI_REVERSE_DEP_LEAF,
+                    v0_1_0(),
+                    VersionStatus::ConfigExcluded { by },
+                )]),
                 "hrd-leaf excluded by {by:?}",
             );
         }
@@ -1004,18 +1085,22 @@ mod tests {
             .compute();
         assert_eq!(
             not_found_reason(&hakari, "rand_core"),
-            NotFoundReason::MultipleVersions {
-                hashed_names: BTreeMap::from([
-                    (
-                        "rand_core-468e82937335b1c9".to_owned(),
-                        Version::new(0, 3, 1),
-                    ),
-                    (
-                        "rand_core-9fbad63c4bcf4a8f".to_owned(),
-                        Version::new(0, 4, 2),
-                    ),
-                ]),
-            },
+            in_graph([
+                (
+                    "rand_core 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
+                    Version::new(0, 3, 1),
+                    VersionStatus::InWorkspaceHack {
+                        toml_name: "rand_core-468e82937335b1c9".to_owned(),
+                    },
+                ),
+                (
+                    "rand_core 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)",
+                    Version::new(0, 4, 2),
+                    VersionStatus::InWorkspaceHack {
+                        toml_name: "rand_core-9fbad63c4bcf4a8f".to_owned(),
+                    },
+                ),
+            ]),
         );
     }
 
@@ -1032,6 +1117,57 @@ mod tests {
         reason
             .display("my-workspace-hack", crate_name, &Styles::default())
             .to_string()
+    }
+
+    #[test]
+    fn explain_not_found_display_single_status() {
+        let reason = in_graph([("a", v0_1_0(), VersionStatus::WorkspaceMember)]);
+        assert_eq!(
+            render(&reason, "foo"),
+            "crate 'foo' is not in my-workspace-hack:\n  \
+             v0.1.0: workspace member; hakari only adds third-party dependencies \
+             to my-workspace-hack",
+        );
+    }
+
+    #[test]
+    fn explain_not_found_display_mixed_statuses() {
+        let reason = in_graph([
+            (
+                "a",
+                Version::new(1, 0, 0),
+                VersionStatus::InWorkspaceHack {
+                    toml_name: "foo-aaaa".to_owned(),
+                },
+            ),
+            (
+                "b",
+                Version::new(0, 9, 0),
+                VersionStatus::InWorkspaceHack {
+                    toml_name: "foo-bbbb".to_owned(),
+                },
+            ),
+            (
+                "e",
+                Version::new(0, 5, 0),
+                VersionStatus::ConfigExcluded {
+                    by: ExcludedBy::Both,
+                },
+            ),
+            ("h", Version::new(0, 8, 0), VersionStatus::WorkspaceMember),
+        ]);
+        assert_eq!(
+            render(&reason, "foo"),
+            "crate 'foo' is not in my-workspace-hack under that name:\n  \
+             v0.9.0: in my-workspace-hack as 'foo-bbbb'\n  \
+             v1.0.0: in my-workspace-hack as 'foo-aaaa'\n  \
+             v0.5.0: excluded by `traversal-excludes` and `final-excludes` in \
+             `hakari.toml`\n  \
+             v0.8.0: workspace member; hakari only adds third-party dependencies \
+             to my-workspace-hack\n\
+             (hint: to explain a version that is in my-workspace-hack, pass the \
+             name listed for it)",
+        );
     }
 
     #[test]
