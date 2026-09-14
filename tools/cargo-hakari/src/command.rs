@@ -692,8 +692,8 @@ impl fmt::Display for NotFoundReasonDisplay<'_> {
             NotFoundReason::Unknown => {
                 write!(
                     f,
-                    "crate name '{crate_name}' not found in workspace-hack\n\
-                     (hint: check spelling, or regenerate workspace-hack with \
+                    "crate name '{crate_name}' not found in {hakari_name}\n\
+                     (hint: check spelling, or regenerate {hakari_name} with \
                      `cargo hakari generate`)"
                 )
             }
@@ -1038,8 +1038,8 @@ mod tests {
     fn explain_not_found_display_unknown() {
         assert_eq!(
             render(&NotFoundReason::Unknown, "foo"),
-            "crate name 'foo' not found in workspace-hack\n\
-             (hint: check spelling, or regenerate workspace-hack with \
+            "crate name 'foo' not found in my-workspace-hack\n\
+             (hint: check spelling, or regenerate my-workspace-hack with \
              `cargo hakari generate`)",
         );
     }
