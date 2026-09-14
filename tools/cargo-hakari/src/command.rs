@@ -433,12 +433,8 @@ impl CommandWithBuilder {
                 let hakari = builder.compute();
                 let toml_name_map = hakari.toml_name_map();
                 let Some(dep) = toml_name_map.get(crate_name.as_str()) else {
-                    let reason = NotFoundReason::classify(
-                        hakari.builder(),
-                        &toml_name_map,
-                        &hakari_package,
-                        &crate_name,
-                    )?;
+                    let reason =
+                        NotFoundReason::classify(hakari.builder(), &toml_name_map, &crate_name)?;
                     error!(
                         "{}",
                         reason.display(&hakari_package, &crate_name, &output.styles)
@@ -544,7 +540,6 @@ impl NotFoundReason {
     fn classify<'g>(
         builder: &HakariBuilder<'g>,
         toml_name_map: &IdOrdMap<TomlNameEntry<'g>>,
-        hakari_package: &PackageMetadata<'g>,
         crate_name: &str,
     ) -> Result<Self, guppy::Error> {
         let hashed_names: BTreeMap<String, Version> = toml_name_map
@@ -563,9 +558,10 @@ impl NotFoundReason {
 
         let mut packages = IdOrdMap::new();
         for package in builder.graph().packages() {
-            // The hakari package is treated as excluded by the algorithm, so
-            // skip it here.
-            if package.name() != crate_name || package.id() == hakari_package.id() {
+            // Workspace members, including the hakari package, can never be
+            // added regardless of configuration, so they're reported via
+            // member_by_name below rather than as excluded.
+            if package.name() != crate_name || package.in_workspace() {
                 continue;
             }
             let traversal = builder.is_traversal_excluded(package.id())?;
@@ -817,12 +813,19 @@ mod tests {
     use super::*;
     use fixtures::json::{
         JsonFixture, METADATA_HAKARI_REVERSE_DEP_LEAF, METADATA_HAKARI_REVERSE_DEP_MEMBER_FEATURES,
+        METADATA_HAKARI_REVERSE_DEP_MEMBER_NORMAL, METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK,
     };
+    use hakari::Hakari;
 
-    // Classify `crate_name` against the hakari-reverse-dep fixture, optionally
-    // with hrd-leaf final-excluded. The fixture has no multi-version crates, so
-    // the name map is always empty here.
-    fn reason_for(crate_name: &str, final_exclude_leaf: bool) -> NotFoundReason {
+    /// Configuration excludes to apply to the hakari-reverse-dep fixture, as
+    /// package IDs.
+    #[derive(Default)]
+    struct Excludes {
+        traversal: Vec<&'static str>,
+        final_: Vec<&'static str>,
+    }
+
+    fn reverse_dep_hakari(excludes: Excludes) -> Hakari<'static> {
         let fixture = JsonFixture::metadata_hakari_reverse_dep();
         let graph = fixture.graph();
         let hakari_id = fixture
@@ -831,24 +834,36 @@ mod tests {
             .expect("hakari-reverse-dep fixture names a hakari package");
         let mut builder =
             HakariBuilder::new(graph, Some(hakari_id)).expect("hakari builder is created");
-        if final_exclude_leaf {
-            let leaf_id = PackageId::new(METADATA_HAKARI_REVERSE_DEP_LEAF);
-            builder
-                .add_final_excludes([&leaf_id])
-                .expect("hrd-leaf is known to the graph");
-        }
-        let hakari_package = graph
-            .metadata(hakari_id)
-            .expect("hakari package is in the graph");
+        let traversal: Vec<PackageId> = excludes
+            .traversal
+            .iter()
+            .map(|id| PackageId::new(*id))
+            .collect();
+        builder
+            .add_traversal_excludes(&traversal)
+            .expect("traversal excludes are known to the graph");
+        let final_: Vec<PackageId> = excludes
+            .final_
+            .iter()
+            .map(|id| PackageId::new(*id))
+            .collect();
+        builder
+            .add_final_excludes(&final_)
+            .expect("final excludes are known to the graph");
+        builder.compute()
+    }
 
-        NotFoundReason::classify(&builder, &IdOrdMap::new(), &hakari_package, crate_name)
+    fn not_found_reason(hakari: &Hakari<'_>, crate_name: &str) -> NotFoundReason {
+        let toml_name_map = hakari.toml_name_map();
+        NotFoundReason::classify(hakari.builder(), &toml_name_map, crate_name)
             .expect("reason is classified without a graph error")
     }
 
     #[test]
     fn explain_not_found_workspace_member() {
+        let hakari = reverse_dep_hakari(Excludes::default());
         assert_eq!(
-            reason_for("hrd-member-features", false),
+            not_found_reason(&hakari, "hrd-member-features"),
             NotFoundReason::WorkspaceMember {
                 id: PackageId::new(METADATA_HAKARI_REVERSE_DEP_MEMBER_FEATURES),
                 version: Version::new(0, 1, 0),
@@ -857,9 +872,42 @@ mod tests {
     }
 
     #[test]
-    fn explain_not_found_config_excluded() {
+    fn explain_not_found_hakari_package() {
+        // The hakari algorithm treats the hakari package as traversal-excluded
+        // -- it must not be reported as a config exclude.
+        let hakari = reverse_dep_hakari(Excludes::default());
         assert_eq!(
-            reason_for("hrd-leaf", true),
+            not_found_reason(&hakari, "hrd-workspace-hack"),
+            NotFoundReason::WorkspaceMember {
+                id: PackageId::new(METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK),
+                version: Version::new(0, 1, 0),
+            },
+        );
+    }
+
+    #[test]
+    fn explain_not_found_workspace_member_in_traversal_excludes() {
+        let hakari = reverse_dep_hakari(Excludes {
+            traversal: vec![METADATA_HAKARI_REVERSE_DEP_MEMBER_NORMAL],
+            ..Excludes::default()
+        });
+        assert_eq!(
+            not_found_reason(&hakari, "hrd-member-normal"),
+            NotFoundReason::WorkspaceMember {
+                id: PackageId::new(METADATA_HAKARI_REVERSE_DEP_MEMBER_NORMAL),
+                version: Version::new(0, 1, 0),
+            },
+        );
+    }
+
+    #[test]
+    fn explain_not_found_config_excluded() {
+        let hakari = reverse_dep_hakari(Excludes {
+            final_: vec![METADATA_HAKARI_REVERSE_DEP_LEAF],
+            ..Excludes::default()
+        });
+        assert_eq!(
+            not_found_reason(&hakari, "hrd-leaf"),
             NotFoundReason::ConfigExcluded {
                 packages: IdOrdMap::from_iter_unique([ExcludedPackage {
                     id: PackageId::new(METADATA_HAKARI_REVERSE_DEP_LEAF),
@@ -873,8 +921,9 @@ mod tests {
 
     #[test]
     fn explain_not_found_unknown() {
+        let hakari = reverse_dep_hakari(Excludes::default());
         assert_eq!(
-            reason_for("hrd-not-a-real-crate", false),
+            not_found_reason(&hakari, "hrd-not-a-real-crate"),
             NotFoundReason::Unknown,
         );
     }
