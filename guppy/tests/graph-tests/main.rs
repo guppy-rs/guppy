@@ -13,6 +13,7 @@ macro_rules! proptest_suite {
 }
 
 mod cargo_set_tests;
+mod dep_name_collision;
 mod feature_helpers;
 mod graph_tests;
 mod invalid_tests;

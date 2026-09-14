@@ -1,0 +1,42 @@
+# This file is @generated. To regenerate, run:
+#    cargo run -p fixture-manager -- generate-hakari --fixture metadata_dep_name_collision
+
+### BEGIN HAKARI SECTION
+# resolver = '3'
+# unify-target-host = 'auto'
+# output-single-feature = true
+# dep-format-version = '4'
+# workspace-hack-line-style = 'full'
+# platforms = ['powerpc-unknown-linux-gnu', 'riscv64gc-unknown-hermit', 'hexagon-unknown-qurt']
+# [[traversal-excludes.ids]]
+# name = 'bitflags'
+# version = '2.13.2'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'libc'
+# version = '0.2.189'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'main'
+# version = '0.1.0'
+# workspace-path = 'main'
+#
+# [[traversal-excludes.ids]]
+# name = 'tinyvec'
+# version = '1.13.2'
+# crates-io = true
+# [[final-excludes.ids]]
+# name = 'arrayvec'
+# version = '0.7.8'
+# crates-io = true
+#
+# [[final-excludes.ids]]
+# name = 'libc'
+# version = '0.2.189'
+# crates-io = true
+
+### END HAKARI SECTION
+
+# This part of the file should be preserved at the end.
