@@ -11,6 +11,8 @@
 
 ### Changed
 
+- `Hakari::toml_name_map` now returns an `iddqd::IdOrdMap` of `TomlNameEntry`
+  values, keyed and ordered by the name each dependency is written out under.
 - Updated `toml` to 1.1.4 and `toml_edit` to 0.25.13.
   - `HakariConfig::from_str`, `HakariBuilderSummary::to_string` and
     `HakariBuilderSummary::write_to_string` now return error types from `toml`

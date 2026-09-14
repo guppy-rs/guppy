@@ -6,9 +6,8 @@ use crate::{
     explain::HakariExplain,
     registry::Registry,
     toml_name_map,
-    toml_out::{HakariOutputOptions, write_toml},
+    toml_out::{HakariOutputOptions, TomlNameEntry, write_toml},
 };
-use ahash::AHashMap;
 use debug_ignore::DebugIgnore;
 use guppy::{
     PackageId,
@@ -20,7 +19,7 @@ use guppy::{
     },
     platform::{Platform, PlatformSpec, TargetFeatures},
 };
-use iddqd::BiHashMap;
+use iddqd::{BiHashMap, IdOrdMap};
 use rayon::prelude::*;
 use std::{
     borrow::Cow,
@@ -778,8 +777,8 @@ impl<'g> Hakari<'g> {
     /// corresponding [`PackageMetadata`].
     ///
     /// Packages which have one version are present as their original names, while packages with
-    /// more than one version have a hash appended to them.
-    pub fn toml_name_map(&self) -> AHashMap<Cow<'g, str>, PackageMetadata<'g>> {
+    /// more than one version have a hash appended to them. The map is ordered by name.
+    pub fn toml_name_map(&self) -> IdOrdMap<TomlNameEntry<'g>> {
         toml_name_map(&self.output_map, self.builder.dep_format_version)
     }
 

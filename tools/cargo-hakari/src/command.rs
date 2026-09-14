@@ -439,7 +439,7 @@ impl CommandWithBuilder {
                 })?;
 
                 let explain = hakari
-                    .explain(dep.id())
+                    .explain(dep.package().id())
                     .expect("package ID should be known since it was in the output");
                 let mut display = explain.display();
                 if output.color.is_enabled() {
