@@ -529,7 +529,7 @@ impl IdOrdItem for ExcludedPackage {
     id_upcast!();
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum ExcludedBy {
     TraversalExcludes,
     FinalExcludes,
@@ -902,19 +902,66 @@ mod tests {
 
     #[test]
     fn explain_not_found_config_excluded() {
-        let hakari = reverse_dep_hakari(Excludes {
-            final_: vec![METADATA_HAKARI_REVERSE_DEP_LEAF],
-            ..Excludes::default()
-        });
+        let leaf = vec![METADATA_HAKARI_REVERSE_DEP_LEAF];
+        let cases = [
+            (
+                Excludes {
+                    traversal: leaf.clone(),
+                    final_: vec![],
+                },
+                ExcludedBy::TraversalExcludes,
+            ),
+            (
+                Excludes {
+                    traversal: vec![],
+                    final_: leaf.clone(),
+                },
+                ExcludedBy::FinalExcludes,
+            ),
+            (
+                Excludes {
+                    traversal: leaf.clone(),
+                    final_: leaf,
+                },
+                ExcludedBy::Both,
+            ),
+        ];
+        for (excludes, by) in cases {
+            let hakari = reverse_dep_hakari(excludes);
+            assert_eq!(
+                not_found_reason(&hakari, "hrd-leaf"),
+                NotFoundReason::ConfigExcluded {
+                    packages: IdOrdMap::from_iter_unique([ExcludedPackage {
+                        id: PackageId::new(METADATA_HAKARI_REVERSE_DEP_LEAF),
+                        version: Version::new(0, 1, 0),
+                        by,
+                    }])
+                    .expect("expected excluded packages have unique IDs"),
+                },
+                "hrd-leaf excluded by {by:?}",
+            );
+        }
+    }
+
+    #[test]
+    fn explain_not_found_multiple_versions() {
+        let graph = JsonFixture::metadata_libra().graph();
+        let hakari = HakariBuilder::new(graph, None)
+            .expect("hakari builder is created")
+            .compute();
         assert_eq!(
-            not_found_reason(&hakari, "hrd-leaf"),
-            NotFoundReason::ConfigExcluded {
-                packages: IdOrdMap::from_iter_unique([ExcludedPackage {
-                    id: PackageId::new(METADATA_HAKARI_REVERSE_DEP_LEAF),
-                    version: Version::new(0, 1, 0),
-                    by: ExcludedBy::FinalExcludes,
-                }])
-                .expect("expected excluded packages have unique IDs"),
+            not_found_reason(&hakari, "rand_core"),
+            NotFoundReason::MultipleVersions {
+                hashed_names: BTreeMap::from([
+                    (
+                        "rand_core-468e82937335b1c9".to_owned(),
+                        Version::new(0, 3, 1),
+                    ),
+                    (
+                        "rand_core-9fbad63c4bcf4a8f".to_owned(),
+                        Version::new(0, 4, 2),
+                    ),
+                ]),
             },
         );
     }
