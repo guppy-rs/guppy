@@ -29,7 +29,7 @@ pre-release-replacements = [
 workspace = true
 
 [dependencies]
-camino = "1.2.5"
+camino = "1.2.6"
 cfg-if = "1.0.4"
 # Note that unstable-markdown is semver-exempt, so a clap bump may change how
 # help text renders. Check `cargo hakari <command> --help` when updating clap.
