@@ -67,8 +67,9 @@ use fixtures::{
     package_id,
 };
 use guppy::graph::{
+    DependencyDirection,
     cargo::{CargoOptions, CargoResolverVersion},
-    feature::{FeatureLabel, StandardFeatures, named_feature_filter},
+    feature::{FeatureId, FeatureLabel, StandardFeatures, named_feature_filter},
 };
 use std::iter;
 use target_spec::{Platform, TargetFeatures};
@@ -137,8 +138,8 @@ static CASES: &[Case] = &[
 
     // `both` -> libc and (on unix) memchr, so on Linux both links are live at
     // once. A weak `both?/std` buffers one weak index per link, and activating
-    // `dep:both` has to flush both -- the merged `dep:` edge only carries one
-    // of the two `package_edge_ix`es.
+    // `dep:both` has to flush both -- so the merged `dep:` edge has to carry
+    // every link's `package_edge_ix`.
     (LINUX, "both-weak-slash", &[
         (json::METADATA_DEP_NAME_COLLISION_LIBC,     None),
         (json::METADATA_DEP_NAME_COLLISION_MEMCHR,   None),
@@ -176,6 +177,64 @@ fn both_links_share_a_dep_name() {
             ("split", "tinyvec"),
         ],
         "both links for each dep name are present"
+    );
+}
+
+/// `ConditionalLink::package_links` reports every package a dependency name
+/// resolves to.
+///
+/// `dep:renamed` activates the name itself, so its link is derived from both
+/// `main -> bytes` and `main -> bitflags`. A `renamed/std` cross-package link
+/// is derived from just the package it lands on.
+#[test]
+fn package_links_report_every_package() {
+    let graph = JsonFixture::metadata_dep_name_collision().graph();
+    let main = package_id(json::METADATA_DEP_NAME_COLLISION_MAIN);
+    let bytes = package_id(json::METADATA_DEP_NAME_COLLISION_BYTES);
+    let bitflags = package_id(json::METADATA_DEP_NAME_COLLISION_BITFLAGS);
+
+    let links_out_of = |feature| {
+        let from = FeatureId::named(&main, feature);
+        let mut links: Vec<_> = graph
+            .feature_graph()
+            .query_forward([from])
+            .expect("valid feature")
+            .resolve()
+            .conditional_links(DependencyDirection::Forward)
+            .filter(|link| link.from().feature_id() == from)
+            .map(|link| {
+                let mut to_names: Vec<_> = link
+                    .package_links()
+                    .map(|package_link| package_link.to().name())
+                    .collect();
+                to_names.sort();
+                (link.to().feature_id(), to_names)
+            })
+            .collect();
+        links.sort();
+        links
+    };
+
+    assert_eq!(
+        links_out_of("dep-colon"),
+        [(
+            FeatureId::optional_dependency(&main, "renamed"),
+            vec!["bitflags", "bytes"],
+        )],
+        "dep:renamed is derived from both links"
+    );
+
+    assert_eq!(
+        links_out_of("slash"),
+        [
+            (
+                FeatureId::optional_dependency(&main, "renamed"),
+                vec!["bitflags", "bytes"],
+            ),
+            (FeatureId::named(&bitflags, "std"), vec!["bitflags"]),
+            (FeatureId::named(&bytes, "std"), vec!["bytes"]),
+        ],
+        "each cross-package link is derived from one link, dep:renamed from both"
     );
 }
 

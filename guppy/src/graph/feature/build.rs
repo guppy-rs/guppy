@@ -303,8 +303,8 @@ impl FeatureGraphBuildState {
 
     // Creates a "full" conditional link, unifying requirements across all dependency lines -- and,
     // where a rename makes one dependency name resolve to several packages, across every link for
-    // that name. `package_edge_ix` is the first link's; only `feature/weak.rs` reads it, and the
-    // `DependenciesSection` edges below the node carry each link's own index.
+    // that name. Every link's edge index is recorded, so `package_links` reports all of them and
+    // `feature/weak.rs` releases each one's buffer.
     // This should not be used in add_dependency_edges below!
     fn make_full_conditional_link_impl(links: &[PackageLink<'_>]) -> ConditionalLinkImpl {
         // This edge is enabled if the feature is enabled, which means the union of (required,
