@@ -95,34 +95,36 @@ where
                     return Either::Left(None);
                 }
 
-                match self.deps.get(link.package_edge_ix()) {
-                    Some(weak_index) => {
-                        match std::mem::replace(
-                            &mut self.states[weak_index.0],
-                            SingleBufferState::Accepted,
-                        ) {
-                            SingleBufferState::Buffered(buffer) => {
-                                // Transition from buffered to accepted.
-                                let mut edge_refs: Vec<_> = buffer
-                                    .into_iter()
-                                    .filter_map(|(link, edge_ref)| {
-                                        // Filter buffered links.
-                                        (self.accept_fn)(link).then_some(edge_ref)
-                                    })
-                                    .collect();
-                                edge_refs.push(edge_ref);
-                                Either::Right(edge_refs)
-                            }
-                            SingleBufferState::Accepted => {
-                                // Weak link, but package already accepted.
-                                Either::Left(Some(edge_ref))
-                            }
+                // A link derived from several package edges releases the buffer
+                // corresponding to all of them.
+                let mut released: Vec<FeatureEdgeReference<'g>> = Vec::new();
+                for package_edge_ix in link.package_edge_ixs().iter() {
+                    let Some(weak_index) = self.deps.get(package_edge_ix) else {
+                        // Not a weak link.
+                        continue;
+                    };
+                    match std::mem::replace(
+                        &mut self.states[weak_index.0],
+                        SingleBufferState::Accepted,
+                    ) {
+                        SingleBufferState::Buffered(buffer) => {
+                            // Transition from buffered to accepted.
+                            released.extend(buffer.into_iter().filter_map(|(link, edge_ref)| {
+                                // Filter buffered links.
+                                (self.accept_fn)(link).then_some(edge_ref)
+                            }));
+                        }
+                        SingleBufferState::Accepted => {
+                            // Weak link, but package already accepted.
                         }
                     }
-                    None => {
-                        // Not a weak link.
-                        Either::Left(Some(edge_ref))
-                    }
+                }
+
+                if released.is_empty() {
+                    Either::Left(Some(edge_ref))
+                } else {
+                    released.push(edge_ref);
+                    Either::Right(released)
                 }
             }
         }

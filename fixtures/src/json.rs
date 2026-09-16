@@ -422,6 +422,8 @@ impl JsonFixture {
         // Tests for the feature graph.
         self.details
             .assert_feature_graph_warnings(graph, "feature graph warnings");
+        self.details
+            .assert_conditional_link_package_links(graph, "conditional link package links");
     }
 
     fn init_graph(&self) -> (&str, &PackageGraph) {
