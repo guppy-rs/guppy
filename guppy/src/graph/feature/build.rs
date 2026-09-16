@@ -70,12 +70,13 @@ impl FeatureGraphBuildState {
     }
 
     pub(super) fn add_named_feature_edges(&mut self, metadata: PackageMetadata<'_>) {
-        // A dependency name can map to more than one link. Cargo unifies
-        // instances that resolve to the same package, so this only happens when
-        // a rename makes two *different* packages share one name -- e.g. semver
-        // 1.0.28's `serde = { package = "serde_core" }` alongside a plain
-        // `serde` under `cfg(any())`. Both are part of `dep:serde` and
-        // `serde/...`, so keying by name alone would silently drop one.
+        // A dependency name can map to more than one link. Cargo and guppy
+        // both unify instances that resolve to the same package, so this only
+        // happens when a rename makes two *different* packages share one name
+        // -- e.g. semver 1.0.28's `serde = { package = "serde_core" }`
+        // alongside a plain `serde` under `cfg(any())`. Both are part of
+        // `dep:serde` and `serde/...`, so keying by name alone would silently
+        // drop one.
         let mut dep_name_to_links: AHashMap<&str, SmallVec<[PackageLink; 1]>> = AHashMap::new();
         for link in metadata.direct_links() {
             dep_name_to_links
@@ -130,7 +131,12 @@ impl FeatureGraphBuildState {
                     .map_or(&[][..], SmallVec::as_slice);
 
                 // A cross-package edge lands on a different node per link, so
-                // emit one per link. Every link also needs a weak index.
+                // emit one per link.
+                //
+                // If the dependency is weak, each link also gets its own weak
+                // index.
+                //
+                // TODO-RAINCLAUDE: dropped explainer, main fixed step-3 bug.
                 for link in links {
                     let slash = if *weak {
                         self.make_weak_slash_impl(&metadata, link)
@@ -346,9 +352,11 @@ impl FeatureGraphBuildState {
         }))
     }
 
-    // Creates a "full" conditional link, unifying requirements across all dependency lines -- and,
-    // where a rename makes one dependency name resolve to several packages, across every link for
-    // that name. Every link's edge index is recorded, so `package_links` reports all of them.
+    // Creates a "full" conditional link, unifying requirements across all
+    // dependency lines -- and, where a rename makes one dependency name
+    // resolve to several packages, across every link for that name. Every
+    // link's edge index is recorded, so `package_links` reports all of them.
+    //
     // This should not be used in add_dependency_edges below!
     fn make_full_conditional_link_impl(links: &[PackageLink<'_>]) -> ConditionalLinkImpl {
         // This edge is enabled if the feature is enabled, which means the union of (required,

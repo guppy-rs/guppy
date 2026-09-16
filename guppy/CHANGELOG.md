@@ -143,14 +143,32 @@
   returns the same set as `FeatureQuery::resolve`. Forward queries are
   unchanged.
 
-- Feature edges are no longer dropped when one dependency name resolves to two
-  different packages ([#682]). A `package = "..."` rename can make two
-  declarations share a single name -- for example `semver` 1.0.28's
-  `serde = { package = "serde_core" }` alongside a plain `serde` under
-  `cfg(any())`. Previously only one of the two links was considered while
-  building the feature graph, so `dep:name` and `name/feature` entries in
-  `[features]` failed to activate the other package. The platform conditions of
-  every link sharing a name are now unioned, matching Cargo.
+- Features that refer to a dependency name shared by two packages now
+  activate both of them ([#682]).
+
+  With Cargo, a `package = "..."` rename can make two declarations share one
+  name. For example, `semver` 1.0.28 does this:
+
+  ```toml
+  [dependencies]
+  serde = { version = "1", package = "serde_core", optional = true }
+
+  [target.'cfg(any())'.dependencies]
+  serde = { version = "1", optional = true }
+
+  [features]
+  serde = ["dep:serde"]
+  ```
+
+  The name `serde` resolves to both `serde_core` and `serde`. Previously the
+  feature graph kept only one of the two, so enabling semver's `serde` feature
+  activated whichever package happened to survive. If that was `serde`, which
+  `cfg(any())` never builds, `serde_core` was left out of the build entirely.
+  Now `dep:serde` and `serde/feature` entries consider every package under the
+  name, and the platform conditions of all of them are unioned, matching
+  Cargo.
+
+  Thanks [UebelAndre](https://github.com/UebelAndre) for your first contribution!
 
 [#682]: https://github.com/guppy-rs/guppy/pull/682
 

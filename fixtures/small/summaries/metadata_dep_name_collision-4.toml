@@ -10,8 +10,8 @@ target-platform = []
 [metadata.host-platform]
 spec = 'any'
 [[metadata.omitted-packages.ids]]
-name = 'bitflags'
-version = '2.13.2'
+name = 'byteorder'
+version = '1.5.0'
 crates-io = true
 
 [[metadata.omitted-packages.ids]]
@@ -20,9 +20,9 @@ version = '1.12.1'
 crates-io = true
 
 [[metadata.omitted-packages.ids]]
-name = 'main'
-version = '0.1.0'
-workspace-path = 'main'
+name = 'libc'
+version = '0.2.189'
+crates-io = true
 
 [[metadata.features-only]]
 name = 'main'

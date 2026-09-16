@@ -17,8 +17,8 @@ triple = 'i686-win7-windows-gnu'
 target-features = 'unknown'
 flags = ['abc']
 [[metadata.omitted-packages.ids]]
-name = 'libc'
-version = '0.2.189'
+name = 'hex'
+version = '0.4.3'
 crates-io = true
 
 [[target-package]]
@@ -26,8 +26,8 @@ name = 'main'
 version = '0.1.0'
 workspace-path = 'main'
 status = 'initial'
-features = ['both-dep-colon', 'both-weak-slash', 'default', 'dep-colon', 'slash', 'split-dep-colon', 'split-slash', 'weak-slash']
-optional-deps = ['both', 'renamed', 'split']
+features = ['both-dep-colon', 'both-weak-slash', 'default', 'dep-colon', 'kinds-dep-colon', 'kinds-slash', 'plain-slash', 'slash', 'split-dep-colon', 'split-slash', 'weak-slash']
+optional-deps = ['both', 'kinds', 'renamed', 'split']
 
 [[target-package]]
 name = 'arrayvec'
@@ -42,6 +42,27 @@ version = '1.12.1'
 crates-io = true
 status = 'direct'
 features = ['std']
+
+[[target-package]]
+name = 'either'
+version = '1.18.0'
+crates-io = true
+status = 'direct'
+features = ['std']
+
+[[target-package]]
+name = 'libc'
+version = '0.2.189'
+crates-io = true
+status = 'direct'
+features = ['std']
+
+[[target-package]]
+name = 'log'
+version = '0.4.34'
+crates-io = true
+status = 'direct'
+features = ['alloc', 'std']
 
 [[target-package]]
 name = 'memchr'

@@ -7,11 +7,15 @@
 //! `package = "..."` rename produces this, and why every `dep:name` and
 //! `name/feature` entry has to be resolved against all of the links.
 //!
-//! The `dep-name-collision` fixture's `main` package declares three such names,
+//! The `dep-name-collision` fixture's `main` package declares five such names,
 //! one per interesting platform combination:
 //!
 //! ```toml
+//! [package]
+//! build = "build.rs"
+//!
 //! [features]
+//! default = []
 //! dep-colon = ["dep:renamed"]
 //! slash = ["renamed/std"]
 //! weak-slash = ["renamed?/std"]
@@ -19,6 +23,9 @@
 //! split-slash = ["split/std"]
 //! both-dep-colon = ["dep:both"]
 //! both-weak-slash = ["both?/std"]
+//! plain-slash = ["plain/std"]
+//! kinds-dep-colon = ["dep:kinds"]
+//! kinds-slash = ["kinds/std"]
 //!
 //! # One link everywhere, one link never: the shape semver 1.0.28 uses to keep
 //! # a package in the lockfile without ever building it.
@@ -59,6 +66,28 @@
 //! package = "memchr"
 //! optional = true
 //! default-features = false
+//!
+//! [dependencies.plain]
+//! version = "1"
+//! package = "either"
+//! default-features = false
+//!
+//! [target.'cfg(any())'.dependencies.plain]
+//! version = "1"
+//! package = "byteorder"
+//! default-features = false
+//!
+//! [dependencies.kinds]
+//! version = "0.4"
+//! package = "log"
+//! optional = true
+//! default-features = false
+//!
+//! [build-dependencies.kinds]
+//! version = "0.4"
+//! package = "hex"
+//! optional = true
+//! default-features = false
 //! ```
 
 use crate::feature_helpers::{CargoResolutionCase, WINDOWS};
@@ -66,107 +95,184 @@ use fixtures::{
     json::{self, JsonFixture},
     package_id,
 };
-use guppy::graph::{DependencyDirection, feature::FeatureId};
+use guppy::graph::{DependencyDirection, PackageGraph, feature::FeatureId};
 
 #[rustfmt::skip]
 static CASES: &[CargoResolutionCase] = &[
-    // `renamed` -> bytes (always) + bitflags (`cfg(any())`, so never built).
+    // [features]
+    // dep-colon = ["dep:renamed"]
+    //
+    // `renamed` resolves to two packages:
+    //
+    // * bytes as a plain (non-target) dependency.
+    // * bitflags, declared under `cfg(any())`, so never built.
     CargoResolutionCase::new(&["dep-colon"]).target_expected(&[
         (json::METADATA_DEP_NAME_COLLISION_MAIN,     Some("default dep-colon dep:renamed")),
         (json::METADATA_DEP_NAME_COLLISION_BYTES,    Some("")),
         (json::METADATA_DEP_NAME_COLLISION_BITFLAGS, None),
     ]),
+    // [features]
+    // slash = ["renamed/std"]
+    //
+    // `renamed` resolves to bytes and bitflags as above.
     CargoResolutionCase::new(&["slash"]).target_expected(&[
         (json::METADATA_DEP_NAME_COLLISION_MAIN,     Some("default slash dep:renamed")),
         (json::METADATA_DEP_NAME_COLLISION_BYTES,    Some("std")),
         (json::METADATA_DEP_NAME_COLLISION_BITFLAGS, None),
     ]),
+    // [features]
+    // weak-slash = ["renamed?/std"]
+    //
     // A weak `renamed?/std` on its own activates nothing.
     CargoResolutionCase::new(&["weak-slash"]).target_expected(&[
         (json::METADATA_DEP_NAME_COLLISION_MAIN,     Some("default weak-slash")),
         (json::METADATA_DEP_NAME_COLLISION_BYTES,    None),
         (json::METADATA_DEP_NAME_COLLISION_BITFLAGS, None),
     ]),
-    // ... but once `dep:renamed` activates it, the buffered weak edge flushes.
+    // [features]
+    // weak-slash = ["renamed?/std"]
+    // dep-colon = ["dep:renamed"]
+    //
+    // Once `dep:renamed` activates the dependency, the buffered weak edge
+    // flushes and bytes gets `std`.
     CargoResolutionCase::new(&["weak-slash", "dep-colon"]).target_expected(&[
         (json::METADATA_DEP_NAME_COLLISION_MAIN,     Some("default dep-colon weak-slash dep:renamed")),
         (json::METADATA_DEP_NAME_COLLISION_BYTES,    Some("std")),
         (json::METADATA_DEP_NAME_COLLISION_BITFLAGS, None),
     ]),
 
-    // `split` -> arrayvec on Linux, tinyvec on Windows. The two platform
-    // conditions are unioned, so the name activates on both -- pulling in only
-    // the package that is buildable there.
+    // [features]
+    // split-dep-colon = ["dep:split"]
+    //
+    // `split` resolves to two packages:
+    //
+    // * arrayvec, declared under `cfg(target_os = "linux")`.
+    // * tinyvec, declared under `cfg(windows)`.
+    //
+    // The two conditions are unioned, so `dep:split` activates on both
+    // platforms, pulling in only the package that is buildable there.
     CargoResolutionCase::new(&["split-dep-colon"]).target_expected(&[
         (json::METADATA_DEP_NAME_COLLISION_MAIN,     Some("default split-dep-colon dep:split")),
         (json::METADATA_DEP_NAME_COLLISION_ARRAYVEC, Some("")),
         (json::METADATA_DEP_NAME_COLLISION_TINYVEC,  None),
     ]),
+    // The same on Windows.
     CargoResolutionCase::new(&["split-dep-colon"]).target_platform(WINDOWS).target_expected(&[
         (json::METADATA_DEP_NAME_COLLISION_MAIN,     Some("default split-dep-colon dep:split")),
         (json::METADATA_DEP_NAME_COLLISION_ARRAYVEC, None),
         (json::METADATA_DEP_NAME_COLLISION_TINYVEC,  Some("")),
     ]),
+    // [features]
+    // split-slash = ["split/std"]
+    //
+    // `split` resolves to arrayvec and tinyvec as above.
     CargoResolutionCase::new(&["split-slash"]).target_expected(&[
         (json::METADATA_DEP_NAME_COLLISION_MAIN,     Some("default split-slash dep:split")),
         (json::METADATA_DEP_NAME_COLLISION_ARRAYVEC, Some("std")),
         (json::METADATA_DEP_NAME_COLLISION_TINYVEC,  None),
     ]),
+    // The same on Windows. tinyvec's `std` implies `alloc`, which implies its
+    // optional `tinyvec_macros` dependency.
     CargoResolutionCase::new(&["split-slash"]).target_platform(WINDOWS).target_expected(&[
         (json::METADATA_DEP_NAME_COLLISION_MAIN,     Some("default split-slash dep:split")),
         (json::METADATA_DEP_NAME_COLLISION_ARRAYVEC, None),
         (json::METADATA_DEP_NAME_COLLISION_TINYVEC,  Some("alloc std tinyvec_macros dep:tinyvec_macros")),
     ]),
 
-    // `both` -> libc and (on unix) memchr, so on Linux both links are live at
-    // once. A weak `both?/std` buffers one weak index per link, and activating
-    // `dep:both` has to flush both.
+    // [features]
+    // both-weak-slash = ["both?/std"]
+    //
+    // `both` resolves to two packages:
+    //
+    // * libc as a plain (non-target) dependency.
+    // * memchr, declared under `cfg(unix)`.
+    //
+    // On Linux both are live at once. A weak `both?/std` buffers one weak
+    // index per link and, on its own, activates nothing.
     CargoResolutionCase::new(&["both-weak-slash"]).target_expected(&[
+        (json::METADATA_DEP_NAME_COLLISION_MAIN,     Some("both-weak-slash default")),
         (json::METADATA_DEP_NAME_COLLISION_LIBC,     None),
         (json::METADATA_DEP_NAME_COLLISION_MEMCHR,   None),
     ]),
+    // [features]
+    // both-weak-slash = ["both?/std"]
+    // both-dep-colon = ["dep:both"]
+    //
+    // Activating `dep:both` has to flush both weak buffers. memchr's `std`
+    // implies `alloc`.
     CargoResolutionCase::new(&["both-weak-slash", "both-dep-colon"]).target_expected(&[
         (json::METADATA_DEP_NAME_COLLISION_MAIN,     Some("both-dep-colon both-weak-slash default dep:both")),
         (json::METADATA_DEP_NAME_COLLISION_LIBC,     Some("std")),
-        // memchr's `std` feature implies `alloc`.
         (json::METADATA_DEP_NAME_COLLISION_MEMCHR,   Some("alloc std")),
+    ]),
+    // The same on Windows, where only libc is live. Activating `dep:both`
+    // releases memchr's weak buffer too, but memchr's link is `cfg(unix)`, so
+    // `memchr/std` stays off.
+    CargoResolutionCase::new(&["both-weak-slash", "both-dep-colon"]).target_platform(WINDOWS).target_expected(&[
+        (json::METADATA_DEP_NAME_COLLISION_MAIN,     Some("both-dep-colon both-weak-slash default dep:both")),
+        (json::METADATA_DEP_NAME_COLLISION_LIBC,     Some("std")),
+        (json::METADATA_DEP_NAME_COLLISION_MEMCHR,   None),
+    ]),
+
+    // [dependencies]
+    // plain = { package = "either" }
+    //
+    // [target.'cfg(any())'.dependencies]
+    // plain = { package = "byteorder" }
+    //
+    // Neither declaration is optional, so there is no `dep:plain` feature and
+    // either is always built, even with no features enabled.
+    CargoResolutionCase::new(&[]).target_expected(&[
+        (json::METADATA_DEP_NAME_COLLISION_MAIN,      Some("default")),
+        (json::METADATA_DEP_NAME_COLLISION_EITHER,    Some("")),
+        (json::METADATA_DEP_NAME_COLLISION_BYTEORDER, None),
+    ]),
+    // [features]
+    // plain-slash = ["plain/std"]
+    //
+    // `plain` resolves to either and byteorder as above.
+    CargoResolutionCase::new(&["plain-slash"]).target_expected(&[
+        (json::METADATA_DEP_NAME_COLLISION_MAIN,      Some("default plain-slash")),
+        (json::METADATA_DEP_NAME_COLLISION_EITHER,    Some("std")),
+        (json::METADATA_DEP_NAME_COLLISION_BYTEORDER, None),
+    ]),
+
+    // [dependencies]
+    // kinds = { package = "log", optional = true }
+    //
+    // [build-dependencies]
+    // kinds = { package = "hex", optional = true }
+    //
+    // [features]
+    // kinds-dep-colon = ["dep:kinds"]
+    //
+    // `main` has a build script, so `dep:kinds` activates log on the target
+    // and hex on the host.
+    CargoResolutionCase::new(&["kinds-dep-colon"]).target_expected(&[
+        (json::METADATA_DEP_NAME_COLLISION_MAIN,      Some("default kinds-dep-colon dep:kinds")),
+        (json::METADATA_DEP_NAME_COLLISION_LOG,       Some("")),
+        (json::METADATA_DEP_NAME_COLLISION_HEX,       None),
+    ]).host_expected(&[
+        (json::METADATA_DEP_NAME_COLLISION_HEX,       Some("")),
+        (json::METADATA_DEP_NAME_COLLISION_LOG,       None),
+    ]),
+    // [features]
+    // kinds-slash = ["kinds/std"]
+    //
+    // `kinds` resolves to log and hex as above. Both `std` features imply
+    // `alloc`.
+    CargoResolutionCase::new(&["kinds-slash"]).target_expected(&[
+        (json::METADATA_DEP_NAME_COLLISION_MAIN,      Some("default kinds-slash dep:kinds")),
+        (json::METADATA_DEP_NAME_COLLISION_LOG,       Some("alloc std")),
+        (json::METADATA_DEP_NAME_COLLISION_HEX,       None),
+    ]).host_expected(&[
+        (json::METADATA_DEP_NAME_COLLISION_HEX,       Some("alloc std")),
+        (json::METADATA_DEP_NAME_COLLISION_LOG,       None),
     ]),
 ];
 
-/// Both links share the dependency name, so both must be in the package graph.
-#[test]
-fn both_links_share_a_dep_name() {
-    let graph = JsonFixture::metadata_dep_name_collision().graph();
-    let main = graph
-        .metadata(&package_id(json::METADATA_DEP_NAME_COLLISION_MAIN))
-        .expect("valid package ID");
-
-    let mut links: Vec<_> = main
-        .direct_links()
-        .map(|link| (link.dep_name(), link.to().name()))
-        .collect();
-    links.sort();
-
-    assert_eq!(
-        links,
-        [
-            ("both", "libc"),
-            ("both", "memchr"),
-            ("renamed", "bitflags"),
-            ("renamed", "bytes"),
-            ("split", "arrayvec"),
-            ("split", "tinyvec"),
-        ],
-        "both links for each dep name are present"
-    );
-}
-
-/// `ConditionalLink::package_links` reports every package a dependency name
-/// resolves to.
-///
-/// `dep:renamed` activates the name itself, so its link is derived from both
-/// `main -> bytes` and `main -> bitflags`. A `renamed/std` cross-package link
-/// is derived from just the package it lands on.
+/// Test that `ConditionalLink::package_links` reports every package a
+/// dependency name resolves to.
 #[test]
 fn package_links_report_every_package() {
     let graph = JsonFixture::metadata_dep_name_collision().graph();
@@ -225,4 +331,65 @@ fn resolution_matches_cargo() {
     for case in CASES {
         case.check(graph, json::METADATA_DEP_NAME_COLLISION_MAIN, "");
     }
+}
+
+// Merged edges use whichever link `direct_links` yields first, so results must
+// not depend on `resolve.nodes[].deps` order (which is the PackageGraph link
+// insertion order internally).
+#[test]
+fn resolution_independent_of_link_order() {
+    let fixture = JsonFixture::metadata_dep_name_collision();
+    let mut metadata: serde_json::Value =
+        serde_json::from_str(fixture.json()).expect("fixture is valid JSON");
+
+    let main_node = metadata["resolve"]["nodes"]
+        .as_array_mut()
+        .expect("resolve.nodes is an array")
+        .iter_mut()
+        .find(|node| node["id"] == json::METADATA_DEP_NAME_COLLISION_MAIN)
+        .expect("main is in the resolve");
+    main_node["deps"]
+        .as_array_mut()
+        .expect("deps is an array")
+        .reverse();
+
+    let reversed = serde_json::to_string(&metadata).expect("metadata serializes");
+    let reversed_graph = PackageGraph::from_json(&reversed).expect("reversed metadata builds");
+
+    let original_order = link_order(fixture.graph());
+    let reversed_order = link_order(&reversed_graph);
+    assert_ne!(
+        original_order, reversed_order,
+        "reversing the resolve changes direct_links order"
+    );
+    assert_eq!(
+        sorted_link_names(&reversed_graph),
+        sorted_link_names(fixture.graph()),
+        "reversing the resolve keeps the same links"
+    );
+
+    for case in CASES {
+        case.check(
+            &reversed_graph,
+            json::METADATA_DEP_NAME_COLLISION_MAIN,
+            "with reversed link order: ",
+        );
+    }
+}
+
+/// Returns a `(dep name, package name)` per direct link, in `direct_links`
+/// order.
+fn link_order(graph: &PackageGraph) -> Vec<(&str, &str)> {
+    graph
+        .metadata(&package_id(json::METADATA_DEP_NAME_COLLISION_MAIN))
+        .expect("valid package ID")
+        .direct_links()
+        .map(|link| (link.dep_name(), link.to().name()))
+        .collect()
+}
+
+fn sorted_link_names(graph: &PackageGraph) -> Vec<(&str, &str)> {
+    let mut links = link_order(graph);
+    links.sort();
+    links
 }

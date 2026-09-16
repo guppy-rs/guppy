@@ -14,14 +14,19 @@
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
+# name = 'libc'
+# version = '0.2.189'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'log'
+# version = '0.4.34'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
 # name = 'main'
 # version = '0.1.0'
 # workspace-path = 'main'
-#
-# [[traversal-excludes.ids]]
-# name = 'memchr'
-# version = '2.8.3'
-# crates-io = true
 #
 # [[traversal-excludes.ids]]
 # name = 'tinyvec'

@@ -19,18 +19,23 @@
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
-# name = 'libc'
-# version = '0.2.189'
+# name = 'either'
+# version = '1.18.0'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'hex'
+# version = '0.4.3'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'log'
+# version = '0.4.34'
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
 # name = 'memchr'
 # version = '2.8.3'
-# crates-io = true
-#
-# [[traversal-excludes.ids]]
-# name = 'tinyvec'
-# version = '1.13.2'
 # crates-io = true
 # [[final-excludes.ids]]
 # name = 'tinyvec'
@@ -41,6 +46,9 @@
 # name = 'tinyvec_macros'
 # version = '0.1.1'
 # crates-io = true
+
+[dependencies]
+libc = { version = "0.2", default-features = false, features = ["std"] }
 
 ### END HAKARI SECTION
 

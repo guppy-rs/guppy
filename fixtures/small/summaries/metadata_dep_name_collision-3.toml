@@ -12,24 +12,24 @@ spec = 'any'
 [metadata.target-platform]
 spec = 'any'
 [[metadata.omitted-packages.ids]]
-name = 'main'
-version = '0.1.0'
-workspace-path = 'main'
+name = 'log'
+version = '0.4.34'
+crates-io = true
 
 [[metadata.features-only]]
 name = 'main'
 version = '0.1.0'
 workspace-path = 'main'
-features = ['both-dep-colon', 'both-weak-slash', 'default', 'dep-colon', 'slash', 'split-dep-colon', 'split-slash', 'weak-slash']
-optional-deps = ['both', 'renamed', 'split']
+features = ['both-dep-colon', 'both-weak-slash', 'default', 'dep-colon', 'kinds-dep-colon', 'kinds-slash', 'plain-slash', 'slash', 'split-dep-colon', 'split-slash', 'weak-slash']
+optional-deps = ['both', 'kinds', 'renamed', 'split']
 
 [[target-package]]
 name = 'main'
 version = '0.1.0'
 workspace-path = 'main'
 status = 'initial'
-features = ['both-dep-colon', 'both-weak-slash', 'default', 'dep-colon', 'slash', 'split-dep-colon', 'split-slash', 'weak-slash']
-optional-deps = ['both', 'renamed', 'split']
+features = ['both-dep-colon', 'both-weak-slash', 'default', 'dep-colon', 'kinds-dep-colon', 'kinds-slash', 'plain-slash', 'slash', 'split-dep-colon', 'split-slash', 'weak-slash']
+optional-deps = ['both', 'kinds', 'renamed', 'split']
 
 [[target-package]]
 name = 'arrayvec'
@@ -46,8 +46,22 @@ status = 'direct'
 features = ['std']
 
 [[target-package]]
+name = 'byteorder'
+version = '1.5.0'
+crates-io = true
+status = 'direct'
+features = ['std']
+
+[[target-package]]
 name = 'bytes'
 version = '1.12.1'
+crates-io = true
+status = 'direct'
+features = ['std']
+
+[[target-package]]
+name = 'either'
+version = '1.18.0'
 crates-io = true
 status = 'direct'
 features = ['std']
@@ -80,3 +94,10 @@ version = '0.1.1'
 crates-io = true
 status = 'transitive'
 features = []
+
+[[host-package]]
+name = 'hex'
+version = '0.4.3'
+crates-io = true
+status = 'direct'
+features = ['alloc', 'std']

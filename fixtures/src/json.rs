@@ -179,6 +179,14 @@ pub static METADATA_DEP_NAME_COLLISION_LIBC: &str =
     "registry+https://github.com/rust-lang/crates.io-index#libc@0.2.189";
 pub static METADATA_DEP_NAME_COLLISION_MEMCHR: &str =
     "registry+https://github.com/rust-lang/crates.io-index#memchr@2.8.3";
+pub static METADATA_DEP_NAME_COLLISION_EITHER: &str =
+    "registry+https://github.com/rust-lang/crates.io-index#either@1.18.0";
+pub static METADATA_DEP_NAME_COLLISION_BYTEORDER: &str =
+    "registry+https://github.com/rust-lang/crates.io-index#byteorder@1.5.0";
+pub static METADATA_DEP_NAME_COLLISION_LOG: &str =
+    "registry+https://github.com/rust-lang/crates.io-index#log@0.4.34";
+pub static METADATA_DEP_NAME_COLLISION_HEX: &str =
+    "registry+https://github.com/rust-lang/crates.io-index#hex@0.4.3";
 
 pub static METADATA_LIBRA_PATH: &str = "../large/metadata_libra.json";
 pub static METADATA_LIBRA_ADMISSION_CONTROL_SERVICE: &str = "admission-control-service 0.1.0 (path+file:///Users/fakeuser/local/libra/admission_control/admission-control-service)";

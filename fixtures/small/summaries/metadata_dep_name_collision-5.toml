@@ -30,3 +30,10 @@ version = '0.1.0'
 workspace-path = 'main'
 status = 'initial'
 features = []
+
+[[target-package]]
+name = 'either'
+version = '1.18.0'
+crates-io = true
+status = 'direct'
+features = []
