@@ -8,7 +8,7 @@ use crate::{
         PackageGraph, PackageIx, PackageLink, PackageMetadata,
         feature::{
             ConditionalLinkImpl, FeatureEdge, FeatureGraphImpl, FeatureLabel, FeatureMetadataImpl,
-            FeatureNode, WeakDependencies, WeakIndex,
+            FeatureNode, PackageEdgeIxs, WeakDependencies, WeakIndex,
         },
     },
     platform::PlatformStatusImpl,
@@ -289,7 +289,7 @@ impl FeatureGraphBuildState {
         }
 
         ConditionalLinkImpl {
-            package_edge_ix: link.edge_ix(),
+            package_edge_ixs: PackageEdgeIxs::single(link.edge_ix()),
             normal: combine_req_opt(link.normal()),
             build: combine_req_opt(link.build()),
             dev: combine_req_opt(link.dev()),
@@ -638,7 +638,7 @@ impl DependencyBuildState {
 
     fn finish(self) -> FeatureEdge {
         FeatureEdge::DependenciesSection(ConditionalLinkImpl {
-            package_edge_ix: self.package_edge_ix,
+            package_edge_ixs: PackageEdgeIxs::single(self.package_edge_ix),
             normal: self.normal,
             build: self.build,
             dev: self.dev,

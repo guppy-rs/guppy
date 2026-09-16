@@ -15,7 +15,7 @@ use guppy::{
     errors::FeatureGraphWarning,
     graph::{
         BuildTargetId, BuildTargetKind, DependencyDirection, EnabledStatus, PackageGraph,
-        PackageLink, PackageMetadata, PackageSource, Workspace,
+        PackageLink, PackageMetadata, PackageSource, Workspace, feature::StandardFeatures,
     },
     platform::{EnabledTernary, Platform, PlatformSpec},
 };
@@ -310,6 +310,43 @@ impl FixtureDetails {
         let mut actual: Vec<_> = graph.feature_graph().build_warnings().to_vec();
         actual.sort();
         assert_eq!(&self.feature_graph_warnings, &actual, "{}", msg);
+    }
+
+    /// Asserts invariants for `ConditionalLink::package_links`.
+    ///
+    /// * Every conditional link starts at its `from` feature's package.
+    /// * A cross-package one has exactly one package link, ending at its `to`
+    ///   feature's package.
+    pub fn assert_conditional_link_package_links(&self, graph: &PackageGraph, msg: &str) {
+        let feature_set = graph
+            .feature_graph()
+            .query_workspace(StandardFeatures::All)
+            .resolve();
+        for link in feature_set.conditional_links(DependencyDirection::Forward) {
+            let (from, to) = link.endpoints();
+            let package_links: Vec<_> = link.package_links().collect();
+            assert!(
+                !package_links.is_empty(),
+                "{msg}: {link:?} has at least one package link"
+            );
+            for package_link in &package_links {
+                assert_eq!(
+                    package_link.from().id(),
+                    from.package_id(),
+                    "{msg}: {link:?}: package link starts at the from package"
+                );
+            }
+            if from.package_id() != to.package_id() {
+                let [package_link] = package_links.as_slice() else {
+                    panic!("{msg}: {link:?}: cross-package link has exactly one package link");
+                };
+                assert_eq!(
+                    package_link.to().id(),
+                    to.package_id(),
+                    "{msg}: {link:?}: package link ends at the to package"
+                );
+            }
+        }
     }
 
     // ---

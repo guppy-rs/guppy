@@ -7,8 +7,9 @@ use fixtures::{
     package_id,
 };
 use guppy::graph::{
+    DependencyDirection,
     cargo::{CargoOptions, CargoResolverVersion, CargoSet},
-    feature::{FeatureLabel, FeatureSet, StandardFeatures, named_feature_filter},
+    feature::{FeatureId, FeatureLabel, FeatureSet, StandardFeatures, named_feature_filter},
 };
 use target_spec::Platform;
 
@@ -399,6 +400,56 @@ fn test_edge_upgrades() {
             &msg,
         );
     }
+}
+
+/// `bar = ["arrayvec/std"]` yields three conditional links (cross-package,
+/// same-package `dep:`, same-package named). All of these are derived from
+/// `main -> arrayvec`.
+#[test]
+fn package_links_for_conditional_links() {
+    let graph = JsonFixture::metadata_weak_namespaced_features().graph();
+    let main = package_id(json::METADATA_WEAK_NAMESPACED_ID);
+    let arrayvec = package_id(json::METADATA_WEAK_NAMESPACED_ARRAYVEC);
+    let bar = FeatureId::named(&main, "bar");
+
+    let mut actual: Vec<_> = graph
+        .feature_graph()
+        .query_forward([bar])
+        .expect("bar is a feature")
+        .resolve()
+        .conditional_links(DependencyDirection::Forward)
+        .filter(|link| link.from().feature_id() == bar)
+        .map(|link| {
+            let package_links: Vec<_> = link
+                .package_links()
+                .map(|package_link| {
+                    (
+                        package_link.from().name(),
+                        package_link.to().name(),
+                        package_link.dep_name(),
+                    )
+                })
+                .collect();
+            (link.to().feature_id(), package_links)
+        })
+        .collect();
+    actual.sort();
+
+    let via_arrayvec = vec![("namespaced-weak", "arrayvec", "arrayvec")];
+    let mut expected = vec![
+        (FeatureId::named(&arrayvec, "std"), via_arrayvec.clone()),
+        (FeatureId::named(&main, "arrayvec"), via_arrayvec.clone()),
+        (
+            FeatureId::optional_dependency(&main, "arrayvec"),
+            via_arrayvec,
+        ),
+    ];
+    expected.sort();
+
+    assert_eq!(
+        actual, expected,
+        "every link out of bar comes from main -> arrayvec"
+    );
 }
 
 fn feature_set_fn(named_features: &[&str]) -> FeatureSet<'static> {

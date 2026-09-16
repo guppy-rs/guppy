@@ -23,6 +23,7 @@ use petgraph::{
     prelude::*,
     visit::{EdgeFiltered, IntoNodeReferences},
 };
+use smallvec::SmallVec;
 use std::{fmt, iter, iter::FromIterator};
 
 // Some general notes about feature graphs:
@@ -821,11 +822,46 @@ impl<'g> ConditionalLink<'g> {
         self.inner.dev_only()
     }
 
-    /// Returns the `PackageLink` from which this `ConditionalLink` was derived.
-    pub fn package_link(&self) -> PackageLink<'g> {
-        self.graph
-            .package_graph
-            .edge_ix_to_link(self.inner.package_edge_ix)
+    /// Returns the `PackageLink`s this `ConditionalLink` was derived from.
+    ///
+    /// This is usually one link, but a `package = "..."` rename can make one
+    /// dependency name resolve to several packages. For example, consider this
+    /// `Cargo.toml`:
+    ///
+    /// ```toml
+    /// [package]
+    /// name = "main"
+    ///
+    /// [dependencies]
+    /// serde = { package = "serde_core", version = "1", optional = true }
+    ///
+    /// # Never enabled on any platform, but still resolved and locked.
+    /// [target.'cfg(any())'.dependencies]
+    /// serde = { version = "1", optional = true }
+    ///
+    /// [features]
+    /// serde = ["dep:serde", "serde/std"]
+    /// ```
+    ///
+    /// The package graph has two links out of `main`, `main -> serde_core` and
+    /// `main -> serde`, both with the dependency name `serde`. The feature
+    /// `serde` produces three conditional links:
+    ///
+    /// * `main/serde -> main/dep:serde`, from `dep:serde`. This activates the
+    ///   dependency name, so this method returns both `main -> serde_core` and
+    ///   `main -> serde`. The link's platform status is the union of theirs.
+    /// * `main/serde -> serde_core/std`, from `serde/std`. This method returns
+    ///   just `main -> serde_core`.
+    /// * `main/serde -> serde/std`, also from `serde/std`. This method returns
+    ///   just `main -> serde`.
+    ///
+    /// The order in which links are returned is unspecified.
+    pub fn package_links(&self) -> impl ExactSizeIterator<Item = PackageLink<'g>> + 'g {
+        let package_graph = self.graph.package_graph;
+        self.inner
+            .package_edge_ixs
+            .iter()
+            .map(move |edge_ix| package_graph.edge_ix_to_link(edge_ix))
     }
 
     // ---
@@ -837,9 +873,8 @@ impl<'g> ConditionalLink<'g> {
         self.edge_ix
     }
 
-    #[allow(dead_code)]
-    pub(in crate::graph) fn package_edge_ix(&self) -> EdgeIndex<PackageIx> {
-        self.inner.package_edge_ix
+    pub(super) fn package_edge_ixs(&self) -> &'g PackageEdgeIxs {
+        &self.inner.package_edge_ixs
     }
 }
 
@@ -1006,7 +1041,7 @@ pub enum FeatureEdge {
 #[derive(Clone, Debug)]
 #[doc(hidden)]
 pub struct ConditionalLinkImpl {
-    pub(super) package_edge_ix: EdgeIndex<PackageIx>,
+    pub(super) package_edge_ixs: PackageEdgeIxs,
     pub(super) normal: PlatformStatusImpl,
     pub(super) build: PlatformStatusImpl,
     pub(super) dev: PlatformStatusImpl,
@@ -1016,6 +1051,22 @@ impl ConditionalLinkImpl {
     #[inline]
     fn dev_only(&self) -> bool {
         self.normal.is_never() && self.build.is_never()
+    }
+}
+
+/// The package edges a conditional link was derived from.
+///
+/// This is always non-empty by construction.
+#[derive(Clone, Debug)]
+pub(super) struct PackageEdgeIxs(SmallVec<[EdgeIndex<PackageIx>; 4]>);
+
+impl PackageEdgeIxs {
+    pub(super) fn single(edge_ix: EdgeIndex<PackageIx>) -> Self {
+        Self(iter::once(edge_ix).collect())
+    }
+
+    pub(super) fn iter(&self) -> impl ExactSizeIterator<Item = EdgeIndex<PackageIx>> + '_ {
+        self.0.iter().copied()
     }
 }
 
