@@ -36,6 +36,19 @@
   - `main/serde -> serde/std`, also from `serde/std`. `package_links` returns
     just `main -> serde`.
 
+### Fixed
+
+- Feature edges are no longer dropped when one dependency name resolves to two
+  different packages ([#682]). A `package = "..."` rename can make two
+  declarations share a single name -- for example `semver` 1.0.28's
+  `serde = { package = "serde_core" }` alongside a plain `serde` under
+  `cfg(any())`. Previously only one of the two links was considered while
+  building the feature graph, so `dep:name` and `name/feature` entries in
+  `[features]` failed to activate the other package. The platform conditions of
+  every link sharing a name are now unioned, matching Cargo.
+
+[#682]: https://github.com/guppy-rs/guppy/pull/682
+
 ## [0.18.0] - 2026-08-25
 
 ### Added
@@ -275,7 +288,7 @@ Cargo metadata generated on Windows is now parseable on Unix. Windows paths are 
  - `Workspace::default_members()` and `Workspace::default_member_ids()` iterate over workspace default members (requires Cargo 1.71+; returns empty iterator for older Cargo versions).
  - `PackageLink::registry()` returns the registry URL for a dependency, if it uses a non-default registry.
  - `PackageLink::path()` returns the file system path for path dependencies.
- 
+
 ## [0.17.23] - 2025-10-12
 
 ### Changed
