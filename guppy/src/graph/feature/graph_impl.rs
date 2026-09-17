@@ -297,9 +297,10 @@ impl<'g> FeatureGraph<'g> {
                 Some(EdgeLinks::NonWeak(make(link)))
             }
             FeatureEdge::NamedFeatureWithSlash { link, slash } => Some(match slash {
-                SlashForm::Weak(index) => EdgeLinks::Weak {
-                    full: make(link),
-                    index: *index,
+                SlashForm::Weak(weak) => EdgeLinks::Weak {
+                    required: weak.required.as_ref().map(|half| make(half.get())),
+                    optional: make(weak.optional.get()),
+                    index: weak.index,
                 },
                 SlashForm::Strong => EdgeLinks::NonWeak(make(link)),
             }),
@@ -840,8 +841,16 @@ impl<'g> ConditionalLink<'g> {
         }
     }
 
-    /// Returns true if this edge is dev-only, i.e. code from this edge will not be included in
-    /// normal builds.
+    /// Returns true if this edge is dev-only, i.e. code from this edge will not
+    /// be included in normal builds.
+    ///
+    /// This is scoped to the declarations for this link. For example, a
+    /// dependency might be optional as a normal dependency but required as a
+    /// dev-dependency. In that case, the
+    /// [`Required`](LinkDeclarations::Required) version of the link is dev-only
+    /// while the [`Optional`](LinkDeclarations::Optional) half is not.
+    /// [`Unsplit`](LinkDeclarations::Unsplit) is the union of both, so it
+    /// isn't dev-only either.
     pub fn dev_only(&self) -> bool {
         self.inner.dev_only()
     }
@@ -850,15 +859,56 @@ impl<'g> ConditionalLink<'g> {
     /// statuses were derived from.
     ///
     /// A package can declare the same dependency more than once, and some of
-    /// those declarations can be optional while others are required. The
-    /// return value is fixed per kind of link:
+    /// those declarations can be optional while others are required. For
+    /// example:
     ///
-    /// * A link from a package's base feature into a dependency covers the
-    ///   required declarations, so it is [`Required`](LinkDeclarations::Required).
-    /// * A link from the `dep:foo` node into `foo` covers the optional ones,
-    ///   so it is [`Optional`](LinkDeclarations::Optional).
-    /// * Every other link covers each declaration alike, so it is
-    ///   [`Unsplit`](LinkDeclarations::Unsplit).
+    /// ```toml
+    /// [dependencies]
+    /// foo = { version = "1" }
+    ///
+    /// [build-dependencies]
+    /// foo = { version = "1", optional = true }
+    ///
+    /// [features]
+    /// weak = ["foo?/std"]
+    /// ```
+    ///
+    /// Cargo applies `foo?/std` to each declaration separately.
+    ///
+    /// * The required normal dependency gets `std` as soon as `weak` is
+    ///   enabled.
+    /// * The optional build dependency gets `std` only if `dep:foo` is
+    ///   also activated.
+    ///
+    /// To model this, [`FeatureQuery::resolve_with`] may call the visitor twice
+    /// for the link from `main/weak` to `foo/std`:
+    ///
+    /// * Once with a [`Required`](LinkDeclarations::Required) link, when `weak`
+    ///   is reached. Here, [`normal`](Self::normal) is always enabled and
+    ///   [`build`](Self::build) is never enabled.
+    /// * Once with an [`Optional`](LinkDeclarations::Optional) link. Here,
+    ///   `normal` is never enabled and `build` is always enabled.
+    ///
+    /// Both links have the same [`from`](Self::from) and [`to`](Self::to); this
+    /// method is the way to tell them apart. The link is followed if the
+    /// visitor accepts either one.
+    ///
+    /// If `foo` has no required declarations, the required link is skipped.
+    ///
+    /// Outside of a resolve, the same edge is a single link.
+    /// [`FeatureSet::conditional_links`] returns it once, with
+    /// [`Unsplit`](LinkDeclarations::Unsplit) and the union of both sets of
+    /// statuses.
+    ///
+    /// For other kinds of links, the return value is fixed:
+    ///
+    /// * `foo/std` and `dep:foo` activate every declaration of `foo`, so their
+    ///   links are always `Unsplit`.
+    /// * A link from a package's base feature into a dependency is `Required`.
+    /// * A link from `dep:foo` into `foo` is `Optional`.
+    ///
+    /// [`FeatureQuery::resolve_with`]: crate::graph::feature::FeatureQuery::resolve_with
+    /// [`FeatureSet::conditional_links`]: crate::graph::feature::FeatureSet::conditional_links
     pub fn declarations(&self) -> LinkDeclarations {
         self.inner.declarations
     }
@@ -1036,13 +1086,17 @@ pub(super) enum EdgeLinks<'g> {
     /// A non-weak conditional link, evaluated once.
     NonWeak(ConditionalLink<'g>),
 
-    /// A weak link, `a = ["foo?/b"]`, held back until the optional dependency
-    /// is activated.
+    /// A weak link, `a = ["foo?/b"]`.
     Weak {
-        /// The link covering every declaration of the dependency.
-        full: ConditionalLink<'g>,
+        /// The link covering required declarations of this dependency.
+        ///
+        /// This is `None` if the dependency is never declared as required.
+        required: Option<ConditionalLink<'g>>,
 
-        /// The buffer holding `full` back.
+        /// The link covering optional declarations of this dependency.
+        optional: ConditionalLink<'g>,
+
+        /// The index of the buffer that holds `optional` back.
         index: WeakIndex,
     },
 }
@@ -1110,13 +1164,50 @@ pub enum FeatureEdge {
 #[derive(Clone, Debug)]
 #[doc(hidden)]
 pub enum SlashForm {
-    /// The feature applies to the dependency as soon as it is enabled. Either
-    /// it is written without the `?`, as `a = ["foo/b"]`, or `a` has both
-    /// forms, as in `a = ["foo?/b", "foo/b"]`, and the non-weak one wins.
+    /// The feature applies to every declaration of the dependency as soon as it
+    /// is enabled. There are three ways to get here:
+    ///
+    /// * The feature is written without the `?`, as `a = ["foo/b"]`.
+    /// * It is written as `foo?/b`, but `foo` has no optional declarations, so
+    ///   `foo?/b` means the same as `foo/b`.
+    /// * `a` has both forms, as in `a = ["foo?/b", "foo/b"]`. Both map to the
+    ///   same edge, and the non-weak form wins.
     Strong,
 
-    /// The weak form, `a = ["foo?/b"]`.
-    Weak(WeakIndex),
+    /// The weak form, `a = ["foo?/b"]`, on a dependency that has at least one
+    /// optional declaration to hold back.
+    Weak(Box<WeakSlashImpl>),
+}
+
+/// Extra data carried by a weak [`FeatureEdge::NamedFeatureWithSlash`]
+/// (`foo?/b`). Not part of the stable API.
+#[derive(Clone, Debug)]
+#[doc(hidden)]
+pub struct WeakSlashImpl {
+    /// The half covering `foo`'s required declarations, absent if it has none.
+    pub(super) required: Option<EnabledLink>,
+
+    /// The half covering `foo`'s optional declarations. Always present: an
+    /// edge with no optional declarations is [`SlashForm::Strong`].
+    pub(super) optional: EnabledLink,
+
+    pub(super) index: WeakIndex,
+}
+
+/// A [`ConditionalLinkImpl`] that is enabled for at least one dependency kind
+/// on at least one platform. Not part of the stable API.
+#[derive(Clone, Debug)]
+#[doc(hidden)]
+pub struct EnabledLink(ConditionalLinkImpl);
+
+impl EnabledLink {
+    pub(super) fn new(link: ConditionalLinkImpl) -> Option<Self> {
+        (!link.is_never()).then_some(Self(link))
+    }
+
+    pub(super) fn get(&self) -> &ConditionalLinkImpl {
+        &self.0
+    }
 }
 
 /// Not part of the stable API -- only exposed for FeatureSet::links().
