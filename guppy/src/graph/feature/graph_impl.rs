@@ -903,6 +903,16 @@ impl<'g> ConditionalLink<'g> {
     pub(super) fn package_edge_ixs(&self) -> &'g PackageEdgeIxs {
         &self.inner.package_edge_ixs
     }
+
+    pub(super) fn endpoints_in(
+        &self,
+        direction: DependencyDirection,
+    ) -> (FeatureMetadata<'g>, FeatureMetadata<'g>) {
+        match direction {
+            DependencyDirection::Forward => (self.from(), self.to()),
+            DependencyDirection::Reverse => (self.to(), self.from()),
+        }
+    }
 }
 
 impl fmt::Debug for ConditionalLink<'_> {

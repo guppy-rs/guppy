@@ -329,11 +329,8 @@ impl<'g> FeatureLinkContext<'g> {
     /// Returns true if the link's starting endpoint (`from` for forward
     /// queries, `to` for reverse queries) is one of the query's initials.
     pub fn starts_from_initial(&self, link: &ConditionalLink<'g>) -> bool {
-        let feature_ix = match self.direction() {
-            DependencyDirection::Forward => link.from().feature_ix(),
-            DependencyDirection::Reverse => link.to().feature_ix(),
-        };
-        self.query.initials.contains_ix(feature_ix)
+        let (start, _) = link.endpoints_in(self.direction());
+        self.query.initials.contains_ix(start.feature_ix())
     }
 }
 
