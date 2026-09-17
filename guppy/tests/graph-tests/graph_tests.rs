@@ -692,23 +692,14 @@ mod small {
         assert_features_for_package(
             &feature_set,
             &package_id(json::METADATA_TARGETS1_TESTCRATE),
-            Some(&[FeatureLabel::Base]),
+            Some(""),
             "testcrate",
         );
-        assert_features_for_package(
-            &feature_set,
-            &dep_a_id,
-            Some(&[
-                FeatureLabel::Base,
-                FeatureLabel::Named("bar"),
-                FeatureLabel::Named("foo"),
-            ]),
-            "dep a",
-        );
+        assert_features_for_package(&feature_set, &dep_a_id, Some("bar foo"), "dep a");
         assert_features_for_package(
             &feature_set,
             &package_id(json::METADATA_TARGETS1_LAZY_STATIC_1),
-            Some(&[FeatureLabel::Base]),
+            Some(""),
             "lazy_static",
         );
     }
