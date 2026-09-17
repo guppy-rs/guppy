@@ -22,16 +22,21 @@ version = '0.1.0'
 workspace-path = 'builddep'
 
 [[metadata.omitted-packages.ids]]
-name = 'main'
+name = 'normaldep'
 version = '0.1.0'
-workspace-path = 'main'
+workspace-path = 'normaldep'
 
 [[metadata.features-only]]
-name = 'main'
+name = 'normaldep'
 version = '0.1.0'
-workspace-path = 'main'
-features = ['dep-colon', 'slash', 'windows-dep-colon']
-optional-deps = ['optbuilddep', 'winbuilddep']
+workspace-path = 'normaldep'
+features = ['alloc', 'std']
+
+[[metadata.features-only]]
+name = 'optbuilddep'
+version = '0.1.0'
+workspace-path = 'optbuilddep'
+features = ['alloc', 'std']
 
 [[metadata.features-only]]
 name = 'winbuilddep'
@@ -40,9 +45,9 @@ workspace-path = 'winbuilddep'
 features = []
 
 [[host-package]]
-name = 'optbuilddep'
+name = 'platdep'
 version = '0.1.0'
-workspace-path = 'optbuilddep'
+workspace-path = 'platdep'
 status = 'initial'
 features = ['alloc', 'std']
 

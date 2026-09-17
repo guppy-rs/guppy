@@ -18,6 +18,11 @@ name = 'builddep'
 version = '0.1.0'
 workspace-path = 'builddep'
 
+[[metadata.omitted-packages.ids]]
+name = 'main'
+version = '0.1.0'
+workspace-path = 'main'
+
 [[metadata.features-only]]
 name = 'builddep'
 version = '0.1.0'
@@ -25,9 +30,15 @@ workspace-path = 'builddep'
 features = []
 
 [[metadata.features-only]]
-name = 'optbuilddep'
+name = 'main'
 version = '0.1.0'
-workspace-path = 'optbuilddep'
+workspace-path = 'main'
+features = []
+
+[[metadata.features-only]]
+name = 'reqbuilddep'
+version = '0.1.0'
+workspace-path = 'reqbuilddep'
 features = []
 
 [[target-package]]
@@ -38,15 +49,15 @@ status = 'initial'
 features = []
 
 [[target-package]]
-name = 'optbuilddep'
+name = 'platdep'
 version = '0.1.0'
-workspace-path = 'optbuilddep'
+workspace-path = 'platdep'
 status = 'initial'
 features = []
 
 [[target-package]]
-name = 'winbuilddep'
+name = 'reqbuilddep'
 version = '0.1.0'
-workspace-path = 'winbuilddep'
+workspace-path = 'reqbuilddep'
 status = 'initial'
 features = []

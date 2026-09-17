@@ -138,18 +138,25 @@ impl FeatureGraphBuildState {
                     // If the package is present as an optional dependency, it is
                     // implicitly activated by the feature:
                     // from (`main`, `a`) to (`main`, `dep:dep`)
-                    if let Some(same_node) = self.make_named_feature_node(
-                        &metadata,
-                        from_label,
-                        &metadata,
-                        FeatureLabel::OptionalDependency(dep_name),
-                        // Don't warn if this dep isn't optional.
-                        false,
-                    ) {
-                        nodes_edges.push((
-                            same_node,
-                            Self::make_named_feature_cross_edge(link, weak_index),
-                        ));
+                    //
+                    // But this is skipped for weak `dep?/foo`, which never
+                    // activates `dep:dep`. If we stored these kinds of edges,
+                    // while doing a dependency traversal we'd let a required
+                    // declaration's edge release it and spuriously activate
+                    // `dep:dep` (and thus the optional declaration). The weak
+                    // cross edge above is sufficient on its own.
+                    if !*weak
+                        && let Some(same_node) = self.make_named_feature_node(
+                            &metadata,
+                            from_label,
+                            &metadata,
+                            FeatureLabel::OptionalDependency(dep_name),
+                            // Don't warn if this dep isn't optional.
+                            false,
+                        )
+                    {
+                        nodes_edges
+                            .push((same_node, Self::make_named_feature_cross_edge(link, None)));
                     }
 
                     // Finally, (`main`, `a`) to (`main`, `dep`) -- if this is a non-weak dependency
@@ -263,8 +270,8 @@ impl FeatureGraphBuildState {
     ///
     /// (a link (`from`, `a`) to (`dep`, `foo`) is created.
     ///
-    /// If `dep` is optional, the edge (`from`, `a`) to (`from`, `dep`) is also a
-    /// `NamedFeatureWithSlash` edge.
+    /// If `dep` is optional and the reference is not weak, the edge (`from`, `a`)
+    /// to (`from`, `dep`) is also a `NamedFeatureWithSlash` edge.
     fn make_named_feature_cross_edge(
         link: &PackageLink<'_>,
         weak_index: Option<WeakIndex>,

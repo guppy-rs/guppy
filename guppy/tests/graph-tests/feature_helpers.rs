@@ -20,7 +20,10 @@ pub(super) struct CargoResolutionCase {
     /// The Cargo feature resolver version -- v2 by default.
     resolver: CargoResolverVersion,
 
-    /// The host triple -- Linux by default. The target is always Linux.
+    /// The target triple -- Linux by default.
+    target_platform: &'static str,
+
+    /// The host triple -- Linux by default.
     host_platform: &'static str,
 
     /// Features enabled on the initial package.
@@ -48,6 +51,7 @@ impl CargoResolutionCase {
     pub(super) const fn new(features: &'static [&'static str]) -> Self {
         Self {
             resolver: CargoResolverVersion::V2,
+            target_platform: LINUX,
             host_platform: LINUX,
             features,
             target_expected: &[],
@@ -57,6 +61,13 @@ impl CargoResolutionCase {
 
     pub(super) const fn resolver(self, resolver: CargoResolverVersion) -> Self {
         Self { resolver, ..self }
+    }
+
+    pub(super) const fn target_platform(self, target_platform: &'static str) -> Self {
+        Self {
+            target_platform,
+            ..self
+        }
     }
 
     pub(super) const fn host_platform(self, host_platform: &'static str) -> Self {
@@ -86,9 +97,10 @@ impl CargoResolutionCase {
     pub(super) fn check(&self, graph: &PackageGraph, initial: &str, msg_prefix: &str) {
         let cargo_set = self.cargo_set(graph, initial);
         let msg = format!(
-            "{msg_prefix}while checking {:?} resolution of {} on a {} host for {}",
+            "{msg_prefix}while checking {:?} resolution of {} on target {} and host {} for {}",
             self.resolver,
             initial,
+            self.target_platform,
             self.host_platform,
             self.features.join(" ")
         );
@@ -122,7 +134,7 @@ impl CargoResolutionCase {
         let mut cargo_options = CargoOptions::new();
         cargo_options
             .set_resolver(self.resolver)
-            .set_target_platform(platform(LINUX))
+            .set_target_platform(platform(self.target_platform))
             .set_host_platform(platform(self.host_platform));
         feature_set
             .into_cargo_set(&cargo_options)
