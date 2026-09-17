@@ -23,7 +23,14 @@ where
     // Adapted from DfsPostOrder::next in petgraph 0.5.0.
     while let Some(&nx) = dfs.stack.last() {
         if dfs.discovered.visit(nx) {
-            // First time visiting `nx`: Push neighbors, don't pop `nx`
+            // First time visiting `nx`: Mark it as discovered, then push neighbors
+            // -- don't pop `nx`.
+            for edge in buffered_filter.discover(nx) {
+                let succ = edge.target();
+                if !dfs.discovered.is_visited(&succ) {
+                    dfs.stack.push(succ);
+                }
+            }
             let neighbors = graph.edges(nx).flat_map(|edge| {
                 buffered_filter
                     .filter(edge)
@@ -52,10 +59,20 @@ pub trait BufferedEdgeFilter<G>
 where
     G: IntoEdges,
 {
-    /// Returns a list of edge references to follow.
     type Iter: IntoIterator<Item = G::EdgeRef>;
 
+    /// Called for each outgoing edge of a node the first time the traversal
+    /// reaches that node.
+    ///
+    /// Returns the edges the traversal should follow next. This may be:
+    ///
+    /// * Empty, to reject `edge` or hold it back for later.
+    /// * `edge` itself, to accept it (as done in a traditional DFS).
+    /// * Any number of edges held back by earlier calls.
     fn filter(&mut self, edge: G::EdgeRef) -> Self::Iter;
+
+    /// Called the first time a node is discovered, before `filter`.
+    fn discover(&mut self, node: G::NodeId) -> Self::Iter;
 }
 
 impl<G, T> BufferedEdgeFilter<G> for &mut T
@@ -69,6 +86,11 @@ where
     #[inline]
     fn filter(&mut self, edge: G::EdgeRef) -> Self::Iter {
         (*self).filter(edge)
+    }
+
+    #[inline]
+    fn discover(&mut self, node: G::NodeId) -> Self::Iter {
+        (*self).discover(node)
     }
 }
 
@@ -86,22 +108,10 @@ where
     fn filter(&mut self, edge: G::EdgeRef) -> Self::Iter {
         if (self.0)(edge) { Some(edge) } else { None }
     }
-}
-
-#[derive(Debug)]
-pub struct BufferedEdgeFilterFn<F>(pub F);
-
-impl<F, G, I> BufferedEdgeFilter<G> for BufferedEdgeFilterFn<F>
-where
-    F: FnMut(G::EdgeRef) -> I,
-    G: IntoEdges,
-    I: IntoIterator<Item = G::EdgeRef>,
-{
-    type Iter = I;
 
     #[inline]
-    fn filter(&mut self, edge: G::EdgeRef) -> Self::Iter {
-        (self.0)(edge)
+    fn discover(&mut self, _node: G::NodeId) -> Self::Iter {
+        None
     }
 }
 
@@ -119,6 +129,12 @@ where
     fn filter(&mut self, edge: <Reversed<G> as IntoEdgeReferences>::EdgeRef) -> Self::Iter {
         ReversedEdgeReferences {
             iter: self.0.filter(edge.into_unreversed()).into_iter(),
+        }
+    }
+
+    fn discover(&mut self, node: G::NodeId) -> Self::Iter {
+        ReversedEdgeReferences {
+            iter: self.0.discover(node).into_iter(),
         }
     }
 }
