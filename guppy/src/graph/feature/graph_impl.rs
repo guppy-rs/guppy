@@ -278,29 +278,49 @@ impl<'g> FeatureGraph<'g> {
         &self.inner.graph
     }
 
-    /// If this is a conditional edge, return the conditional link. Otherwise, return None.
-    pub(super) fn edge_to_conditional_link(
+    /// If this is a conditional edge, returns the link or links it is evaluated
+    /// as during a resolve. Otherwise, return None.
+    pub(super) fn edge_to_links(
         &self,
         source_ix: NodeIndex<FeatureIx>,
         target_ix: NodeIndex<FeatureIx>,
         edge_ix: EdgeIndex<FeatureIx>,
         edge: Option<&'g FeatureEdge>,
-    ) -> Option<(ConditionalLink<'g>, Option<WeakIndex>)> {
+    ) -> Option<EdgeLinks<'g>> {
         let edge = edge.unwrap_or_else(|| &self.dep_graph()[edge_ix]);
+        let make = |inner| ConditionalLink::new(*self, source_ix, target_ix, edge_ix, inner);
 
         match edge {
             FeatureEdge::NamedFeature | FeatureEdge::FeatureToBase => None,
             FeatureEdge::DependenciesSection(link) | FeatureEdge::NamedFeatureDepColon(link) => {
-                let link = ConditionalLink::new(*self, source_ix, target_ix, edge_ix, link);
                 // Dependency section and dep:foo style conditional links are always non-weak.
-                let weak_index = None;
-                Some((link, weak_index))
+                Some(EdgeLinks::NonWeak(make(link)))
             }
-            FeatureEdge::NamedFeatureWithSlash { link, weak_index } => {
-                let link = ConditionalLink::new(*self, source_ix, target_ix, edge_ix, link);
-                Some((link, *weak_index))
-            }
+            FeatureEdge::NamedFeatureWithSlash { link, weak_index } => Some(match weak_index {
+                Some(index) => EdgeLinks::Weak {
+                    full: make(link),
+                    index: *index,
+                },
+                None => EdgeLinks::NonWeak(make(link)),
+            }),
         }
+    }
+
+    /// If this is a conditional edge, returns the link covering every
+    /// declaration it was derived from.
+    pub(super) fn edge_to_full_link(
+        &self,
+        source_ix: NodeIndex<FeatureIx>,
+        target_ix: NodeIndex<FeatureIx>,
+        edge_ix: EdgeIndex<FeatureIx>,
+        edge: Option<&'g FeatureEdge>,
+    ) -> Option<ConditionalLink<'g>> {
+        Some(
+            match self.edge_to_links(source_ix, target_ix, edge_ix, edge)? {
+                EdgeLinks::NonWeak(link) => link,
+                EdgeLinks::Weak { full, .. } => full,
+            },
+        )
     }
 
     fn feature_ix_depends_on(
@@ -977,6 +997,22 @@ impl FeatureNode {
         let feature_label = metadata.feature_idx_to_label(self.feature_idx);
         (package_id, feature_label)
     }
+}
+
+/// The conditional link or links an edge is evaluated as during a resolve.
+pub(super) enum EdgeLinks<'g> {
+    /// A non-weak conditional link, evaluated once.
+    NonWeak(ConditionalLink<'g>),
+
+    /// A weak link, `a = ["foo?/b"]`, held back until the optional dependency
+    /// is activated.
+    Weak {
+        /// The link covering every declaration of the dependency.
+        full: ConditionalLink<'g>,
+
+        /// The buffer holding `full` back.
+        index: WeakIndex,
+    },
 }
 
 /// Information about why a feature depends on another feature.

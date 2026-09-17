@@ -5,7 +5,7 @@
 
 use crate::graph::{
     PackageIx,
-    feature::{ConditionalLink, FeatureEdgeReference},
+    feature::{ConditionalLink, EdgeLinks, FeatureEdgeReference},
 };
 use indexmap::IndexSet;
 use itertools::Either;
@@ -72,24 +72,23 @@ where
     pub(super) fn track(
         &mut self,
         edge_ref: FeatureEdgeReference<'g>,
-        link: ConditionalLink<'g>,
-        weak_index: Option<WeakIndex>,
+        links: EdgeLinks<'g>,
     ) -> Either<Option<FeatureEdgeReference<'g>>, Vec<FeatureEdgeReference<'g>>> {
-        match weak_index {
-            Some(index) => {
+        match links {
+            EdgeLinks::Weak { full, index } => {
                 match &mut self.states[index.0] {
                     SingleBufferState::Buffered(buffer) => {
                         // Package not currently accepted -- add to the buffer.
-                        buffer.push((link, edge_ref));
+                        buffer.push((full, edge_ref));
                         Either::Left(None)
                     }
                     SingleBufferState::Accepted => {
                         // Weak link, but package already accepted.
-                        Either::Left((self.accept_fn)(link).then_some(edge_ref))
+                        Either::Left((self.accept_fn)(full).then_some(edge_ref))
                     }
                 }
             }
-            None => {
+            EdgeLinks::NonWeak(link) => {
                 if !(self.accept_fn)(link) {
                     // This link was not accepted -- ignore its presence.
                     return Either::Left(None);
