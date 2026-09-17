@@ -8,7 +8,7 @@ use crate::{
         PackageGraph, PackageIx, PackageLink, PackageMetadata,
         feature::{
             ConditionalLinkImpl, FeatureEdge, FeatureGraphImpl, FeatureLabel, FeatureMetadataImpl,
-            FeatureNode, PackageEdgeIxs, SlashForm, WeakDependencies,
+            FeatureNode, LinkDeclarations, PackageEdgeIxs, SlashForm, WeakDependencies,
         },
     },
     platform::PlatformStatusImpl,
@@ -289,7 +289,7 @@ impl FeatureGraphBuildState {
     fn make_full_conditional_link_impl(link: &PackageLink<'_>) -> ConditionalLinkImpl {
         // This edge is enabled if the feature is enabled, which means the union of (required,
         // optional) build conditions.
-        Self::make_conditional_link_impl(link, |req| {
+        Self::make_conditional_link_impl(link, LinkDeclarations::Unsplit, |req| {
             let mut required = req.inner.required.build_if.clone();
             required.extend(&req.inner.optional.build_if);
             required
@@ -298,10 +298,12 @@ impl FeatureGraphBuildState {
 
     fn make_conditional_link_impl<'g>(
         link: &PackageLink<'g>,
+        declarations: LinkDeclarations,
         status: impl Fn(DependencyReq<'g>) -> PlatformStatusImpl,
     ) -> ConditionalLinkImpl {
         ConditionalLinkImpl {
             package_edge_ixs: PackageEdgeIxs::single(link.edge_ix()),
+            declarations,
             normal: status(link.normal()),
             build: status(link.build()),
             dev: status(link.dev()),
@@ -355,8 +357,8 @@ impl FeatureGraphBuildState {
             .chain(iter::once((DependencyKind::Build, link.build())))
             .chain(iter::once((DependencyKind::Development, link.dev())));
 
-        let mut required_req = FeatureReq::new(link);
-        let mut optional_req = FeatureReq::new(link);
+        let mut required_req = FeatureReq::new(link, LinkDeclarations::Required);
+        let mut optional_req = FeatureReq::new(link, LinkDeclarations::Optional);
         for (kind, dependency_req) in unified_metadata {
             required_req.add_features(kind, &dependency_req.inner.required, &mut self.warnings);
             optional_req.add_features(kind, &dependency_req.inner.optional, &mut self.warnings);
@@ -530,6 +532,7 @@ impl FeatureGraphBuildState {
 #[derive(Debug)]
 struct FeatureReq<'g> {
     link: PackageLink<'g>,
+    declarations: LinkDeclarations,
     to: PackageMetadata<'g>,
     edge_ix: EdgeIndex<PackageIx>,
     to_default_idx: FeatureIndexInPackage,
@@ -538,10 +541,11 @@ struct FeatureReq<'g> {
 }
 
 impl<'g> FeatureReq<'g> {
-    fn new(link: PackageLink<'g>) -> Self {
+    fn new(link: PackageLink<'g>, declarations: LinkDeclarations) -> Self {
         let to = link.to();
         Self {
             link,
+            declarations,
             to,
             edge_ix: link.edge_ix(),
             to_default_idx: to
@@ -595,10 +599,11 @@ impl<'g> FeatureReq<'g> {
         status: &PlatformStatusImpl,
     ) {
         let package_edge_ix = self.edge_ix;
+        let declarations = self.declarations;
         if !status.is_never() {
             self.features
                 .entry(feature_idx)
-                .or_insert_with(|| DependencyBuildState::new(package_edge_ix))
+                .or_insert_with(|| DependencyBuildState::new(package_edge_ix, declarations))
                 .extend(dep_kind, status);
         }
     }
@@ -627,10 +632,11 @@ struct DependencyBuildState {
 }
 
 impl DependencyBuildState {
-    fn new(package_edge_ix: EdgeIndex<PackageIx>) -> Self {
+    fn new(package_edge_ix: EdgeIndex<PackageIx>, declarations: LinkDeclarations) -> Self {
         Self {
             link: ConditionalLinkImpl {
                 package_edge_ixs: PackageEdgeIxs::single(package_edge_ix),
+                declarations,
                 normal: PlatformStatusImpl::default(),
                 build: PlatformStatusImpl::default(),
                 dev: PlatformStatusImpl::default(),

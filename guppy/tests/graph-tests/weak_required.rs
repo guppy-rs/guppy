@@ -87,9 +87,19 @@
 //! versions 1 and 2. Cases that build dev-dependencies were obtained with
 //! `cargo build --tests`.
 
-use crate::feature_helpers::{CargoResolutionCase, WINDOWS};
-use fixtures::json::{self, JsonFixture};
-use guppy::graph::cargo::CargoResolverVersion;
+use crate::feature_helpers::{CargoResolutionCase, WINDOWS, feature_ids};
+use fixtures::{
+    json::{self, JsonFixture},
+    package_id,
+};
+use guppy::{
+    graph::{
+        DependencyDirection,
+        cargo::CargoResolverVersion,
+        feature::{ConditionalLink, FeatureId, LinkDeclarations},
+    },
+    platform::PlatformStatus,
+};
 
 #[rustfmt::skip]
 static CASES: &[CargoResolutionCase] = &[
@@ -572,5 +582,122 @@ fn resolution_matches_cargo() {
     let graph = JsonFixture::metadata_builddep().graph();
     for case in CASES {
         case.check(graph, json::METADATA_BUILDDEP_MAIN, "");
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+enum VisitStatus {
+    Always,
+    Never,
+    // Enabled on platforms matching these target specs.
+    Specs(Vec<String>),
+}
+
+impl VisitStatus {
+    fn new(status: PlatformStatus<'_>) -> Self {
+        match status {
+            PlatformStatus::Always => VisitStatus::Always,
+            PlatformStatus::Never => VisitStatus::Never,
+            PlatformStatus::PlatformDependent { eval } => VisitStatus::Specs(
+                eval.target_specs()
+                    .iter()
+                    .map(|spec| spec.to_string())
+                    .collect(),
+            ),
+        }
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+struct SeenLink {
+    declarations: LinkDeclarations,
+    normal: VisitStatus,
+    build: VisitStatus,
+    dev: VisitStatus,
+}
+
+impl SeenLink {
+    fn from_link(link: &ConditionalLink<'_>) -> Self {
+        Self {
+            declarations: link.declarations(),
+            normal: VisitStatus::new(link.normal()),
+            build: VisitStatus::new(link.build()),
+            dev: VisitStatus::new(link.dev()),
+        }
+    }
+}
+
+#[test]
+fn conditional_links_report_declarations() {
+    let graph = JsonFixture::metadata_builddep().graph();
+    let main = package_id(json::METADATA_BUILDDEP_MAIN);
+    let normaldep = package_id(json::METADATA_BUILDDEP_NORMALDEP);
+    let optbuilddep = package_id(json::METADATA_BUILDDEP_OPTBUILDDEP);
+
+    // The weak edge is one unified link here, not two halves unlike
+    // weak_edge_visits_each_declaration_once above.
+    let expected = [
+        (
+            FeatureId::named(&main, "normaldep-weak"),
+            FeatureId::named(&normaldep, "std"),
+            SeenLink {
+                declarations: LinkDeclarations::Unsplit,
+                normal: VisitStatus::Always,
+                build: VisitStatus::Always,
+                dev: VisitStatus::Never,
+            },
+        ),
+        (
+            FeatureId::base(&main),
+            FeatureId::base(&normaldep),
+            SeenLink {
+                declarations: LinkDeclarations::Required,
+                normal: VisitStatus::Always,
+                build: VisitStatus::Never,
+                dev: VisitStatus::Never,
+            },
+        ),
+        (
+            FeatureId::optional_dependency(&main, "normaldep"),
+            FeatureId::base(&normaldep),
+            SeenLink {
+                declarations: LinkDeclarations::Optional,
+                normal: VisitStatus::Never,
+                build: VisitStatus::Always,
+                dev: VisitStatus::Never,
+            },
+        ),
+        // slash = ["optbuilddep/std"]
+        //
+        // Without the `?`, the link is never split by declaration, so it is
+        // `Unsplit`. optbuilddep is only an optional build dependency.
+        (
+            FeatureId::named(&main, "slash"),
+            FeatureId::named(&optbuilddep, "std"),
+            SeenLink {
+                declarations: LinkDeclarations::Unsplit,
+                normal: VisitStatus::Never,
+                build: VisitStatus::Always,
+                dev: VisitStatus::Never,
+            },
+        ),
+    ];
+
+    let feature_set = graph
+        .feature_graph()
+        .query_forward(feature_ids(&main, "normaldep-weak dep:normaldep slash"))
+        .expect("valid feature IDs")
+        .resolve();
+    for (from, to, expected) in expected {
+        let actual: Vec<_> = feature_set
+            .conditional_links(DependencyDirection::Forward)
+            .filter(|link| link.from().feature_id() == from && link.to().feature_id() == to)
+            .map(|link| SeenLink::from_link(&link))
+            .collect();
+        assert_eq!(
+            actual,
+            [expected],
+            "exactly one conditional link from {from} to {to}"
+        );
     }
 }
