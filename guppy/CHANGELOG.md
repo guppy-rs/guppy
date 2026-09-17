@@ -3,6 +3,39 @@
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+### Changed
+
+- `ConditionalLink::package_link` is replaced by `package_links`, an iterator
+  over every `PackageLink` the conditional link was derived from. This is
+  usually one link, but a `package = "..."` rename can make one dependency
+  name resolve to several packages. For example, consider this `Cargo.toml`:
+
+  ```toml
+  [package]
+  name = "main"
+
+  [dependencies]
+  serde = { package = "serde_core", version = "1", optional = true }
+
+  [target.'cfg(any())'.dependencies]
+  serde = { version = "1", optional = true }
+
+  [features]
+  serde = ["dep:serde", "serde/std"]
+  ```
+
+  The package graph has two links out of `main`, `main -> serde_core` and
+  `main -> serde`, both with the dependency name `serde`. The feature `serde`
+  produces three conditional links:
+
+  - `main/serde -> main/dep:serde`, from `dep:serde`. This activates the
+    dependency name, so `package_links` returns both `main -> serde_core` and
+    `main -> serde`.
+  - `main/serde -> serde_core/std`, from `serde/std`. `package_links` returns
+    just `main -> serde_core`.
+  - `main/serde -> serde/std`, also from `serde/std`. `package_links` returns
+    just `main -> serde`.
+
 ### Fixed
 
 - With the version 2 and 3 feature resolvers, an optional build dependency
@@ -41,39 +74,6 @@
 
   As part of this change, the feature graph no longer has an edge from `weak`
   to `dep:foo`.
-
-### Changed
-
-- `ConditionalLink::package_link` is replaced by `package_links`, an iterator
-  over every `PackageLink` the conditional link was derived from. This is
-  usually one link, but a `package = "..."` rename can make one dependency
-  name resolve to several packages. For example, consider this `Cargo.toml`:
-
-  ```toml
-  [package]
-  name = "main"
-
-  [dependencies]
-  serde = { package = "serde_core", version = "1", optional = true }
-
-  [target.'cfg(any())'.dependencies]
-  serde = { version = "1", optional = true }
-
-  [features]
-  serde = ["dep:serde", "serde/std"]
-  ```
-
-  The package graph has two links out of `main`, `main -> serde_core` and
-  `main -> serde`, both with the dependency name `serde`. The feature `serde`
-  produces three conditional links:
-
-  - `main/serde -> main/dep:serde`, from `dep:serde`. This activates the
-    dependency name, so `package_links` returns both `main -> serde_core` and
-    `main -> serde`.
-  - `main/serde -> serde_core/std`, from `serde/std`. `package_links` returns
-    just `main -> serde_core`.
-  - `main/serde -> serde/std`, also from `serde/std`. `package_links` returns
-    just `main -> serde`.
 
 ## [0.18.0] - 2026-08-25
 
