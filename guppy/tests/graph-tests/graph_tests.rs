@@ -515,6 +515,22 @@ mod small {
 
     proptest_suite!(metadata_hakari_reverse_dep);
 
+    #[test]
+    fn metadata_builddep() {
+        let metadata_builddep = JsonFixture::metadata_builddep();
+        metadata_builddep.verify();
+    }
+
+    proptest_suite!(metadata_builddep);
+
+    #[test]
+    fn metadata_weak_namespaced_features() {
+        let metadata_weak_namespaced_features = JsonFixture::metadata_weak_namespaced_features();
+        metadata_weak_namespaced_features.verify();
+    }
+
+    proptest_suite!(metadata_weak_namespaced_features);
+
     // Test Windows path handling in fixtures with path dependencies.
     #[test]
     fn metadata_cycle1_windows() {
