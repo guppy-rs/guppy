@@ -12,11 +12,15 @@
 //! platdep-weak = ["platdep?/std"]
 //! normaldep-weak = ["normaldep?/std"]
 //! reqbuilddep-weak = ["reqbuilddep?/std"]
+//! pmdep-weak = ["pmdep?/std"]
 //! devdep-weak = ["devdep?/std"]
+//! hostuser-normaldep = ["hostuser/normaldep"]
+//! targetuser-reqbuilddep = ["targetuser/reqbuilddep"]
 //!
 //! [dependencies]
 //! normaldep = { path = "../normaldep" }
 //! reqbuilddep = { path = "../reqbuilddep", optional = true }
+//! targetuser = { path = "../targetuser" }
 //! devdep = { path = "../devdep", optional = true }
 //!
 //! [dev-dependencies]
@@ -25,17 +29,58 @@
 //! [build-dependencies]
 //! normaldep = { path = "../normaldep", optional = true }
 //! reqbuilddep = { path = "../reqbuilddep" }
+//! hostuser = { path = "../hostuser" }
 //!
 //! [target.'cfg(unix)'.dependencies]
 //! platdep = { path = "../platdep" }
+//! pmdep = { path = "../pmdep" }
 //!
 //! [target.'cfg(windows)'.dependencies]
 //! platdep = { path = "../platdep", optional = true }
+//! pmdep = { path = "../pmdep", optional = true }
 //! ```
 //!
-//! `platdep`, `normaldep`, `reqbuilddep` and `devdep` each have features
-//! `alloc = []` and `std = ["alloc"]`. None of these optional dependencies are
-//! referred to with `dep:`, so each has an implicit feature of the same name.
+//! `platdep`, `normaldep`, `reqbuilddep`, `pmdep` and `devdep` each have
+//! features `alloc = []` and `std = ["alloc"]`. None of these optional
+//! dependencies are referred to with `dep:`, so each has an implicit feature of
+//! the same name.
+//!
+//! `pmdep` is a proc macro. When it is built, it is built for the host and
+//! never for the target, even though it is listed under `[dependencies]`. On
+//! Windows it is optional, so it may not be built at all.
+//!
+//! `hostuser` and `targetuser` are helper crates. Each one has a single
+//! optional dependency, with an implicit feature of the same name:
+//!
+//! ```toml
+//! # hostuser, a required build dependency of main
+//! [dependencies]
+//! normaldep = { path = "../normaldep", optional = true }
+//!
+//! # targetuser, a required normal dependency of main
+//! [dependencies]
+//! reqbuilddep = { path = "../reqbuilddep", optional = true }
+//! ```
+//!
+//! The helpers let a test build a second copy of a crate without turning on
+//! `main`'s optional dependency on it:
+//!
+//! * `main` always needs `normaldep` on the target, and optionally needs it on
+//!   the host. Enabling `hostuser-normaldep` makes `hostuser` build
+//!   `normaldep` on the host, while `main`'s optional host-side dependency
+//!   stays off.
+//! * `main` always needs `reqbuilddep` on the host, and optionally needs it on
+//!   the target. Enabling `targetuser-reqbuilddep` makes `targetuser` build
+//!   `reqbuilddep` on the target, while `main`'s optional target-side
+//!   dependency stays off.
+//!
+//! In both cases, the copy that `main` didn't ask for must not get `std` from
+//! `main`'s weak feature.
+//!
+//! TODO: only the `targetuser` half is tested here. The `hostuser-normaldep`
+//! case fails today: a required declaration releases the weak buffer, so the
+//! host copy of `normaldep` gets `std`. The next commit fixes that and adds the
+//! case.
 //!
 //! The expected results were obtained from Cargo 1.98.1 with
 //! `cargo build --unit-graph -Z unstable-options`, under both resolver
@@ -195,6 +240,38 @@ static CASES: &[CargoResolutionCase] = &[
         ]),
 
     // [features]
+    // normaldep-weak = ["normaldep?/std"]
+    //
+    // The same as the case above, but with `dep:normaldep` passed in directly
+    // as an initial feature, and not reached through the `normaldep` feature.
+    // This means that the optional build dependency is already activated by
+    // the time `normaldep?/std` is looked at. In the case above, it is
+    // activated afterwards.
+    //
+    // Cargo has no equivalent to this: `--features dep:normaldep` is rejected
+    // on the command line. But guppy accepts `dep:` features as initials, so
+    // the expected results here can't be checked against Cargo. They are the
+    // results of the case above, minus `normaldep` in `main`'s features.
+    CargoResolutionCase::new(&["normaldep-weak", "dep:normaldep"])
+        .target_expected(&[
+            (json::METADATA_BUILDDEP_MAIN,          Some("normaldep-weak dep:normaldep")),
+            (json::METADATA_BUILDDEP_NORMALDEP,     Some("alloc std")),
+        ])
+        .host_expected(&[
+            (json::METADATA_BUILDDEP_NORMALDEP,     Some("alloc std")),
+        ]),
+    // The same with the v1 resolver.
+    CargoResolutionCase::new(&["normaldep-weak", "dep:normaldep"])
+        .resolver(CargoResolverVersion::V1)
+        .target_expected(&[
+            (json::METADATA_BUILDDEP_MAIN,          Some("normaldep-weak dep:normaldep")),
+            (json::METADATA_BUILDDEP_NORMALDEP,     Some("alloc std")),
+        ])
+        .host_expected(&[
+            (json::METADATA_BUILDDEP_NORMALDEP,     Some("alloc std")),
+        ]),
+
+    // [features]
     // reqbuilddep-weak = ["reqbuilddep?/std"]
     //
     // The reverse of `normaldep-weak`: reqbuilddep is a required build
@@ -231,6 +308,100 @@ static CASES: &[CargoResolutionCase] = &[
         .resolver(CargoResolverVersion::V1)
         .target_expected(&[
             (json::METADATA_BUILDDEP_MAIN,          Some("reqbuilddep reqbuilddep-weak dep:reqbuilddep")),
+            (json::METADATA_BUILDDEP_REQBUILDDEP,   Some("alloc std")),
+        ])
+        .host_expected(&[
+            (json::METADATA_BUILDDEP_REQBUILDDEP,   Some("alloc std")),
+        ]),
+
+    // [features]
+    // pmdep-weak = ["pmdep?/std"]
+    //
+    // pmdep is a proc macro, so it is built for the host and never for the
+    // target. On Unix it is a required dependency, so `pmdep?/std` turns on
+    // `std` for the host build. A weak feature never turns on an optional
+    // dependency, so `main` doesn't get `dep:pmdep`.
+    //
+    // (This is v1 only for now -- the v2 case is currently buggy.)
+    CargoResolutionCase::new(&["pmdep-weak"])
+        .resolver(CargoResolverVersion::V1)
+        .target_expected(&[
+            (json::METADATA_BUILDDEP_MAIN,          Some("pmdep-weak")),
+            (json::METADATA_BUILDDEP_PMDEP,         None),
+        ])
+        .host_expected(&[
+            (json::METADATA_BUILDDEP_PMDEP,         Some("alloc std")),
+        ]),
+    // On Windows, pmdep is optional and nothing turns it on, so it isn't built
+    // at all.
+    CargoResolutionCase::new(&["pmdep-weak"])
+        .target_platform(WINDOWS)
+        .target_expected(&[
+            (json::METADATA_BUILDDEP_MAIN,          Some("pmdep-weak")),
+            (json::METADATA_BUILDDEP_PMDEP,         None),
+        ])
+        .host_expected(&[
+            (json::METADATA_BUILDDEP_PMDEP,         None),
+        ]),
+    // The same with the v1 resolver.
+    CargoResolutionCase::new(&["pmdep-weak"])
+        .resolver(CargoResolverVersion::V1)
+        .target_platform(WINDOWS)
+        .target_expected(&[
+            (json::METADATA_BUILDDEP_MAIN,          Some("pmdep-weak")),
+            (json::METADATA_BUILDDEP_PMDEP,         None),
+        ])
+        .host_expected(&[
+            (json::METADATA_BUILDDEP_PMDEP,         None),
+        ]),
+    // [features]
+    // pmdep-weak = ["pmdep?/std"]
+    // pmdep = ["dep:pmdep"]
+    //
+    // On Windows, the `pmdep` feature turns on the optional dependency. Now
+    // that pmdep is being built, `pmdep?/std` takes effect. pmdep is still a
+    // proc macro, so `std` shows up on the host.
+    CargoResolutionCase::new(&["pmdep-weak", "pmdep"])
+        .target_platform(WINDOWS)
+        .target_expected(&[
+            (json::METADATA_BUILDDEP_MAIN,          Some("pmdep pmdep-weak dep:pmdep")),
+            (json::METADATA_BUILDDEP_PMDEP,         None),
+        ])
+        .host_expected(&[
+            (json::METADATA_BUILDDEP_PMDEP,         Some("alloc std")),
+        ]),
+    // The same with the v1 resolver.
+    CargoResolutionCase::new(&["pmdep-weak", "pmdep"])
+        .resolver(CargoResolverVersion::V1)
+        .target_platform(WINDOWS)
+        .target_expected(&[
+            (json::METADATA_BUILDDEP_MAIN,          Some("pmdep pmdep-weak dep:pmdep")),
+            (json::METADATA_BUILDDEP_PMDEP,         None),
+        ])
+        .host_expected(&[
+            (json::METADATA_BUILDDEP_PMDEP,         Some("alloc std")),
+        ]),
+
+    // [features]
+    // reqbuilddep-weak = ["reqbuilddep?/std"]
+    // targetuser-reqbuilddep = ["targetuser/reqbuilddep"]
+    //
+    // reqbuilddep is now built twice:
+    //
+    // * on the host, because it is a required build dependency of `main`.
+    // * on the target, because `targetuser` turned on its own optional
+    //   dependency on it.
+    //
+    // `main` also has an optional target-side dependency on reqbuilddep, but
+    // nothing has turned it on. So `reqbuilddep?/std` only counts for the host
+    // copy: the host copy gets `std`, and the target copy gets no features.
+    //
+    // (This is v1 only for now -- the v2 case is currently buggy.)
+    CargoResolutionCase::new(&["reqbuilddep-weak", "targetuser-reqbuilddep"])
+        .resolver(CargoResolverVersion::V1)
+        .target_expected(&[
+            (json::METADATA_BUILDDEP_MAIN,          Some("reqbuilddep-weak targetuser-reqbuilddep")),
+            (json::METADATA_BUILDDEP_TARGETUSER,    Some("reqbuilddep dep:reqbuilddep")),
             (json::METADATA_BUILDDEP_REQBUILDDEP,   Some("alloc std")),
         ])
         .host_expected(&[
