@@ -1105,6 +1105,11 @@ impl ConditionalLinkImpl {
     fn dev_only(&self) -> bool {
         self.normal.is_never() && self.build.is_never()
     }
+
+    #[inline]
+    pub(super) fn is_never(&self) -> bool {
+        self.normal.is_never() && self.build.is_never() && self.dev.is_never()
+    }
 }
 
 /// The package edges a conditional link was derived from.

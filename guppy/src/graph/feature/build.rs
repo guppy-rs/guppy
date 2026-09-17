@@ -607,7 +607,10 @@ impl<'g> FeatureReq<'g> {
             .into_iter()
             .map(move |(feature_idx, build_state)| {
                 // extend ensures that the build states aren't empty. Double-check that.
-                debug_assert!(!build_state.is_never(), "build states are always non-empty");
+                debug_assert!(
+                    !build_state.link.is_never(),
+                    "build states are always non-empty"
+                );
                 (
                     FeatureNode::new(package_ix, feature_idx),
                     build_state.finish(),
@@ -618,41 +621,31 @@ impl<'g> FeatureReq<'g> {
 
 #[derive(Debug)]
 struct DependencyBuildState {
-    package_edge_ix: EdgeIndex<PackageIx>,
-    normal: PlatformStatusImpl,
-    build: PlatformStatusImpl,
-    dev: PlatformStatusImpl,
+    link: ConditionalLinkImpl,
 }
 
 impl DependencyBuildState {
     fn new(package_edge_ix: EdgeIndex<PackageIx>) -> Self {
         Self {
-            package_edge_ix,
-            normal: PlatformStatusImpl::default(),
-            build: PlatformStatusImpl::default(),
-            dev: PlatformStatusImpl::default(),
+            link: ConditionalLinkImpl {
+                package_edge_ixs: PackageEdgeIxs::single(package_edge_ix),
+                normal: PlatformStatusImpl::default(),
+                build: PlatformStatusImpl::default(),
+                dev: PlatformStatusImpl::default(),
+            },
         }
     }
 
     fn extend(&mut self, dep_kind: DependencyKind, status: &PlatformStatusImpl) {
         match dep_kind {
-            DependencyKind::Normal => self.normal.extend(status),
-            DependencyKind::Build => self.build.extend(status),
-            DependencyKind::Development => self.dev.extend(status),
+            DependencyKind::Normal => self.link.normal.extend(status),
+            DependencyKind::Build => self.link.build.extend(status),
+            DependencyKind::Development => self.link.dev.extend(status),
             _ => panic!("unknown dependency kind"),
         }
     }
 
-    fn is_never(&self) -> bool {
-        self.normal.is_never() && self.build.is_never() && self.dev.is_never()
-    }
-
     fn finish(self) -> FeatureEdge {
-        FeatureEdge::DependenciesSection(ConditionalLinkImpl {
-            package_edge_ixs: PackageEdgeIxs::single(self.package_edge_ix),
-            normal: self.normal,
-            build: self.build,
-            dev: self.dev,
-        })
+        FeatureEdge::DependenciesSection(self.link)
     }
 }
