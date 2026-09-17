@@ -97,7 +97,7 @@ use guppy::{
     graph::{
         DependencyDirection, PackageGraph,
         cargo::CargoResolverVersion,
-        feature::{ConditionalLink, FeatureId, FeatureLabel, LinkDeclarations},
+        feature::{ConditionalLink, FeatureId, LinkDeclarations},
     },
     platform::PlatformStatus,
 };
@@ -859,11 +859,11 @@ fn weak_edge_halves_can_split_by_platform() {
 // [features]
 // normaldep-weak = ["normaldep?/std"]
 //
-// With `dep:normaldep` activated, the visitor sees both halves of the weak
-// edge. The edge is followed if the visitor accepts at least one of them.
+// The visitor sees both halves of the weak edge, required first, in either
+// direction. The edge is followed if it accepts at least one of them.
 //
-// `normaldep/std` can only be reached through this edge, so whether it is in
-// the resulting feature set says whether the edge was followed.
+// The opposite endpoint can only be reached through this edge, so whether
+// it is in the resulting feature set says whether the edge was followed.
 #[test]
 fn weak_edge_followed_if_either_half_accepted() {
     #[derive(Clone, Copy, Debug)]
@@ -879,36 +879,98 @@ fn weak_edge_followed_if_either_half_accepted() {
     let normaldep = package_id(json::METADATA_BUILDDEP_NORMALDEP);
     let weak_to = FeatureId::named(&normaldep, "std");
 
-    for (reject, expected_std) in [
+    // `dep:normaldep` releases the optional half's buffer in the forward query;
+    // without it that half is never offered.
+    let forward_initials: Vec<_> = feature_ids(&main, "normaldep-weak dep:normaldep").collect();
+    let directions: [(DependencyDirection, &[FeatureId<'_>], FeatureId<'_>); 2] = [
+        (DependencyDirection::Forward, &forward_initials, weak_to),
+        (DependencyDirection::Reverse, &[weak_to], weak_from),
+    ];
+
+    for (reject, expected_present) in [
         (Reject::Required, true),
         (Reject::Optional, true),
         (Reject::Both, false),
     ] {
-        let feature_set = graph
-            .feature_graph()
-            .query_forward(feature_ids(&main, "normaldep-weak dep:normaldep"))
-            .expect("valid feature IDs")
-            .resolve_with_fn(|_, link| {
-                if link.from().feature_id() != weak_from || link.to().feature_id() != weak_to {
-                    return true;
-                }
-                match (reject, link.declarations()) {
-                    (Reject::Both, _) => false,
-                    (Reject::Required, LinkDeclarations::Required)
-                    | (Reject::Optional, LinkDeclarations::Optional) => false,
-                    (Reject::Required, LinkDeclarations::Optional)
-                    | (Reject::Optional, LinkDeclarations::Required) => true,
-                    (Reject::Required | Reject::Optional, LinkDeclarations::Unsplit) => {
-                        panic!("weak edge halves are Required or Optional, not Unsplit")
+        for (direction, initials, expected_feature) in directions {
+            let mut visits = Vec::new();
+            let feature_set = graph
+                .feature_graph()
+                .query_directed(initials.iter().copied(), direction)
+                .expect("valid feature IDs")
+                .resolve_with_fn(|_, link| {
+                    if link.from().feature_id() != weak_from || link.to().feature_id() != weak_to {
+                        return true;
                     }
-                }
-            });
-        assert_eq!(
-            feature_set
-                .contains((&normaldep, FeatureLabel::Named("std")))
-                .expect("valid feature ID"),
-            expected_std,
-            "with {reject:?} rejected, normaldep/std presence matches"
+                    visits.push(SeenLink::from_link(&link));
+                    match (reject, link.declarations()) {
+                        (Reject::Both, _) => false,
+                        (Reject::Required, LinkDeclarations::Required)
+                        | (Reject::Optional, LinkDeclarations::Optional) => false,
+                        (Reject::Required, LinkDeclarations::Optional)
+                        | (Reject::Optional, LinkDeclarations::Required) => true,
+                        (Reject::Required | Reject::Optional, LinkDeclarations::Unsplit) => {
+                            panic!("weak edge halves are Required or Optional, not Unsplit")
+                        }
+                    }
+                });
+            assert_eq!(
+                feature_set
+                    .contains(expected_feature)
+                    .expect("valid feature ID"),
+                expected_present,
+                "with {reject:?} rejected in {direction:?}, opposite endpoint presence matches"
+            );
+            assert_eq!(
+                visits,
+                normaldep_weak_halves(),
+                "with {reject:?} rejected in {direction:?}, both halves are visited once, \
+                 required first"
+            );
+        }
+    }
+}
+
+// An accept-all visitor follows every edge, which is what `resolve` does, so
+// the two must agree in reverse.
+//
+// `hyper_util_7afb1ed` has `regex-automata` with
+// `logging = ["aho-corasick?/logging"]` and an optional `aho-corasick`. A
+// reverse query from `aho-corasick/logging` reaches no other link between the
+// two packages, so a buffered optional half would never be released.
+#[test]
+fn reverse_accept_all_matches_resolve() {
+    for (name, fixture) in JsonFixture::all_fixtures() {
+        assert_reverse_accept_all_matches_resolve(name, fixture.graph());
+    }
+}
+
+fn assert_reverse_accept_all_matches_resolve(name: &str, graph: &PackageGraph) {
+    let feature_graph = graph.feature_graph();
+    for feature in feature_graph
+        .resolve_all()
+        .feature_ids(DependencyDirection::Forward)
+    {
+        let query = feature_graph
+            .query_reverse([feature])
+            .expect("valid feature ID");
+        let visited = query.clone().resolve_with_fn(|_, _| true);
+        let resolved = query.resolve();
+        // Print only the differences: the sets themselves can be large.
+        let missing: Vec<_> = resolved
+            .difference(&visited)
+            .feature_ids(DependencyDirection::Forward)
+            .map(|feature_id| feature_id.to_string())
+            .collect();
+        let extra: Vec<_> = visited
+            .difference(&resolved)
+            .feature_ids(DependencyDirection::Forward)
+            .map(|feature_id| feature_id.to_string())
+            .collect();
+        assert!(
+            missing.is_empty() && extra.is_empty(),
+            "for fixture {name}, an accept-all reverse visitor from {feature} matches \
+             resolve (missing: {missing:?}, extra: {extra:?})"
         );
     }
 }
