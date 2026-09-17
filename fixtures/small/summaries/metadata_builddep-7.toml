@@ -19,9 +19,9 @@ triple = 'thumbv7a-pc-windows-msvc'
 target-features = ['sha', 'ssse3', 'xsave']
 flags = ['abc', 'foo']
 [[metadata.omitted-packages.ids]]
-name = 'platdep'
+name = 'pmdep'
 version = '0.1.0'
-workspace-path = 'platdep'
+workspace-path = 'pmdep'
 
 [[metadata.omitted-packages.ids]]
 name = 'reqbuilddep'
@@ -50,9 +50,9 @@ status = 'initial'
 features = []
 
 [[host-package]]
-name = 'optbuilddep'
+name = 'platdep'
 version = '0.1.0'
-workspace-path = 'optbuilddep'
+workspace-path = 'platdep'
 status = 'initial'
 features = []
 
@@ -61,4 +61,18 @@ name = 'winbuilddep'
 version = '0.1.0'
 workspace-path = 'winbuilddep'
 status = 'initial'
+features = []
+
+[[host-package]]
+name = 'hostuser'
+version = '0.1.0'
+workspace-path = 'hostuser'
+status = 'workspace'
+features = []
+
+[[host-package]]
+name = 'targetuser'
+version = '0.1.0'
+workspace-path = 'targetuser'
+status = 'workspace'
 features = []

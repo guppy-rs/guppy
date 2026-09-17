@@ -46,6 +46,12 @@ pub static METADATA_BUILDDEP_NORMALDEP: &str =
     "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/normaldep#0.1.0";
 pub static METADATA_BUILDDEP_REQBUILDDEP: &str =
     "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/reqbuilddep#0.1.0";
+pub static METADATA_BUILDDEP_PMDEP: &str =
+    "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/pmdep#0.1.0";
+pub static METADATA_BUILDDEP_HOSTUSER: &str =
+    "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/hostuser#0.1.0";
+pub static METADATA_BUILDDEP_TARGETUSER: &str =
+    "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/targetuser#0.1.0";
 
 pub static METADATA_DUPS_PATH: &str = "../small/metadata_dups.json";
 pub static METADATA_DUPS_TESTCRATE: &str =

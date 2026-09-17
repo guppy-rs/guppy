@@ -19,9 +19,9 @@ version = '0.1.0'
 workspace-path = 'builddep'
 
 [[metadata.omitted-packages.ids]]
-name = 'main'
+name = 'hostuser'
 version = '0.1.0'
-workspace-path = 'main'
+workspace-path = 'hostuser'
 
 [[metadata.features-only]]
 name = 'builddep'
@@ -30,9 +30,9 @@ workspace-path = 'builddep'
 features = []
 
 [[metadata.features-only]]
-name = 'main'
+name = 'hostuser'
 version = '0.1.0'
-workspace-path = 'main'
+workspace-path = 'hostuser'
 features = []
 
 [[metadata.features-only]]
@@ -49,15 +49,15 @@ status = 'initial'
 features = []
 
 [[target-package]]
-name = 'platdep'
+name = 'targetuser'
 version = '0.1.0'
-workspace-path = 'platdep'
+workspace-path = 'targetuser'
 status = 'initial'
 features = []
 
-[[target-package]]
-name = 'reqbuilddep'
+[[host-package]]
+name = 'pmdep'
 version = '0.1.0'
-workspace-path = 'reqbuilddep'
+workspace-path = 'pmdep'
 status = 'initial'
 features = []

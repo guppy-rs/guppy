@@ -39,6 +39,13 @@ workspace-path = 'optbuilddep'
 features = []
 
 [[host-package]]
+name = 'hostuser'
+version = '0.1.0'
+workspace-path = 'hostuser'
+status = 'initial'
+features = []
+
+[[host-package]]
 name = 'main'
 version = '0.1.0'
 workspace-path = 'main'
@@ -46,15 +53,15 @@ status = 'initial'
 features = []
 
 [[host-package]]
-name = 'normaldep'
+name = 'optbuilddep'
 version = '0.1.0'
-workspace-path = 'normaldep'
+workspace-path = 'optbuilddep'
 status = 'initial'
 features = []
 
 [[host-package]]
-name = 'winbuilddep'
+name = 'targetuser'
 version = '0.1.0'
-workspace-path = 'winbuilddep'
+workspace-path = 'targetuser'
 status = 'initial'
 features = []

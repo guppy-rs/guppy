@@ -12,9 +12,9 @@ spec = 'any'
 [metadata.target-platform]
 spec = 'always'
 [[metadata.omitted-packages.ids]]
-name = 'normaldep'
+name = 'optbuilddep'
 version = '0.1.0'
-workspace-path = 'normaldep'
+workspace-path = 'optbuilddep'
 
 [[metadata.features-only]]
 name = 'builddep'
@@ -23,9 +23,9 @@ workspace-path = 'builddep'
 features = []
 
 [[metadata.features-only]]
-name = 'normaldep'
+name = 'optbuilddep'
 version = '0.1.0'
-workspace-path = 'normaldep'
+workspace-path = 'optbuilddep'
 features = ['alloc', 'std']
 
 [[host-package]]
@@ -36,12 +36,12 @@ status = 'initial'
 features = []
 
 [[host-package]]
-name = 'main'
+name = 'hostuser'
 version = '0.1.0'
-workspace-path = 'main'
+workspace-path = 'hostuser'
 status = 'initial'
-features = ['dep-colon', 'normaldep', 'normaldep-weak', 'platdep', 'platdep-weak', 'reqbuilddep', 'reqbuilddep-weak', 'slash', 'windows-dep-colon']
-optional-deps = ['normaldep', 'optbuilddep', 'platdep', 'reqbuilddep', 'winbuilddep']
+features = ['normaldep']
+optional-deps = ['normaldep']
 
 [[host-package]]
 name = 'optbuilddep'
@@ -51,22 +51,37 @@ status = 'initial'
 features = ['alloc', 'std']
 
 [[host-package]]
-name = 'platdep'
+name = 'pmdep'
 version = '0.1.0'
-workspace-path = 'platdep'
+workspace-path = 'pmdep'
 status = 'initial'
 features = ['alloc', 'std']
 
 [[host-package]]
-name = 'reqbuilddep'
+name = 'targetuser'
 version = '0.1.0'
-workspace-path = 'reqbuilddep'
+workspace-path = 'targetuser'
 status = 'initial'
-features = ['alloc', 'std']
+features = ['reqbuilddep']
+optional-deps = ['reqbuilddep']
 
 [[host-package]]
 name = 'winbuilddep'
 version = '0.1.0'
 workspace-path = 'winbuilddep'
 status = 'initial'
+features = []
+
+[[host-package]]
+name = 'normaldep'
+version = '0.1.0'
+workspace-path = 'normaldep'
+status = 'workspace'
+features = []
+
+[[host-package]]
+name = 'reqbuilddep'
+version = '0.1.0'
+workspace-path = 'reqbuilddep'
+status = 'workspace'
 features = []
