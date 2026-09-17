@@ -12,10 +12,15 @@
 //! platdep-weak = ["platdep?/std"]
 //! normaldep-weak = ["normaldep?/std"]
 //! reqbuilddep-weak = ["reqbuilddep?/std"]
+//! devdep-weak = ["devdep?/std"]
 //!
 //! [dependencies]
 //! normaldep = { path = "../normaldep" }
 //! reqbuilddep = { path = "../reqbuilddep", optional = true }
+//! devdep = { path = "../devdep", optional = true }
+//!
+//! [dev-dependencies]
+//! devdep = { path = "../devdep" }
 //!
 //! [build-dependencies]
 //! normaldep = { path = "../normaldep", optional = true }
@@ -28,13 +33,14 @@
 //! platdep = { path = "../platdep", optional = true }
 //! ```
 //!
-//! `platdep`, `normaldep` and `reqbuilddep` each have features `alloc = []`
-//! and `std = ["alloc"]`. None of these optional dependencies are referred to
-//! with `dep:`, so each has an implicit feature of the same name.
+//! `platdep`, `normaldep`, `reqbuilddep` and `devdep` each have features
+//! `alloc = []` and `std = ["alloc"]`. None of these optional dependencies are
+//! referred to with `dep:`, so each has an implicit feature of the same name.
 //!
 //! The expected results were obtained from Cargo 1.98.1 with
 //! `cargo build --unit-graph -Z unstable-options`, under both resolver
-//! versions 1 and 2.
+//! versions 1 and 2. Cases that build dev-dependencies were obtained with
+//! `cargo build --tests`.
 
 use crate::feature_helpers::{CargoResolutionCase, WINDOWS};
 use fixtures::json::{self, JsonFixture};
@@ -45,6 +51,19 @@ static CASES: &[CargoResolutionCase] = &[
     // Nothing enabled. The required declarations are built, and the optional
     // ones are not.
     CargoResolutionCase::new(&[])
+        .target_expected(&[
+            (json::METADATA_BUILDDEP_MAIN,          Some("")),
+            (json::METADATA_BUILDDEP_PLATDEP,       Some("")),
+            (json::METADATA_BUILDDEP_NORMALDEP,     Some("")),
+            (json::METADATA_BUILDDEP_REQBUILDDEP,   None),
+        ])
+        .host_expected(&[
+            (json::METADATA_BUILDDEP_NORMALDEP,     None),
+            (json::METADATA_BUILDDEP_REQBUILDDEP,   Some("")),
+        ]),
+    // The same with the v1 resolver.
+    CargoResolutionCase::new(&[])
+        .resolver(CargoResolverVersion::V1)
         .target_expected(&[
             (json::METADATA_BUILDDEP_MAIN,          Some("")),
             (json::METADATA_BUILDDEP_PLATDEP,       Some("")),
@@ -81,6 +100,14 @@ static CASES: &[CargoResolutionCase] = &[
             (json::METADATA_BUILDDEP_MAIN,          Some("platdep-weak")),
             (json::METADATA_BUILDDEP_PLATDEP,       None),
         ]),
+    // The same with the v1 resolver.
+    CargoResolutionCase::new(&["platdep-weak"])
+        .resolver(CargoResolverVersion::V1)
+        .target_platform(WINDOWS)
+        .target_expected(&[
+            (json::METADATA_BUILDDEP_MAIN,          Some("platdep-weak")),
+            (json::METADATA_BUILDDEP_PLATDEP,       None),
+        ]),
     // [features]
     // platdep-weak = ["platdep?/std"]
     // platdep = ["dep:platdep"]
@@ -89,6 +116,30 @@ static CASES: &[CargoResolutionCase] = &[
     // `platdep?/std` then applies.
     CargoResolutionCase::new(&["platdep-weak", "platdep"])
         .target_platform(WINDOWS)
+        .target_expected(&[
+            (json::METADATA_BUILDDEP_MAIN,          Some("platdep platdep-weak dep:platdep")),
+            (json::METADATA_BUILDDEP_PLATDEP,       Some("alloc std")),
+        ]),
+    // The same with the v1 resolver.
+    CargoResolutionCase::new(&["platdep-weak", "platdep"])
+        .resolver(CargoResolverVersion::V1)
+        .target_platform(WINDOWS)
+        .target_expected(&[
+            (json::METADATA_BUILDDEP_MAIN,          Some("platdep platdep-weak dep:platdep")),
+            (json::METADATA_BUILDDEP_PLATDEP,       Some("alloc std")),
+        ]),
+    // On Linux, the `platdep` feature still activates `dep:platdep`, but the
+    // optional declaration is `cfg(windows)`-only, so it adds nothing to the
+    // build. platdep gets `std` through its required declaration, as it does
+    // without the `platdep` feature.
+    CargoResolutionCase::new(&["platdep-weak", "platdep"])
+        .target_expected(&[
+            (json::METADATA_BUILDDEP_MAIN,          Some("platdep platdep-weak dep:platdep")),
+            (json::METADATA_BUILDDEP_PLATDEP,       Some("alloc std")),
+        ]),
+    // The same with the v1 resolver.
+    CargoResolutionCase::new(&["platdep-weak", "platdep"])
+        .resolver(CargoResolverVersion::V1)
         .target_expected(&[
             (json::METADATA_BUILDDEP_MAIN,          Some("platdep platdep-weak dep:platdep")),
             (json::METADATA_BUILDDEP_PLATDEP,       Some("alloc std")),
@@ -132,6 +183,16 @@ static CASES: &[CargoResolutionCase] = &[
         .host_expected(&[
             (json::METADATA_BUILDDEP_NORMALDEP,     Some("alloc std")),
         ]),
+    // The same with the v1 resolver.
+    CargoResolutionCase::new(&["normaldep-weak", "normaldep"])
+        .resolver(CargoResolverVersion::V1)
+        .target_expected(&[
+            (json::METADATA_BUILDDEP_MAIN,          Some("normaldep normaldep-weak dep:normaldep")),
+            (json::METADATA_BUILDDEP_NORMALDEP,     Some("alloc std")),
+        ])
+        .host_expected(&[
+            (json::METADATA_BUILDDEP_NORMALDEP,     Some("alloc std")),
+        ]),
 
     // [features]
     // reqbuilddep-weak = ["reqbuilddep?/std"]
@@ -164,6 +225,109 @@ static CASES: &[CargoResolutionCase] = &[
         ])
         .host_expected(&[
             (json::METADATA_BUILDDEP_REQBUILDDEP,   Some("alloc std")),
+        ]),
+    // The same with the v1 resolver.
+    CargoResolutionCase::new(&["reqbuilddep-weak", "reqbuilddep"])
+        .resolver(CargoResolverVersion::V1)
+        .target_expected(&[
+            (json::METADATA_BUILDDEP_MAIN,          Some("reqbuilddep reqbuilddep-weak dep:reqbuilddep")),
+            (json::METADATA_BUILDDEP_REQBUILDDEP,   Some("alloc std")),
+        ])
+        .host_expected(&[
+            (json::METADATA_BUILDDEP_REQBUILDDEP,   Some("alloc std")),
+        ]),
+
+    // With dev-dependencies built and nothing enabled, devdep is built through
+    // its required dev declaration.
+    CargoResolutionCase::new(&[])
+        .include_dev()
+        .target_expected(&[
+            (json::METADATA_BUILDDEP_MAIN,          Some("")),
+            (json::METADATA_BUILDDEP_DEVDEP,        Some("")),
+        ])
+        .host_expected(&[
+            (json::METADATA_BUILDDEP_DEVDEP,        None),
+        ]),
+    // The same with the v1 resolver.
+    CargoResolutionCase::new(&[])
+        .resolver(CargoResolverVersion::V1)
+        .include_dev()
+        .target_expected(&[
+            (json::METADATA_BUILDDEP_MAIN,          Some("")),
+            (json::METADATA_BUILDDEP_DEVDEP,        Some("")),
+        ])
+        .host_expected(&[
+            (json::METADATA_BUILDDEP_DEVDEP,        None),
+        ]),
+    // [features]
+    // devdep-weak = ["devdep?/std"]
+    //
+    // devdep's only required declaration is a dev-dependency. Without
+    // dev-dependencies, nothing builds devdep, and `devdep?/std` doesn't
+    // activate the optional normal declaration.
+    CargoResolutionCase::new(&["devdep-weak"])
+        .target_expected(&[
+            (json::METADATA_BUILDDEP_MAIN,          Some("devdep-weak")),
+            (json::METADATA_BUILDDEP_DEVDEP,        None),
+        ])
+        .host_expected(&[
+            (json::METADATA_BUILDDEP_DEVDEP,        None),
+        ]),
+    // The same with the v1 resolver.
+    CargoResolutionCase::new(&["devdep-weak"])
+        .resolver(CargoResolverVersion::V1)
+        .target_expected(&[
+            (json::METADATA_BUILDDEP_MAIN,          Some("devdep-weak")),
+            (json::METADATA_BUILDDEP_DEVDEP,        None),
+        ])
+        .host_expected(&[
+            (json::METADATA_BUILDDEP_DEVDEP,        None),
+        ]),
+    // With dev-dependencies built, the required dev declaration is active, so
+    // `devdep?/std` applies to it. `main` still doesn't get `dep:devdep`.
+    CargoResolutionCase::new(&["devdep-weak"])
+        .include_dev()
+        .target_expected(&[
+            (json::METADATA_BUILDDEP_MAIN,          Some("devdep-weak")),
+            (json::METADATA_BUILDDEP_DEVDEP,        Some("alloc std")),
+        ])
+        .host_expected(&[
+            (json::METADATA_BUILDDEP_DEVDEP,        None),
+        ]),
+    // The same with the v1 resolver.
+    CargoResolutionCase::new(&["devdep-weak"])
+        .resolver(CargoResolverVersion::V1)
+        .include_dev()
+        .target_expected(&[
+            (json::METADATA_BUILDDEP_MAIN,          Some("devdep-weak")),
+            (json::METADATA_BUILDDEP_DEVDEP,        Some("alloc std")),
+        ])
+        .host_expected(&[
+            (json::METADATA_BUILDDEP_DEVDEP,        None),
+        ]),
+    // [features]
+    // devdep-weak = ["devdep?/std"]
+    // devdep = ["dep:devdep"]
+    //
+    // Enabling `devdep` activates the optional normal declaration, and
+    // `devdep?/std` then applies without dev-dependencies as well.
+    CargoResolutionCase::new(&["devdep-weak", "devdep"])
+        .target_expected(&[
+            (json::METADATA_BUILDDEP_MAIN,          Some("devdep devdep-weak dep:devdep")),
+            (json::METADATA_BUILDDEP_DEVDEP,        Some("alloc std")),
+        ])
+        .host_expected(&[
+            (json::METADATA_BUILDDEP_DEVDEP,        None),
+        ]),
+    // The same with the v1 resolver.
+    CargoResolutionCase::new(&["devdep-weak", "devdep"])
+        .resolver(CargoResolverVersion::V1)
+        .target_expected(&[
+            (json::METADATA_BUILDDEP_MAIN,          Some("devdep devdep-weak dep:devdep")),
+            (json::METADATA_BUILDDEP_DEVDEP,        Some("alloc std")),
+        ])
+        .host_expected(&[
+            (json::METADATA_BUILDDEP_DEVDEP,        None),
         ]),
 ];
 
