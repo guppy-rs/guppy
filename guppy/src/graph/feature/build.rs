@@ -8,7 +8,7 @@ use crate::{
         PackageGraph, PackageIx, PackageLink, PackageMetadata,
         feature::{
             ConditionalLinkImpl, FeatureEdge, FeatureGraphImpl, FeatureLabel, FeatureMetadataImpl,
-            FeatureNode, PackageEdgeIxs, WeakDependencies, WeakIndex,
+            FeatureNode, PackageEdgeIxs, SlashForm, WeakDependencies,
         },
     },
     platform::PlatformStatusImpl,
@@ -116,7 +116,10 @@ impl FeatureGraphBuildState {
                 weak,
             } => {
                 if let Some(link) = dep_name_to_link.get(dep_name.as_ref()) {
-                    let weak_index = weak.then(|| self.weak.insert(link.edge_ix()));
+                    let slash = match weak {
+                        true => SlashForm::Weak(self.weak.insert(link.edge_ix())),
+                        false => SlashForm::Strong,
+                    };
 
                     // Dependency from (`main`, `a`) to (`dep, `foo`)
                     if let Some(cross_node) = self.make_named_feature_node(
@@ -129,10 +132,8 @@ impl FeatureGraphBuildState {
                         // This is a cross-package link. The platform-specific
                         // requirements still apply, so grab them from the
                         // PackageLink.
-                        nodes_edges.push((
-                            cross_node,
-                            Self::make_named_feature_cross_edge(link, weak_index),
-                        ));
+                        nodes_edges
+                            .push((cross_node, Self::make_named_feature_cross_edge(link, slash)));
                     };
 
                     // If the package is present as an optional dependency, it is
@@ -155,8 +156,10 @@ impl FeatureGraphBuildState {
                             false,
                         )
                     {
-                        nodes_edges
-                            .push((same_node, Self::make_named_feature_cross_edge(link, None)));
+                        nodes_edges.push((
+                            same_node,
+                            Self::make_named_feature_cross_edge(link, SlashForm::Strong),
+                        ));
                     }
 
                     // Finally, (`main`, `a`) to (`main`, `dep`) -- if this is a non-weak dependency
@@ -189,7 +192,7 @@ impl FeatureGraphBuildState {
                     {
                         nodes_edges.push((
                             same_named_feature_node,
-                            Self::make_named_feature_cross_edge(link, None),
+                            Self::make_named_feature_cross_edge(link, SlashForm::Strong),
                         ));
                     }
                 }
@@ -272,15 +275,12 @@ impl FeatureGraphBuildState {
     ///
     /// If `dep` is optional and the reference is not weak, the edge (`from`, `a`)
     /// to (`from`, `dep`) is also a `NamedFeatureWithSlash` edge.
-    fn make_named_feature_cross_edge(
-        link: &PackageLink<'_>,
-        weak_index: Option<WeakIndex>,
-    ) -> FeatureEdge {
+    fn make_named_feature_cross_edge(link: &PackageLink<'_>, slash: SlashForm) -> FeatureEdge {
         // This edge is enabled if the feature is enabled, which means the union of (required,
         // optional) build conditions.
         FeatureEdge::NamedFeatureWithSlash {
             link: Self::make_full_conditional_link_impl(link),
-            weak_index,
+            slash,
         }
     }
 
@@ -464,20 +464,22 @@ impl FeatureGraphBuildState {
                     match (old_edge, edge) {
                         (
                             FeatureEdge::NamedFeatureWithSlash {
-                                weak_index: old_weak_index,
-                                ..
+                                slash: old_slash, ..
                             },
-                            FeatureEdge::NamedFeatureWithSlash { weak_index, .. },
+                            FeatureEdge::NamedFeatureWithSlash { slash, .. },
                         ) => {
-                            if old_weak_index.is_some() && weak_index.is_some() {
+                            if let (SlashForm::Weak(old_index), SlashForm::Weak(index)) =
+                                (&*old_slash, &slash)
+                            {
                                 debug_assert_eq!(
-                                    *old_weak_index, weak_index,
-                                    "weak indexes should match if some"
+                                    old_index, index,
+                                    "weak indexes should match if both are weak"
                                 );
                             }
                             // Upgrade this edge from weak to non-weak.
-                            if weak_index.is_none() {
-                                *old_weak_index = None;
+                            match slash {
+                                SlashForm::Strong => *old_slash = SlashForm::Strong,
+                                SlashForm::Weak(_) => {}
                             }
                         }
                         (
