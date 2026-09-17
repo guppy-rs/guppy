@@ -11,11 +11,12 @@ use crate::{
         feature::{
             ConditionalLink, FeatureEdge, FeatureGraph, FeatureId, FeatureLinkContext,
             FeatureLinkVisitor, FeatureList, FeatureMetadata, FeatureQuery,
-            build::FeatureEdgeReference,
+            build::{FeatureEdgeReference, FeaturePetgraph},
+            weak::WeakBufferStates,
         },
         resolve_core::ResolveCore,
     },
-    petgraph_support::{IxBitSet, dfs::BufferedEdgeFilterFn},
+    petgraph_support::{IxBitSet, dfs::BufferedEdgeFilter},
 };
 use debug_ignore::DebugIgnore;
 use fixedbitset::FixedBitSet;
@@ -77,6 +78,42 @@ impl fmt::Debug for FeatureSet<'_> {
 
 assert_covariant!(FeatureSet);
 
+struct FeatureEdgeFilter<'g, 'a, F> {
+    graph: FeatureGraph<'g>,
+    buffer_states: WeakBufferStates<'g, 'a, F>,
+}
+
+impl<'g, F> BufferedEdgeFilter<&'g FeaturePetgraph> for FeatureEdgeFilter<'g, '_, F>
+where
+    F: FnMut(ConditionalLink<'g>) -> bool,
+{
+    type Iter = Either<
+        std::option::IntoIter<FeatureEdgeReference<'g>>,
+        std::vec::IntoIter<FeatureEdgeReference<'g>>,
+    >;
+
+    fn filter(&mut self, edge_ref: FeatureEdgeReference<'g>) -> Self::Iter {
+        match self.graph.edge_to_links(
+            edge_ref.source(),
+            edge_ref.target(),
+            edge_ref.id(),
+            Some(edge_ref.weight()),
+        ) {
+            Some(links) => self.buffer_states.track(edge_ref, links),
+            None => {
+                // Feature links within the same package are always followed.
+                Either::Left(Some(edge_ref))
+            }
+        }
+        .into_iter()
+    }
+
+    fn discover(&mut self, _feature_ix: NodeIndex<FeatureIx>) -> Self::Iter {
+        // Currently a no-op, but will be populated in the future.
+        Either::Left(None.into_iter())
+    }
+}
+
 impl<'g> FeatureSet<'g> {
     pub(super) fn new(query: FeatureQuery<'g>) -> Self {
         let graph = query.initials.graph;
@@ -98,32 +135,19 @@ impl<'g> FeatureSet<'g> {
         let cx = FeatureLinkContext::new(query);
 
         // State used by the callback below.
-        let mut buffer_states = graph
+        let buffer_states = graph
             .inner
             .weak
             .new_buffer_states(|link| visitor.visit_link(&cx, link));
-
-        let filter_fn = |edge_ref: FeatureEdgeReference<'g>| {
-            match graph.edge_to_links(
-                edge_ref.source(),
-                edge_ref.target(),
-                edge_ref.id(),
-                Some(edge_ref.weight()),
-            ) {
-                Some(links) => buffer_states.track(edge_ref, links),
-                None => {
-                    // Feature links within the same package are always followed.
-                    Either::Left(Some(edge_ref))
-                }
-            }
-            .into_iter()
-        };
 
         let core = ResolveCore::with_buffered_edge_filter(
             graph.dep_graph(),
             cx.query().initials().sorted_ixs(),
             cx.direction(),
-            BufferedEdgeFilterFn(filter_fn),
+            FeatureEdgeFilter {
+                graph: *graph,
+                buffer_states,
+            },
         );
 
         Self { graph, core }
