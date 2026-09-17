@@ -19,7 +19,7 @@ fn default_features() {
     assert_features_for_package(
         cargo_set.target_features(),
         &package_id(json::METADATA_WEAK_NAMESPACED_ID),
-        Some(&[FeatureLabel::Base]),
+        Some(""),
         "while checking Cargo resolution for default features",
     );
 }
@@ -33,11 +33,7 @@ fn named_feature_single_dep() {
     assert_features_for_package(
         cargo_set.target_features(),
         &package_id(json::METADATA_WEAK_NAMESPACED_ID),
-        Some(&[
-            FeatureLabel::Base,
-            FeatureLabel::Named("foo"),
-            FeatureLabel::OptionalDependency("arrayvec"),
-        ]),
+        Some("foo dep:arrayvec"),
         "while checking Cargo resolution for default + foo",
     );
 }
@@ -50,20 +46,14 @@ fn named_feature_same_as_dep_plus_feature() {
     assert_features_for_package(
         cargo_set.target_features(),
         &package_id(json::METADATA_WEAK_NAMESPACED_ID),
-        Some(&[
-            FeatureLabel::Base,
-            FeatureLabel::Named("foo"),
-            FeatureLabel::Named("smallvec"),
-            FeatureLabel::OptionalDependency("arrayvec"),
-            FeatureLabel::OptionalDependency("smallvec"),
-        ]),
+        Some("foo smallvec dep:arrayvec dep:smallvec"),
         "while checking Cargo resolution for default + smallvec",
     );
     // smallvec should not have its union feature enabled.
     assert_features_for_package(
         cargo_set.target_features(),
         &package_id(json::METADATA_WEAK_NAMESPACED_SMALLVEC),
-        Some(&[FeatureLabel::Base]),
+        Some(""),
         "while checking Cargo resolution for default + smallvec",
     );
 }
@@ -76,18 +66,13 @@ fn enabled_non_weak_feature() {
     assert_features_for_package(
         cargo_set.target_features(),
         &package_id(json::METADATA_WEAK_NAMESPACED_ID),
-        Some(&[
-            FeatureLabel::Base,
-            FeatureLabel::Named("arrayvec"),
-            FeatureLabel::Named("bar"),
-            FeatureLabel::OptionalDependency("arrayvec"),
-        ]),
+        Some("arrayvec bar dep:arrayvec"),
         "while checking Cargo resolution for default + bar",
     );
     assert_features_for_package(
         cargo_set.target_features(),
         &package_id(json::METADATA_WEAK_NAMESPACED_ARRAYVEC),
-        Some(&[FeatureLabel::Base, FeatureLabel::Named("std")]),
+        Some("std"),
         "while checking Cargo resolution for default + bar",
     );
 }
@@ -100,7 +85,7 @@ fn named_feature_does_not_enable_dep_with_same_name() {
     assert_features_for_package(
         cargo_set.target_features(),
         &package_id(json::METADATA_WEAK_NAMESPACED_ID),
-        Some(&[FeatureLabel::Base, FeatureLabel::Named("arrayvec")]),
+        Some("arrayvec"),
         "while checking Cargo resolution for default + arrayvec",
     );
     assert_features_for_package(
@@ -119,21 +104,14 @@ fn enabled_weak_feature_1() {
     assert_features_for_package(
         cargo_set.target_features(),
         &package_id(json::METADATA_WEAK_NAMESPACED_ID),
-        Some(&[
-            FeatureLabel::Base,
-            FeatureLabel::Named("foo"),
-            FeatureLabel::Named("smallvec"),
-            FeatureLabel::Named("smallvec-union"),
-            FeatureLabel::OptionalDependency("arrayvec"),
-            FeatureLabel::OptionalDependency("smallvec"),
-        ]),
+        Some("foo smallvec smallvec-union dep:arrayvec dep:smallvec"),
         "while checking Cargo resolution for default + smallvec + smallvec-union",
     );
     // smallvec *should* have its union feature enabled.
     assert_features_for_package(
         cargo_set.target_features(),
         &package_id(json::METADATA_WEAK_NAMESPACED_SMALLVEC),
-        Some(&[FeatureLabel::Base, FeatureLabel::Named("union")]),
+        Some("union"),
         "while checking Cargo resolution for default + smallvec + smallvec-union",
     );
 }
@@ -146,19 +124,13 @@ fn enabled_weak_feature_2() {
     assert_features_for_package(
         cargo_set.target_features(),
         &package_id(json::METADATA_WEAK_NAMESPACED_ID),
-        Some(&[
-            FeatureLabel::Base,
-            FeatureLabel::Named("baz"),
-            FeatureLabel::Named("foo"),
-            FeatureLabel::OptionalDependency("arrayvec"),
-            FeatureLabel::OptionalDependency("pathdiff"),
-        ]),
+        Some("baz foo dep:arrayvec dep:pathdiff"),
         "while checking Cargo resolution for default + foo + baz",
     );
     assert_features_for_package(
         cargo_set.target_features(),
         &package_id(json::METADATA_WEAK_NAMESPACED_ARRAYVEC),
-        Some(&[FeatureLabel::Base, FeatureLabel::Named("std")]),
+        Some("std"),
         "while checking Cargo resolution for default + foo + baz",
     );
 }
@@ -171,20 +143,13 @@ fn enabled_weak_feature_3() {
     assert_features_for_package(
         cargo_set.target_features(),
         &package_id(json::METADATA_WEAK_NAMESPACED_ID),
-        Some(&[
-            FeatureLabel::Base,
-            FeatureLabel::Named("arrayvec"),
-            FeatureLabel::Named("bar"),
-            FeatureLabel::Named("baz"),
-            FeatureLabel::OptionalDependency("arrayvec"),
-            FeatureLabel::OptionalDependency("pathdiff"),
-        ]),
+        Some("arrayvec bar baz dep:arrayvec dep:pathdiff"),
         "while checking Cargo resolution for default + bar + baz",
     );
     assert_features_for_package(
         cargo_set.target_features(),
         &package_id(json::METADATA_WEAK_NAMESPACED_ARRAYVEC),
-        Some(&[FeatureLabel::Base, FeatureLabel::Named("std")]),
+        Some("std"),
         "while checking Cargo resolution for default + bar + baz",
     );
 }
@@ -197,11 +162,7 @@ fn disabled_weak_feature_1() {
     assert_features_for_package(
         cargo_set.target_features(),
         &package_id(json::METADATA_WEAK_NAMESPACED_ID),
-        Some(&[
-            FeatureLabel::Base,
-            FeatureLabel::Named("baz"),
-            FeatureLabel::OptionalDependency("pathdiff"),
-        ]),
+        Some("baz dep:pathdiff"),
         "while checking Cargo resolution for default + baz",
     );
     assert_features_for_package(
@@ -220,12 +181,7 @@ fn disabled_weak_feature_2() {
     assert_features_for_package(
         cargo_set.target_features(),
         &package_id(json::METADATA_WEAK_NAMESPACED_ID),
-        Some(&[
-            FeatureLabel::Base,
-            FeatureLabel::Named("arrayvec"),
-            FeatureLabel::Named("baz"),
-            FeatureLabel::OptionalDependency("pathdiff"),
-        ]),
+        Some("arrayvec baz dep:pathdiff"),
         "while checking Cargo resolution for default + arrayvec + baz",
     );
     assert_features_for_package(
@@ -238,17 +194,11 @@ fn disabled_weak_feature_2() {
 
 #[test]
 fn platform_not_matched_features() {
-    fn expected_features_for(name: &'static str) -> Vec<FeatureLabel<'static>> {
+    fn expected_features_for(name: &'static str) -> String {
         match name {
-            "windows-dep" => vec![FeatureLabel::Base, FeatureLabel::Named(name)],
-            "windows-named" => vec![
-                FeatureLabel::Base,
-                FeatureLabel::Named("tinyvec"),
-                FeatureLabel::Named(name),
-            ],
-            "windows-non-weak" | "windows-weak" => {
-                vec![FeatureLabel::Base, FeatureLabel::Named(name)]
-            }
+            "windows-dep" => name.to_owned(),
+            "windows-named" => format!("tinyvec {name}"),
+            "windows-non-weak" | "windows-weak" => name.to_owned(),
             _ => unreachable!(),
         }
     }
@@ -278,28 +228,19 @@ fn platform_not_matched_features() {
 
 #[test]
 fn platform_matched_features() {
-    fn expected_features_for_main(name: &'static str) -> Vec<FeatureLabel<'static>> {
+    fn expected_features_for_main(name: &'static str) -> String {
         match name {
-            "windows-dep" => vec![
-                FeatureLabel::Base,
-                FeatureLabel::Named(name),
-                FeatureLabel::OptionalDependency("tinyvec"),
-            ],
-            "windows-named" | "windows-non-weak" => vec![
-                FeatureLabel::Base,
-                FeatureLabel::Named("tinyvec"),
-                FeatureLabel::Named(name),
-                FeatureLabel::OptionalDependency("tinyvec"),
-            ],
-            "windows-weak" => vec![FeatureLabel::Base, FeatureLabel::Named(name)],
+            "windows-dep" => format!("{name} dep:tinyvec"),
+            "windows-named" | "windows-non-weak" => format!("tinyvec {name} dep:tinyvec"),
+            "windows-weak" => name.to_owned(),
             _ => unreachable!(),
         }
     }
 
-    fn expected_features_for_tinyvec(name: &'static str) -> Option<Vec<FeatureLabel<'static>>> {
+    fn expected_features_for_tinyvec(name: &'static str) -> Option<&'static str> {
         match name {
-            "windows-dep" | "windows-named" => Some(vec![FeatureLabel::Base]),
-            "windows-non-weak" => Some(vec![FeatureLabel::Base, FeatureLabel::Named("rustc_1_40")]),
+            "windows-dep" | "windows-named" => Some(""),
+            "windows-non-weak" => Some("rustc_1_40"),
             "windows-weak" => None,
             _ => unreachable!(),
         }
@@ -322,7 +263,7 @@ fn platform_matched_features() {
         assert_features_for_package(
             cargo_set.target_features(),
             &package_id(json::METADATA_WEAK_NAMESPACED_TINYVEC),
-            expected_features_for_tinyvec(feature_name).as_deref(),
+            expected_features_for_tinyvec(feature_name),
             &msg,
         );
     }
@@ -361,22 +302,13 @@ fn test_feature_presence() {
 /// foo = ["a/feat", "a"]
 #[test]
 fn test_edge_upgrades() {
-    fn expected_features_for(feature_name: &'static str) -> Vec<FeatureLabel<'static>> {
+    fn expected_features_for(feature_name: &'static str) -> String {
         match feature_name {
-            "upgrade1" | "upgrade2" | "upgrade3" | "upgrade4" | "upgrade5" | "upgrade6" => vec![
-                FeatureLabel::Base,
-                FeatureLabel::Named("foo"),
-                FeatureLabel::Named("smallvec"),
-                FeatureLabel::Named(feature_name),
-                FeatureLabel::OptionalDependency("arrayvec"),
-                FeatureLabel::OptionalDependency("smallvec"),
-            ],
+            "upgrade1" | "upgrade2" | "upgrade3" | "upgrade4" | "upgrade5" | "upgrade6" => {
+                format!("foo smallvec {feature_name} dep:arrayvec dep:smallvec")
+            }
             // These do not activate the named feature smallvec.
-            "upgrade7" | "upgrade8" => vec![
-                FeatureLabel::Base,
-                FeatureLabel::Named(feature_name),
-                FeatureLabel::OptionalDependency("smallvec"),
-            ],
+            "upgrade7" | "upgrade8" => format!("{feature_name} dep:smallvec"),
             _ => unreachable!(),
         }
     }
@@ -396,7 +328,7 @@ fn test_edge_upgrades() {
         assert_features_for_package(
             cargo_set.target_features(),
             &package_id(json::METADATA_WEAK_NAMESPACED_SMALLVEC),
-            Some(&[FeatureLabel::Base, FeatureLabel::Named("union")]),
+            Some("union"),
             &msg,
         );
     }
