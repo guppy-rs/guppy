@@ -1065,6 +1065,10 @@ impl PackageEdgeIxs {
         Self(iter::once(edge_ix).collect())
     }
 
+    pub(super) fn push(&mut self, edge_ix: EdgeIndex<PackageIx>) {
+        self.0.push(edge_ix);
+    }
+
     pub(super) fn iter(&self) -> impl ExactSizeIterator<Item = EdgeIndex<PackageIx>> + '_ {
         self.0.iter().copied()
     }
