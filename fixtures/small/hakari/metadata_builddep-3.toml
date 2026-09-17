@@ -9,14 +9,19 @@
 # workspace-hack-line-style = 'workspace-dotted'
 # platforms = ['loongarch64-unknown-linux-musl', 'thumbv7a-none-eabihf']
 # [[traversal-excludes.ids]]
-# name = 'main'
+# name = 'hostuser'
 # version = '0.1.0'
-# workspace-path = 'main'
+# workspace-path = 'hostuser'
 #
 # [[traversal-excludes.ids]]
-# name = 'platdep'
+# name = 'pmdep'
 # version = '0.1.0'
-# workspace-path = 'platdep'
+# workspace-path = 'pmdep'
+#
+# [[traversal-excludes.ids]]
+# name = 'targetuser'
+# version = '0.1.0'
+# workspace-path = 'targetuser'
 #
 # [[traversal-excludes.ids]]
 # name = 'winbuilddep'
@@ -26,6 +31,11 @@
 # name = 'builddep'
 # version = '0.1.0'
 # workspace-path = 'builddep'
+#
+# [[final-excludes.ids]]
+# name = 'hostuser'
+# version = '0.1.0'
+# workspace-path = 'hostuser'
 
 ### END HAKARI SECTION
 

@@ -40,6 +40,13 @@ status = 'initial'
 features = []
 
 [[host-package]]
+name = 'targetuser'
+version = '0.1.0'
+workspace-path = 'targetuser'
+status = 'initial'
+features = []
+
+[[host-package]]
 name = 'winbuilddep'
 version = '0.1.0'
 workspace-path = 'winbuilddep'
