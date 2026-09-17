@@ -607,7 +607,7 @@ impl<'g> FeatureReq<'g> {
             .into_iter()
             .map(move |(feature_idx, build_state)| {
                 // extend ensures that the build states aren't empty. Double-check that.
-                debug_assert!(!build_state.is_empty(), "build states are always non-empty");
+                debug_assert!(!build_state.is_never(), "build states are always non-empty");
                 (
                     FeatureNode::new(package_ix, feature_idx),
                     build_state.finish(),
@@ -643,7 +643,7 @@ impl DependencyBuildState {
         }
     }
 
-    fn is_empty(&self) -> bool {
+    fn is_never(&self) -> bool {
         self.normal.is_never() && self.build.is_never() && self.dev.is_never()
     }
 
