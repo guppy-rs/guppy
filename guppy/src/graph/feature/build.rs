@@ -289,17 +289,22 @@ impl FeatureGraphBuildState {
     fn make_full_conditional_link_impl(link: &PackageLink<'_>) -> ConditionalLinkImpl {
         // This edge is enabled if the feature is enabled, which means the union of (required,
         // optional) build conditions.
-        fn combine_req_opt(req: DependencyReq<'_>) -> PlatformStatusImpl {
+        Self::make_conditional_link_impl(link, |req| {
             let mut required = req.inner.required.build_if.clone();
             required.extend(&req.inner.optional.build_if);
             required
-        }
+        })
+    }
 
+    fn make_conditional_link_impl<'g>(
+        link: &PackageLink<'g>,
+        status: impl Fn(DependencyReq<'g>) -> PlatformStatusImpl,
+    ) -> ConditionalLinkImpl {
         ConditionalLinkImpl {
             package_edge_ixs: PackageEdgeIxs::single(link.edge_ix()),
-            normal: combine_req_opt(link.normal()),
-            build: combine_req_opt(link.build()),
-            dev: combine_req_opt(link.dev()),
+            normal: status(link.normal()),
+            build: status(link.build()),
+            dev: status(link.dev()),
         }
     }
 
