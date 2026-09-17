@@ -104,13 +104,13 @@ impl<'g> FeatureSet<'g> {
             .new_buffer_states(|link| visitor.visit_link(&cx, link));
 
         let filter_fn = |edge_ref: FeatureEdgeReference<'g>| {
-            match graph.edge_to_conditional_link(
+            match graph.edge_to_links(
                 edge_ref.source(),
                 edge_ref.target(),
                 edge_ref.id(),
                 Some(edge_ref.weight()),
             ) {
-                Some((link, weak_index)) => buffer_states.track(edge_ref, link, weak_index),
+                Some(links) => buffer_states.track(edge_ref, links),
                 None => {
                     // Feature links within the same package are always followed.
                     Either::Left(Some(edge_ref))
@@ -530,9 +530,7 @@ impl<'g> FeatureSet<'g> {
         self.core
             .links(graph.dep_graph(), graph.sccs(), direction)
             .filter_map(move |(source_ix, target_ix, edge_ix)| {
-                graph
-                    .edge_to_conditional_link(source_ix, target_ix, edge_ix, None)
-                    .map(|(link, _)| link)
+                graph.edge_to_full_link(source_ix, target_ix, edge_ix, None)
             })
     }
 
