@@ -33,9 +33,9 @@
 # workspace-path = 'builddep'
 #
 # [[final-excludes.ids]]
-# name = 'hostuser'
+# name = 'devdep'
 # version = '0.1.0'
-# workspace-path = 'hostuser'
+# workspace-path = 'devdep'
 
 ### END HAKARI SECTION
 

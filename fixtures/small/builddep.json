@@ -42,6 +42,52 @@
             "rust_version": null
         },
         {
+            "name": "devdep",
+            "version": "0.1.0",
+            "id": "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/devdep#0.1.0",
+            "license": null,
+            "license_file": null,
+            "description": null,
+            "source": null,
+            "dependencies": [],
+            "targets": [
+                {
+                    "kind": [
+                        "lib"
+                    ],
+                    "crate_types": [
+                        "lib"
+                    ],
+                    "name": "devdep",
+                    "src_path": "/home/fakeuser/dev/tmp/test-workspaces/builddep/devdep/src/lib.rs",
+                    "edition": "2018",
+                    "doc": true,
+                    "doctest": true,
+                    "test": true
+                }
+            ],
+            "features": {
+                "alloc": [],
+                "std": [
+                    "alloc"
+                ]
+            },
+            "manifest_path": "/home/fakeuser/dev/tmp/test-workspaces/builddep/devdep/Cargo.toml",
+            "metadata": null,
+            "publish": null,
+            "authors": [],
+            "categories": [],
+            "keywords": [],
+            "readme": null,
+            "repository": null,
+            "homepage": null,
+            "documentation": null,
+            "edition": "2018",
+            "links": null,
+            "default_run": null,
+            "rust_version": null
+        },
+        {
             "name": "hostuser",
             "version": "0.1.0",
             "id": "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/hostuser#0.1.0",
@@ -110,6 +156,19 @@
             "source": null,
             "dependencies": [
                 {
+                    "name": "devdep",
+                    "source": null,
+                    "req": "*",
+                    "kind": null,
+                    "rename": null,
+                    "optional": true,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null,
+                    "path": "/home/fakeuser/dev/tmp/test-workspaces/builddep/devdep"
+                },
+                {
                     "name": "normaldep",
                     "source": null,
                     "req": "*",
@@ -147,6 +206,19 @@
                     "target": null,
                     "registry": null,
                     "path": "/home/fakeuser/dev/tmp/test-workspaces/builddep/targetuser"
+                },
+                {
+                    "name": "devdep",
+                    "source": null,
+                    "req": "*",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null,
+                    "path": "/home/fakeuser/dev/tmp/test-workspaces/builddep/devdep"
                 },
                 {
                     "name": "builddep",
@@ -312,6 +384,12 @@
             "features": {
                 "dep-colon": [
                     "dep:optbuilddep"
+                ],
+                "devdep": [
+                    "dep:devdep"
+                ],
+                "devdep-weak": [
+                    "devdep?/std"
                 ],
                 "hostuser-normaldep": [
                     "hostuser/normaldep"
@@ -698,6 +776,7 @@
     ],
     "workspace_members": [
         "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/main#0.1.0",
+        "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/devdep#0.1.0",
         "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/normaldep#0.1.0",
         "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/reqbuilddep#0.1.0",
         "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/targetuser#0.1.0",
@@ -710,6 +789,7 @@
     ],
     "workspace_default_members": [
         "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/main#0.1.0",
+        "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/devdep#0.1.0",
         "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/normaldep#0.1.0",
         "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/reqbuilddep#0.1.0",
         "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/targetuser#0.1.0",
@@ -727,6 +807,15 @@
                 "dependencies": [],
                 "deps": [],
                 "features": []
+            },
+            {
+                "id": "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/devdep#0.1.0",
+                "dependencies": [],
+                "deps": [],
+                "features": [
+                    "alloc",
+                    "std"
+                ]
             },
             {
                 "id": "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/hostuser#0.1.0",
@@ -753,6 +842,7 @@
                 "id": "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/main#0.1.0",
                 "dependencies": [
                     "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/builddep#0.1.0",
+                    "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/devdep#0.1.0",
                     "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/hostuser#0.1.0",
                     "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/normaldep#0.1.0",
                     "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/optbuilddep#0.1.0",
@@ -769,6 +859,20 @@
                         "dep_kinds": [
                             {
                                 "kind": "build",
+                                "target": null
+                            }
+                        ]
+                    },
+                    {
+                        "name": "devdep",
+                        "pkg": "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/devdep#0.1.0",
+                        "dep_kinds": [
+                            {
+                                "kind": null,
+                                "target": null
+                            },
+                            {
+                                "kind": "dev",
                                 "target": null
                             }
                         ]
@@ -872,6 +976,8 @@
                 ],
                 "features": [
                     "dep-colon",
+                    "devdep",
+                    "devdep-weak",
                     "hostuser-normaldep",
                     "normaldep",
                     "normaldep-weak",

@@ -12,9 +12,9 @@ spec = 'any'
 [metadata.target-platform]
 spec = 'always'
 [[metadata.omitted-packages.ids]]
-name = 'optbuilddep'
+name = 'normaldep'
 version = '0.1.0'
-workspace-path = 'optbuilddep'
+workspace-path = 'normaldep'
 
 [[metadata.features-only]]
 name = 'builddep'
@@ -23,9 +23,9 @@ workspace-path = 'builddep'
 features = []
 
 [[metadata.features-only]]
-name = 'optbuilddep'
+name = 'normaldep'
 version = '0.1.0'
-workspace-path = 'optbuilddep'
+workspace-path = 'normaldep'
 features = ['alloc', 'std']
 
 [[host-package]]
@@ -36,17 +36,16 @@ status = 'initial'
 features = []
 
 [[host-package]]
-name = 'hostuser'
+name = 'devdep'
 version = '0.1.0'
-workspace-path = 'hostuser'
+workspace-path = 'devdep'
 status = 'initial'
-features = ['normaldep']
-optional-deps = ['normaldep']
+features = ['alloc', 'std']
 
 [[host-package]]
-name = 'optbuilddep'
+name = 'normaldep'
 version = '0.1.0'
-workspace-path = 'optbuilddep'
+workspace-path = 'normaldep'
 status = 'initial'
 features = ['alloc', 'std']
 
@@ -70,13 +69,6 @@ name = 'winbuilddep'
 version = '0.1.0'
 workspace-path = 'winbuilddep'
 status = 'initial'
-features = []
-
-[[host-package]]
-name = 'normaldep'
-version = '0.1.0'
-workspace-path = 'normaldep'
-status = 'workspace'
 features = []
 
 [[host-package]]

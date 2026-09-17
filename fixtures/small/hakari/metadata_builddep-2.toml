@@ -9,14 +9,14 @@
 # workspace-hack-line-style = 'full'
 # platforms = ['mips64el-unknown-linux-muslabi64', 'thumbv7a-nuttx-eabi', 'riscv64im-unknown-none-elf']
 # [[traversal-excludes.ids]]
-# name = 'hostuser'
+# name = 'devdep'
 # version = '0.1.0'
-# workspace-path = 'hostuser'
+# workspace-path = 'devdep'
 #
 # [[traversal-excludes.ids]]
-# name = 'normaldep'
+# name = 'main'
 # version = '0.1.0'
-# workspace-path = 'normaldep'
+# workspace-path = 'main'
 #
 # [[traversal-excludes.ids]]
 # name = 'optbuilddep'
@@ -33,9 +33,14 @@
 # version = '0.1.0'
 # workspace-path = 'winbuilddep'
 # [[final-excludes.ids]]
-# name = 'main'
+# name = 'hostuser'
 # version = '0.1.0'
-# workspace-path = 'main'
+# workspace-path = 'hostuser'
+#
+# [[final-excludes.ids]]
+# name = 'normaldep'
+# version = '0.1.0'
+# workspace-path = 'normaldep'
 #
 # [[final-excludes.ids]]
 # name = 'optbuilddep'
