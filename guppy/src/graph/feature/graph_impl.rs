@@ -315,12 +315,19 @@ impl<'g> FeatureGraph<'g> {
         edge_ix: EdgeIndex<FeatureIx>,
         edge: Option<&'g FeatureEdge>,
     ) -> Option<ConditionalLink<'g>> {
-        Some(
-            match self.edge_to_links(source_ix, target_ix, edge_ix, edge)? {
-                EdgeLinks::NonWeak(link) => link,
-                EdgeLinks::Weak { full, .. } => full,
-            },
-        )
+        let edge = edge.unwrap_or_else(|| &self.dep_graph()[edge_ix]);
+        let link = match edge {
+            FeatureEdge::NamedFeature | FeatureEdge::FeatureToBase => return None,
+            FeatureEdge::DependenciesSection(link)
+            | FeatureEdge::NamedFeatureDepColon(link)
+            | FeatureEdge::NamedFeatureWithSlash {
+                link,
+                weak_index: _,
+            } => link,
+        };
+        Some(ConditionalLink::new(
+            *self, source_ix, target_ix, edge_ix, link,
+        ))
     }
 
     fn feature_ix_depends_on(
