@@ -331,6 +331,71 @@ static CASES: &[CargoResolutionCase] = &[
         ]),
 ];
 
+// [dependencies]
+// targetuser = { path = "../targetuser" }
+//
+// [features]
+// targetuser-weak = ["targetuser?/reqbuilddep"]
+//
+// This is a weak dependency feature on a dependency that is never optional.
+// Cargo rejects this while parsing the manifest:
+//
+//     feature `targetuser-weak` includes `targetuser?/reqbuilddep` with a `?`,
+//     but `targetuser` is not an optional dependency
+//
+// But guppy accepts this, (logically) treating it as the same as
+// `targetuser/reqbuilddep`.
+//
+// TODO: This should probably be a FeatureGraphWarning.
+#[rustfmt::skip]
+static NEVER_OPTIONAL_CASES: &[CargoResolutionCase] = &[
+    CargoResolutionCase::new(&["targetuser-weak"])
+        .target_expected(&[
+            (json::METADATA_BUILDDEP_MAIN,          Some("targetuser-weak")),
+            (json::METADATA_BUILDDEP_TARGETUSER,    Some("reqbuilddep dep:reqbuilddep")),
+            (json::METADATA_BUILDDEP_REQBUILDDEP,   Some("")),
+        ]),
+    CargoResolutionCase::new(&["targetuser-weak"])
+        .resolver(CargoResolverVersion::V1)
+        .target_expected(&[
+            (json::METADATA_BUILDDEP_MAIN,          Some("targetuser-weak")),
+            (json::METADATA_BUILDDEP_TARGETUSER,    Some("reqbuilddep dep:reqbuilddep")),
+            (json::METADATA_BUILDDEP_REQBUILDDEP,   Some("")),
+        ]),
+];
+
+// `cargo metadata` never produces the manifest in NEVER_OPTIONAL_CASES. But
+// this case isn't rejected by guppy, so we still have to produce an answer
+// without panicking. Check that by patching the feature into the builddep
+// fixture's JSON.
+#[test]
+fn weak_feature_on_never_optional_dep() {
+    let mut metadata: serde_json::Value =
+        serde_json::from_str(JsonFixture::metadata_builddep().json())
+            .expect("builddep fixture is valid JSON");
+    let main = metadata["packages"]
+        .as_array_mut()
+        .expect("packages is an array")
+        .iter_mut()
+        .find(|package| package["id"] == json::METADATA_BUILDDEP_MAIN)
+        .expect("main is in the builddep fixture");
+    // `main` only lists targetuser under `[dependencies]`, without
+    // `optional = true`.
+    main["features"]
+        .as_object_mut()
+        .expect("features is a map")
+        .insert(
+            "targetuser-weak".to_owned(),
+            serde_json::json!(["targetuser?/reqbuilddep"]),
+        );
+    let graph = guppy::graph::PackageGraph::from_json(metadata.to_string())
+        .expect("patched metadata is valid");
+
+    for case in NEVER_OPTIONAL_CASES {
+        case.check(&graph, json::METADATA_BUILDDEP_MAIN, "");
+    }
+}
+
 #[test]
 fn resolution_matches_cargo() {
     let graph = JsonFixture::metadata_builddep().graph();
