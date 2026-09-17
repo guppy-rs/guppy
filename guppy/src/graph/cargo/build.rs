@@ -421,36 +421,56 @@ impl<'g> CargoSetBuildState<'g> {
             }
 
             let consider_dev = self.opts.include_dev && cx.starts_from_initial(&link);
+            let same_package = from.package_id() == to.package_id();
+            // Build dependencies are evaluated against the host platform.
+            let build_enabled = is_enabled(&link, DependencyKind::Build, host_platform);
+
             // This resolver doesn't check for whether this package has a build script.
+            //
+            // If this is a dependency like:
+            //
+            // ```
+            // [build-dependencies]
+            // cc = { version = "1.0", optional = true }
+            //
+            // [features]
+            // bundled = ["cc"]
+            // ```
+            //
+            // Then, there is an implicit named feature here called "cc" on the target platform,
+            // which enables the optional dependency "cc". But this does not mean that this
+            // package itself is built on the host platform!
+            //
+            // In the feature graph, enabling `bundled` walks two edges:
+            //
+            // ```
+            // (main, bundled) --edge 1--> (main, dep:cc) --edge 2--> (cc, base)
+            // ```
+            //
+            // Both edges take their platform conditions from cc's declaration, which is only in
+            // `[build-dependencies]` (their normal kind is never enabled and their build kind is
+            // always enabled).
+            //
+            // Edge 1 stays inside `main`. It has to be followed on the target, because `main`'s
+            // features live on the target and `dep:cc` is one of them. If it isn't followed, the
+            // walk stops here and cc is never built. That is what `same_package && build_enabled`
+            // does below.
+            //
+            // Edge 2 crosses into cc. It is a cross-package build edge, so `build_dep_redirect`
+            // below sends cc to the host. Only the destination of a cross-package build edge moves
+            // to the host, which is why following edge 1 does not put `main` there.
             let mut follow_target = is_enabled(&link, DependencyKind::Normal, target_platform)
                 || (consider_dev
-                    && is_enabled(&link, DependencyKind::Development, target_platform));
+                    && is_enabled(&link, DependencyKind::Development, target_platform))
+                || (same_package && build_enabled);
 
             // Proc macros build on the host, so for normal/dev dependencies redirect it to the host
             // instead.
             let proc_macro_redirect = follow_target && to.package().is_proc_macro();
 
-            // Build dependencies are evaluated against the host platform.
-            let build_dep_redirect = {
-                // If this is a dependency like:
-                //
-                // ```
-                // [build-dependencies]
-                // cc = { version = "1.0", optional = true }
-                //
-                // [features]
-                // bundled = ["cc"]
-                // ```
-                //
-                // Then, there is an implicit named feature here called "cc" on the target platform,
-                // which enables the optional dependency "cc". But this does not mean that this
-                // package itself is built on the host platform!
-                //
-                // Detect this situation by ensuring that the package ID of the `from` and `to`
-                // nodes are different.
-                from.package_id() != to.package_id()
-                    && is_enabled(&link, DependencyKind::Build, host_platform)
-            };
+            // Cross-package build dependencies are built on the host. Same-package edges are
+            // handled above.
+            let build_dep_redirect = !same_package && build_enabled;
 
             // Finally, process what needs to be done.
             if build_dep_redirect || proc_macro_redirect {

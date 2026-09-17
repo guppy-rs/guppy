@@ -25,9 +25,9 @@ workspace-path = 'builddep'
 features = []
 
 [[metadata.features-only]]
-name = 'main'
+name = 'optbuilddep'
 version = '0.1.0'
-workspace-path = 'main'
+workspace-path = 'optbuilddep'
 features = []
 
 [[target-package]]
@@ -38,8 +38,15 @@ status = 'initial'
 features = []
 
 [[target-package]]
-name = 'main'
+name = 'optbuilddep'
 version = '0.1.0'
-workspace-path = 'main'
+workspace-path = 'optbuilddep'
+status = 'initial'
+features = []
+
+[[target-package]]
+name = 'winbuilddep'
+version = '0.1.0'
+workspace-path = 'winbuilddep'
 status = 'initial'
 features = []

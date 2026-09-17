@@ -3,6 +3,22 @@
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+### Fixed
+
+- With the version 2 and 3 feature resolvers, an optional build dependency
+  activated only through its own package's features was never built:
+
+  ```toml
+  [build-dependencies]
+  cc = { version = "1", optional = true }
+
+  [features]
+  bundled = ["dep:cc"]
+  ```
+
+  Enabling `bundled` now builds `cc` on the host, as Cargo does. `cc/feature`
+  entries and the version 1 resolver were not affected.
+
 ### Changed
 
 - `ConditionalLink::package_link` is replaced by `package_links`, an iterator
