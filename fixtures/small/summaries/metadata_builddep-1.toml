@@ -17,19 +17,26 @@ triple = 'riscv32imfc-unknown-none-elf'
 target-features = ['avx', 'avx2', 'fma', 'rdrand', 'sse3', 'ssse3', 'xsaves']
 flags = ['flag-test']
 [[metadata.omitted-packages.ids]]
-name = 'hostuser'
+name = 'devdep'
 version = '0.1.0'
-workspace-path = 'hostuser'
+workspace-path = 'devdep'
+
+[[metadata.omitted-packages.ids]]
+name = 'main'
+version = '0.1.0'
+workspace-path = 'main'
 
 [[metadata.omitted-packages.ids]]
 name = 'normaldep'
 version = '0.1.0'
 workspace-path = 'normaldep'
 
-[[metadata.omitted-packages.ids]]
-name = 'optbuilddep'
+[[metadata.features-only]]
+name = 'main'
 version = '0.1.0'
-workspace-path = 'optbuilddep'
+workspace-path = 'main'
+features = ['dep-colon', 'devdep', 'devdep-weak', 'hostuser-normaldep', 'normaldep', 'normaldep-weak', 'platdep', 'platdep-weak', 'pmdep', 'pmdep-weak', 'reqbuilddep', 'reqbuilddep-weak', 'slash', 'targetuser-reqbuilddep', 'windows-dep-colon']
+optional-deps = ['devdep', 'normaldep', 'optbuilddep', 'platdep', 'pmdep', 'reqbuilddep', 'winbuilddep']
 
 [[metadata.features-only]]
 name = 'normaldep'
@@ -38,16 +45,11 @@ workspace-path = 'normaldep'
 features = ['alloc', 'std']
 
 [[metadata.features-only]]
-name = 'optbuilddep'
+name = 'targetuser'
 version = '0.1.0'
-workspace-path = 'optbuilddep'
-features = ['alloc', 'std']
-
-[[metadata.features-only]]
-name = 'winbuilddep'
-version = '0.1.0'
-workspace-path = 'winbuilddep'
-features = []
+workspace-path = 'targetuser'
+features = ['reqbuilddep']
+optional-deps = ['reqbuilddep']
 
 [[host-package]]
 name = 'platdep'
@@ -57,8 +59,9 @@ status = 'initial'
 features = ['alloc', 'std']
 
 [[host-package]]
-name = 'winbuilddep'
+name = 'targetuser'
 version = '0.1.0'
-workspace-path = 'winbuilddep'
+workspace-path = 'targetuser'
 status = 'initial'
-features = []
+features = ['reqbuilddep']
+optional-deps = ['reqbuilddep']

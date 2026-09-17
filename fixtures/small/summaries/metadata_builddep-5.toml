@@ -30,15 +30,15 @@ workspace-path = 'builddep'
 features = []
 
 [[metadata.features-only]]
-name = 'hostuser'
+name = 'devdep'
 version = '0.1.0'
-workspace-path = 'hostuser'
+workspace-path = 'devdep'
 features = []
 
 [[metadata.features-only]]
-name = 'reqbuilddep'
+name = 'pmdep'
 version = '0.1.0'
-workspace-path = 'reqbuilddep'
+workspace-path = 'pmdep'
 features = []
 
 [[target-package]]
@@ -49,15 +49,15 @@ status = 'initial'
 features = []
 
 [[target-package]]
-name = 'targetuser'
+name = 'platdep'
 version = '0.1.0'
-workspace-path = 'targetuser'
+workspace-path = 'platdep'
 status = 'initial'
 features = []
 
-[[host-package]]
-name = 'pmdep'
+[[target-package]]
+name = 'targetuser'
 version = '0.1.0'
-workspace-path = 'pmdep'
+workspace-path = 'targetuser'
 status = 'initial'
 features = []

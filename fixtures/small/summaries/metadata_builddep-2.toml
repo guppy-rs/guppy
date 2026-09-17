@@ -27,6 +27,13 @@ workspace-path = 'pmdep'
 features = []
 
 [[target-package]]
+name = 'main'
+version = '0.1.0'
+workspace-path = 'main'
+status = 'initial'
+features = []
+
+[[target-package]]
 name = 'normaldep'
 version = '0.1.0'
 workspace-path = 'normaldep'
@@ -47,9 +54,37 @@ workspace-path = 'platdep'
 status = 'initial'
 features = []
 
+[[target-package]]
+name = 'targetuser'
+version = '0.1.0'
+workspace-path = 'targetuser'
+status = 'workspace'
+features = []
+
 [[host-package]]
 name = 'pmdep'
 version = '0.1.0'
 workspace-path = 'pmdep'
 status = 'initial'
+features = []
+
+[[host-package]]
+name = 'builddep'
+version = '0.1.0'
+workspace-path = 'builddep'
+status = 'workspace'
+features = []
+
+[[host-package]]
+name = 'hostuser'
+version = '0.1.0'
+workspace-path = 'hostuser'
+status = 'workspace'
+features = []
+
+[[host-package]]
+name = 'reqbuilddep'
+version = '0.1.0'
+workspace-path = 'reqbuilddep'
+status = 'workspace'
 features = []
