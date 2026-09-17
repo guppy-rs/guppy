@@ -19,6 +19,29 @@
   Enabling `bundled` now builds `cc` on the host, as Cargo does. `cc/feature`
   entries and the version 1 resolver were not affected.
 
+- A weak dependency feature (`dep?/feature`) no longer activates the optional
+  dependency `dep:dep` when `dep` is also declared as a required dependency.
+  For example:
+
+  ```toml
+  [dependencies]
+  foo = { version = "1" }
+
+  [build-dependencies]
+  foo = { version = "1", optional = true }
+
+  [features]
+  weak = ["foo?/std"]
+  ```
+
+  Previously, enabling `weak` activated `dep:foo`, so `foo` was also built on
+  the host. Now, as with Cargo, `weak` only enables `foo/std` on the target.
+  With a dependency that is required on one platform and optional on another,
+  `dep:foo` was similarly added to the feature set.
+
+  As part of this change, the feature graph no longer has an edge from `weak`
+  to `dep:foo`.
+
 ### Changed
 
 - `ConditionalLink::package_link` is replaced by `package_links`, an iterator

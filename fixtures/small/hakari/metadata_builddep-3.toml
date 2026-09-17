@@ -9,14 +9,14 @@
 # workspace-hack-line-style = 'workspace-dotted'
 # platforms = ['loongarch64-unknown-linux-musl', 'thumbv7a-none-eabihf']
 # [[traversal-excludes.ids]]
-# name = 'builddep'
+# name = 'main'
 # version = '0.1.0'
-# workspace-path = 'builddep'
+# workspace-path = 'main'
 #
 # [[traversal-excludes.ids]]
-# name = 'optbuilddep'
+# name = 'platdep'
 # version = '0.1.0'
-# workspace-path = 'optbuilddep'
+# workspace-path = 'platdep'
 #
 # [[traversal-excludes.ids]]
 # name = 'winbuilddep'

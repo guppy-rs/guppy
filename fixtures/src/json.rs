@@ -40,6 +40,12 @@ pub static METADATA_BUILDDEP_OPTBUILDDEP: &str =
     "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/optbuilddep#0.1.0";
 pub static METADATA_BUILDDEP_WINBUILDDEP: &str =
     "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/winbuilddep#0.1.0";
+pub static METADATA_BUILDDEP_PLATDEP: &str =
+    "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/platdep#0.1.0";
+pub static METADATA_BUILDDEP_NORMALDEP: &str =
+    "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/normaldep#0.1.0";
+pub static METADATA_BUILDDEP_REQBUILDDEP: &str =
+    "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/reqbuilddep#0.1.0";
 
 pub static METADATA_DUPS_PATH: &str = "../small/metadata_dups.json";
 pub static METADATA_DUPS_TESTCRATE: &str =

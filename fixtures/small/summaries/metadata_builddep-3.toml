@@ -22,9 +22,9 @@ triple = 'x86_64-unknown-redox'
 target-features = 'all'
 flags = ['foo']
 [[metadata.omitted-packages.ids]]
-name = 'main'
+name = 'normaldep'
 version = '0.1.0'
-workspace-path = 'main'
+workspace-path = 'normaldep'
 
 [[metadata.features-only]]
 name = 'builddep'
@@ -33,22 +33,22 @@ workspace-path = 'builddep'
 features = []
 
 [[metadata.features-only]]
-name = 'main'
+name = 'optbuilddep'
 version = '0.1.0'
-workspace-path = 'main'
+workspace-path = 'optbuilddep'
 features = []
 
 [[host-package]]
-name = 'builddep'
+name = 'main'
 version = '0.1.0'
-workspace-path = 'builddep'
+workspace-path = 'main'
 status = 'initial'
 features = []
 
 [[host-package]]
-name = 'main'
+name = 'normaldep'
 version = '0.1.0'
-workspace-path = 'main'
+workspace-path = 'normaldep'
 status = 'initial'
 features = []
 

@@ -51,6 +51,32 @@
             "source": null,
             "dependencies": [
                 {
+                    "name": "normaldep",
+                    "source": null,
+                    "req": "*",
+                    "kind": null,
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null,
+                    "path": "/home/fakeuser/dev/tmp/test-workspaces/builddep/normaldep"
+                },
+                {
+                    "name": "reqbuilddep",
+                    "source": null,
+                    "req": "*",
+                    "kind": null,
+                    "rename": null,
+                    "optional": true,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null,
+                    "path": "/home/fakeuser/dev/tmp/test-workspaces/builddep/reqbuilddep"
+                },
+                {
                     "name": "builddep",
                     "source": null,
                     "req": "*",
@@ -64,6 +90,19 @@
                     "path": "/home/fakeuser/dev/tmp/test-workspaces/builddep/builddep"
                 },
                 {
+                    "name": "normaldep",
+                    "source": null,
+                    "req": "*",
+                    "kind": "build",
+                    "rename": null,
+                    "optional": true,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null,
+                    "path": "/home/fakeuser/dev/tmp/test-workspaces/builddep/normaldep"
+                },
+                {
                     "name": "optbuilddep",
                     "source": null,
                     "req": "*",
@@ -75,6 +114,45 @@
                     "target": null,
                     "registry": null,
                     "path": "/home/fakeuser/dev/tmp/test-workspaces/builddep/optbuilddep"
+                },
+                {
+                    "name": "reqbuilddep",
+                    "source": null,
+                    "req": "*",
+                    "kind": "build",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null,
+                    "path": "/home/fakeuser/dev/tmp/test-workspaces/builddep/reqbuilddep"
+                },
+                {
+                    "name": "platdep",
+                    "source": null,
+                    "req": "*",
+                    "kind": null,
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": "cfg(unix)",
+                    "registry": null,
+                    "path": "/home/fakeuser/dev/tmp/test-workspaces/builddep/platdep"
+                },
+                {
+                    "name": "platdep",
+                    "source": null,
+                    "req": "*",
+                    "kind": null,
+                    "rename": null,
+                    "optional": true,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": "cfg(windows)",
+                    "registry": null,
+                    "path": "/home/fakeuser/dev/tmp/test-workspaces/builddep/platdep"
                 },
                 {
                     "name": "winbuilddep",
@@ -124,6 +202,24 @@
                 "dep-colon": [
                     "dep:optbuilddep"
                 ],
+                "normaldep": [
+                    "dep:normaldep"
+                ],
+                "normaldep-weak": [
+                    "normaldep?/std"
+                ],
+                "platdep": [
+                    "dep:platdep"
+                ],
+                "platdep-weak": [
+                    "platdep?/std"
+                ],
+                "reqbuilddep": [
+                    "dep:reqbuilddep"
+                ],
+                "reqbuilddep-weak": [
+                    "reqbuilddep?/std"
+                ],
                 "slash": [
                     "optbuilddep/std"
                 ],
@@ -132,6 +228,52 @@
                 ]
             },
             "manifest_path": "/home/fakeuser/dev/tmp/test-workspaces/builddep/main/Cargo.toml",
+            "metadata": null,
+            "publish": null,
+            "authors": [],
+            "categories": [],
+            "keywords": [],
+            "readme": null,
+            "repository": null,
+            "homepage": null,
+            "documentation": null,
+            "edition": "2018",
+            "links": null,
+            "default_run": null,
+            "rust_version": null
+        },
+        {
+            "name": "normaldep",
+            "version": "0.1.0",
+            "id": "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/normaldep#0.1.0",
+            "license": null,
+            "license_file": null,
+            "description": null,
+            "source": null,
+            "dependencies": [],
+            "targets": [
+                {
+                    "kind": [
+                        "lib"
+                    ],
+                    "crate_types": [
+                        "lib"
+                    ],
+                    "name": "normaldep",
+                    "src_path": "/home/fakeuser/dev/tmp/test-workspaces/builddep/normaldep/src/lib.rs",
+                    "edition": "2018",
+                    "doc": true,
+                    "doctest": true,
+                    "test": true
+                }
+            ],
+            "features": {
+                "alloc": [],
+                "std": [
+                    "alloc"
+                ]
+            },
+            "manifest_path": "/home/fakeuser/dev/tmp/test-workspaces/builddep/normaldep/Cargo.toml",
             "metadata": null,
             "publish": null,
             "authors": [],
@@ -193,6 +335,98 @@
             "rust_version": null
         },
         {
+            "name": "platdep",
+            "version": "0.1.0",
+            "id": "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/platdep#0.1.0",
+            "license": null,
+            "license_file": null,
+            "description": null,
+            "source": null,
+            "dependencies": [],
+            "targets": [
+                {
+                    "kind": [
+                        "lib"
+                    ],
+                    "crate_types": [
+                        "lib"
+                    ],
+                    "name": "platdep",
+                    "src_path": "/home/fakeuser/dev/tmp/test-workspaces/builddep/platdep/src/lib.rs",
+                    "edition": "2018",
+                    "doc": true,
+                    "doctest": true,
+                    "test": true
+                }
+            ],
+            "features": {
+                "alloc": [],
+                "std": [
+                    "alloc"
+                ]
+            },
+            "manifest_path": "/home/fakeuser/dev/tmp/test-workspaces/builddep/platdep/Cargo.toml",
+            "metadata": null,
+            "publish": null,
+            "authors": [],
+            "categories": [],
+            "keywords": [],
+            "readme": null,
+            "repository": null,
+            "homepage": null,
+            "documentation": null,
+            "edition": "2018",
+            "links": null,
+            "default_run": null,
+            "rust_version": null
+        },
+        {
+            "name": "reqbuilddep",
+            "version": "0.1.0",
+            "id": "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/reqbuilddep#0.1.0",
+            "license": null,
+            "license_file": null,
+            "description": null,
+            "source": null,
+            "dependencies": [],
+            "targets": [
+                {
+                    "kind": [
+                        "lib"
+                    ],
+                    "crate_types": [
+                        "lib"
+                    ],
+                    "name": "reqbuilddep",
+                    "src_path": "/home/fakeuser/dev/tmp/test-workspaces/builddep/reqbuilddep/src/lib.rs",
+                    "edition": "2018",
+                    "doc": true,
+                    "doctest": true,
+                    "test": true
+                }
+            ],
+            "features": {
+                "alloc": [],
+                "std": [
+                    "alloc"
+                ]
+            },
+            "manifest_path": "/home/fakeuser/dev/tmp/test-workspaces/builddep/reqbuilddep/Cargo.toml",
+            "metadata": null,
+            "publish": null,
+            "authors": [],
+            "categories": [],
+            "keywords": [],
+            "readme": null,
+            "repository": null,
+            "homepage": null,
+            "documentation": null,
+            "edition": "2018",
+            "links": null,
+            "default_run": null,
+            "rust_version": null
+        },
+        {
             "name": "winbuilddep",
             "version": "0.1.0",
             "id": "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/winbuilddep#0.1.0",
@@ -236,14 +470,20 @@
     ],
     "workspace_members": [
         "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/main#0.1.0",
+        "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/normaldep#0.1.0",
+        "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/reqbuilddep#0.1.0",
         "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/builddep#0.1.0",
         "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/optbuilddep#0.1.0",
+        "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/platdep#0.1.0",
         "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/winbuilddep#0.1.0"
     ],
     "workspace_default_members": [
         "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/main#0.1.0",
+        "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/normaldep#0.1.0",
+        "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/reqbuilddep#0.1.0",
         "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/builddep#0.1.0",
         "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/optbuilddep#0.1.0",
+        "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/platdep#0.1.0",
         "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/winbuilddep#0.1.0"
     ],
     "resolve": {
@@ -258,7 +498,10 @@
                 "id": "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/main#0.1.0",
                 "dependencies": [
                     "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/builddep#0.1.0",
+                    "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/normaldep#0.1.0",
                     "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/optbuilddep#0.1.0",
+                    "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/platdep#0.1.0",
+                    "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/reqbuilddep#0.1.0",
                     "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/winbuilddep#0.1.0"
                 ],
                 "deps": [
@@ -273,9 +516,51 @@
                         ]
                     },
                     {
+                        "name": "normaldep",
+                        "pkg": "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/normaldep#0.1.0",
+                        "dep_kinds": [
+                            {
+                                "kind": null,
+                                "target": null
+                            },
+                            {
+                                "kind": "build",
+                                "target": null
+                            }
+                        ]
+                    },
+                    {
                         "name": "optbuilddep",
                         "pkg": "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/optbuilddep#0.1.0",
                         "dep_kinds": [
+                            {
+                                "kind": "build",
+                                "target": null
+                            }
+                        ]
+                    },
+                    {
+                        "name": "platdep",
+                        "pkg": "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/platdep#0.1.0",
+                        "dep_kinds": [
+                            {
+                                "kind": null,
+                                "target": "cfg(unix)"
+                            },
+                            {
+                                "kind": null,
+                                "target": "cfg(windows)"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "reqbuilddep",
+                        "pkg": "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/reqbuilddep#0.1.0",
+                        "dep_kinds": [
+                            {
+                                "kind": null,
+                                "target": null
+                            },
                             {
                                 "kind": "build",
                                 "target": null
@@ -295,12 +580,45 @@
                 ],
                 "features": [
                     "dep-colon",
+                    "normaldep",
+                    "normaldep-weak",
+                    "platdep",
+                    "platdep-weak",
+                    "reqbuilddep",
+                    "reqbuilddep-weak",
                     "slash",
                     "windows-dep-colon"
                 ]
             },
             {
+                "id": "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/normaldep#0.1.0",
+                "dependencies": [],
+                "deps": [],
+                "features": [
+                    "alloc",
+                    "std"
+                ]
+            },
+            {
                 "id": "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/optbuilddep#0.1.0",
+                "dependencies": [],
+                "deps": [],
+                "features": [
+                    "alloc",
+                    "std"
+                ]
+            },
+            {
+                "id": "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/platdep#0.1.0",
+                "dependencies": [],
+                "deps": [],
+                "features": [
+                    "alloc",
+                    "std"
+                ]
+            },
+            {
+                "id": "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/reqbuilddep#0.1.0",
                 "dependencies": [],
                 "deps": [],
                 "features": [

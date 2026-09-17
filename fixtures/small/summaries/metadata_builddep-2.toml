@@ -21,15 +21,15 @@ target-features = ['aes', 'rdrand', 'sse3', 'sse4.1', 'sse4.2', 'xsavec']
 flags = ['foo', 'test-flag']
 
 [[metadata.features-only]]
-name = 'optbuilddep'
+name = 'platdep'
 version = '0.1.0'
-workspace-path = 'optbuilddep'
+workspace-path = 'platdep'
 features = []
 
 [[target-package]]
-name = 'main'
+name = 'normaldep'
 version = '0.1.0'
-workspace-path = 'main'
+workspace-path = 'normaldep'
 status = 'initial'
 features = []
 
@@ -40,9 +40,9 @@ workspace-path = 'optbuilddep'
 status = 'initial'
 features = []
 
-[[host-package]]
-name = 'builddep'
+[[target-package]]
+name = 'platdep'
 version = '0.1.0'
-workspace-path = 'builddep'
-status = 'workspace'
+workspace-path = 'platdep'
+status = 'initial'
 features = []
