@@ -296,12 +296,12 @@ impl<'g> FeatureGraph<'g> {
                 // Dependency section and dep:foo style conditional links are always non-weak.
                 Some(EdgeLinks::NonWeak(make(link)))
             }
-            FeatureEdge::NamedFeatureWithSlash { link, weak_index } => Some(match weak_index {
-                Some(index) => EdgeLinks::Weak {
+            FeatureEdge::NamedFeatureWithSlash { link, slash } => Some(match slash {
+                SlashForm::Weak(index) => EdgeLinks::Weak {
                     full: make(link),
                     index: *index,
                 },
-                None => EdgeLinks::NonWeak(make(link)),
+                SlashForm::Strong => EdgeLinks::NonWeak(make(link)),
             }),
         }
     }
@@ -320,10 +320,7 @@ impl<'g> FeatureGraph<'g> {
             FeatureEdge::NamedFeature | FeatureEdge::FeatureToBase => return None,
             FeatureEdge::DependenciesSection(link)
             | FeatureEdge::NamedFeatureDepColon(link)
-            | FeatureEdge::NamedFeatureWithSlash {
-                link,
-                weak_index: _,
-            } => link,
+            | FeatureEdge::NamedFeatureWithSlash { link, slash: _ } => link,
         };
         Some(ConditionalLink::new(
             *self, source_ix, target_ix, edge_ix, link,
@@ -1086,8 +1083,22 @@ pub enum FeatureEdge {
     /// ```
     NamedFeatureWithSlash {
         link: ConditionalLinkImpl,
-        weak_index: Option<WeakIndex>,
+        slash: SlashForm,
     },
+}
+
+/// Which form a [`FeatureEdge::NamedFeatureWithSlash`] takes. Not part of the
+/// stable API.
+#[derive(Clone, Debug)]
+#[doc(hidden)]
+pub enum SlashForm {
+    /// The feature applies to the dependency as soon as it is enabled. Either
+    /// it is written without the `?`, as `a = ["foo/b"]`, or `a` has both
+    /// forms, as in `a = ["foo?/b", "foo/b"]`, and the non-weak one wins.
+    Strong,
+
+    /// The weak form, `a = ["foo?/b"]`.
+    Weak(WeakIndex),
 }
 
 /// Not part of the stable API -- only exposed for FeatureSet::links().
