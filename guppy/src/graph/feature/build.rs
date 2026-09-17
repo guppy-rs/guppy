@@ -18,7 +18,7 @@ use cargo_metadata::DependencyKind;
 use once_cell::sync::OnceCell;
 use petgraph::{prelude::*, visit::IntoEdgeReferences};
 use smallvec::SmallVec;
-use std::iter;
+use std::{iter, slice};
 
 pub(super) type FeaturePetgraph = Graph<FeatureNode, FeatureEdge, Directed, FeatureIx>;
 pub(super) type FeatureEdgeReference<'g> = <&'g FeaturePetgraph as IntoEdgeReferences>::EdgeRef;
@@ -69,10 +69,19 @@ impl FeatureGraphBuildState {
     }
 
     pub(super) fn add_named_feature_edges(&mut self, metadata: PackageMetadata<'_>) {
-        let dep_name_to_link: AHashMap<_, _> = metadata
-            .direct_links()
-            .map(|link| (link.dep_name(), link))
-            .collect();
+        // A dependency name can map to more than one link. Cargo unifies
+        // instances that resolve to the same package, so this only happens when
+        // a rename makes two *different* packages share one name -- e.g. semver
+        // 1.0.28's `serde = { package = "serde_core" }` alongside a plain
+        // `serde` under `cfg(any())`. Both are part of `dep:serde` and
+        // `serde/...`, so keying by name alone would silently drop one.
+        let mut dep_name_to_links: AHashMap<&str, SmallVec<[PackageLink; 1]>> = AHashMap::new();
+        for link in metadata.direct_links() {
+            dep_name_to_links
+                .entry(link.dep_name())
+                .or_default()
+                .push(link);
+        }
 
         metadata
             .named_features_full()
@@ -86,7 +95,7 @@ impl FeatureGraphBuildState {
                             metadata,
                             from_feature,
                             feature_dep,
-                            &dep_name_to_link,
+                            &dep_name_to_links,
                         )
                     })
                     // The flat_map above holds an &mut reference to self, which is why it needs to
@@ -104,7 +113,7 @@ impl FeatureGraphBuildState {
         metadata: PackageMetadata<'_>,
         from_named_feature: &str,
         feature_dep: &NamedFeatureDep,
-        dep_name_to_link: &AHashMap<&str, PackageLink>,
+        dep_name_to_links: &AHashMap<&str, SmallVec<[PackageLink<'_>; 1]>>,
     ) -> SmallVec<[(FeatureNode, FeatureEdge); 3]> {
         let from_label = FeatureLabel::Named(from_named_feature);
         let mut nodes_edges: SmallVec<[(FeatureNode, FeatureEdge); 3]> = SmallVec::new();
@@ -115,8 +124,16 @@ impl FeatureGraphBuildState {
                 feature,
                 weak,
             } => {
-                if let Some(link) = dep_name_to_link.get(dep_name.as_ref()) {
-                    let weak_index = weak.then(|| self.weak.insert(link.edge_ix()));
+                let links = dep_name_to_links
+                    .get(dep_name.as_ref())
+                    .map_or(&[][..], SmallVec::as_slice);
+
+                // A cross-package edge lands on a different node per link, so
+                // emit one per link. Every link also needs a weak index.
+                let mut weak_index = None;
+                for link in links {
+                    let link_weak_index = weak.then(|| self.weak.insert(link.edge_ix()));
+                    weak_index = weak_index.or(link_weak_index);
 
                     // Dependency from (`main`, `a`) to (`dep, `foo`)
                     if let Some(cross_node) = self.make_named_feature_node(
@@ -131,10 +148,17 @@ impl FeatureGraphBuildState {
                         // PackageLink.
                         nodes_edges.push((
                             cross_node,
-                            Self::make_named_feature_cross_edge(link, weak_index),
+                            Self::make_named_feature_cross_edge(
+                                slice::from_ref(link),
+                                link_weak_index,
+                            ),
                         ));
                     };
+                }
 
+                // The edges below land on the same node for every link, so they
+                // get one edge covering all of them.
+                if !links.is_empty() {
                     // If the package is present as an optional dependency, it is
                     // implicitly activated by the feature:
                     // from (`main`, `a`) to (`main`, `dep:dep`)
@@ -148,7 +172,7 @@ impl FeatureGraphBuildState {
                     ) {
                         nodes_edges.push((
                             same_node,
-                            Self::make_named_feature_cross_edge(link, weak_index),
+                            Self::make_named_feature_cross_edge(links, weak_index),
                         ));
                     }
 
@@ -182,7 +206,7 @@ impl FeatureGraphBuildState {
                     {
                         nodes_edges.push((
                             same_named_feature_node,
-                            Self::make_named_feature_cross_edge(link, None),
+                            Self::make_named_feature_cross_edge(links, None),
                         ));
                     }
                 }
@@ -205,12 +229,12 @@ impl FeatureGraphBuildState {
                     &metadata,
                     FeatureLabel::OptionalDependency(dep_name.as_ref()),
                     true,
-                ) && let Some(link) = dep_name_to_link.get(dep_name.as_ref())
+                ) && let Some(links) = dep_name_to_links.get(dep_name.as_ref())
                 {
                     nodes_edges.push((
                         same_node,
                         FeatureEdge::NamedFeatureDepColon(Self::make_full_conditional_link_impl(
-                            link,
+                            links,
                         )),
                     ));
                 }
@@ -266,20 +290,23 @@ impl FeatureGraphBuildState {
     /// If `dep` is optional, the edge (`from`, `a`) to (`from`, `dep`) is also a
     /// `NamedFeatureWithSlash` edge.
     fn make_named_feature_cross_edge(
-        link: &PackageLink<'_>,
+        links: &[PackageLink<'_>],
         weak_index: Option<WeakIndex>,
     ) -> FeatureEdge {
         // This edge is enabled if the feature is enabled, which means the union of (required,
         // optional) build conditions.
         FeatureEdge::NamedFeatureWithSlash {
-            link: Self::make_full_conditional_link_impl(link),
+            link: Self::make_full_conditional_link_impl(links),
             weak_index,
         }
     }
 
-    // Creates a "full" conditional link, unifying requirements across all dependency lines.
+    // Creates a "full" conditional link, unifying requirements across all dependency lines -- and,
+    // where a rename makes one dependency name resolve to several packages, across every link for
+    // that name. Every link's edge index is recorded, so `package_links` reports all of them and
+    // `feature/weak.rs` releases each one's buffer.
     // This should not be used in add_dependency_edges below!
-    fn make_full_conditional_link_impl(link: &PackageLink<'_>) -> ConditionalLinkImpl {
+    fn make_full_conditional_link_impl(links: &[PackageLink<'_>]) -> ConditionalLinkImpl {
         // This edge is enabled if the feature is enabled, which means the union of (required,
         // optional) build conditions.
         fn combine_req_opt(req: DependencyReq<'_>) -> PlatformStatusImpl {
@@ -288,12 +315,20 @@ impl FeatureGraphBuildState {
             required
         }
 
-        ConditionalLinkImpl {
-            package_edge_ixs: PackageEdgeIxs::single(link.edge_ix()),
-            normal: combine_req_opt(link.normal()),
-            build: combine_req_opt(link.build()),
-            dev: combine_req_opt(link.dev()),
+        let (first, rest) = links.split_first().expect("at least one link");
+        let mut combined = ConditionalLinkImpl {
+            package_edge_ixs: PackageEdgeIxs::single(first.edge_ix()),
+            normal: combine_req_opt(first.normal()),
+            build: combine_req_opt(first.build()),
+            dev: combine_req_opt(first.dev()),
+        };
+        for link in rest {
+            combined.package_edge_ixs.push(link.edge_ix());
+            combined.normal.extend(&combine_req_opt(link.normal()));
+            combined.build.extend(&combine_req_opt(link.build()));
+            combined.dev.extend(&combine_req_opt(link.dev()));
         }
+        combined
     }
 
     pub(super) fn add_dependency_edges(&mut self, link: PackageLink<'_>) {

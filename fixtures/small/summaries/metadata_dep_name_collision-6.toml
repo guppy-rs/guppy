@@ -1,0 +1,51 @@
+# This summary was @generated. To regenerate, run:
+#   cargo run -p fixture-manager -- generate-summaries --fixture metadata_dep_name_collision
+
+[metadata]
+resolver = '2'
+include-dev = false
+initials-platform = 'standard'
+
+[metadata.host-platform]
+spec = 'always'
+
+[metadata.target-platform]
+triple = 'armebv7r-none-eabi'
+target-features = 'unknown'
+flags = ['abc', 'foo']
+[[metadata.omitted-packages.ids]]
+name = 'arrayvec'
+version = '0.7.8'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'bytes'
+version = '1.12.1'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'tinyvec_macros'
+version = '0.1.1'
+crates-io = true
+
+[[metadata.features-only]]
+name = 'main'
+version = '0.1.0'
+workspace-path = 'main'
+features = ['both-dep-colon', 'both-weak-slash', 'default', 'dep-colon', 'slash', 'split-dep-colon', 'split-slash', 'weak-slash']
+optional-deps = ['both', 'renamed', 'split']
+
+[[target-package]]
+name = 'main'
+version = '0.1.0'
+workspace-path = 'main'
+status = 'initial'
+features = ['both-dep-colon', 'both-weak-slash', 'default', 'dep-colon', 'slash', 'split-dep-colon', 'split-slash', 'weak-slash']
+optional-deps = ['both', 'renamed', 'split']
+
+[[target-package]]
+name = 'libc'
+version = '0.2.189'
+crates-io = true
+status = 'direct'
+features = ['std']
