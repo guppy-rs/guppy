@@ -456,7 +456,6 @@ impl FeatureGraphBuildState {
                         .graph
                         .edge_weight_mut(edge_ix)
                         .expect("this edge was just found");
-                    #[allow(clippy::single_match)]
                     match (old_edge, edge) {
                         (
                             FeatureEdge::NamedFeatureWithSlash {
