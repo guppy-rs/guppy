@@ -7,7 +7,7 @@ use guppy::{
     graph::{
         PackageGraph,
         cargo::{CargoOptions, CargoResolverVersion, CargoSet},
-        feature::{FeatureLabel, FeatureSet, StandardFeatures, named_feature_filter},
+        feature::{FeatureId, FeatureLabel, FeatureSet, StandardFeatures, feature_id_filter},
     },
 };
 use std::iter;
@@ -27,6 +27,8 @@ pub(super) struct CargoResolutionCase {
     host_platform: &'static str,
 
     /// Features enabled on the initial package.
+    ///
+    /// `dep:x` features are accepted as valid.
     features: &'static [&'static str],
 
     /// Expected `(package, features)` pairs in the target feature set.
@@ -123,12 +125,14 @@ impl CargoResolutionCase {
     }
 
     fn cargo_set<'g>(&self, graph: &'g PackageGraph, initial: &str) -> CargoSet<'g> {
+        let initial = package_id(initial);
+        let features = self.features.join(" ");
         let feature_set = graph
-            .resolve_ids([&package_id(initial)])
+            .resolve_ids([&initial])
             .expect("valid package ID")
-            .to_feature_set(named_feature_filter(
+            .to_feature_set(feature_id_filter(
                 StandardFeatures::Default,
-                self.features.iter().copied(),
+                feature_ids(&initial, &features),
             ));
 
         let mut cargo_options = CargoOptions::new();
@@ -186,4 +190,13 @@ pub(super) fn feature_labels(features: &str) -> Vec<FeatureLabel<'_>> {
     labels.sort_unstable();
     labels.dedup();
     labels
+}
+
+pub(super) fn feature_ids<'a>(
+    package_id: &'a PackageId,
+    features: &'a str,
+) -> impl Iterator<Item = FeatureId<'a>> {
+    feature_labels(features)
+        .into_iter()
+        .map(move |label| FeatureId::new(package_id, label))
 }
