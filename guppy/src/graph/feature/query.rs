@@ -290,12 +290,18 @@ impl<'g> FeatureQuery<'g> {
 
     /// Resolves this query into a set of known feature IDs, using the provided visitor to
     /// determine which links are followed.
+    ///
+    /// The visitor can be called twice for a weak dependency feature
+    /// (`dep?/feature`). See [`FeatureLinkVisitor::visit_link`] for details.
     pub fn resolve_with(self, visitor: impl FeatureLinkVisitor<'g>) -> FeatureSet<'g> {
         FeatureSet::with_link_visitor(self, visitor)
     }
 
     /// Resolves this query into a set of known feature IDs, using the provided visitor function to
     /// determine which links are followed.
+    ///
+    /// The visitor function can be called twice for a weak dependency feature
+    /// (`dep?/feature`). See [`FeatureLinkVisitor::visit_link`] for details.
     pub fn resolve_with_fn(
         self,
         visitor_fn: impl FnMut(&FeatureLinkContext<'g>, ConditionalLink<'g>) -> bool,
@@ -338,6 +344,39 @@ impl<'g> FeatureLinkContext<'g> {
 /// resolve operation.
 pub trait FeatureLinkVisitor<'g> {
     /// Returns true if this conditional link should be followed during a resolve operation.
+    ///
+    /// # Weak dependency features
+    ///
+    /// Most links are visited at most once per resolve. The exception is a weak
+    /// dependency feature (`dep?/feature`) on a dependency with both required
+    /// and optional declarations. For example:
+    ///
+    /// ```toml
+    /// [dependencies]
+    /// foo = { version = "1" }
+    ///
+    /// [build-dependencies]
+    /// foo = { version = "1", optional = true }
+    ///
+    /// [features]
+    /// weak = ["foo?/std"]
+    /// ```
+    ///
+    /// Cargo applies `foo?/std` to each declaration of `foo` separately, so
+    /// this method can be called twice for the link from `weak` to `foo/std`:
+    ///
+    /// * First with a link covering the required declarations of `foo`: here,
+    ///   `[dependencies]`.
+    /// * Then with a link covering the optional ones: here,
+    ///   `[build-dependencies]`.
+    ///
+    /// Both links have the same endpoints. Use
+    /// [`ConditionalLink::declarations`] to tell them apart. The feature graph
+    /// has one edge for the two links, and that edge is followed if this method
+    /// returns true for either of them.
+    ///
+    /// A visitor that keeps state for each link, such as a count of visits,
+    /// should take this into account.
     fn visit_link(&mut self, cx: &FeatureLinkContext<'g>, link: ConditionalLink<'g>) -> bool;
 }
 

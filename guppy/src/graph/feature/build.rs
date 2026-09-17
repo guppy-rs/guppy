@@ -7,8 +7,9 @@ use crate::{
         DepRequiredOrOptional, DependencyReq, FeatureIndexInPackage, FeatureIx, NamedFeatureDep,
         PackageGraph, PackageIx, PackageLink, PackageMetadata,
         feature::{
-            ConditionalLinkImpl, FeatureEdge, FeatureGraphImpl, FeatureLabel, FeatureMetadataImpl,
-            FeatureNode, LinkDeclarations, PackageEdgeIxs, SlashForm, WeakDependencies,
+            ConditionalLinkImpl, EnabledLink, FeatureEdge, FeatureGraphImpl, FeatureLabel,
+            FeatureMetadataImpl, FeatureNode, LinkDeclarations, PackageEdgeIxs, SlashForm,
+            WeakDependencies, WeakSlashImpl,
         },
     },
     platform::PlatformStatusImpl,
@@ -116,9 +117,10 @@ impl FeatureGraphBuildState {
                 weak,
             } => {
                 if let Some(link) = dep_name_to_link.get(dep_name.as_ref()) {
-                    let slash = match weak {
-                        true => SlashForm::Weak(self.weak.insert(link.edge_ix())),
-                        false => SlashForm::Strong,
+                    let slash = if *weak {
+                        Self::make_weak_slash_impl(link, &mut self.weak)
+                    } else {
+                        SlashForm::Strong
                     };
 
                     // Dependency from (`main`, `a`) to (`dep, `foo`)
@@ -282,6 +284,34 @@ impl FeatureGraphBuildState {
             link: Self::make_full_conditional_link_impl(link),
             slash,
         }
+    }
+
+    /// Returns [`SlashForm::Strong`] if the dependency has no optional
+    /// declarations -- in that case, `foo?/b` behaves like `foo/b`, so modeling
+    /// weak dependencies isn't required.
+    fn make_weak_slash_impl(
+        link: &PackageLink<'_>,
+        weak_dependencies: &mut WeakDependencies,
+    ) -> SlashForm {
+        let optional = EnabledLink::new(Self::make_conditional_link_impl(
+            link,
+            LinkDeclarations::Optional,
+            |req| req.inner.optional.build_if.clone(),
+        ));
+        let Some(optional) = optional else {
+            return SlashForm::Strong;
+        };
+
+        let required = EnabledLink::new(Self::make_conditional_link_impl(
+            link,
+            LinkDeclarations::Required,
+            |req| req.inner.required.build_if.clone(),
+        ));
+        SlashForm::Weak(Box::new(WeakSlashImpl {
+            required,
+            optional,
+            index: weak_dependencies.insert(link.edge_ix()),
+        }))
     }
 
     // Creates a "full" conditional link, unifying requirements across all dependency lines.
@@ -470,11 +500,11 @@ impl FeatureGraphBuildState {
                             },
                             FeatureEdge::NamedFeatureWithSlash { slash, .. },
                         ) => {
-                            if let (SlashForm::Weak(old_index), SlashForm::Weak(index)) =
+                            if let (SlashForm::Weak(old_weak), SlashForm::Weak(weak)) =
                                 (&*old_slash, &slash)
                             {
                                 debug_assert_eq!(
-                                    old_index, index,
+                                    old_weak.index, weak.index,
                                     "weak indexes should match if both are weak"
                                 );
                             }

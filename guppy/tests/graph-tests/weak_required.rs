@@ -78,9 +78,9 @@
 //! `main`'s weak feature.
 //!
 //! TODO: only the `targetuser` half is tested here. The `hostuser-normaldep`
-//! case fails today: a required declaration releases the weak buffer, so the
-//! host copy of `normaldep` gets `std`. The next commit fixes that and adds the
-//! case.
+//! case fails today: any accepted non-weak link over the same package edge
+//! releases the weak buffer, including the one for the required
+//! `[dependencies]` declaration, so the host copy of `normaldep` gets `std`.
 //!
 //! The expected results were obtained from Cargo 1.98.1 with
 //! `cargo build --unit-graph -Z unstable-options`, under both resolver
@@ -93,10 +93,11 @@ use fixtures::{
     package_id,
 };
 use guppy::{
+    PackageId,
     graph::{
-        DependencyDirection,
+        DependencyDirection, PackageGraph,
         cargo::CargoResolverVersion,
-        feature::{ConditionalLink, FeatureId, LinkDeclarations},
+        feature::{ConditionalLink, FeatureId, FeatureLabel, LinkDeclarations},
     },
     platform::PlatformStatus,
 };
@@ -287,9 +288,15 @@ static CASES: &[CargoResolutionCase] = &[
     // The reverse of `normaldep-weak`: reqbuilddep is a required build
     // dependency, so it gets `std` on the host. The optional normal dependency
     // is not activated, so reqbuilddep is not built on the target.
-    //
-    // (This is v1-only for now -- there's a bug in the v2 resolver which we'll
-    // need to fix.)
+    CargoResolutionCase::new(&["reqbuilddep-weak"])
+        .target_expected(&[
+            (json::METADATA_BUILDDEP_MAIN,          Some("reqbuilddep-weak")),
+            (json::METADATA_BUILDDEP_REQBUILDDEP,   None),
+        ])
+        .host_expected(&[
+            (json::METADATA_BUILDDEP_REQBUILDDEP,   Some("alloc std")),
+        ]),
+    // The same with the v1 resolver.
     CargoResolutionCase::new(&["reqbuilddep-weak"])
         .resolver(CargoResolverVersion::V1)
         .target_expected(&[
@@ -331,8 +338,15 @@ static CASES: &[CargoResolutionCase] = &[
     // target. On Unix it is a required dependency, so `pmdep?/std` turns on
     // `std` for the host build. A weak feature never turns on an optional
     // dependency, so `main` doesn't get `dep:pmdep`.
-    //
-    // (This is v1 only for now -- the v2 case is currently buggy.)
+    CargoResolutionCase::new(&["pmdep-weak"])
+        .target_expected(&[
+            (json::METADATA_BUILDDEP_MAIN,          Some("pmdep-weak")),
+            (json::METADATA_BUILDDEP_PMDEP,         None),
+        ])
+        .host_expected(&[
+            (json::METADATA_BUILDDEP_PMDEP,         Some("alloc std")),
+        ]),
+    // The same with the v1 resolver.
     CargoResolutionCase::new(&["pmdep-weak"])
         .resolver(CargoResolverVersion::V1)
         .target_expected(&[
@@ -405,8 +419,17 @@ static CASES: &[CargoResolutionCase] = &[
     // `main` also has an optional target-side dependency on reqbuilddep, but
     // nothing has turned it on. So `reqbuilddep?/std` only counts for the host
     // copy: the host copy gets `std`, and the target copy gets no features.
-    //
-    // (This is v1 only for now -- the v2 case is currently buggy.)
+    CargoResolutionCase::new(&["reqbuilddep-weak", "targetuser-reqbuilddep"])
+        .target_expected(&[
+            (json::METADATA_BUILDDEP_MAIN,          Some("reqbuilddep-weak targetuser-reqbuilddep")),
+            (json::METADATA_BUILDDEP_TARGETUSER,    Some("reqbuilddep dep:reqbuilddep")),
+            (json::METADATA_BUILDDEP_REQBUILDDEP,   Some("")),
+        ])
+        .host_expected(&[
+            (json::METADATA_BUILDDEP_REQBUILDDEP,   Some("alloc std")),
+        ]),
+    // Same for the v1 resolver. v1 unifies host and target features, so the
+    // target copy gets `std` too.
     CargoResolutionCase::new(&["reqbuilddep-weak", "targetuser-reqbuilddep"])
         .resolver(CargoResolverVersion::V1)
         .target_expected(&[
@@ -569,12 +592,33 @@ fn weak_feature_on_never_optional_dep() {
             "targetuser-weak".to_owned(),
             serde_json::json!(["targetuser?/reqbuilddep"]),
         );
-    let graph = guppy::graph::PackageGraph::from_json(metadata.to_string())
-        .expect("patched metadata is valid");
+    let graph = PackageGraph::from_json(metadata.to_string()).expect("patched metadata is valid");
 
     for case in NEVER_OPTIONAL_CASES {
         case.check(&graph, json::METADATA_BUILDDEP_MAIN, "");
     }
+
+    // targetuser has no optional declarations, so there is no optional half to
+    // hold back. The edge is not weak at all: the visitor sees it once, as an
+    // `Unsplit` link like the one for `targetuser/reqbuilddep`.
+    let targetuser = package_id(json::METADATA_BUILDDEP_TARGETUSER);
+    let visits = weak_edge_visits(
+        &graph,
+        "targetuser-weak",
+        "targetuser-weak",
+        &targetuser,
+        "reqbuilddep",
+    );
+    assert_eq!(
+        visits,
+        [SeenLink {
+            declarations: LinkDeclarations::Unsplit,
+            normal: VisitStatus::Always,
+            build: VisitStatus::Never,
+            dev: VisitStatus::Never,
+        }],
+        "a weak feature on a never-optional dep is visited once"
+    );
 }
 
 #[test]
@@ -608,6 +652,10 @@ impl VisitStatus {
     }
 }
 
+fn specs(specs: &[&str]) -> VisitStatus {
+    VisitStatus::Specs(specs.iter().map(|spec| (*spec).to_owned()).collect())
+}
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 struct SeenLink {
     declarations: LinkDeclarations,
@@ -624,6 +672,229 @@ impl SeenLink {
             build: VisitStatus::new(link.build()),
             dev: VisitStatus::new(link.dev()),
         }
+    }
+}
+
+// Resolves `features` on `main` with a visitor that accepts every link, and
+// returns the visits of the link from `main/<from_feature>` to
+// `<to_package>/<to_feature>`, in order.
+fn weak_edge_visits(
+    graph: &PackageGraph,
+    features: &str,
+    from_feature: &str,
+    to_package: &PackageId,
+    to_feature: &str,
+) -> Vec<SeenLink> {
+    let main = package_id(json::METADATA_BUILDDEP_MAIN);
+    let weak_from = FeatureId::named(&main, from_feature);
+    let weak_to = FeatureId::named(to_package, to_feature);
+
+    let mut visits = Vec::new();
+    graph
+        .feature_graph()
+        .query_forward(feature_ids(&main, features))
+        .expect("valid feature IDs")
+        .resolve_with_fn(|_, link| {
+            if link.from().feature_id() == weak_from && link.to().feature_id() == weak_to {
+                visits.push(SeenLink::from_link(&link));
+            }
+            true
+        });
+    visits
+}
+
+#[test]
+fn weak_edge_visits_each_declaration_once() {
+    // [dependencies]
+    // normaldep = { path = "../normaldep" }
+    //
+    // [build-dependencies]
+    // normaldep = { path = "../normaldep", optional = true }
+    //
+    // [features]
+    // normaldep-weak = ["normaldep?/std"]
+    //
+    // `normaldep?/std` is a single edge in the feature graph, from
+    // `main/normaldep-weak` to `normaldep/std`. But normaldep is declared
+    // twice, and the weak feature applies separately to each declaration.
+    let both_halves = [
+        SeenLink {
+            declarations: LinkDeclarations::Required,
+            normal: VisitStatus::Always,
+            build: VisitStatus::Never,
+            dev: VisitStatus::Never,
+        },
+        SeenLink {
+            declarations: LinkDeclarations::Optional,
+            normal: VisitStatus::Never,
+            build: VisitStatus::Always,
+            dev: VisitStatus::Never,
+        },
+    ];
+    let cases: &[(&str, &[SeenLink])] = &[
+        // Activated later: required, then optional once the weak buffer is
+        // released.
+        ("normaldep-weak normaldep", &both_halves),
+        // Activated first: same two visits, back to back (in the same order).
+        ("normaldep-weak dep:normaldep", &both_halves),
+    ];
+
+    let graph = JsonFixture::metadata_builddep().graph();
+    let normaldep = package_id(json::METADATA_BUILDDEP_NORMALDEP);
+
+    for (features, expected) in cases {
+        let actual = weak_edge_visits(graph, features, "normaldep-weak", &normaldep, "std");
+        assert_eq!(
+            &actual, expected,
+            "for features {features:?}, visits of the weak edge match"
+        );
+    }
+}
+
+// [dependencies]
+// devdep = { path = "../devdep", optional = true }
+//
+// [dev-dependencies]
+// devdep = { path = "../devdep" }
+//
+// [features]
+// devdep-weak = ["devdep?/std"]
+// devdep = ["dep:devdep"]
+//
+// devdep's only required declaration is a dev-dependency. So the required half
+// of the weak edge is dev-only (normal and build are never enabled), and the
+// optional half is not. The union of the two would not be dev-only, which is
+// why each half carries its own statuses.
+#[test]
+fn weak_edge_required_half_can_be_dev_only() {
+    let graph = JsonFixture::metadata_builddep().graph();
+    let devdep = package_id(json::METADATA_BUILDDEP_DEVDEP);
+    let actual = weak_edge_visits(graph, "devdep-weak devdep", "devdep-weak", &devdep, "std");
+    assert_eq!(
+        actual,
+        [
+            SeenLink {
+                declarations: LinkDeclarations::Required,
+                normal: VisitStatus::Never,
+                build: VisitStatus::Never,
+                dev: VisitStatus::Always,
+            },
+            SeenLink {
+                declarations: LinkDeclarations::Optional,
+                normal: VisitStatus::Always,
+                build: VisitStatus::Never,
+                dev: VisitStatus::Never,
+            },
+        ],
+        "visits of the devdep weak edge match"
+    );
+}
+
+// [target.'cfg(unix)'.dependencies]
+// platdep = { path = "../platdep" }
+//
+// [target.'cfg(windows)'.dependencies]
+// platdep = { path = "../platdep", optional = true }
+//
+// [features]
+// platdep-weak = ["platdep?/std"]
+// platdep = ["dep:platdep"]
+//
+// Both of platdep's declarations are normal dependencies, so the two halves of
+// the weak edge are split by platform rather than by section. Each one carries
+// the `cfg` of the declarations it covers (Unix for the required half, Windows
+// for the optional one) rather than being simply always or never enabled.
+#[test]
+fn weak_edge_halves_can_split_by_platform() {
+    let graph = JsonFixture::metadata_builddep().graph();
+    let platdep = package_id(json::METADATA_BUILDDEP_PLATDEP);
+    let actual = weak_edge_visits(
+        graph,
+        "platdep-weak platdep",
+        "platdep-weak",
+        &platdep,
+        "std",
+    );
+    assert_eq!(
+        actual,
+        [
+            SeenLink {
+                declarations: LinkDeclarations::Required,
+                normal: specs(&["unix"]),
+                build: VisitStatus::Never,
+                dev: VisitStatus::Never,
+            },
+            SeenLink {
+                declarations: LinkDeclarations::Optional,
+                normal: specs(&["windows"]),
+                build: VisitStatus::Never,
+                dev: VisitStatus::Never,
+            },
+        ],
+        "visits of the platdep weak edge match"
+    );
+}
+
+// [dependencies]
+// normaldep = { path = "../normaldep" }
+//
+// [build-dependencies]
+// normaldep = { path = "../normaldep", optional = true }
+//
+// [features]
+// normaldep-weak = ["normaldep?/std"]
+//
+// With `dep:normaldep` activated, the visitor sees both halves of the weak
+// edge. The edge is followed if the visitor accepts at least one of them.
+//
+// `normaldep/std` can only be reached through this edge, so whether it is in
+// the resulting feature set says whether the edge was followed.
+#[test]
+fn weak_edge_followed_if_either_half_accepted() {
+    #[derive(Clone, Copy, Debug)]
+    enum Reject {
+        Required,
+        Optional,
+        Both,
+    }
+
+    let graph = JsonFixture::metadata_builddep().graph();
+    let main = package_id(json::METADATA_BUILDDEP_MAIN);
+    let weak_from = FeatureId::named(&main, "normaldep-weak");
+    let normaldep = package_id(json::METADATA_BUILDDEP_NORMALDEP);
+    let weak_to = FeatureId::named(&normaldep, "std");
+
+    for (reject, expected_std) in [
+        (Reject::Required, true),
+        (Reject::Optional, true),
+        (Reject::Both, false),
+    ] {
+        let feature_set = graph
+            .feature_graph()
+            .query_forward(feature_ids(&main, "normaldep-weak dep:normaldep"))
+            .expect("valid feature IDs")
+            .resolve_with_fn(|_, link| {
+                if link.from().feature_id() != weak_from || link.to().feature_id() != weak_to {
+                    return true;
+                }
+                match (reject, link.declarations()) {
+                    (Reject::Both, _) => false,
+                    (Reject::Required, LinkDeclarations::Required)
+                    | (Reject::Optional, LinkDeclarations::Optional) => false,
+                    (Reject::Required, LinkDeclarations::Optional)
+                    | (Reject::Optional, LinkDeclarations::Required) => true,
+                    (Reject::Required | Reject::Optional, LinkDeclarations::Unsplit) => {
+                        panic!("weak edge halves are Required or Optional, not Unsplit")
+                    }
+                }
+            });
+        assert_eq!(
+            feature_set
+                .contains((&normaldep, FeatureLabel::Named("std")))
+                .expect("valid feature ID"),
+            expected_std,
+            "with {reject:?} rejected, normaldep/std presence matches"
+        );
     }
 }
 

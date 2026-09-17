@@ -2,6 +2,20 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 //! Support for weak features.
+//!
+//! A weak feature such as `a = ["foo?/std"]` is a single edge in the feature
+//! graph, but Cargo applies it to each declaration of `foo` separately. guppy
+//! models that by splitting the edge's link into two halves, and running the
+//! traversal through the buffered edge filter in
+//! [`crate::petgraph_support::dfs`]:
+//!
+//! * The half covering `foo`'s required declarations is offered to the visitor
+//!   as soon as the edge is reached. It is absent if `foo` has no required
+//!   declaration.
+//! * The half covering `foo`'s optional declarations is held back in a buffer,
+//!   and offered to the visitor when that buffer is released.
+//!
+//! The edge is followed if the visitor accepts either half.
 
 use crate::graph::{
     PackageIx,
@@ -75,18 +89,37 @@ where
         links: EdgeLinks<'g>,
     ) -> Either<Option<FeatureEdgeReference<'g>>, Vec<FeatureEdgeReference<'g>>> {
         match links {
-            EdgeLinks::Weak { full, index } => {
-                match &mut self.states[index.0] {
+            EdgeLinks::Weak {
+                required,
+                optional,
+                index,
+            } => {
+                // Handle both halves, required first.
+                //
+                // Both halves must be dealt with before they are combined, so
+                // don't fold these into a single `a || b` expression. If the
+                // required half is accepted, a short-circuiting `||` would skip
+                // the optional half. It would never reach the buffer, and the
+                // visitor would not see it once the buffer is released.
+                //
+                // The optional half is buffered along with `edge_ref` even when
+                // the required half was just accepted, so releasing the buffer
+                // can hand the same `edge_ref` to the traversal a second time.
+                // That is harmless: the DFS checks its discovered set before
+                // pushing a target.
+                let required_accepted = required.is_some_and(|required| (self.accept_fn)(required));
+                let optional_accepted = match &mut self.states[index.0] {
                     SingleBufferState::Buffered(buffer) => {
-                        // Package not currently accepted -- add to the buffer.
-                        buffer.push((full, edge_ref));
-                        Either::Left(None)
+                        // The buffer has not been released yet.
+                        buffer.push((optional, edge_ref));
+                        false
                     }
                     SingleBufferState::Accepted => {
-                        // Weak link, but package already accepted.
-                        Either::Left((self.accept_fn)(full).then_some(edge_ref))
+                        // The buffer has already been released.
+                        (self.accept_fn)(optional)
                     }
-                }
+                };
+                Either::Left((required_accepted || optional_accepted).then_some(edge_ref))
             }
             EdgeLinks::NonWeak(link) => {
                 if !(self.accept_fn)(link) {
