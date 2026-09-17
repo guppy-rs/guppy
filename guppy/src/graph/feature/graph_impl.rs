@@ -846,6 +846,23 @@ impl<'g> ConditionalLink<'g> {
         self.inner.dev_only()
     }
 
+    /// Returns the declarations of the dependency that this link's platform
+    /// statuses were derived from.
+    ///
+    /// A package can declare the same dependency more than once, and some of
+    /// those declarations can be optional while others are required. The
+    /// return value is fixed per kind of link:
+    ///
+    /// * A link from a package's base feature into a dependency covers the
+    ///   required declarations, so it is [`Required`](LinkDeclarations::Required).
+    /// * A link from the `dep:foo` node into `foo` covers the optional ones,
+    ///   so it is [`Optional`](LinkDeclarations::Optional).
+    /// * Every other link covers each declaration alike, so it is
+    ///   [`Unsplit`](LinkDeclarations::Unsplit).
+    pub fn declarations(&self) -> LinkDeclarations {
+        self.inner.declarations
+    }
+
     /// Returns the `PackageLink`s this `ConditionalLink` was derived from.
     ///
     /// This is usually one link, but a `package = "..."` rename can make one
@@ -917,6 +934,7 @@ impl fmt::Debug for ConditionalLink<'_> {
         f.debug_struct("ConditionalLink")
             .field("from", &self.from())
             .field("to", &self.to())
+            .field("declarations", &self.declarations())
             .field("normal", &self.normal())
             .field("build", &self.build())
             .field("dev", &self.dev())
@@ -1106,6 +1124,7 @@ pub enum SlashForm {
 #[doc(hidden)]
 pub struct ConditionalLinkImpl {
     pub(super) package_edge_ixs: PackageEdgeIxs,
+    pub(super) declarations: LinkDeclarations,
     pub(super) normal: PlatformStatusImpl,
     pub(super) build: PlatformStatusImpl,
     pub(super) dev: PlatformStatusImpl,
@@ -1120,6 +1139,63 @@ impl ConditionalLinkImpl {
     #[inline]
     pub(super) fn is_never(&self) -> bool {
         self.normal.is_never() && self.build.is_never() && self.dev.is_never()
+    }
+}
+
+/// The declarations of a dependency that a [`ConditionalLink`] was derived
+/// from.
+///
+/// Returned by [`ConditionalLink::declarations`]. For more information, see the
+/// docs for that method.
+#[derive(Copy, Clone, Debug, Eq, Hash, PartialEq)]
+pub enum LinkDeclarations {
+    /// The link was not split by declaration, so it covers every declaration
+    /// of the dependency.
+    Unsplit,
+
+    /// Only the declarations without `optional = true`.
+    Required,
+
+    /// Only the declarations with `optional = true`.
+    Optional,
+}
+
+impl LinkDeclarations {
+    /// Returns true if these declarations include the ones without
+    /// `optional = true`: that is, for [`Unsplit`](Self::Unsplit) and
+    /// [`Required`](Self::Required).
+    ///
+    /// Prefer this to simply checking equality against `Required`. A link that
+    /// was not split by declaration is `Unsplit`, even if every declaration it
+    /// covers is a required one. For example, with:
+    ///
+    /// ```toml
+    /// [dependencies]
+    /// foo = { version = "1" }
+    ///
+    /// [features]
+    /// a = ["foo/std"]
+    /// ```
+    ///
+    /// the link from `a` to `foo/std` is `Unsplit`, not `Required`.
+    pub fn includes_required(self) -> bool {
+        match self {
+            Self::Unsplit | Self::Required => true,
+            Self::Optional => false,
+        }
+    }
+
+    /// Returns true if these declarations include the ones with
+    /// `optional = true`: that is, for [`Unsplit`](Self::Unsplit) and
+    /// [`Optional`](Self::Optional).
+    ///
+    /// As with [`includes_required`](Self::includes_required), prefer this to
+    /// checking equality against `Optional`.
+    pub fn includes_optional(self) -> bool {
+        match self {
+            Self::Unsplit | Self::Optional => true,
+            Self::Required => false,
+        }
     }
 }
 

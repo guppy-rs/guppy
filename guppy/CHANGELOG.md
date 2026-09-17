@@ -3,6 +3,15 @@
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+### Added
+
+- `ConditionalLink::declarations`, which returns a new `LinkDeclarations`
+  enum: whether the link's platform statuses were derived from every
+  declaration of the dependency (`Unsplit`), only the ones without
+  `optional = true` (`Required`), or only the ones with it (`Optional`).
+  `LinkDeclarations::includes_required` and `includes_optional` answer whether
+  a link covers a given kind of declaration.
+
 ### Changed
 
 - `ConditionalLink::package_link` is replaced by `package_links`, an iterator
