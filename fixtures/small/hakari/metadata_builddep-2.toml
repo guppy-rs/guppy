@@ -17,6 +17,16 @@
 # name = 'main'
 # version = '0.1.0'
 # workspace-path = 'main'
+#
+# [[traversal-excludes.ids]]
+# name = 'optbuilddep'
+# version = '0.1.0'
+# workspace-path = 'optbuilddep'
+#
+# [[traversal-excludes.ids]]
+# name = 'winbuilddep'
+# version = '0.1.0'
+# workspace-path = 'winbuilddep'
 # [[final-excludes.ids]]
 # name = 'builddep'
 # version = '0.1.0'
@@ -26,6 +36,16 @@
 # name = 'main'
 # version = '0.1.0'
 # workspace-path = 'main'
+#
+# [[final-excludes.ids]]
+# name = 'optbuilddep'
+# version = '0.1.0'
+# workspace-path = 'optbuilddep'
+#
+# [[final-excludes.ids]]
+# name = 'winbuilddep'
+# version = '0.1.0'
+# workspace-path = 'winbuilddep'
 
 ### END HAKARI SECTION
 

@@ -34,6 +34,12 @@ pub static METADATA2_WALKDIR: &str =
 pub static METADATA2_QUOTE: &str = "quote 1.0.2 (path+file:///Users/fakeuser/local/quote)";
 
 pub static METADATA_BUILDDEP_PATH: &str = "../small/builddep.json";
+pub static METADATA_BUILDDEP_MAIN: &str =
+    "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/main#0.1.0";
+pub static METADATA_BUILDDEP_OPTBUILDDEP: &str =
+    "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/optbuilddep#0.1.0";
+pub static METADATA_BUILDDEP_WINBUILDDEP: &str =
+    "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/winbuilddep#0.1.0";
 
 pub static METADATA_DUPS_PATH: &str = "../small/metadata_dups.json";
 pub static METADATA_DUPS_TESTCRATE: &str =
