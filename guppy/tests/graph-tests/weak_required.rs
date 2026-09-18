@@ -10,6 +10,7 @@
 //! ```toml
 //! [features]
 //! platdep-weak = ["platdep?/std"]
+//! platdep-slash = ["platdep/std"]
 //! normaldep-weak = ["normaldep?/std"]
 //! reqbuilddep-weak = ["reqbuilddep?/std"]
 //! pmdep-weak = ["pmdep?/std"]
@@ -1010,6 +1011,7 @@ fn conditional_links_report_declarations() {
     let main = package_id(json::METADATA_BUILDDEP_MAIN);
     let normaldep = package_id(json::METADATA_BUILDDEP_NORMALDEP);
     let optbuilddep = package_id(json::METADATA_BUILDDEP_OPTBUILDDEP);
+    let platdep = package_id(json::METADATA_BUILDDEP_PLATDEP);
 
     // The weak edge is one unified link here, not two halves unlike
     // weak_edge_visits_each_declaration_once above.
@@ -1058,11 +1060,62 @@ fn conditional_links_report_declarations() {
                 dev: VisitStatus::Never,
             },
         ),
+        // `optbuilddep/std` also activates `dep:optbuilddep`, but only through
+        // optional declarations of optbuilddep, so that link is `Optional`.
+        (
+            FeatureId::named(&main, "slash"),
+            FeatureId::optional_dependency(&main, "optbuilddep"),
+            SeenLink {
+                declarations: LinkDeclarations::Optional,
+                normal: VisitStatus::Never,
+                build: VisitStatus::Always,
+                dev: VisitStatus::Never,
+            },
+        ),
+        // platdep-slash = ["platdep/std"]
+        //
+        // `platdep/std` applies to both declarations of platdep, so the link
+        // to platdep's `std` is `Unsplit`.
+        (
+            FeatureId::named(&main, "platdep-slash"),
+            FeatureId::named(&platdep, "std"),
+            SeenLink {
+                declarations: LinkDeclarations::Unsplit,
+                normal: specs(&["unix", "windows"]),
+                build: VisitStatus::Never,
+                dev: VisitStatus::Never,
+            },
+        ),
+        // The links to `dep:platdep` and the implicit `platdep` feature only
+        // cover the optional `cfg(windows)` declaration.
+        (
+            FeatureId::named(&main, "platdep-slash"),
+            FeatureId::optional_dependency(&main, "platdep"),
+            SeenLink {
+                declarations: LinkDeclarations::Optional,
+                normal: specs(&["windows"]),
+                build: VisitStatus::Never,
+                dev: VisitStatus::Never,
+            },
+        ),
+        (
+            FeatureId::named(&main, "platdep-slash"),
+            FeatureId::named(&main, "platdep"),
+            SeenLink {
+                declarations: LinkDeclarations::Optional,
+                normal: specs(&["windows"]),
+                build: VisitStatus::Never,
+                dev: VisitStatus::Never,
+            },
+        ),
     ];
 
     let feature_set = graph
         .feature_graph()
-        .query_forward(feature_ids(&main, "normaldep-weak dep:normaldep slash"))
+        .query_forward(feature_ids(
+            &main,
+            "normaldep-weak dep:normaldep slash platdep-slash",
+        ))
         .expect("valid feature IDs")
         .resolve();
     for (from, to, expected) in expected {

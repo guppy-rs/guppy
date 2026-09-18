@@ -54,6 +54,8 @@ pub static METADATA_BUILDDEP_TARGETUSER: &str =
     "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/targetuser#0.1.0";
 pub static METADATA_BUILDDEP_DEVDEP: &str =
     "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/devdep#0.1.0";
+pub static METADATA_BUILDDEP_BUILDDEP: &str =
+    "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/builddep#0.1.0";
 
 pub static METADATA_DUPS_PATH: &str = "../small/metadata_dups.json";
 pub static METADATA_DUPS_TESTCRATE: &str =
