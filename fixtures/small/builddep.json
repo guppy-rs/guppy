@@ -25,7 +25,12 @@
                     "test": true
                 }
             ],
-            "features": {},
+            "features": {
+                "alloc": [],
+                "std": [
+                    "alloc"
+                ]
+            },
             "manifest_path": "/home/fakeuser/dev/tmp/test-workspaces/builddep/builddep/Cargo.toml",
             "metadata": null,
             "publish": null,
@@ -382,6 +387,10 @@
                 }
             ],
             "features": {
+                "builddep": [],
+                "builddep-slash": [
+                    "builddep/std"
+                ],
                 "dep-colon": [
                     "dep:optbuilddep"
                 ],
@@ -402,6 +411,9 @@
                 ],
                 "platdep": [
                     "dep:platdep"
+                ],
+                "platdep-slash": [
+                    "platdep/std"
                 ],
                 "platdep-weak": [
                     "platdep?/std"
@@ -806,7 +818,10 @@
                 "id": "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/builddep#0.1.0",
                 "dependencies": [],
                 "deps": [],
-                "features": []
+                "features": [
+                    "alloc",
+                    "std"
+                ]
             },
             {
                 "id": "path+file:///home/fakeuser/dev/tmp/test-workspaces/builddep/devdep#0.1.0",
@@ -975,6 +990,8 @@
                     }
                 ],
                 "features": [
+                    "builddep",
+                    "builddep-slash",
                     "dep-colon",
                     "devdep",
                     "devdep-weak",
@@ -982,6 +999,7 @@
                     "normaldep",
                     "normaldep-weak",
                     "platdep",
+                    "platdep-slash",
                     "platdep-weak",
                     "pmdep",
                     "pmdep-weak",
