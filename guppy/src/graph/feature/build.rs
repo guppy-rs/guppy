@@ -294,11 +294,7 @@ impl FeatureGraphBuildState {
         metadata: &PackageMetadata<'_>,
         link: &PackageLink<'_>,
     ) -> SlashForm {
-        let optional = EnabledLink::new(Self::make_conditional_link_impl(
-            link,
-            LinkDeclarations::Optional,
-            |req| req.inner.optional.build_if.clone(),
-        ));
+        let optional = EnabledLink::new(Self::make_optional_conditional_link_impl(link));
         let Some(optional) = optional else {
             return SlashForm::Strong;
         };
@@ -323,6 +319,12 @@ impl FeatureGraphBuildState {
             optional,
             index: self.weak.insert(link.edge_ix(), optional_dependency_ix),
         }))
+    }
+
+    fn make_optional_conditional_link_impl(link: &PackageLink<'_>) -> ConditionalLinkImpl {
+        Self::make_conditional_link_impl(link, LinkDeclarations::Optional, |req| {
+            req.inner.optional.build_if.clone()
+        })
     }
 
     // Creates a "full" conditional link, unifying requirements across all dependency lines.
