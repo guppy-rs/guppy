@@ -3,4 +3,6 @@
 
 proptest_suite!(inside_outside_v1);
 proptest_suite!(inside_outside_v2);
+proptest_suite!(weak_features_v1);
+proptest_suite!(weak_features_v2);
 proptest_suite!(cargo_guppy);

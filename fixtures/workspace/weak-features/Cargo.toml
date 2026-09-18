@@ -1,0 +1,13 @@
+[workspace]
+members = [
+    "main",
+    "normaldep",
+    "reqbuilddep",
+    "platdep",
+    "optbuilddep",
+    "pmdep",
+    "hostuser",
+    "targetuser",
+]
+# The cargo-compare tests will add resolver = "1" or "2" to the end of this
+# file.
