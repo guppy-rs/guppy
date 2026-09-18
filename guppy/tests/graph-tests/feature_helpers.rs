@@ -1,14 +1,18 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-use fixtures::package_id;
+use fixtures::{json::JsonFixture, package_id};
 use guppy::{
     PackageId,
     graph::{
-        PackageGraph,
+        DependencyDirection, PackageGraph,
         cargo::{CargoOptions, CargoResolverVersion, CargoSet},
-        feature::{FeatureId, FeatureLabel, FeatureSet, StandardFeatures, feature_id_filter},
+        feature::{
+            ConditionalLink, FeatureId, FeatureLabel, FeatureSet, LinkDeclarations,
+            StandardFeatures, feature_id_filter,
+        },
     },
+    platform::PlatformStatus,
 };
 use std::iter;
 use target_spec::{Platform, TargetFeatures};
@@ -214,4 +218,74 @@ pub(super) fn feature_ids<'a>(
     feature_labels(features)
         .into_iter()
         .map(move |label| FeatureId::new(package_id, label))
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub(super) enum VisitStatus {
+    Always,
+    Never,
+    // Enabled on platforms matching these target specs.
+    Specs(Vec<String>),
+}
+
+impl VisitStatus {
+    pub(super) fn new(status: PlatformStatus<'_>) -> Self {
+        match status {
+            PlatformStatus::Always => VisitStatus::Always,
+            PlatformStatus::Never => VisitStatus::Never,
+            PlatformStatus::PlatformDependent { eval } => VisitStatus::Specs(
+                eval.target_specs()
+                    .iter()
+                    .map(|spec| spec.to_string())
+                    .collect(),
+            ),
+        }
+    }
+}
+
+pub(super) fn specs(specs: &[&str]) -> VisitStatus {
+    VisitStatus::Specs(specs.iter().map(|spec| (*spec).to_owned()).collect())
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub(super) struct SeenLink {
+    pub(super) declarations: LinkDeclarations,
+    pub(super) normal: VisitStatus,
+    pub(super) build: VisitStatus,
+    pub(super) dev: VisitStatus,
+}
+
+impl SeenLink {
+    pub(super) fn from_link(link: &ConditionalLink<'_>) -> Self {
+        Self {
+            declarations: link.declarations(),
+            normal: VisitStatus::new(link.normal()),
+            build: VisitStatus::new(link.build()),
+            dev: VisitStatus::new(link.dev()),
+        }
+    }
+}
+
+pub(super) fn graph_with_patched_json(
+    fixture: &JsonFixture,
+    patch: impl FnOnce(&mut serde_json::Value),
+) -> PackageGraph {
+    let mut metadata: serde_json::Value =
+        serde_json::from_str(fixture.json()).expect("fixture is valid JSON");
+    patch(&mut metadata);
+    PackageGraph::from_json(metadata.to_string()).expect("patched metadata is valid")
+}
+
+pub(super) fn conditional_links_from<'g>(
+    graph: &'g PackageGraph,
+    from: FeatureId<'_>,
+) -> Vec<ConditionalLink<'g>> {
+    graph
+        .feature_graph()
+        .query_forward([from])
+        .expect("valid feature ID")
+        .resolve()
+        .conditional_links(DependencyDirection::Forward)
+        .filter(|link| link.from().feature_id() == from)
+        .collect()
 }

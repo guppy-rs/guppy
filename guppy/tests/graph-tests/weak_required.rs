@@ -83,7 +83,10 @@
 //! versions 1 and 2. Cases that build dev-dependencies were obtained with
 //! `cargo build --tests`.
 
-use crate::feature_helpers::{CargoResolutionCase, WINDOWS, feature_ids};
+use crate::feature_helpers::{
+    CargoResolutionCase, SeenLink, VisitStatus, WINDOWS, feature_ids, graph_with_patched_json,
+    specs,
+};
 use fixtures::{
     json::{self, JsonFixture},
     package_id,
@@ -93,9 +96,8 @@ use guppy::{
     graph::{
         DependencyDirection, PackageGraph,
         cargo::CargoResolverVersion,
-        feature::{ConditionalLink, FeatureId, LinkDeclarations},
+        feature::{FeatureId, LinkDeclarations},
     },
-    platform::PlatformStatus,
 };
 
 #[rustfmt::skip]
@@ -636,52 +638,6 @@ fn resolution_matches_cargo() {
     }
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
-enum VisitStatus {
-    Always,
-    Never,
-    // Enabled on platforms matching these target specs.
-    Specs(Vec<String>),
-}
-
-impl VisitStatus {
-    fn new(status: PlatformStatus<'_>) -> Self {
-        match status {
-            PlatformStatus::Always => VisitStatus::Always,
-            PlatformStatus::Never => VisitStatus::Never,
-            PlatformStatus::PlatformDependent { eval } => VisitStatus::Specs(
-                eval.target_specs()
-                    .iter()
-                    .map(|spec| spec.to_string())
-                    .collect(),
-            ),
-        }
-    }
-}
-
-fn specs(specs: &[&str]) -> VisitStatus {
-    VisitStatus::Specs(specs.iter().map(|spec| (*spec).to_owned()).collect())
-}
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-struct SeenLink {
-    declarations: LinkDeclarations,
-    normal: VisitStatus,
-    build: VisitStatus,
-    dev: VisitStatus,
-}
-
-impl SeenLink {
-    fn from_link(link: &ConditionalLink<'_>) -> Self {
-        Self {
-            declarations: link.declarations(),
-            normal: VisitStatus::new(link.normal()),
-            build: VisitStatus::new(link.build()),
-            dev: VisitStatus::new(link.dev()),
-        }
-    }
-}
-
 // The two halves of `main/normaldep-weak` -> `normaldep/std`: normaldep is
 // declared as a required normal dependency and an optional build dependency.
 fn normaldep_weak_halves() -> [SeenLink; 2] {
@@ -707,20 +663,18 @@ fn normaldep_weak_halves() -> [SeenLink; 2] {
 // tests need a shape that isn't checked in. Patching the JSON keeps the rest
 // of the fixture intact.
 fn builddep_graph_with_main_features(features: &[(&str, serde_json::Value)]) -> PackageGraph {
-    let mut metadata: serde_json::Value =
-        serde_json::from_str(JsonFixture::metadata_builddep().json())
-            .expect("builddep fixture is valid JSON");
-    let main = metadata["packages"]
-        .as_array_mut()
-        .expect("packages is an array")
-        .iter_mut()
-        .find(|package| package["id"] == json::METADATA_BUILDDEP_MAIN)
-        .expect("main is in the builddep fixture");
-    let main_features = main["features"].as_object_mut().expect("features is a map");
-    for (name, value) in features {
-        main_features.insert((*name).to_owned(), value.clone());
-    }
-    PackageGraph::from_json(metadata.to_string()).expect("patched metadata is valid")
+    graph_with_patched_json(JsonFixture::metadata_builddep(), |metadata| {
+        let main = metadata["packages"]
+            .as_array_mut()
+            .expect("packages is an array")
+            .iter_mut()
+            .find(|package| package["id"] == json::METADATA_BUILDDEP_MAIN)
+            .expect("main is in the builddep fixture");
+        let main_features = main["features"].as_object_mut().expect("features is a map");
+        for (name, value) in features {
+            main_features.insert((*name).to_owned(), value.clone());
+        }
+    })
 }
 
 // Resolves `features` on `main` with a visitor that accepts every link, and
