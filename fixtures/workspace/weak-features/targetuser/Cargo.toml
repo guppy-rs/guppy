@@ -1,0 +1,11 @@
+[package]
+name = "targetuser"
+version = "0.1.0"
+authors = ["Fake Author <fakeauthor@example.com>"]
+edition = "2018"
+
+# targetuser is a required normal dependency of main, so activating this
+# optional dependency builds reqbuilddep on the target without going through
+# main's own optional normal declaration.
+[dependencies]
+reqbuilddep = { path = "../reqbuilddep", optional = true }
