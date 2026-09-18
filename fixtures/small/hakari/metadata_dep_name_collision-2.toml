@@ -9,8 +9,18 @@
 # workspace-hack-line-style = 'workspace-dotted'
 # platforms = ['armv7-sony-vita-newlibeabihf', 'i686-pc-windows-gnullvm']
 # [[traversal-excludes.ids]]
-# name = 'arrayvec'
-# version = '0.7.8'
+# name = 'adler2'
+# version = '2.0.1'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'bitflags'
+# version = '2.13.2'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'byteorder'
+# version = '1.5.0'
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
@@ -24,13 +34,8 @@
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
-# name = 'hex'
-# version = '0.4.3'
-# crates-io = true
-#
-# [[traversal-excludes.ids]]
-# name = 'log'
-# version = '0.4.34'
+# name = 'libc'
+# version = '0.2.189'
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
@@ -38,8 +43,8 @@
 # version = '2.8.3'
 # crates-io = true
 # [[final-excludes.ids]]
-# name = 'tinyvec'
-# version = '1.13.2'
+# name = 'percent-encoding'
+# version = '2.3.2'
 # crates-io = true
 #
 # [[final-excludes.ids]]
@@ -48,7 +53,17 @@
 # crates-io = true
 
 [dependencies]
-libc = { version = "0.2", default-features = false, features = ["std"] }
+base64-647d43efb71741da = { package = "base64", version = "0.21", default-features = false, features = ["alloc", "std"] }
+log = { version = "0.4", default-features = false }
+once_cell = { version = "1", default-features = false, features = ["alloc", "race", "std"] }
+
+[build-dependencies]
+hex = { version = "0.4", default-features = false, features = ["alloc", "std"] }
+
+[target.i686-pc-windows-gnullvm.dependencies]
+base64-3c51e837cfc5589a = { package = "base64", version = "0.22", default-features = false }
+foldhash = { version = "0.1", default-features = false }
+tinyvec = { version = "1", default-features = false }
 
 ### END HAKARI SECTION
 
