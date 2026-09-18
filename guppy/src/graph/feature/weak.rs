@@ -46,14 +46,6 @@ impl WeakDependencies {
     pub(super) fn get(&self, edge_ix: EdgeIndex<PackageIx>) -> Option<WeakIndex> {
         self.ixs.get_index_of(&edge_ix).map(WeakIndex)
     }
-
-    #[inline]
-    pub(super) fn new_buffer_states<'g, F>(&self, accept_fn: F) -> WeakBufferStates<'g, '_, F>
-    where
-        F: FnMut(ConditionalLink<'g>) -> bool,
-    {
-        WeakBufferStates::new(self, self.ixs.len(), accept_fn)
-    }
 }
 
 // Not part of the public API -- exposed for testing.
@@ -73,7 +65,8 @@ where
     F: FnMut(ConditionalLink<'g>) -> bool,
 {
     #[inline]
-    fn new(deps: &'a WeakDependencies, len: usize, accept_fn: F) -> Self {
+    pub(super) fn new(deps: &'a WeakDependencies, accept_fn: F) -> Self {
+        let len = deps.ixs.len();
         let mut states = SmallVec::with_capacity(len);
         states.resize_with(len, || SingleBufferState::Buffered(SingleBufferVec::new()));
         Self {
