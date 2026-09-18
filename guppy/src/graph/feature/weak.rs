@@ -55,9 +55,20 @@ pub struct WeakIndex(pub(super) usize);
 
 /// Buffer states for weak indexes, to be used during a feature resolver traversal.
 pub(super) struct WeakBufferStates<'g, 'a, F> {
-    deps: &'a WeakDependencies,
-    states: SmallVec<[SingleBufferState<'g>; 8]>,
+    buffers: WeakBuffers<'g, 'a>,
     accept_fn: F,
+}
+
+/// The buffers a traversal keeps for the optional halves of weak edges.
+enum WeakBuffers<'g, 'a> {
+    /// Buffering is enabled.
+    PerPackageEdge {
+        /// The weak dependencies that map a package edge back to its index.
+        deps: &'a WeakDependencies,
+
+        /// A buffer for each weak index.
+        states: SmallVec<[SingleBufferState<'g>; 8]>,
+    },
 }
 
 impl<'g, 'a, F> WeakBufferStates<'g, 'a, F>
@@ -70,8 +81,7 @@ where
         let mut states = SmallVec::with_capacity(len);
         states.resize_with(len, || SingleBufferState::Buffered(SingleBufferVec::new()));
         Self {
-            deps,
-            states,
+            buffers: WeakBuffers::PerPackageEdge { deps, states },
             accept_fn,
         }
     }
@@ -101,16 +111,18 @@ where
                 // That is harmless: the DFS checks its discovered set before
                 // pushing a target.
                 let required_accepted = required.is_some_and(|required| (self.accept_fn)(required));
-                let optional_accepted = match &mut self.states[index.0] {
-                    SingleBufferState::Buffered(buffer) => {
-                        // The buffer has not been released yet.
-                        buffer.push((optional, edge_ref));
-                        false
-                    }
-                    SingleBufferState::Released => {
-                        // The buffer has already been released.
-                        (self.accept_fn)(optional)
-                    }
+                let optional_accepted = match &mut self.buffers {
+                    WeakBuffers::PerPackageEdge { deps: _, states } => match &mut states[index.0] {
+                        SingleBufferState::Buffered(buffer) => {
+                            // The buffer has not been released yet.
+                            buffer.push((optional, edge_ref));
+                            false
+                        }
+                        SingleBufferState::Released => {
+                            // The buffer has already been released.
+                            (self.accept_fn)(optional)
+                        }
+                    },
                 };
                 Either::Left((required_accepted || optional_accepted).then_some(edge_ref))
             }
@@ -120,8 +132,11 @@ where
                     return Either::Left(None);
                 }
 
-                let mut released =
-                    release_buffers(self.deps, &mut self.states, link, &mut self.accept_fn);
+                let mut released = match &mut self.buffers {
+                    WeakBuffers::PerPackageEdge { deps, states } => {
+                        release_buffers(deps, states, link, &mut self.accept_fn)
+                    }
+                };
 
                 if released.is_empty() {
                     Either::Left(Some(edge_ref))
