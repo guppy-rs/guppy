@@ -967,10 +967,6 @@ impl<'g> ConditionalLink<'g> {
         self.edge_ix
     }
 
-    pub(super) fn package_edge_ixs(&self) -> &'g PackageEdgeIxs {
-        &self.inner.package_edge_ixs
-    }
-
     pub(super) fn endpoints_in(
         &self,
         direction: DependencyDirection,

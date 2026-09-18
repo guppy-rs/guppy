@@ -13,38 +13,51 @@
 //!   as soon as the edge is reached. It is absent if `foo` has no required
 //!   declaration.
 //! * The half covering `foo`'s optional declarations is held in a buffer in a
-//!   forward query, and offered when that buffer is released. In a reverse
+//!   forward query until `dep:foo` is activated, and offered then. If
+//!   `dep:foo` is never reached, that half is never offered. In a reverse
 //!   query, it is offered as soon as the edge is reached.
 //!
 //! The edge is followed if the visitor accepts either half.
 
 use crate::graph::{
-    DependencyDirection, PackageIx,
+    DependencyDirection, FeatureIx, PackageIx,
     feature::{ConditionalLink, EdgeLinks, FeatureEdgeReference},
 };
+use ahash::AHashMap;
 use indexmap::IndexSet;
-use itertools::Either;
-use petgraph::graph::EdgeIndex;
+use petgraph::graph::{EdgeIndex, NodeIndex};
+use smallvec::SmallVec;
 
 /// Data structure that tracks pairs of package indexes that form weak dependencies.
 #[derive(Clone, Debug)]
 pub(super) struct WeakDependencies {
     ixs: IndexSet<EdgeIndex<PackageIx>>,
+    // A map of dep:foo node to the weak indexes it releases when reached.
+    by_optional_dependency: AHashMap<NodeIndex<FeatureIx>, SmallVec<[WeakIndex; 1]>>,
 }
 
 impl WeakDependencies {
     pub(super) fn new() -> Self {
         Self {
             ixs: IndexSet::new(),
+            by_optional_dependency: AHashMap::new(),
         }
     }
 
-    pub(super) fn insert(&mut self, edge_ix: EdgeIndex<PackageIx>) -> WeakIndex {
-        WeakIndex(self.ixs.insert_full(edge_ix).0)
-    }
-
-    pub(super) fn get(&self, edge_ix: EdgeIndex<PackageIx>) -> Option<WeakIndex> {
-        self.ixs.get_index_of(&edge_ix).map(WeakIndex)
+    pub(super) fn insert(
+        &mut self,
+        edge_ix: EdgeIndex<PackageIx>,
+        optional_dependency_ix: NodeIndex<FeatureIx>,
+    ) -> WeakIndex {
+        let (index, inserted) = self.ixs.insert_full(edge_ix);
+        let index = WeakIndex(index);
+        if inserted {
+            self.by_optional_dependency
+                .entry(optional_dependency_ix)
+                .or_default()
+                .push(index);
+        }
+        index
     }
 }
 
@@ -62,8 +75,12 @@ pub(super) struct WeakBufferStates<'g, 'a, F> {
 /// The buffers a traversal keeps for the optional halves of weak edges.
 enum WeakBuffers<'g, 'a> {
     /// Buffering is enabled. Used by forward queries.
+    ///
+    /// A buffer is released when the traversal discovers `dep:foo`, which is
+    /// when the dependent activates `foo`'s optional declarations.
     PerPackageEdge {
-        /// The weak dependencies that map a package edge back to its index.
+        /// The weak dependencies that map a `dep:foo` node back to the indexes
+        /// it releases.
         deps: &'a WeakDependencies,
 
         /// A buffer for each weak index.
@@ -102,8 +119,8 @@ where
         &mut self,
         edge_ref: FeatureEdgeReference<'g>,
         links: EdgeLinks<'g>,
-    ) -> Either<Option<FeatureEdgeReference<'g>>, Vec<FeatureEdgeReference<'g>>> {
-        match links {
+    ) -> Option<FeatureEdgeReference<'g>> {
+        let accepted = match links {
             EdgeLinks::Weak {
                 required,
                 optional,
@@ -132,47 +149,40 @@ where
                     },
                     WeakBuffers::Unbuffered => (self.accept_fn)(optional),
                 };
-                Either::Left((required_accepted || optional_accepted).then_some(edge_ref))
+                required_accepted || optional_accepted
             }
-            EdgeLinks::NonWeak(link) => {
-                if !(self.accept_fn)(link) {
-                    // This link was not accepted -- ignore its presence.
-                    return Either::Left(None);
-                }
+            EdgeLinks::NonWeak(link) => (self.accept_fn)(link),
+        };
+        accepted.then_some(edge_ref)
+    }
 
-                let mut released = match &mut self.buffers {
-                    WeakBuffers::PerPackageEdge { deps, states } => {
-                        release_buffers(deps, states, link, &mut self.accept_fn)
-                    }
-                    WeakBuffers::Unbuffered => Vec::new(),
-                };
+    // Called when the DFS reaches a feature node.
+    pub(super) fn discover(
+        &mut self,
+        feature_ix: NodeIndex<FeatureIx>,
+    ) -> Vec<FeatureEdgeReference<'g>> {
+        let (deps, states) = match &mut self.buffers {
+            WeakBuffers::PerPackageEdge { deps, states } => (*deps, states),
+            WeakBuffers::Unbuffered => return Vec::new(),
+        };
+        let Some(weak_indexes) = deps.by_optional_dependency.get(&feature_ix) else {
+            return Vec::new();
+        };
 
-                if released.is_empty() {
-                    Either::Left(Some(edge_ref))
-                } else {
-                    released.push(edge_ref);
-                    Either::Right(released)
-                }
-            }
-        }
+        release_buffers(states, weak_indexes, &mut self.accept_fn)
     }
 }
 
 fn release_buffers<'g, F>(
-    deps: &WeakDependencies,
     states: &mut [SingleBufferState<'g>],
-    link: ConditionalLink<'g>,
+    weak_indexes: &[WeakIndex],
     accept_fn: &mut F,
 ) -> Vec<FeatureEdgeReference<'g>>
 where
     F: FnMut(ConditionalLink<'g>) -> bool,
 {
     let mut released = Vec::new();
-    for package_edge_ix in link.package_edge_ixs().iter() {
-        let Some(weak_index) = deps.get(package_edge_ix) else {
-            // Not a weak link.
-            continue;
-        };
+    for weak_index in weak_indexes {
         match std::mem::replace(&mut states[weak_index.0], SingleBufferState::Released) {
             SingleBufferState::Buffered(buffer) => {
                 // Transition from buffered to released.
@@ -182,7 +192,9 @@ where
                 }));
             }
             SingleBufferState::Released => {
-                // Weak link, but the buffer is already released.
+                // This should never happen, since nodes are discovered at
+                // most once.
+                debug_assert!(false, "weak index {weak_index:?} is released once");
             }
         }
     }

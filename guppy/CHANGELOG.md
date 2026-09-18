@@ -61,11 +61,11 @@
   ```
 
   The visitor sees `weak -> foo/std` as a `Required` link covering
-  `[dependencies]`. It can see the same endpoints again as an `Optional` link
-  covering `[build-dependencies]`. The edge is followed if the visitor accepts
-  either link. Use `ConditionalLink::declarations` to tell the two apart.
-  `FeatureSet::conditional_links` is unchanged: it returns one `Unsplit` link
-  for the edge.
+  `[dependencies]`. If `dep:foo` is activated, it sees the same endpoints again
+  as an `Optional` link covering `[build-dependencies]`. The edge is followed if
+  the visitor accepts either link. Use `ConditionalLink::declarations` to tell
+  the two apart. `FeatureSet::conditional_links` is unchanged: it returns one
+  `Unsplit` link for the edge.
 
   This is part of the fix to weak dependency features described below.
 
@@ -97,6 +97,7 @@
   [build-dependencies]
   foo = { version = "1", optional = true }
   bar = { version = "1" }
+  helper = { version = "1" }  # helper depends on foo itself
 
   [features]
   weak = ["foo?/std", "bar?/std"]
@@ -108,9 +109,15 @@
     does, and the feature graph no longer has an edge from `weak` to
     `dep:foo`. A dependency required on one platform and optional on another
     had `dep:foo` added the same way.
+  - enabled `std` on the `foo` that `helper` builds on the host, even though
+    nothing had activated foo's optional build declaration. Now only the `foo`
+    built on the target gets `std`.
   - activated `dep:bar` in the same way, so `bar` was also built on the target.
     Now `bar` only gets `std` on the host, where it is required, and is not
     built on the target.
+
+  Of these, the second did not affect the version 1 resolver, which unifies
+  features across the host and the target.
 
   As part of this fix, `FeatureQuery::resolve_with` and `resolve_with_fn` visit
   a weak dependency feature once for each kind of declaration. See the entry

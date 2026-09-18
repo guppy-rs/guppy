@@ -398,9 +398,8 @@ pub trait FeatureLinkVisitor<'g> {
     /// When the two links are offered depends on the query's direction:
     ///
     /// * A forward query offers the `Required` link as soon as `weak` is
-    ///   reached. It offers the `Optional` link only once this method has
-    ///   accepted another non-weak link to `foo` from the same package, such
-    ///   as the one from `dep:foo`.
+    ///   reached. It offers the `Optional` link only once `dep:foo` is
+    ///   activated, which may be at an unrelated point later in the traversal.
     /// * A reverse query offers both links (`Required` first) as soon as
     ///   `foo/std` is reached. Reverse queries don't try to model when `foo` is
     ///   activated.
