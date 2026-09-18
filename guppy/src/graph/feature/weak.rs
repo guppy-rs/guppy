@@ -75,7 +75,7 @@ where
     #[inline]
     fn new(deps: &'a WeakDependencies, len: usize, accept_fn: F) -> Self {
         let mut states = SmallVec::with_capacity(len);
-        states.resize_with(len, Default::default);
+        states.resize_with(len, || SingleBufferState::Buffered(SingleBufferVec::new()));
         Self {
             deps,
             states,
@@ -114,7 +114,7 @@ where
                         buffer.push((optional, edge_ref));
                         false
                     }
-                    SingleBufferState::Accepted => {
+                    SingleBufferState::Released => {
                         // The buffer has already been released.
                         (self.accept_fn)(optional)
                     }
@@ -137,17 +137,17 @@ where
                     };
                     match std::mem::replace(
                         &mut self.states[weak_index.0],
-                        SingleBufferState::Accepted,
+                        SingleBufferState::Released,
                     ) {
                         SingleBufferState::Buffered(buffer) => {
-                            // Transition from buffered to accepted.
+                            // Transition from buffered to released.
                             released.extend(buffer.into_iter().filter_map(|(link, edge_ref)| {
                                 // Filter buffered links.
                                 (self.accept_fn)(link).then_some(edge_ref)
                             }));
                         }
-                        SingleBufferState::Accepted => {
-                            // Weak link, but package already accepted.
+                        SingleBufferState::Released => {
+                            // Weak link, but the buffer is already released.
                         }
                     }
                 }
@@ -165,14 +165,12 @@ where
 
 /// Buffer state for a single weak index in an in-progress resolver.
 pub(super) enum SingleBufferState<'g> {
+    /// The optional halves seen so far, held until the buffer is released.
     Buffered(SingleBufferVec<'g>),
-    Accepted,
-}
 
-impl Default for SingleBufferState<'_> {
-    fn default() -> Self {
-        Self::Buffered(SingleBufferVec::new())
-    }
+    /// The buffer has been released: optional halves are offered to the
+    /// visitor as they are reached.
+    Released,
 }
 
 type SingleBufferVec<'g> = Vec<(ConditionalLink<'g>, FeatureEdgeReference<'g>)>;
