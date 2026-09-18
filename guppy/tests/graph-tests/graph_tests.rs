@@ -515,6 +515,22 @@ mod small {
 
     proptest_suite!(metadata_hakari_reverse_dep);
 
+    #[test]
+    fn metadata_builddep() {
+        let metadata_builddep = JsonFixture::metadata_builddep();
+        metadata_builddep.verify();
+    }
+
+    proptest_suite!(metadata_builddep);
+
+    #[test]
+    fn metadata_weak_namespaced_features() {
+        let metadata_weak_namespaced_features = JsonFixture::metadata_weak_namespaced_features();
+        metadata_weak_namespaced_features.verify();
+    }
+
+    proptest_suite!(metadata_weak_namespaced_features);
+
     // A fixture where one dependency name resolves to two different packages.
     // See `dep_name_collision.rs` for the behavior this exercises.
     #[test]

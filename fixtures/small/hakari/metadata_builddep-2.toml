@@ -9,9 +9,9 @@
 # workspace-hack-line-style = 'full'
 # platforms = ['mips64el-unknown-linux-muslabi64', 'thumbv7a-nuttx-eabi', 'riscv64im-unknown-none-elf']
 # [[traversal-excludes.ids]]
-# name = 'builddep'
+# name = 'devdep'
 # version = '0.1.0'
-# workspace-path = 'builddep'
+# workspace-path = 'devdep'
 #
 # [[traversal-excludes.ids]]
 # name = 'main'
@@ -22,25 +22,40 @@
 # name = 'optbuilddep'
 # version = '0.1.0'
 # workspace-path = 'optbuilddep'
+#
+# [[traversal-excludes.ids]]
+# name = 'pmdep'
+# version = '0.1.0'
+# workspace-path = 'pmdep'
 #
 # [[traversal-excludes.ids]]
 # name = 'winbuilddep'
 # version = '0.1.0'
 # workspace-path = 'winbuilddep'
 # [[final-excludes.ids]]
-# name = 'builddep'
+# name = 'hostuser'
 # version = '0.1.0'
-# workspace-path = 'builddep'
+# workspace-path = 'hostuser'
 #
 # [[final-excludes.ids]]
-# name = 'main'
+# name = 'normaldep'
 # version = '0.1.0'
-# workspace-path = 'main'
+# workspace-path = 'normaldep'
 #
 # [[final-excludes.ids]]
 # name = 'optbuilddep'
 # version = '0.1.0'
 # workspace-path = 'optbuilddep'
+#
+# [[final-excludes.ids]]
+# name = 'pmdep'
+# version = '0.1.0'
+# workspace-path = 'pmdep'
+#
+# [[final-excludes.ids]]
+# name = 'reqbuilddep'
+# version = '0.1.0'
+# workspace-path = 'reqbuilddep'
 #
 # [[final-excludes.ids]]
 # name = 'winbuilddep'

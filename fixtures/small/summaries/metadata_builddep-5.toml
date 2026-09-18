@@ -18,6 +18,11 @@ name = 'builddep'
 version = '0.1.0'
 workspace-path = 'builddep'
 
+[[metadata.omitted-packages.ids]]
+name = 'hostuser'
+version = '0.1.0'
+workspace-path = 'hostuser'
+
 [[metadata.features-only]]
 name = 'builddep'
 version = '0.1.0'
@@ -25,9 +30,15 @@ workspace-path = 'builddep'
 features = []
 
 [[metadata.features-only]]
-name = 'optbuilddep'
+name = 'devdep'
 version = '0.1.0'
-workspace-path = 'optbuilddep'
+workspace-path = 'devdep'
+features = []
+
+[[metadata.features-only]]
+name = 'pmdep'
+version = '0.1.0'
+workspace-path = 'pmdep'
 features = []
 
 [[target-package]]
@@ -38,15 +49,15 @@ status = 'initial'
 features = []
 
 [[target-package]]
-name = 'optbuilddep'
+name = 'platdep'
 version = '0.1.0'
-workspace-path = 'optbuilddep'
+workspace-path = 'platdep'
 status = 'initial'
 features = []
 
 [[target-package]]
-name = 'winbuilddep'
+name = 'targetuser'
 version = '0.1.0'
-workspace-path = 'winbuilddep'
+workspace-path = 'targetuser'
 status = 'initial'
 features = []

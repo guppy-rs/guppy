@@ -21,9 +21,9 @@ target-features = ['aes', 'rdrand', 'sse3', 'sse4.1', 'sse4.2', 'xsavec']
 flags = ['foo', 'test-flag']
 
 [[metadata.features-only]]
-name = 'optbuilddep'
+name = 'pmdep'
 version = '0.1.0'
-workspace-path = 'optbuilddep'
+workspace-path = 'pmdep'
 features = []
 
 [[target-package]]
@@ -34,9 +34,37 @@ status = 'initial'
 features = []
 
 [[target-package]]
+name = 'normaldep'
+version = '0.1.0'
+workspace-path = 'normaldep'
+status = 'initial'
+features = []
+
+[[target-package]]
 name = 'optbuilddep'
 version = '0.1.0'
 workspace-path = 'optbuilddep'
+status = 'initial'
+features = []
+
+[[target-package]]
+name = 'platdep'
+version = '0.1.0'
+workspace-path = 'platdep'
+status = 'initial'
+features = []
+
+[[target-package]]
+name = 'targetuser'
+version = '0.1.0'
+workspace-path = 'targetuser'
+status = 'workspace'
+features = []
+
+[[host-package]]
+name = 'pmdep'
+version = '0.1.0'
+workspace-path = 'pmdep'
 status = 'initial'
 features = []
 
@@ -44,5 +72,19 @@ features = []
 name = 'builddep'
 version = '0.1.0'
 workspace-path = 'builddep'
+status = 'workspace'
+features = []
+
+[[host-package]]
+name = 'hostuser'
+version = '0.1.0'
+workspace-path = 'hostuser'
+status = 'workspace'
+features = []
+
+[[host-package]]
+name = 'reqbuilddep'
+version = '0.1.0'
+workspace-path = 'reqbuilddep'
 status = 'workspace'
 features = []

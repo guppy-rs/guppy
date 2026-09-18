@@ -120,8 +120,7 @@ static CASES: &[CargoResolutionCase] = &[
 
     // `both` -> libc and (on unix) memchr, so on Linux both links are live at
     // once. A weak `both?/std` buffers one weak index per link, and activating
-    // `dep:both` has to flush both -- so the merged `dep:` edge has to carry
-    // every link's `package_edge_ix`.
+    // `dep:both` has to flush both.
     CargoResolutionCase::new(&["both-weak-slash"]).target_expected(&[
         (json::METADATA_DEP_NAME_COLLISION_LIBC,     None),
         (json::METADATA_DEP_NAME_COLLISION_MEMCHR,   None),

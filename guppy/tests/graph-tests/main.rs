@@ -21,3 +21,4 @@ mod invalid_tests;
 #[cfg(feature = "summaries")]
 mod summary_tests;
 mod weak_namespaced;
+mod weak_required;

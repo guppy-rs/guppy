@@ -7,7 +7,7 @@ use guppy::{
     graph::{
         PackageGraph,
         cargo::{CargoOptions, CargoResolverVersion, CargoSet},
-        feature::{FeatureLabel, FeatureSet, StandardFeatures, named_feature_filter},
+        feature::{FeatureId, FeatureLabel, FeatureSet, StandardFeatures, feature_id_filter},
     },
 };
 use std::iter;
@@ -26,7 +26,13 @@ pub(super) struct CargoResolutionCase {
     /// The host triple -- Linux by default.
     host_platform: &'static str,
 
+    /// Whether dev-dependencies of the initial package are built, as with
+    /// `cargo build --tests` -- off by default.
+    include_dev: bool,
+
     /// Features enabled on the initial package.
+    ///
+    /// `dep:x` features are accepted as valid.
     features: &'static [&'static str],
 
     /// Expected `(package, features)` pairs in the target feature set.
@@ -53,6 +59,7 @@ impl CargoResolutionCase {
             resolver: CargoResolverVersion::V2,
             target_platform: LINUX,
             host_platform: LINUX,
+            include_dev: false,
             features,
             target_expected: &[],
             host_expected: &[],
@@ -77,6 +84,13 @@ impl CargoResolutionCase {
         }
     }
 
+    pub(super) const fn include_dev(self) -> Self {
+        Self {
+            include_dev: true,
+            ..self
+        }
+    }
+
     pub(super) const fn target_expected(
         self,
         target_expected: &'static [ExpectedFeatures],
@@ -97,11 +111,13 @@ impl CargoResolutionCase {
     pub(super) fn check(&self, graph: &PackageGraph, initial: &str, msg_prefix: &str) {
         let cargo_set = self.cargo_set(graph, initial);
         let msg = format!(
-            "{msg_prefix}while checking {:?} resolution of {} on target {} and host {} for {}",
+            "{msg_prefix}while checking {:?} resolution of {} on target {} and host {} \
+             (include dev: {}) for {}",
             self.resolver,
             initial,
             self.target_platform,
             self.host_platform,
+            self.include_dev,
             self.features.join(" ")
         );
         for (id, expected) in self.target_expected {
@@ -123,17 +139,20 @@ impl CargoResolutionCase {
     }
 
     fn cargo_set<'g>(&self, graph: &'g PackageGraph, initial: &str) -> CargoSet<'g> {
+        let initial = package_id(initial);
+        let features = self.features.join(" ");
         let feature_set = graph
-            .resolve_ids([&package_id(initial)])
+            .resolve_ids([&initial])
             .expect("valid package ID")
-            .to_feature_set(named_feature_filter(
+            .to_feature_set(feature_id_filter(
                 StandardFeatures::Default,
-                self.features.iter().copied(),
+                feature_ids(&initial, &features),
             ));
 
         let mut cargo_options = CargoOptions::new();
         cargo_options
             .set_resolver(self.resolver)
+            .set_include_dev(self.include_dev)
             .set_target_platform(platform(self.target_platform))
             .set_host_platform(platform(self.host_platform));
         feature_set
@@ -186,4 +205,13 @@ pub(super) fn feature_labels(features: &str) -> Vec<FeatureLabel<'_>> {
     labels.sort_unstable();
     labels.dedup();
     labels
+}
+
+pub(super) fn feature_ids<'a>(
+    package_id: &'a PackageId,
+    features: &'a str,
+) -> impl Iterator<Item = FeatureId<'a>> {
+    feature_labels(features)
+        .into_iter()
+        .map(move |label| FeatureId::new(package_id, label))
 }

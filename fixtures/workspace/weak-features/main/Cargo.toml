@@ -1,0 +1,53 @@
+[package]
+name = "main"
+version = "0.1.0"
+authors = ["Fake Author <fakeauthor@example.com>"]
+edition = "2018"
+build = "build.rs"
+
+# normaldep is required here and optional in [build-dependencies]; reqbuilddep
+# is the other way round. Each is a single dependency with two declarations, so
+# a weak feature on one of them must not reach the other.
+[dependencies]
+normaldep = { path = "../normaldep" }
+reqbuilddep = { path = "../reqbuilddep", optional = true }
+targetuser = { path = "../targetuser" }
+
+[build-dependencies]
+normaldep = { path = "../normaldep", optional = true }
+reqbuilddep = { path = "../reqbuilddep" }
+hostuser = { path = "../hostuser" }
+optbuilddep = { path = "../optbuilddep", optional = true }
+
+[target.'cfg(unix)'.dependencies]
+platdep = { path = "../platdep" }
+pmdep = { path = "../pmdep" }
+
+[target.'cfg(windows)'.dependencies]
+platdep = { path = "../platdep", optional = true }
+pmdep = { path = "../pmdep", optional = true }
+
+[features]
+# The default set is what the cargo-compare proptests exercise most: the
+# strategy varies packages, platforms and dev-deps, but only picks between
+# default, --all-features and --no-default-features. Enabling the weak features
+# by default, without the implicit features that activate the optional
+# declarations, is what makes the interesting case the common one.
+default = [
+    "normaldep-weak",
+    "reqbuilddep-weak",
+    "platdep-weak",
+    "pmdep-weak",
+    "hostuser-normaldep",
+    "targetuser-reqbuilddep",
+    "dep-colon",
+]
+
+normaldep-weak = ["normaldep?/std"]
+reqbuilddep-weak = ["reqbuilddep?/std"]
+platdep-weak = ["platdep?/std"]
+pmdep-weak = ["pmdep?/std"]
+hostuser-normaldep = ["hostuser/normaldep"]
+targetuser-reqbuilddep = ["targetuser/reqbuilddep"]
+dep-colon = ["dep:optbuilddep"]
+slash = ["optbuilddep/std"]

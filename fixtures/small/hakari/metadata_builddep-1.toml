@@ -9,9 +9,9 @@
 # workspace-hack-line-style = 'full'
 # platforms = ['riscv32em-unknown-none-elf']
 # [[traversal-excludes.ids]]
-# name = 'builddep'
+# name = 'devdep'
 # version = '0.1.0'
-# workspace-path = 'builddep'
+# workspace-path = 'devdep'
 #
 # [[traversal-excludes.ids]]
 # name = 'main'
@@ -24,18 +24,33 @@
 # workspace-path = 'optbuilddep'
 #
 # [[traversal-excludes.ids]]
-# name = 'winbuilddep'
+# name = 'platdep'
 # version = '0.1.0'
-# workspace-path = 'winbuilddep'
+# workspace-path = 'platdep'
+#
+# [[traversal-excludes.ids]]
+# name = 'pmdep'
+# version = '0.1.0'
+# workspace-path = 'pmdep'
+#
+# [[traversal-excludes.ids]]
+# name = 'reqbuilddep'
+# version = '0.1.0'
+# workspace-path = 'reqbuilddep'
 # [[final-excludes.ids]]
 # name = 'main'
 # version = '0.1.0'
 # workspace-path = 'main'
 #
 # [[final-excludes.ids]]
-# name = 'optbuilddep'
+# name = 'normaldep'
 # version = '0.1.0'
-# workspace-path = 'optbuilddep'
+# workspace-path = 'normaldep'
+#
+# [[final-excludes.ids]]
+# name = 'platdep'
+# version = '0.1.0'
+# workspace-path = 'platdep'
 
 ### END HAKARI SECTION
 

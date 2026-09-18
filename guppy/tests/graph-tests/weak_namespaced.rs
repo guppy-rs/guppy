@@ -1,7 +1,7 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-use crate::feature_helpers::assert_features_for_package;
+use crate::feature_helpers::{assert_features_for_package, feature_ids};
 use fixtures::{
     json::{self, JsonFixture},
     package_id,
@@ -9,7 +9,10 @@ use fixtures::{
 use guppy::graph::{
     DependencyDirection,
     cargo::{CargoOptions, CargoResolverVersion, CargoSet},
-    feature::{FeatureId, FeatureLabel, FeatureSet, StandardFeatures, named_feature_filter},
+    feature::{
+        ConditionalLink, FeatureId, FeatureLabel, FeatureLinkContext, FeatureSet, StandardFeatures,
+        named_feature_filter,
+    },
 };
 use target_spec::Platform;
 
@@ -382,6 +385,53 @@ fn package_links_for_conditional_links() {
         actual, expected,
         "every link out of bar comes from main -> arrayvec"
     );
+}
+
+type LinkVisitorFn = dyn Fn(&FeatureLinkContext<'_>, ConditionalLink<'_>) -> bool;
+
+// [dependencies]
+// smallvec = { version = "1.8.0", optional = true }
+//
+// [features]
+// smallvec = ["dep:smallvec", "foo"]
+// smallvec-union = ["smallvec?/union"]
+//
+// Ensure that if smallvec is activated, the visitor receives the link for
+// `smallvec?/union`, and (the more interesting case) doesn't receive it
+// otherwise. The visitors accept every link they receive, so whether `union`
+// is enabled tells us whether the link was received.
+#[test]
+fn weak_feature_stays_off_for_accept_all_visitor() {
+    let graph = JsonFixture::metadata_weak_namespaced_features().graph();
+    let main = package_id(json::METADATA_WEAK_NAMESPACED_ID);
+    let smallvec = package_id(json::METADATA_WEAK_NAMESPACED_SMALLVEC);
+
+    // smallvec-union = ["smallvec?/union"], optional-only.
+    for (features, expected_union) in [("smallvec-union", false), ("smallvec-union smallvec", true)]
+    {
+        let visitors: [(&str, &LinkVisitorFn); 2] = [
+            // This visitor always accepts any links it receives.
+            ("always true", &|_, _| true),
+            // This is a Cargo v1-like visitor.
+            ("V1-like", &|cx, link| {
+                cx.starts_from_initial(&link) || !link.dev_only()
+            }),
+        ];
+        for (visitor_name, visitor) in visitors {
+            let feature_set = graph
+                .feature_graph()
+                .query_forward(feature_ids(&main, features))
+                .expect("valid feature IDs")
+                .resolve_with_fn(|cx, link| visitor(cx, link));
+            assert_eq!(
+                feature_set
+                    .contains((&smallvec, FeatureLabel::Named("union")))
+                    .expect("valid feature ID"),
+                expected_union,
+                "for features {features:?} with the {visitor_name} visitor, smallvec/union presence matches",
+            );
+        }
+    }
 }
 
 fn feature_set_fn(named_features: &[&str]) -> FeatureSet<'static> {

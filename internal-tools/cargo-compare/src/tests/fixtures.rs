@@ -15,6 +15,8 @@ use tempfile::TempDir;
 pub(super) static INSIDE_OUTSIDE_WORKSPACE: &str =
     "../../fixtures/workspace/inside-outside/workspace";
 pub(super) static INSIDE_OUTSIDE_COPY_DIR: &str = "../../fixtures/workspace/inside-outside";
+pub(super) static WEAK_FEATURES_WORKSPACE: &str = "../../fixtures/workspace/weak-features";
+pub(super) static WEAK_FEATURES_COPY_DIR: &str = "../../fixtures/workspace/weak-features";
 pub(super) static CARGO_GUPPY_WORKSPACE: &str = ".";
 
 #[derive(Debug)]
@@ -140,6 +142,18 @@ impl Fixture {
         path => INSIDE_OUTSIDE_WORKSPACE,
         resolver => CargoResolverVersion::V2,
         copy_dir => Some(INSIDE_OUTSIDE_COPY_DIR),
+    }
+    define_fixture! {
+        name => weak_features_v1,
+        path => WEAK_FEATURES_WORKSPACE,
+        resolver => CargoResolverVersion::V1,
+        copy_dir => Some(WEAK_FEATURES_COPY_DIR),
+    }
+    define_fixture! {
+        name => weak_features_v2,
+        path => WEAK_FEATURES_WORKSPACE,
+        resolver => CargoResolverVersion::V2,
+        copy_dir => Some(WEAK_FEATURES_COPY_DIR),
     }
     define_fixture! {
         name => cargo_guppy,

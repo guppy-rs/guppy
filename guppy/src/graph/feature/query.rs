@@ -284,18 +284,41 @@ impl<'g> FeatureQuery<'g> {
     /// Resolves this query into a set of known feature IDs.
     ///
     /// This is the entry point for iterators.
+    ///
+    /// The result is every feature reachable from the initials, ignoring any
+    /// conditions attached to it (such as whether it is a dev-dependency or a
+    /// weak dependency). This does not determine which features Cargo would
+    /// enable in a particular build.
+    ///
+    /// To simulate a Cargo build, pass a set of workspace features to
+    /// [`FeatureSet::into_cargo_set`], then inspect
+    /// [`CargoSet::target_features`] and [`CargoSet::host_features`].
+    ///
+    /// [`CargoSet::target_features`]: crate::graph::cargo::CargoSet::target_features
+    /// [`CargoSet::host_features`]: crate::graph::cargo::CargoSet::host_features
     pub fn resolve(self) -> FeatureSet<'g> {
         FeatureSet::new(self)
     }
 
     /// Resolves this query into a set of known feature IDs, using the provided visitor to
     /// determine which links are followed.
+    ///
+    /// The visitor can be called twice for a weak dependency feature
+    /// (`dep?/feature`). See [`FeatureLinkVisitor::visit_link`] for details.
+    ///
+    /// With a visitor that accepts every link, a reverse query returns the same
+    /// set as [`resolve`](Self::resolve). Note that (unlike with `resolve`), a
+    /// forward query can return a smaller set of features because of weak links
+    /// not being activated.
     pub fn resolve_with(self, visitor: impl FeatureLinkVisitor<'g>) -> FeatureSet<'g> {
         FeatureSet::with_link_visitor(self, visitor)
     }
 
     /// Resolves this query into a set of known feature IDs, using the provided visitor function to
     /// determine which links are followed.
+    ///
+    /// The visitor function can be called twice for a weak dependency feature
+    /// (`dep?/feature`). See [`FeatureLinkVisitor::visit_link`] for details.
     pub fn resolve_with_fn(
         self,
         visitor_fn: impl FnMut(&FeatureLinkContext<'g>, ConditionalLink<'g>) -> bool,
@@ -329,11 +352,8 @@ impl<'g> FeatureLinkContext<'g> {
     /// Returns true if the link's starting endpoint (`from` for forward
     /// queries, `to` for reverse queries) is one of the query's initials.
     pub fn starts_from_initial(&self, link: &ConditionalLink<'g>) -> bool {
-        let feature_ix = match self.direction() {
-            DependencyDirection::Forward => link.from().feature_ix(),
-            DependencyDirection::Reverse => link.to().feature_ix(),
-        };
-        self.query.initials.contains_ix(feature_ix)
+        let (start, _) = link.endpoints_in(self.direction());
+        self.query.initials.contains_ix(start.feature_ix())
     }
 }
 
@@ -341,6 +361,48 @@ impl<'g> FeatureLinkContext<'g> {
 /// resolve operation.
 pub trait FeatureLinkVisitor<'g> {
     /// Returns true if this conditional link should be followed during a resolve operation.
+    ///
+    /// # Weak dependency features
+    ///
+    /// Most links are visited at most once per resolve. The exception is a weak
+    /// dependency feature (`dep?/feature`) on a dependency with both required
+    /// and optional declarations. For example:
+    ///
+    /// ```toml
+    /// [dependencies]
+    /// foo = { version = "1" }
+    ///
+    /// [build-dependencies]
+    /// foo = { version = "1", optional = true }
+    ///
+    /// [features]
+    /// weak = ["foo?/std"]
+    /// ```
+    ///
+    /// Cargo applies `foo?/std` to each declaration of `foo` separately, so
+    /// this method can be called twice for the link from `weak` to `foo/std`:
+    ///
+    /// * First with a link covering the required declarations of `foo`: here,
+    ///   `[dependencies]`.
+    /// * Then with a link covering the optional ones: here,
+    ///   `[build-dependencies]`.
+    ///
+    /// Both links have the same endpoints. Use
+    /// [`ConditionalLink::declarations`] to tell them apart. The feature graph
+    /// has one edge for the two links, and that edge is followed if this method
+    /// returns true for either of them.
+    ///
+    /// A visitor that keeps state for each link, such as a count of visits,
+    /// should take this into account.
+    ///
+    /// When the two links are offered depends on the query's direction:
+    ///
+    /// * A forward query offers the `Required` link as soon as `weak` is
+    ///   reached. It offers the `Optional` link only once `dep:foo` is
+    ///   activated, which may be at an unrelated point later in the traversal.
+    /// * A reverse query offers both links (`Required` first) as soon as
+    ///   `foo/std` is reached. Reverse queries don't try to model when `foo` is
+    ///   activated.
     fn visit_link(&mut self, cx: &FeatureLinkContext<'g>, link: ConditionalLink<'g>) -> bool;
 }
 

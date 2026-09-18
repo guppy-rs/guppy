@@ -3,21 +3,14 @@
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
-### Fixed
+### Added
 
-- With the version 2 and 3 feature resolvers, an optional build dependency
-  activated only through its own package's features was never built:
-
-  ```toml
-  [build-dependencies]
-  cc = { version = "1", optional = true }
-
-  [features]
-  bundled = ["dep:cc"]
-  ```
-
-  Enabling `bundled` now builds `cc` on the host, as Cargo does. `cc/feature`
-  entries and the version 1 resolver were not affected.
+- `ConditionalLink::declarations`, which returns a new `LinkDeclarations`
+  enum: whether the link's platform statuses were derived from every
+  declaration of the dependency (`Unsplit`), only the ones without
+  `optional = true` (`Required`), or only the ones with it (`Optional`).
+  `LinkDeclarations::includes_required` and `includes_optional` answer whether
+  a link covers a given kind of declaration.
 
 ### Changed
 
@@ -52,7 +45,103 @@
   - `main/serde -> serde/std`, also from `serde/std`. `package_links` returns
     just `main -> serde`.
 
+- `FeatureQuery::resolve_with` and `resolve_with_fn` now visit a weak dependency
+  feature (`dep?/feature`) once for each kind of declaration of `dep`, not once
+  for the whole edge. Consider:
+
+  ```toml
+  [dependencies]
+  foo = { version = "1" }
+
+  [build-dependencies]
+  foo = { version = "1", optional = true }
+
+  [features]
+  weak = ["foo?/std"]
+  ```
+
+  The visitor sees `weak -> foo/std` as a `Required` link covering
+  `[dependencies]`. If `dep:foo` is activated, it sees the same endpoints again
+  as an `Optional` link covering `[build-dependencies]`. The edge is followed if
+  the visitor accepts either link. Use `ConditionalLink::declarations` to tell
+  the two apart. `FeatureSet::conditional_links` is unchanged: it returns one
+  `Unsplit` link for the edge.
+
+  This is part of the fix to weak dependency features described below.
+
 ### Fixed
+
+- With the version 2 and 3 feature resolvers, an optional build dependency
+  activated only through its own package's features was never built:
+
+  ```toml
+  [build-dependencies]
+  cc = { version = "1", optional = true }
+
+  [features]
+  bundled = ["dep:cc"]
+  ```
+
+  Enabling `bundled` now builds `cc` on the host, as Cargo does. `cc/feature`
+  entries and the version 1 resolver were not affected.
+
+- Fixed a number of bugs in guppy's simulation of weak dependency features
+  (`dep?/feature`). guppy tracked whether `dep` was activated at all, whereas
+  Cargo resolves each declaration of `dep` on its own. Consider:
+
+  ```toml
+  [dependencies]
+  foo = { version = "1" }
+  bar = { version = "1", optional = true }
+
+  [build-dependencies]
+  foo = { version = "1", optional = true }
+  bar = { version = "1" }
+  helper = { version = "1" }  # helper depends on foo itself
+
+  [features]
+  weak = ["foo?/std", "bar?/std"]
+  ```
+
+  Previously, enabling `weak`:
+
+  - activated `dep:foo`, so `foo` was also built on the host. It no longer
+    does, and the feature graph no longer has an edge from `weak` to
+    `dep:foo`. A dependency required on one platform and optional on another
+    had `dep:foo` added the same way.
+  - enabled `std` on the `foo` that `helper` builds on the host, even though
+    nothing had activated foo's optional build declaration. Now only the `foo`
+    built on the target gets `std`.
+  - activated `dep:bar` in the same way, so `bar` was also built on the target.
+    Now `bar` only gets `std` on the host, where it is required, and is not
+    built on the target.
+
+  Of these, the second did not affect the version 1 resolver, which unifies
+  features across the host and the target.
+
+  As part of this fix, `FeatureQuery::resolve_with` and `resolve_with_fn` visit
+  a weak dependency feature once for each kind of declaration. See the entry
+  under "Changed" above.
+
+- Reverse feature queries with `FeatureQuery::resolve_with` or
+  `resolve_with_fn` could leave out weak dependency features, depending on
+  which features the query started from. For example, `regex-automata` has:
+
+  ```toml
+  [dependencies]
+  aho-corasick = { version = "1", optional = true }
+
+  [features]
+  logging = ["aho-corasick?/logging"]
+  ```
+
+  A reverse query from `aho-corasick/logging` did not return
+  `regex-automata/logging`.
+
+  Reverse queries now offer both links of a weak dependency feature as soon as
+  it is reached. With a visitor that accepts every link, a reverse query
+  returns the same set as `FeatureQuery::resolve`. Forward queries are
+  unchanged.
 
 - Feature edges are no longer dropped when one dependency name resolves to two
   different packages ([#682]). A `package = "..."` rename can make two

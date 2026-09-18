@@ -33,28 +33,35 @@ workspace-path = 'builddep'
 features = []
 
 [[metadata.features-only]]
-name = 'main'
+name = 'normaldep'
 version = '0.1.0'
-workspace-path = 'main'
+workspace-path = 'normaldep'
 features = []
 
 [[host-package]]
-name = 'builddep'
+name = 'devdep'
 version = '0.1.0'
-workspace-path = 'builddep'
+workspace-path = 'devdep'
 status = 'initial'
 features = []
 
 [[host-package]]
-name = 'main'
+name = 'hostuser'
 version = '0.1.0'
-workspace-path = 'main'
+workspace-path = 'hostuser'
 status = 'initial'
 features = []
 
 [[host-package]]
-name = 'winbuilddep'
+name = 'normaldep'
 version = '0.1.0'
-workspace-path = 'winbuilddep'
+workspace-path = 'normaldep'
+status = 'initial'
+features = []
+
+[[host-package]]
+name = 'targetuser'
+version = '0.1.0'
+workspace-path = 'targetuser'
 status = 'initial'
 features = []

@@ -278,29 +278,54 @@ impl<'g> FeatureGraph<'g> {
         &self.inner.graph
     }
 
-    /// If this is a conditional edge, return the conditional link. Otherwise, return None.
-    pub(super) fn edge_to_conditional_link(
+    /// If this is a conditional edge, returns the link or links it is evaluated
+    /// as during a resolve. Otherwise, return None.
+    pub(super) fn edge_to_links(
         &self,
         source_ix: NodeIndex<FeatureIx>,
         target_ix: NodeIndex<FeatureIx>,
         edge_ix: EdgeIndex<FeatureIx>,
         edge: Option<&'g FeatureEdge>,
-    ) -> Option<(ConditionalLink<'g>, Option<WeakIndex>)> {
+    ) -> Option<EdgeLinks<'g>> {
         let edge = edge.unwrap_or_else(|| &self.dep_graph()[edge_ix]);
+        let make = |inner| ConditionalLink::new(*self, source_ix, target_ix, edge_ix, inner);
 
         match edge {
             FeatureEdge::NamedFeature | FeatureEdge::FeatureToBase => None,
             FeatureEdge::DependenciesSection(link) | FeatureEdge::NamedFeatureDepColon(link) => {
-                let link = ConditionalLink::new(*self, source_ix, target_ix, edge_ix, link);
                 // Dependency section and dep:foo style conditional links are always non-weak.
-                let weak_index = None;
-                Some((link, weak_index))
+                Some(EdgeLinks::NonWeak(make(link)))
             }
-            FeatureEdge::NamedFeatureWithSlash { link, weak_index } => {
-                let link = ConditionalLink::new(*self, source_ix, target_ix, edge_ix, link);
-                Some((link, *weak_index))
-            }
+            FeatureEdge::NamedFeatureWithSlash { link, slash } => Some(match slash {
+                SlashForm::Weak(weak) => EdgeLinks::Weak {
+                    required: weak.required.as_ref().map(|half| make(half.get())),
+                    optional: make(weak.optional.get()),
+                    index: weak.index,
+                },
+                SlashForm::Strong => EdgeLinks::NonWeak(make(link)),
+            }),
         }
+    }
+
+    /// If this is a conditional edge, returns the link covering every
+    /// declaration it was derived from.
+    pub(super) fn edge_to_full_link(
+        &self,
+        source_ix: NodeIndex<FeatureIx>,
+        target_ix: NodeIndex<FeatureIx>,
+        edge_ix: EdgeIndex<FeatureIx>,
+        edge: Option<&'g FeatureEdge>,
+    ) -> Option<ConditionalLink<'g>> {
+        let edge = edge.unwrap_or_else(|| &self.dep_graph()[edge_ix]);
+        let link = match edge {
+            FeatureEdge::NamedFeature | FeatureEdge::FeatureToBase => return None,
+            FeatureEdge::DependenciesSection(link)
+            | FeatureEdge::NamedFeatureDepColon(link)
+            | FeatureEdge::NamedFeatureWithSlash { link, slash: _ } => link,
+        };
+        Some(ConditionalLink::new(
+            *self, source_ix, target_ix, edge_ix, link,
+        ))
     }
 
     fn feature_ix_depends_on(
@@ -816,10 +841,79 @@ impl<'g> ConditionalLink<'g> {
         }
     }
 
-    /// Returns true if this edge is dev-only, i.e. code from this edge will not be included in
-    /// normal builds.
+    /// Returns true if this edge is dev-only, i.e. code from this edge will not
+    /// be included in normal builds.
+    ///
+    /// This is scoped to the declarations for this link. For example, a
+    /// dependency might be optional as a normal dependency but required as a
+    /// dev-dependency. In that case, the
+    /// [`Required`](LinkDeclarations::Required) version of the link is dev-only
+    /// while the [`Optional`](LinkDeclarations::Optional) half is not.
+    /// [`Unsplit`](LinkDeclarations::Unsplit) is the union of both, so it
+    /// isn't dev-only either.
     pub fn dev_only(&self) -> bool {
         self.inner.dev_only()
+    }
+
+    /// Returns the declarations of the dependency that this link's platform
+    /// statuses were derived from.
+    ///
+    /// A package can declare the same dependency more than once, and some of
+    /// those declarations can be optional while others are required. For
+    /// example:
+    ///
+    /// ```toml
+    /// [dependencies]
+    /// foo = { version = "1" }
+    ///
+    /// [build-dependencies]
+    /// foo = { version = "1", optional = true }
+    ///
+    /// [features]
+    /// weak = ["foo?/std"]
+    /// ```
+    ///
+    /// Cargo applies `foo?/std` to each declaration separately.
+    ///
+    /// * The required normal dependency gets `std` as soon as `weak` is
+    ///   enabled.
+    /// * The optional build dependency gets `std` only if `dep:foo` is
+    ///   also activated.
+    ///
+    /// To model this, [`FeatureQuery::resolve_with`] may call the visitor twice
+    /// for the link from `main/weak` to `foo/std`:
+    ///
+    /// * Once with a [`Required`](LinkDeclarations::Required) link. Here,
+    ///   [`normal`](Self::normal) is always enabled and
+    ///   [`build`](Self::build) is never enabled.
+    /// * Once with an [`Optional`](LinkDeclarations::Optional) link. Here,
+    ///   `normal` is never enabled and `build` is always enabled.
+    ///
+    /// Both links have the same [`from`](Self::from) and [`to`](Self::to); this
+    /// method is the way to tell them apart. The link is followed if the
+    /// visitor accepts either one.
+    ///
+    /// If `foo` has no required declarations, the required link is skipped.
+    /// When each link is offered depends on the query's direction; see
+    /// [`FeatureLinkVisitor::visit_link`].
+    ///
+    /// Outside of a resolve, the same edge is a single link.
+    /// [`FeatureSet::conditional_links`] returns it once, with
+    /// [`Unsplit`](LinkDeclarations::Unsplit) and the union of both sets of
+    /// statuses.
+    ///
+    /// For other kinds of links, the return value is fixed:
+    ///
+    /// * `foo/std` and `dep:foo` activate every declaration of `foo`, so their
+    ///   links are always `Unsplit`.
+    /// * A link from a package's base feature into a dependency is `Required`.
+    /// * A link from `dep:foo` into `foo` is `Optional`.
+    ///
+    /// [`FeatureQuery::resolve_with`]: crate::graph::feature::FeatureQuery::resolve_with
+    /// [`FeatureSet::conditional_links`]: crate::graph::feature::FeatureSet::conditional_links
+    /// [`FeatureLinkVisitor::visit_link`]: crate::graph::feature::FeatureLinkVisitor::visit_link
+    pub fn declarations(&self) -> LinkDeclarations {
+        self.inner.declarations
     }
 
     /// Returns the `PackageLink`s this `ConditionalLink` was derived from.
@@ -873,8 +967,14 @@ impl<'g> ConditionalLink<'g> {
         self.edge_ix
     }
 
-    pub(super) fn package_edge_ixs(&self) -> &'g PackageEdgeIxs {
-        &self.inner.package_edge_ixs
+    pub(super) fn endpoints_in(
+        &self,
+        direction: DependencyDirection,
+    ) -> (FeatureMetadata<'g>, FeatureMetadata<'g>) {
+        match direction {
+            DependencyDirection::Forward => (self.from(), self.to()),
+            DependencyDirection::Reverse => (self.to(), self.from()),
+        }
     }
 }
 
@@ -883,6 +983,7 @@ impl fmt::Debug for ConditionalLink<'_> {
         f.debug_struct("ConditionalLink")
             .field("from", &self.from())
             .field("to", &self.to())
+            .field("declarations", &self.declarations())
             .field("normal", &self.normal())
             .field("build", &self.build())
             .field("dev", &self.dev())
@@ -979,6 +1080,27 @@ impl FeatureNode {
     }
 }
 
+/// The conditional link or links an edge is evaluated as during a resolve.
+pub(super) enum EdgeLinks<'g> {
+    /// A non-weak conditional link, evaluated once.
+    NonWeak(ConditionalLink<'g>),
+
+    /// A weak link, `a = ["foo?/b"]`.
+    Weak {
+        /// The link covering required declarations of this dependency.
+        ///
+        /// This is `None` if the dependency is never declared as required.
+        required: Option<ConditionalLink<'g>>,
+
+        /// The link covering optional declarations of this dependency.
+        optional: ConditionalLink<'g>,
+
+        /// The index of the buffer that holds `optional` back in a forward
+        /// query.
+        index: WeakIndex,
+    },
+}
+
 /// Information about why a feature depends on another feature.
 ///
 /// Not part of the stable API -- only exposed for FeatureSet::links().
@@ -1033,8 +1155,60 @@ pub enum FeatureEdge {
     /// ```
     NamedFeatureWithSlash {
         link: ConditionalLinkImpl,
-        weak_index: Option<WeakIndex>,
+        slash: SlashForm,
     },
+}
+
+/// Which form a [`FeatureEdge::NamedFeatureWithSlash`] takes. Not part of the
+/// stable API.
+#[derive(Clone, Debug)]
+#[doc(hidden)]
+pub enum SlashForm {
+    /// The feature applies to every declaration of the dependency as soon as it
+    /// is enabled. There are three ways to get here:
+    ///
+    /// * The feature is written without the `?`, as `a = ["foo/b"]`.
+    /// * It is written as `foo?/b`, but `foo` has no optional declarations, so
+    ///   `foo?/b` means the same as `foo/b`.
+    /// * `a` has both forms, as in `a = ["foo?/b", "foo/b"]`. Both map to the
+    ///   same edge, and the non-weak form wins.
+    Strong,
+
+    /// The weak form, `a = ["foo?/b"]`, on a dependency that has at least one
+    /// optional declaration. For those declarations, the feature only applies
+    /// once `foo` is activated.
+    Weak(Box<WeakSlashImpl>),
+}
+
+/// Extra data carried by a weak [`FeatureEdge::NamedFeatureWithSlash`]
+/// (`foo?/b`). Not part of the stable API.
+#[derive(Clone, Debug)]
+#[doc(hidden)]
+pub struct WeakSlashImpl {
+    /// The half covering `foo`'s required declarations, absent if it has none.
+    pub(super) required: Option<EnabledLink>,
+
+    /// The half covering `foo`'s optional declarations. Always present: an
+    /// edge with no optional declarations is [`SlashForm::Strong`].
+    pub(super) optional: EnabledLink,
+
+    pub(super) index: WeakIndex,
+}
+
+/// A [`ConditionalLinkImpl`] that is enabled for at least one dependency kind
+/// on at least one platform. Not part of the stable API.
+#[derive(Clone, Debug)]
+#[doc(hidden)]
+pub struct EnabledLink(ConditionalLinkImpl);
+
+impl EnabledLink {
+    pub(super) fn new(link: ConditionalLinkImpl) -> Option<Self> {
+        (!link.is_never()).then_some(Self(link))
+    }
+
+    pub(super) fn get(&self) -> &ConditionalLinkImpl {
+        &self.0
+    }
 }
 
 /// Not part of the stable API -- only exposed for FeatureSet::links().
@@ -1042,6 +1216,7 @@ pub enum FeatureEdge {
 #[doc(hidden)]
 pub struct ConditionalLinkImpl {
     pub(super) package_edge_ixs: PackageEdgeIxs,
+    pub(super) declarations: LinkDeclarations,
     pub(super) normal: PlatformStatusImpl,
     pub(super) build: PlatformStatusImpl,
     pub(super) dev: PlatformStatusImpl,
@@ -1051,6 +1226,68 @@ impl ConditionalLinkImpl {
     #[inline]
     fn dev_only(&self) -> bool {
         self.normal.is_never() && self.build.is_never()
+    }
+
+    #[inline]
+    pub(super) fn is_never(&self) -> bool {
+        self.normal.is_never() && self.build.is_never() && self.dev.is_never()
+    }
+}
+
+/// The declarations of a dependency that a [`ConditionalLink`] was derived
+/// from.
+///
+/// Returned by [`ConditionalLink::declarations`]. For more information, see the
+/// docs for that method.
+#[derive(Copy, Clone, Debug, Eq, Hash, PartialEq)]
+pub enum LinkDeclarations {
+    /// The link was not split by declaration, so it covers every declaration
+    /// of the dependency.
+    Unsplit,
+
+    /// Only the declarations without `optional = true`.
+    Required,
+
+    /// Only the declarations with `optional = true`.
+    Optional,
+}
+
+impl LinkDeclarations {
+    /// Returns true if these declarations include the ones without
+    /// `optional = true`: that is, for [`Unsplit`](Self::Unsplit) and
+    /// [`Required`](Self::Required).
+    ///
+    /// Prefer this to simply checking equality against `Required`. A link that
+    /// was not split by declaration is `Unsplit`, even if every declaration it
+    /// covers is a required one. For example, with:
+    ///
+    /// ```toml
+    /// [dependencies]
+    /// foo = { version = "1" }
+    ///
+    /// [features]
+    /// a = ["foo/std"]
+    /// ```
+    ///
+    /// the link from `a` to `foo/std` is `Unsplit`, not `Required`.
+    pub fn includes_required(self) -> bool {
+        match self {
+            Self::Unsplit | Self::Required => true,
+            Self::Optional => false,
+        }
+    }
+
+    /// Returns true if these declarations include the ones with
+    /// `optional = true`: that is, for [`Unsplit`](Self::Unsplit) and
+    /// [`Optional`](Self::Optional).
+    ///
+    /// As with [`includes_required`](Self::includes_required), prefer this to
+    /// checking equality against `Optional`.
+    pub fn includes_optional(self) -> bool {
+        match self {
+            Self::Unsplit | Self::Optional => true,
+            Self::Required => false,
+        }
     }
 }
 

@@ -26,16 +26,23 @@ status = 'initial'
 features = []
 
 [[host-package]]
-name = 'main'
+name = 'optbuilddep'
 version = '0.1.0'
-workspace-path = 'main'
+workspace-path = 'optbuilddep'
 status = 'initial'
 features = []
 
 [[host-package]]
-name = 'optbuilddep'
+name = 'reqbuilddep'
 version = '0.1.0'
-workspace-path = 'optbuilddep'
+workspace-path = 'reqbuilddep'
+status = 'initial'
+features = []
+
+[[host-package]]
+name = 'targetuser'
+version = '0.1.0'
+workspace-path = 'targetuser'
 status = 'initial'
 features = []
 

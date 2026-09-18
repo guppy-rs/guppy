@@ -14,23 +14,28 @@
 # workspace-path = 'builddep'
 #
 # [[traversal-excludes.ids]]
-# name = 'optbuilddep'
+# name = 'pmdep'
 # version = '0.1.0'
-# workspace-path = 'optbuilddep'
+# workspace-path = 'pmdep'
+#
+# [[traversal-excludes.ids]]
+# name = 'targetuser'
+# version = '0.1.0'
+# workspace-path = 'targetuser'
 #
 # [[traversal-excludes.ids]]
 # name = 'winbuilddep'
 # version = '0.1.0'
 # workspace-path = 'winbuilddep'
 # [[final-excludes.ids]]
-# name = 'main'
+# name = 'normaldep'
 # version = '0.1.0'
-# workspace-path = 'main'
+# workspace-path = 'normaldep'
 #
 # [[final-excludes.ids]]
-# name = 'optbuilddep'
+# name = 'pmdep'
 # version = '0.1.0'
-# workspace-path = 'optbuilddep'
+# workspace-path = 'pmdep'
 
 ### END HAKARI SECTION
 

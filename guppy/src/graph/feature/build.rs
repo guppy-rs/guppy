@@ -7,8 +7,9 @@ use crate::{
         DepRequiredOrOptional, DependencyReq, FeatureIndexInPackage, FeatureIx, NamedFeatureDep,
         PackageGraph, PackageIx, PackageLink, PackageMetadata,
         feature::{
-            ConditionalLinkImpl, FeatureEdge, FeatureGraphImpl, FeatureLabel, FeatureMetadataImpl,
-            FeatureNode, PackageEdgeIxs, WeakDependencies, WeakIndex,
+            ConditionalLinkImpl, EnabledLink, FeatureEdge, FeatureGraphImpl, FeatureLabel,
+            FeatureMetadataImpl, FeatureNode, LinkDeclarations, PackageEdgeIxs, SlashForm,
+            WeakDependencies, WeakSlashImpl,
         },
     },
     platform::PlatformStatusImpl,
@@ -130,10 +131,12 @@ impl FeatureGraphBuildState {
 
                 // A cross-package edge lands on a different node per link, so
                 // emit one per link. Every link also needs a weak index.
-                let mut weak_index = None;
                 for link in links {
-                    let link_weak_index = weak.then(|| self.weak.insert(link.edge_ix()));
-                    weak_index = weak_index.or(link_weak_index);
+                    let slash = if *weak {
+                        self.make_weak_slash_impl(&metadata, link)
+                    } else {
+                        SlashForm::Strong
+                    };
 
                     // Dependency from (`main`, `a`) to (`dep, `foo`)
                     if let Some(cross_node) = self.make_named_feature_node(
@@ -148,10 +151,7 @@ impl FeatureGraphBuildState {
                         // PackageLink.
                         nodes_edges.push((
                             cross_node,
-                            Self::make_named_feature_cross_edge(
-                                slice::from_ref(link),
-                                link_weak_index,
-                            ),
+                            Self::make_named_feature_cross_edge(slice::from_ref(link), slash),
                         ));
                     };
                 }
@@ -162,17 +162,26 @@ impl FeatureGraphBuildState {
                     // If the package is present as an optional dependency, it is
                     // implicitly activated by the feature:
                     // from (`main`, `a`) to (`main`, `dep:dep`)
-                    if let Some(same_node) = self.make_named_feature_node(
-                        &metadata,
-                        from_label,
-                        &metadata,
-                        FeatureLabel::OptionalDependency(dep_name),
-                        // Don't warn if this dep isn't optional.
-                        false,
-                    ) {
+                    //
+                    // But this is skipped for weak `dep?/foo`, which never
+                    // activates `dep:dep`. If we stored these kinds of edges,
+                    // while doing a forward traversal we'd let a required
+                    // declaration's edge release it and spuriously activate
+                    // `dep:dep` (and thus the optional declaration). The weak
+                    // cross edge above is sufficient on its own.
+                    if !*weak
+                        && let Some(same_node) = self.make_named_feature_node(
+                            &metadata,
+                            from_label,
+                            &metadata,
+                            FeatureLabel::OptionalDependency(dep_name),
+                            // Don't warn if this dep isn't optional.
+                            false,
+                        )
+                    {
                         nodes_edges.push((
                             same_node,
-                            Self::make_named_feature_cross_edge(links, weak_index),
+                            Self::make_named_feature_cross_edge(links, SlashForm::Strong),
                         ));
                     }
 
@@ -206,7 +215,7 @@ impl FeatureGraphBuildState {
                     {
                         nodes_edges.push((
                             same_named_feature_node,
-                            Self::make_named_feature_cross_edge(links, None),
+                            Self::make_named_feature_cross_edge(links, SlashForm::Strong),
                         ));
                     }
                 }
@@ -287,46 +296,88 @@ impl FeatureGraphBuildState {
     ///
     /// (a link (`from`, `a`) to (`dep`, `foo`) is created.
     ///
-    /// If `dep` is optional, the edge (`from`, `a`) to (`from`, `dep`) is also a
-    /// `NamedFeatureWithSlash` edge.
-    fn make_named_feature_cross_edge(
-        links: &[PackageLink<'_>],
-        weak_index: Option<WeakIndex>,
-    ) -> FeatureEdge {
+    /// If `dep` is optional and the reference is not weak, the edge (`from`, `a`)
+    /// to (`from`, `dep`) is also a `NamedFeatureWithSlash` edge.
+    fn make_named_feature_cross_edge(links: &[PackageLink<'_>], slash: SlashForm) -> FeatureEdge {
         // This edge is enabled if the feature is enabled, which means the union of (required,
         // optional) build conditions.
         FeatureEdge::NamedFeatureWithSlash {
             link: Self::make_full_conditional_link_impl(links),
-            weak_index,
+            slash,
         }
+    }
+
+    /// Returns [`SlashForm::Strong`] if the dependency has no optional
+    /// declarations -- in that case, `foo?/b` behaves like `foo/b`, so modeling
+    /// weak dependencies isn't required.
+    fn make_weak_slash_impl(
+        &mut self,
+        metadata: &PackageMetadata<'_>,
+        link: &PackageLink<'_>,
+    ) -> SlashForm {
+        let optional = EnabledLink::new(Self::make_conditional_link_impl(
+            slice::from_ref(link),
+            LinkDeclarations::Optional,
+            |req| req.inner.optional.build_if.clone(),
+        ));
+        let Some(optional) = optional else {
+            return SlashForm::Strong;
+        };
+
+        let required = EnabledLink::new(Self::make_conditional_link_impl(
+            slice::from_ref(link),
+            LinkDeclarations::Required,
+            |req| req.inner.required.build_if.clone(),
+        ));
+        let optional_dependency_ix = metadata
+            .get_feature_idx(FeatureLabel::OptionalDependency(link.dep_name()))
+            .and_then(|idx| self.lookup_node(&FeatureNode::new(metadata.package_ix(), idx)))
+            .unwrap_or_else(|| {
+                panic!(
+                    "for package '{}', optional declarations of '{}' have a dep: feature node",
+                    metadata.id(),
+                    link.dep_name(),
+                )
+            });
+        SlashForm::Weak(Box::new(WeakSlashImpl {
+            required,
+            optional,
+            index: self.weak.insert(link.edge_ix(), optional_dependency_ix),
+        }))
     }
 
     // Creates a "full" conditional link, unifying requirements across all dependency lines -- and,
     // where a rename makes one dependency name resolve to several packages, across every link for
-    // that name. Every link's edge index is recorded, so `package_links` reports all of them and
-    // `feature/weak.rs` releases each one's buffer.
+    // that name. Every link's edge index is recorded, so `package_links` reports all of them.
     // This should not be used in add_dependency_edges below!
     fn make_full_conditional_link_impl(links: &[PackageLink<'_>]) -> ConditionalLinkImpl {
         // This edge is enabled if the feature is enabled, which means the union of (required,
         // optional) build conditions.
-        fn combine_req_opt(req: DependencyReq<'_>) -> PlatformStatusImpl {
+        Self::make_conditional_link_impl(links, LinkDeclarations::Unsplit, |req| {
             let mut required = req.inner.required.build_if.clone();
             required.extend(&req.inner.optional.build_if);
             required
-        }
+        })
+    }
 
+    fn make_conditional_link_impl<'g>(
+        links: &[PackageLink<'g>],
+        declarations: LinkDeclarations,
+        status: impl Fn(DependencyReq<'g>) -> PlatformStatusImpl,
+    ) -> ConditionalLinkImpl {
         let (first, rest) = links.split_first().expect("at least one link");
         let mut combined = ConditionalLinkImpl {
             package_edge_ixs: PackageEdgeIxs::single(first.edge_ix()),
-            normal: combine_req_opt(first.normal()),
-            build: combine_req_opt(first.build()),
-            dev: combine_req_opt(first.dev()),
+            declarations,
+            normal: status(first.normal()),
+            build: status(first.build()),
+            dev: status(first.dev()),
         };
         for link in rest {
             combined.package_edge_ixs.push(link.edge_ix());
-            combined.normal.extend(&combine_req_opt(link.normal()));
-            combined.build.extend(&combine_req_opt(link.build()));
-            combined.dev.extend(&combine_req_opt(link.dev()));
+            combined.normal.extend(&status(link.normal()));
+            combined.build.extend(&status(link.build()));
+            combined.dev.extend(&status(link.dev()));
         }
         combined
     }
@@ -378,8 +429,8 @@ impl FeatureGraphBuildState {
             .chain(iter::once((DependencyKind::Build, link.build())))
             .chain(iter::once((DependencyKind::Development, link.dev())));
 
-        let mut required_req = FeatureReq::new(link);
-        let mut optional_req = FeatureReq::new(link);
+        let mut required_req = FeatureReq::new(link, LinkDeclarations::Required);
+        let mut optional_req = FeatureReq::new(link, LinkDeclarations::Optional);
         for (kind, dependency_req) in unified_metadata {
             required_req.add_features(kind, &dependency_req.inner.required, &mut self.warnings);
             optional_req.add_features(kind, &dependency_req.inner.optional, &mut self.warnings);
@@ -484,24 +535,25 @@ impl FeatureGraphBuildState {
                         .graph
                         .edge_weight_mut(edge_ix)
                         .expect("this edge was just found");
-                    #[allow(clippy::single_match)]
                     match (old_edge, edge) {
                         (
                             FeatureEdge::NamedFeatureWithSlash {
-                                weak_index: old_weak_index,
-                                ..
+                                slash: old_slash, ..
                             },
-                            FeatureEdge::NamedFeatureWithSlash { weak_index, .. },
+                            FeatureEdge::NamedFeatureWithSlash { slash, .. },
                         ) => {
-                            if old_weak_index.is_some() && weak_index.is_some() {
+                            if let (SlashForm::Weak(old_weak), SlashForm::Weak(weak)) =
+                                (&*old_slash, &slash)
+                            {
                                 debug_assert_eq!(
-                                    *old_weak_index, weak_index,
-                                    "weak indexes should match if some"
+                                    old_weak.index, weak.index,
+                                    "weak indexes should match if both are weak"
                                 );
                             }
                             // Upgrade this edge from weak to non-weak.
-                            if weak_index.is_none() {
-                                *old_weak_index = None;
+                            match slash {
+                                SlashForm::Strong => *old_slash = SlashForm::Strong,
+                                SlashForm::Weak(_) => {}
                             }
                         }
                         (
@@ -552,6 +604,7 @@ impl FeatureGraphBuildState {
 #[derive(Debug)]
 struct FeatureReq<'g> {
     link: PackageLink<'g>,
+    declarations: LinkDeclarations,
     to: PackageMetadata<'g>,
     edge_ix: EdgeIndex<PackageIx>,
     to_default_idx: FeatureIndexInPackage,
@@ -560,10 +613,11 @@ struct FeatureReq<'g> {
 }
 
 impl<'g> FeatureReq<'g> {
-    fn new(link: PackageLink<'g>) -> Self {
+    fn new(link: PackageLink<'g>, declarations: LinkDeclarations) -> Self {
         let to = link.to();
         Self {
             link,
+            declarations,
             to,
             edge_ix: link.edge_ix(),
             to_default_idx: to
@@ -617,10 +671,11 @@ impl<'g> FeatureReq<'g> {
         status: &PlatformStatusImpl,
     ) {
         let package_edge_ix = self.edge_ix;
+        let declarations = self.declarations;
         if !status.is_never() {
             self.features
                 .entry(feature_idx)
-                .or_insert_with(|| DependencyBuildState::new(package_edge_ix))
+                .or_insert_with(|| DependencyBuildState::new(package_edge_ix, declarations))
                 .extend(dep_kind, status);
         }
     }
@@ -631,7 +686,10 @@ impl<'g> FeatureReq<'g> {
             .into_iter()
             .map(move |(feature_idx, build_state)| {
                 // extend ensures that the build states aren't empty. Double-check that.
-                debug_assert!(!build_state.is_empty(), "build states are always non-empty");
+                debug_assert!(
+                    !build_state.link.is_never(),
+                    "build states are always non-empty"
+                );
                 (
                     FeatureNode::new(package_ix, feature_idx),
                     build_state.finish(),
@@ -642,41 +700,32 @@ impl<'g> FeatureReq<'g> {
 
 #[derive(Debug)]
 struct DependencyBuildState {
-    package_edge_ix: EdgeIndex<PackageIx>,
-    normal: PlatformStatusImpl,
-    build: PlatformStatusImpl,
-    dev: PlatformStatusImpl,
+    link: ConditionalLinkImpl,
 }
 
 impl DependencyBuildState {
-    fn new(package_edge_ix: EdgeIndex<PackageIx>) -> Self {
+    fn new(package_edge_ix: EdgeIndex<PackageIx>, declarations: LinkDeclarations) -> Self {
         Self {
-            package_edge_ix,
-            normal: PlatformStatusImpl::default(),
-            build: PlatformStatusImpl::default(),
-            dev: PlatformStatusImpl::default(),
+            link: ConditionalLinkImpl {
+                package_edge_ixs: PackageEdgeIxs::single(package_edge_ix),
+                declarations,
+                normal: PlatformStatusImpl::default(),
+                build: PlatformStatusImpl::default(),
+                dev: PlatformStatusImpl::default(),
+            },
         }
     }
 
     fn extend(&mut self, dep_kind: DependencyKind, status: &PlatformStatusImpl) {
         match dep_kind {
-            DependencyKind::Normal => self.normal.extend(status),
-            DependencyKind::Build => self.build.extend(status),
-            DependencyKind::Development => self.dev.extend(status),
+            DependencyKind::Normal => self.link.normal.extend(status),
+            DependencyKind::Build => self.link.build.extend(status),
+            DependencyKind::Development => self.link.dev.extend(status),
             _ => panic!("unknown dependency kind"),
         }
     }
 
-    fn is_empty(&self) -> bool {
-        self.normal.is_never() && self.build.is_never() && self.dev.is_never()
-    }
-
     fn finish(self) -> FeatureEdge {
-        FeatureEdge::DependenciesSection(ConditionalLinkImpl {
-            package_edge_ixs: PackageEdgeIxs::single(self.package_edge_ix),
-            normal: self.normal,
-            build: self.build,
-            dev: self.dev,
-        })
+        FeatureEdge::DependenciesSection(self.link)
     }
 }
