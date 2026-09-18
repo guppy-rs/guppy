@@ -77,11 +77,6 @@
 //! In both cases, the copy that `main` didn't ask for must not get `std` from
 //! `main`'s weak feature.
 //!
-//! TODO: only the `targetuser` half is tested here. The `hostuser-normaldep`
-//! case fails today: any accepted non-weak link over the same package edge
-//! releases the weak buffer, including the one for the required
-//! `[dependencies]` declaration, so the host copy of `normaldep` gets `std`.
-//!
 //! The expected results were obtained from Cargo 1.98.1 with
 //! `cargo build --unit-graph -Z unstable-options`, under both resolver
 //! versions 1 and 2. Cases that build dev-dependencies were obtained with
@@ -441,6 +436,30 @@ static CASES: &[CargoResolutionCase] = &[
             (json::METADATA_BUILDDEP_REQBUILDDEP,   Some("alloc std")),
         ]),
 
+    // [features]
+    // normaldep-weak = ["normaldep?/std"]
+    // hostuser-normaldep = ["hostuser/normaldep"]
+    //
+    // The same as the case above, with host and target swapped. normaldep is
+    // now built twice:
+    //
+    // * on the target, because it is a required normal dependency of `main`.
+    // * on the host, because `hostuser` (a build dependency of `main`) turned
+    //   on its own optional dependency on it.
+    //
+    // `main` also has an optional host-side dependency on normaldep, but
+    // nothing has turned it on. So `normaldep?/std` only counts for the target
+    // copy: the target copy gets `std`, and the host copy gets no features.
+    CargoResolutionCase::new(&["normaldep-weak", "hostuser-normaldep"])
+        .target_expected(&[
+            (json::METADATA_BUILDDEP_MAIN,          Some("normaldep-weak hostuser-normaldep")),
+            (json::METADATA_BUILDDEP_NORMALDEP,     Some("alloc std")),
+        ])
+        .host_expected(&[
+            (json::METADATA_BUILDDEP_HOSTUSER,      Some("normaldep dep:normaldep")),
+            (json::METADATA_BUILDDEP_NORMALDEP,     Some("")),
+        ]),
+
     // With dev-dependencies built and nothing enabled, devdep is built through
     // its required dev declaration.
     CargoResolutionCase::new(&[])
@@ -747,6 +766,16 @@ fn weak_edge_visits_each_declaration_once() {
     // twice, and the weak feature applies separately to each declaration.
     let both_halves = normaldep_weak_halves();
     let cases: &[(&str, &[SeenLink])] = &[
+        // normaldep is not activated, so only the required half is visited.
+        (
+            "normaldep-weak",
+            &[SeenLink {
+                declarations: LinkDeclarations::Required,
+                normal: VisitStatus::Always,
+                build: VisitStatus::Never,
+                dev: VisitStatus::Never,
+            }],
+        ),
         // Activated later: required, then optional once the weak buffer is
         // released.
         ("normaldep-weak normaldep", &both_halves),

@@ -99,18 +99,16 @@ where
             edge_ref.id(),
             Some(edge_ref.weight()),
         ) {
-            Some(links) => self.buffer_states.track(edge_ref, links),
+            Some(links) => Either::Left(self.buffer_states.track(edge_ref, links).into_iter()),
             None => {
                 // Feature links within the same package are always followed.
-                Either::Left(Some(edge_ref))
+                Either::Left(Some(edge_ref).into_iter())
             }
         }
-        .into_iter()
     }
 
-    fn discover(&mut self, _feature_ix: NodeIndex<FeatureIx>) -> Self::Iter {
-        // Currently a no-op, but will be populated in the future.
-        Either::Left(None.into_iter())
+    fn discover(&mut self, feature_ix: NodeIndex<FeatureIx>) -> Self::Iter {
+        Either::Right(self.buffer_states.discover(feature_ix).into_iter())
     }
 }
 

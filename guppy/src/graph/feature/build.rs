@@ -118,7 +118,7 @@ impl FeatureGraphBuildState {
             } => {
                 if let Some(link) = dep_name_to_link.get(dep_name.as_ref()) {
                     let slash = if *weak {
-                        Self::make_weak_slash_impl(link, &mut self.weak)
+                        self.make_weak_slash_impl(&metadata, link)
                     } else {
                         SlashForm::Strong
                     };
@@ -290,8 +290,9 @@ impl FeatureGraphBuildState {
     /// declarations -- in that case, `foo?/b` behaves like `foo/b`, so modeling
     /// weak dependencies isn't required.
     fn make_weak_slash_impl(
+        &mut self,
+        metadata: &PackageMetadata<'_>,
         link: &PackageLink<'_>,
-        weak_dependencies: &mut WeakDependencies,
     ) -> SlashForm {
         let optional = EnabledLink::new(Self::make_conditional_link_impl(
             link,
@@ -307,10 +308,20 @@ impl FeatureGraphBuildState {
             LinkDeclarations::Required,
             |req| req.inner.required.build_if.clone(),
         ));
+        let optional_dependency_ix = metadata
+            .get_feature_idx(FeatureLabel::OptionalDependency(link.dep_name()))
+            .and_then(|idx| self.lookup_node(&FeatureNode::new(metadata.package_ix(), idx)))
+            .unwrap_or_else(|| {
+                panic!(
+                    "for package '{}', optional declarations of '{}' have a dep: feature node",
+                    metadata.id(),
+                    link.dep_name(),
+                )
+            });
         SlashForm::Weak(Box::new(WeakSlashImpl {
             required,
             optional,
-            index: weak_dependencies.insert(link.edge_ix()),
+            index: self.weak.insert(link.edge_ix(), optional_dependency_ix),
         }))
     }
 
