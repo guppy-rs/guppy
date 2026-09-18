@@ -135,8 +135,9 @@ impl<'g> FeatureSet<'g> {
         let cx = FeatureLinkContext::new(query);
 
         // State used by the callback below.
-        let buffer_states =
-            WeakBufferStates::new(&graph.inner.weak, |link| visitor.visit_link(&cx, link));
+        let buffer_states = WeakBufferStates::new(&graph.inner.weak, cx.direction(), |link| {
+            visitor.visit_link(&cx, link)
+        });
 
         let core = ResolveCore::with_buffered_edge_filter(
             graph.dep_graph(),

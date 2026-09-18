@@ -116,6 +116,26 @@
   a weak dependency feature once for each kind of declaration. See the entry
   under "Changed" above.
 
+- Reverse feature queries with `FeatureQuery::resolve_with` or
+  `resolve_with_fn` could leave out weak dependency features, depending on
+  which features the query started from. For example, `regex-automata` has:
+
+  ```toml
+  [dependencies]
+  aho-corasick = { version = "1", optional = true }
+
+  [features]
+  logging = ["aho-corasick?/logging"]
+  ```
+
+  A reverse query from `aho-corasick/logging` did not return
+  `regex-automata/logging`.
+
+  Reverse queries now offer both links of a weak dependency feature as soon as
+  it is reached. With a visitor that accepts every link, a reverse query
+  returns the same set as `FeatureQuery::resolve`. Forward queries are
+  unchanged.
+
 ## [0.18.0] - 2026-08-25
 
 ### Added

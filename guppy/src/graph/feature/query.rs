@@ -305,6 +305,11 @@ impl<'g> FeatureQuery<'g> {
     ///
     /// The visitor can be called twice for a weak dependency feature
     /// (`dep?/feature`). See [`FeatureLinkVisitor::visit_link`] for details.
+    ///
+    /// With a visitor that accepts every link, a reverse query returns the same
+    /// set as [`resolve`](Self::resolve). Note that (unlike with `resolve`), a
+    /// forward query can return a smaller set of features because of weak links
+    /// not being activated.
     pub fn resolve_with(self, visitor: impl FeatureLinkVisitor<'g>) -> FeatureSet<'g> {
         FeatureSet::with_link_visitor(self, visitor)
     }
@@ -389,6 +394,16 @@ pub trait FeatureLinkVisitor<'g> {
     ///
     /// A visitor that keeps state for each link, such as a count of visits,
     /// should take this into account.
+    ///
+    /// When the two links are offered depends on the query's direction:
+    ///
+    /// * A forward query offers the `Required` link as soon as `weak` is
+    ///   reached. It offers the `Optional` link only once this method has
+    ///   accepted another non-weak link to `foo` from the same package, such
+    ///   as the one from `dep:foo`.
+    /// * A reverse query offers both links (`Required` first) as soon as
+    ///   `foo/std` is reached. Reverse queries don't try to model when `foo` is
+    ///   activated.
     fn visit_link(&mut self, cx: &FeatureLinkContext<'g>, link: ConditionalLink<'g>) -> bool;
 }
 

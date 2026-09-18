@@ -12,19 +12,19 @@
 //! * The half covering `foo`'s required declarations is offered to the visitor
 //!   as soon as the edge is reached. It is absent if `foo` has no required
 //!   declaration.
-//! * The half covering `foo`'s optional declarations is held back in a buffer,
-//!   and offered to the visitor when that buffer is released.
+//! * The half covering `foo`'s optional declarations is held in a buffer in a
+//!   forward query, and offered when that buffer is released. In a reverse
+//!   query, it is offered as soon as the edge is reached.
 //!
 //! The edge is followed if the visitor accepts either half.
 
 use crate::graph::{
-    PackageIx,
+    DependencyDirection, PackageIx,
     feature::{ConditionalLink, EdgeLinks, FeatureEdgeReference},
 };
 use indexmap::IndexSet;
 use itertools::Either;
 use petgraph::graph::EdgeIndex;
-use smallvec::SmallVec;
 
 /// Data structure that tracks pairs of package indexes that form weak dependencies.
 #[derive(Clone, Debug)]
@@ -61,29 +61,41 @@ pub(super) struct WeakBufferStates<'g, 'a, F> {
 
 /// The buffers a traversal keeps for the optional halves of weak edges.
 enum WeakBuffers<'g, 'a> {
-    /// Buffering is enabled.
+    /// Buffering is enabled. Used by forward queries.
     PerPackageEdge {
         /// The weak dependencies that map a package edge back to its index.
         deps: &'a WeakDependencies,
 
         /// A buffer for each weak index.
-        states: SmallVec<[SingleBufferState<'g>; 8]>,
+        states: Vec<SingleBufferState<'g>>,
     },
+
+    /// No weak buffers: optional links are offered as soon as they are reached.
+    /// Used by reverse queries.
+    Unbuffered,
 }
 
 impl<'g, 'a, F> WeakBufferStates<'g, 'a, F>
 where
     F: FnMut(ConditionalLink<'g>) -> bool,
 {
+    /// Returns buffer states for a traversal in `direction`.
     #[inline]
-    pub(super) fn new(deps: &'a WeakDependencies, accept_fn: F) -> Self {
-        let len = deps.ixs.len();
-        let mut states = SmallVec::with_capacity(len);
-        states.resize_with(len, || SingleBufferState::Buffered(SingleBufferVec::new()));
-        Self {
-            buffers: WeakBuffers::PerPackageEdge { deps, states },
-            accept_fn,
-        }
+    pub(super) fn new(
+        deps: &'a WeakDependencies,
+        direction: DependencyDirection,
+        accept_fn: F,
+    ) -> Self {
+        let buffers = match direction {
+            DependencyDirection::Forward => {
+                let len = deps.ixs.len();
+                let mut states = Vec::with_capacity(len);
+                states.resize_with(len, || SingleBufferState::Buffered(SingleBufferVec::new()));
+                WeakBuffers::PerPackageEdge { deps, states }
+            }
+            DependencyDirection::Reverse => WeakBuffers::Unbuffered,
+        };
+        Self { buffers, accept_fn }
     }
 
     pub(super) fn track(
@@ -102,27 +114,23 @@ where
                 // Both halves must be dealt with before they are combined, so
                 // don't fold these into a single `a || b` expression. If the
                 // required half is accepted, a short-circuiting `||` would skip
-                // the optional half. It would never reach the buffer, and the
-                // visitor would not see it once the buffer is released.
+                // the optional half, and the visitor would never see it.
                 //
-                // The optional half is buffered along with `edge_ref` even when
-                // the required half was just accepted, so releasing the buffer
-                // can hand the same `edge_ref` to the traversal a second time.
-                // That is harmless: the DFS checks its discovered set before
-                // pushing a target.
+                // A buffered optional half is held along with `edge_ref` even
+                // when the required half was just accepted, so releasing the
+                // buffer can hand the same `edge_ref` to the traversal a second
+                // time. That is harmless: the DFS checks its discovered set
+                // before pushing a target.
                 let required_accepted = required.is_some_and(|required| (self.accept_fn)(required));
                 let optional_accepted = match &mut self.buffers {
                     WeakBuffers::PerPackageEdge { deps: _, states } => match &mut states[index.0] {
                         SingleBufferState::Buffered(buffer) => {
-                            // The buffer has not been released yet.
                             buffer.push((optional, edge_ref));
                             false
                         }
-                        SingleBufferState::Released => {
-                            // The buffer has already been released.
-                            (self.accept_fn)(optional)
-                        }
+                        SingleBufferState::Released => (self.accept_fn)(optional),
                     },
+                    WeakBuffers::Unbuffered => (self.accept_fn)(optional),
                 };
                 Either::Left((required_accepted || optional_accepted).then_some(edge_ref))
             }
@@ -136,6 +144,7 @@ where
                     WeakBuffers::PerPackageEdge { deps, states } => {
                         release_buffers(deps, states, link, &mut self.accept_fn)
                     }
+                    WeakBuffers::Unbuffered => Vec::new(),
                 };
 
                 if released.is_empty() {

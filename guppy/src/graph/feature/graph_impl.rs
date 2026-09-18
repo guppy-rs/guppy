@@ -883,8 +883,8 @@ impl<'g> ConditionalLink<'g> {
     /// To model this, [`FeatureQuery::resolve_with`] may call the visitor twice
     /// for the link from `main/weak` to `foo/std`:
     ///
-    /// * Once with a [`Required`](LinkDeclarations::Required) link, when `weak`
-    ///   is reached. Here, [`normal`](Self::normal) is always enabled and
+    /// * Once with a [`Required`](LinkDeclarations::Required) link. Here,
+    ///   [`normal`](Self::normal) is always enabled and
     ///   [`build`](Self::build) is never enabled.
     /// * Once with an [`Optional`](LinkDeclarations::Optional) link. Here,
     ///   `normal` is never enabled and `build` is always enabled.
@@ -894,6 +894,8 @@ impl<'g> ConditionalLink<'g> {
     /// visitor accepts either one.
     ///
     /// If `foo` has no required declarations, the required link is skipped.
+    /// When each link is offered depends on the query's direction; see
+    /// [`FeatureLinkVisitor::visit_link`].
     ///
     /// Outside of a resolve, the same edge is a single link.
     /// [`FeatureSet::conditional_links`] returns it once, with
@@ -909,6 +911,7 @@ impl<'g> ConditionalLink<'g> {
     ///
     /// [`FeatureQuery::resolve_with`]: crate::graph::feature::FeatureQuery::resolve_with
     /// [`FeatureSet::conditional_links`]: crate::graph::feature::FeatureSet::conditional_links
+    /// [`FeatureLinkVisitor::visit_link`]: crate::graph::feature::FeatureLinkVisitor::visit_link
     pub fn declarations(&self) -> LinkDeclarations {
         self.inner.declarations
     }
@@ -1096,7 +1099,8 @@ pub(super) enum EdgeLinks<'g> {
         /// The link covering optional declarations of this dependency.
         optional: ConditionalLink<'g>,
 
-        /// The index of the buffer that holds `optional` back.
+        /// The index of the buffer that holds `optional` back in a forward
+        /// query.
         index: WeakIndex,
     },
 }

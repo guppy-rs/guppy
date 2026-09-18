@@ -144,7 +144,7 @@ impl FeatureGraphBuildState {
                     //
                     // But this is skipped for weak `dep?/foo`, which never
                     // activates `dep:dep`. If we stored these kinds of edges,
-                    // while doing a dependency traversal we'd let a required
+                    // while doing a forward traversal we'd let a required
                     // declaration's edge release it and spuriously activate
                     // `dep:dep` (and thus the optional declaration). The weak
                     // cross edge above is sufficient on its own.
