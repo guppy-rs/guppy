@@ -127,30 +127,8 @@ where
                     return Either::Left(None);
                 }
 
-                // A link derived from several package edges releases the buffer
-                // corresponding to all of them.
-                let mut released: Vec<FeatureEdgeReference<'g>> = Vec::new();
-                for package_edge_ix in link.package_edge_ixs().iter() {
-                    let Some(weak_index) = self.deps.get(package_edge_ix) else {
-                        // Not a weak link.
-                        continue;
-                    };
-                    match std::mem::replace(
-                        &mut self.states[weak_index.0],
-                        SingleBufferState::Released,
-                    ) {
-                        SingleBufferState::Buffered(buffer) => {
-                            // Transition from buffered to released.
-                            released.extend(buffer.into_iter().filter_map(|(link, edge_ref)| {
-                                // Filter buffered links.
-                                (self.accept_fn)(link).then_some(edge_ref)
-                            }));
-                        }
-                        SingleBufferState::Released => {
-                            // Weak link, but the buffer is already released.
-                        }
-                    }
-                }
+                let mut released =
+                    release_buffers(self.deps, &mut self.states, link, &mut self.accept_fn);
 
                 if released.is_empty() {
                     Either::Left(Some(edge_ref))
@@ -161,6 +139,37 @@ where
             }
         }
     }
+}
+
+fn release_buffers<'g, F>(
+    deps: &WeakDependencies,
+    states: &mut [SingleBufferState<'g>],
+    link: ConditionalLink<'g>,
+    accept_fn: &mut F,
+) -> Vec<FeatureEdgeReference<'g>>
+where
+    F: FnMut(ConditionalLink<'g>) -> bool,
+{
+    let mut released = Vec::new();
+    for package_edge_ix in link.package_edge_ixs().iter() {
+        let Some(weak_index) = deps.get(package_edge_ix) else {
+            // Not a weak link.
+            continue;
+        };
+        match std::mem::replace(&mut states[weak_index.0], SingleBufferState::Released) {
+            SingleBufferState::Buffered(buffer) => {
+                // Transition from buffered to released.
+                released.extend(buffer.into_iter().filter_map(|(link, edge_ref)| {
+                    // Filter buffered links.
+                    accept_fn(link).then_some(edge_ref)
+                }));
+            }
+            SingleBufferState::Released => {
+                // Weak link, but the buffer is already released.
+            }
+        }
+    }
+    released
 }
 
 /// Buffer state for a single weak index in an in-progress resolver.
