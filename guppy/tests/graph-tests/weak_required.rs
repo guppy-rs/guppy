@@ -662,6 +662,25 @@ impl SeenLink {
     }
 }
 
+// The two halves of `main/normaldep-weak` -> `normaldep/std`: normaldep is
+// declared as a required normal dependency and an optional build dependency.
+fn normaldep_weak_halves() -> [SeenLink; 2] {
+    [
+        SeenLink {
+            declarations: LinkDeclarations::Required,
+            normal: VisitStatus::Always,
+            build: VisitStatus::Never,
+            dev: VisitStatus::Never,
+        },
+        SeenLink {
+            declarations: LinkDeclarations::Optional,
+            normal: VisitStatus::Never,
+            build: VisitStatus::Always,
+            dev: VisitStatus::Never,
+        },
+    ]
+}
+
 // Returns the builddep fixture with `features` patched into `main`.
 //
 // `cargo metadata` can produce manifests the fixtures don't cover, so some
@@ -726,20 +745,7 @@ fn weak_edge_visits_each_declaration_once() {
     // `normaldep?/std` is a single edge in the feature graph, from
     // `main/normaldep-weak` to `normaldep/std`. But normaldep is declared
     // twice, and the weak feature applies separately to each declaration.
-    let both_halves = [
-        SeenLink {
-            declarations: LinkDeclarations::Required,
-            normal: VisitStatus::Always,
-            build: VisitStatus::Never,
-            dev: VisitStatus::Never,
-        },
-        SeenLink {
-            declarations: LinkDeclarations::Optional,
-            normal: VisitStatus::Never,
-            build: VisitStatus::Always,
-            dev: VisitStatus::Never,
-        },
-    ];
+    let both_halves = normaldep_weak_halves();
     let cases: &[(&str, &[SeenLink])] = &[
         // Activated later: required, then optional once the weak buffer is
         // released.
