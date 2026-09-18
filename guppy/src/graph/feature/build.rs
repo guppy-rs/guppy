@@ -135,8 +135,6 @@ impl FeatureGraphBuildState {
                 //
                 // If the dependency is weak, each link also gets its own weak
                 // index.
-                //
-                // TODO-RAINCLAUDE: dropped explainer, main fixed step-3 bug.
                 for link in links {
                     let slash = if *weak {
                         self.make_weak_slash_impl(&metadata, link)
