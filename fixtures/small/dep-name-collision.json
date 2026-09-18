@@ -1,0 +1,2806 @@
+{
+    "packages": [
+        {
+            "name": "arrayvec",
+            "version": "0.7.8",
+            "id": "registry+https://github.com/rust-lang/crates.io-index#arrayvec@0.7.8",
+            "license": "MIT OR Apache-2.0",
+            "license_file": null,
+            "description": "A vector with fixed capacity, backed by an array (it can be stored on the stack too). Implements fixed capacity ArrayVec and ArrayString.",
+            "source": "registry+https://github.com/rust-lang/crates.io-index",
+            "dependencies": [
+                {
+                    "name": "borsh",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.2.0",
+                    "kind": null,
+                    "rename": null,
+                    "optional": true,
+                    "uses_default_features": false,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "serde",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.0",
+                    "kind": null,
+                    "rename": null,
+                    "optional": true,
+                    "uses_default_features": false,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "zeroize",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.4",
+                    "kind": null,
+                    "rename": null,
+                    "optional": true,
+                    "uses_default_features": false,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "bencher",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^0.1.4",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "matches",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^0.1",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "serde_test",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.0",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                }
+            ],
+            "targets": [
+                {
+                    "kind": [
+                        "lib"
+                    ],
+                    "crate_types": [
+                        "lib"
+                    ],
+                    "name": "arrayvec",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/arrayvec-0.7.8/src/lib.rs",
+                    "edition": "2018",
+                    "doc": true,
+                    "doctest": true,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "test"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "borsh",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/arrayvec-0.7.8/tests/borsh.rs",
+                    "edition": "2018",
+                    "doc": false,
+                    "doctest": false,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "test"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "serde",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/arrayvec-0.7.8/tests/serde.rs",
+                    "edition": "2018",
+                    "doc": false,
+                    "doctest": false,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "test"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "tests",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/arrayvec-0.7.8/tests/tests.rs",
+                    "edition": "2018",
+                    "doc": false,
+                    "doctest": false,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "bench"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "arraystring",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/arrayvec-0.7.8/benches/arraystring.rs",
+                    "edition": "2018",
+                    "doc": false,
+                    "doctest": false,
+                    "test": false
+                },
+                {
+                    "kind": [
+                        "bench"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "extend",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/arrayvec-0.7.8/benches/extend.rs",
+                    "edition": "2018",
+                    "doc": false,
+                    "doctest": false,
+                    "test": false
+                }
+            ],
+            "features": {
+                "borsh": [
+                    "dep:borsh"
+                ],
+                "default": [
+                    "std"
+                ],
+                "serde": [
+                    "dep:serde"
+                ],
+                "std": [],
+                "zeroize": [
+                    "dep:zeroize"
+                ]
+            },
+            "manifest_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/arrayvec-0.7.8/Cargo.toml",
+            "metadata": {
+                "docs": {
+                    "rs": {
+                        "features": [
+                            "borsh",
+                            "serde",
+                            "zeroize"
+                        ]
+                    }
+                },
+                "release": {
+                    "no-dev-version": true,
+                    "tag-name": "{{version}}"
+                }
+            },
+            "publish": null,
+            "authors": [
+                "bluss"
+            ],
+            "categories": [
+                "data-structures",
+                "no-std"
+            ],
+            "keywords": [
+                "stack",
+                "vector",
+                "array",
+                "data-structure",
+                "no_std"
+            ],
+            "readme": "README.md",
+            "repository": "https://github.com/bluss/arrayvec",
+            "homepage": null,
+            "documentation": "https://docs.rs/arrayvec/",
+            "edition": "2018",
+            "links": null,
+            "default_run": null,
+            "rust_version": "1.51"
+        },
+        {
+            "name": "bitflags",
+            "version": "2.13.2",
+            "id": "registry+https://github.com/rust-lang/crates.io-index#bitflags@2.13.2",
+            "license": "MIT OR Apache-2.0",
+            "license_file": null,
+            "description": "A macro to generate structures which behave like bitflags.\n",
+            "source": "registry+https://github.com/rust-lang/crates.io-index",
+            "dependencies": [
+                {
+                    "name": "arbitrary",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.0",
+                    "kind": null,
+                    "rename": null,
+                    "optional": true,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "bytemuck",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.12",
+                    "kind": null,
+                    "rename": null,
+                    "optional": true,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "serde_core",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.0.228",
+                    "kind": null,
+                    "rename": null,
+                    "optional": true,
+                    "uses_default_features": false,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "arbitrary",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.0",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [
+                        "derive"
+                    ],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "bytemuck",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.12.2",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [
+                        "derive"
+                    ],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "rustversion",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.0",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "serde_json",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.0",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "serde",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.0.103",
+                    "kind": "dev",
+                    "rename": "serde_lib",
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [
+                        "derive"
+                    ],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "serde_test",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.0.19",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "trybuild",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.0.18",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "zerocopy",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^0.8",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [
+                        "derive"
+                    ],
+                    "target": null,
+                    "registry": null
+                }
+            ],
+            "targets": [
+                {
+                    "kind": [
+                        "lib"
+                    ],
+                    "crate_types": [
+                        "lib"
+                    ],
+                    "name": "bitflags",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/bitflags-2.13.2/src/lib.rs",
+                    "edition": "2021",
+                    "doc": true,
+                    "doctest": true,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "example"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "custom_bits_type",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/bitflags-2.13.2/examples/custom_bits_type.rs",
+                    "edition": "2021",
+                    "doc": false,
+                    "doctest": false,
+                    "test": false
+                },
+                {
+                    "kind": [
+                        "example"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "custom_derive",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/bitflags-2.13.2/examples/custom_derive.rs",
+                    "edition": "2021",
+                    "doc": false,
+                    "doctest": false,
+                    "test": false
+                },
+                {
+                    "kind": [
+                        "example"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "fmt",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/bitflags-2.13.2/examples/fmt.rs",
+                    "edition": "2021",
+                    "doc": false,
+                    "doctest": false,
+                    "test": false
+                },
+                {
+                    "kind": [
+                        "example"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "macro_free",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/bitflags-2.13.2/examples/macro_free.rs",
+                    "edition": "2021",
+                    "doc": false,
+                    "doctest": false,
+                    "test": false
+                },
+                {
+                    "kind": [
+                        "example"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "serde",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/bitflags-2.13.2/examples/serde.rs",
+                    "edition": "2021",
+                    "doc": false,
+                    "doctest": false,
+                    "test": false
+                },
+                {
+                    "kind": [
+                        "bench"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "parse",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/bitflags-2.13.2/benches/parse.rs",
+                    "edition": "2021",
+                    "doc": false,
+                    "doctest": false,
+                    "test": false
+                }
+            ],
+            "features": {
+                "arbitrary": [
+                    "dep:arbitrary"
+                ],
+                "bytemuck": [
+                    "dep:bytemuck"
+                ],
+                "example_generated": [],
+                "serde": [
+                    "serde_core"
+                ],
+                "serde_core": [
+                    "dep:serde_core"
+                ],
+                "std": []
+            },
+            "manifest_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/bitflags-2.13.2/Cargo.toml",
+            "metadata": {
+                "docs": {
+                    "rs": {
+                        "features": [
+                            "example_generated"
+                        ]
+                    }
+                }
+            },
+            "publish": null,
+            "authors": [
+                "The Rust Project Developers"
+            ],
+            "categories": [
+                "no-std"
+            ],
+            "keywords": [
+                "bit",
+                "bitmask",
+                "bitflags",
+                "flags"
+            ],
+            "readme": "README.md",
+            "repository": "https://github.com/bitflags/bitflags",
+            "homepage": "https://github.com/bitflags/bitflags",
+            "documentation": "https://docs.rs/bitflags",
+            "edition": "2021",
+            "links": null,
+            "default_run": null,
+            "rust_version": "1.56.0"
+        },
+        {
+            "name": "byteorder",
+            "version": "1.5.0",
+            "id": "registry+https://github.com/rust-lang/crates.io-index#byteorder@1.5.0",
+            "license": "Unlicense OR MIT",
+            "license_file": null,
+            "description": "Library for reading/writing numbers in big-endian and little-endian.",
+            "source": "registry+https://github.com/rust-lang/crates.io-index",
+            "dependencies": [
+                {
+                    "name": "quickcheck",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^0.9.2",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": false,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "rand",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^0.7",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                }
+            ],
+            "targets": [
+                {
+                    "kind": [
+                        "lib"
+                    ],
+                    "crate_types": [
+                        "lib"
+                    ],
+                    "name": "byteorder",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/byteorder-1.5.0/src/lib.rs",
+                    "edition": "2021",
+                    "doc": true,
+                    "doctest": true,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "bench"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "bench",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/byteorder-1.5.0/benches/bench.rs",
+                    "edition": "2021",
+                    "doc": false,
+                    "doctest": false,
+                    "test": false
+                }
+            ],
+            "features": {
+                "default": [
+                    "std"
+                ],
+                "i128": [],
+                "std": []
+            },
+            "manifest_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/byteorder-1.5.0/Cargo.toml",
+            "metadata": null,
+            "publish": null,
+            "authors": [
+                "Andrew Gallant <jamslam@gmail.com>"
+            ],
+            "categories": [
+                "encoding",
+                "parsing",
+                "no-std"
+            ],
+            "keywords": [
+                "byte",
+                "endian",
+                "big-endian",
+                "little-endian",
+                "binary"
+            ],
+            "readme": "README.md",
+            "repository": "https://github.com/BurntSushi/byteorder",
+            "homepage": "https://github.com/BurntSushi/byteorder",
+            "documentation": "https://docs.rs/byteorder",
+            "edition": "2021",
+            "links": null,
+            "default_run": null,
+            "rust_version": "1.60"
+        },
+        {
+            "name": "bytes",
+            "version": "1.12.1",
+            "id": "registry+https://github.com/rust-lang/crates.io-index#bytes@1.12.1",
+            "license": "MIT",
+            "license_file": null,
+            "description": "Types and traits for working with bytes",
+            "source": "registry+https://github.com/rust-lang/crates.io-index",
+            "dependencies": [
+                {
+                    "name": "portable-atomic",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.3",
+                    "kind": null,
+                    "rename": "extra-platforms",
+                    "optional": true,
+                    "uses_default_features": false,
+                    "features": [
+                        "require-cas"
+                    ],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "serde",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.0.60",
+                    "kind": null,
+                    "rename": null,
+                    "optional": true,
+                    "uses_default_features": false,
+                    "features": [
+                        "alloc"
+                    ],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "serde_test",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.0",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "loom",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^0.7",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": "cfg(loom)",
+                    "registry": null
+                }
+            ],
+            "targets": [
+                {
+                    "kind": [
+                        "lib"
+                    ],
+                    "crate_types": [
+                        "lib"
+                    ],
+                    "name": "bytes",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/bytes-1.12.1/src/lib.rs",
+                    "edition": "2021",
+                    "doc": true,
+                    "doctest": true,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "test"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "test_buf",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/bytes-1.12.1/tests/test_buf.rs",
+                    "edition": "2021",
+                    "doc": false,
+                    "doctest": false,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "test"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "test_buf_mut",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/bytes-1.12.1/tests/test_buf_mut.rs",
+                    "edition": "2021",
+                    "doc": false,
+                    "doctest": false,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "test"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "test_bytes",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/bytes-1.12.1/tests/test_bytes.rs",
+                    "edition": "2021",
+                    "doc": false,
+                    "doctest": false,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "test"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "test_bytes_odd_alloc",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/bytes-1.12.1/tests/test_bytes_odd_alloc.rs",
+                    "edition": "2021",
+                    "doc": false,
+                    "doctest": false,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "test"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "test_bytes_vec_alloc",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/bytes-1.12.1/tests/test_bytes_vec_alloc.rs",
+                    "edition": "2021",
+                    "doc": false,
+                    "doctest": false,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "test"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "test_chain",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/bytes-1.12.1/tests/test_chain.rs",
+                    "edition": "2021",
+                    "doc": false,
+                    "doctest": false,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "test"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "test_debug",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/bytes-1.12.1/tests/test_debug.rs",
+                    "edition": "2021",
+                    "doc": false,
+                    "doctest": false,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "test"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "test_iter",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/bytes-1.12.1/tests/test_iter.rs",
+                    "edition": "2021",
+                    "doc": false,
+                    "doctest": false,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "test"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "test_limit",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/bytes-1.12.1/tests/test_limit.rs",
+                    "edition": "2021",
+                    "doc": false,
+                    "doctest": false,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "test"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "test_reader",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/bytes-1.12.1/tests/test_reader.rs",
+                    "edition": "2021",
+                    "doc": false,
+                    "doctest": false,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "test"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "test_serde",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/bytes-1.12.1/tests/test_serde.rs",
+                    "edition": "2021",
+                    "doc": false,
+                    "doctest": false,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "test"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "test_take",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/bytes-1.12.1/tests/test_take.rs",
+                    "edition": "2021",
+                    "doc": false,
+                    "doctest": false,
+                    "test": true
+                }
+            ],
+            "features": {
+                "default": [
+                    "std"
+                ],
+                "extra-platforms": [
+                    "dep:extra-platforms"
+                ],
+                "serde": [
+                    "dep:serde"
+                ],
+                "std": []
+            },
+            "manifest_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/bytes-1.12.1/Cargo.toml",
+            "metadata": {
+                "docs": {
+                    "rs": {
+                        "rustdoc-args": [
+                            "--cfg",
+                            "docsrs"
+                        ]
+                    }
+                }
+            },
+            "publish": null,
+            "authors": [
+                "Carl Lerche <me@carllerche.com>",
+                "Sean McArthur <sean@seanmonstar.com>"
+            ],
+            "categories": [
+                "network-programming",
+                "data-structures"
+            ],
+            "keywords": [
+                "buffers",
+                "zero-copy",
+                "io"
+            ],
+            "readme": "README.md",
+            "repository": "https://github.com/tokio-rs/bytes",
+            "homepage": null,
+            "documentation": null,
+            "edition": "2021",
+            "links": null,
+            "default_run": null,
+            "rust_version": "1.57"
+        },
+        {
+            "name": "either",
+            "version": "1.18.0",
+            "id": "registry+https://github.com/rust-lang/crates.io-index#either@1.18.0",
+            "license": "MIT OR Apache-2.0",
+            "license_file": null,
+            "description": "The enum `Either` with variants `Left` and `Right` is a general purpose sum type with two cases.\n",
+            "source": "registry+https://github.com/rust-lang/crates.io-index",
+            "dependencies": [
+                {
+                    "name": "serde",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.0.95",
+                    "kind": null,
+                    "rename": null,
+                    "optional": true,
+                    "uses_default_features": false,
+                    "features": [
+                        "alloc",
+                        "derive"
+                    ],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "serde_json",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.0.0",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                }
+            ],
+            "targets": [
+                {
+                    "kind": [
+                        "lib"
+                    ],
+                    "crate_types": [
+                        "lib"
+                    ],
+                    "name": "either",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/either-1.18.0/src/lib.rs",
+                    "edition": "2021",
+                    "doc": true,
+                    "doctest": true,
+                    "test": true
+                }
+            ],
+            "features": {
+                "default": [
+                    "std"
+                ],
+                "serde": [
+                    "dep:serde"
+                ],
+                "std": [],
+                "use_std": [
+                    "std"
+                ]
+            },
+            "manifest_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/either-1.18.0/Cargo.toml",
+            "metadata": {
+                "release": {
+                    "allow-branch": [
+                        "main"
+                    ],
+                    "sign-tag": true,
+                    "tag-name": "{{version}}"
+                },
+                "docs": {
+                    "rs": {
+                        "features": [
+                            "serde"
+                        ]
+                    }
+                },
+                "playground": {
+                    "features": [
+                        "serde"
+                    ]
+                }
+            },
+            "publish": null,
+            "authors": [],
+            "categories": [
+                "data-structures",
+                "no-std"
+            ],
+            "keywords": [
+                "data-structure",
+                "no_std"
+            ],
+            "readme": "README.md",
+            "repository": "https://github.com/rayon-rs/either",
+            "homepage": null,
+            "documentation": "https://docs.rs/either/1/",
+            "edition": "2021",
+            "links": null,
+            "default_run": null,
+            "rust_version": "1.63.0"
+        },
+        {
+            "name": "hex",
+            "version": "0.4.3",
+            "id": "registry+https://github.com/rust-lang/crates.io-index#hex@0.4.3",
+            "license": "MIT OR Apache-2.0",
+            "license_file": null,
+            "description": "Encoding and decoding data into/from hexadecimal representation.",
+            "source": "registry+https://github.com/rust-lang/crates.io-index",
+            "dependencies": [
+                {
+                    "name": "serde",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.0",
+                    "kind": null,
+                    "rename": null,
+                    "optional": true,
+                    "uses_default_features": false,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "criterion",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^0.3",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "faster-hex",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^0.5",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "pretty_assertions",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^0.6",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "rustc-hex",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^2.1",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "serde",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.0",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [
+                        "derive"
+                    ],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "serde_json",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.0",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "version-sync",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^0.9",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                }
+            ],
+            "targets": [
+                {
+                    "kind": [
+                        "lib"
+                    ],
+                    "crate_types": [
+                        "lib"
+                    ],
+                    "name": "hex",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/hex-0.4.3/src/lib.rs",
+                    "edition": "2018",
+                    "doc": true,
+                    "doctest": true,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "test"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "serde",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/hex-0.4.3/tests/serde.rs",
+                    "edition": "2018",
+                    "doc": false,
+                    "doctest": false,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "test"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "version-number",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/hex-0.4.3/tests/version-number.rs",
+                    "edition": "2018",
+                    "doc": false,
+                    "doctest": false,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "bench"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "hex",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/hex-0.4.3/benches/hex.rs",
+                    "edition": "2018",
+                    "doc": false,
+                    "doctest": false,
+                    "test": false
+                }
+            ],
+            "features": {
+                "alloc": [],
+                "default": [
+                    "std"
+                ],
+                "serde": [
+                    "dep:serde"
+                ],
+                "std": [
+                    "alloc"
+                ]
+            },
+            "manifest_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/hex-0.4.3/Cargo.toml",
+            "metadata": {
+                "docs": {
+                    "rs": {
+                        "all-features": true,
+                        "rustdoc-args": [
+                            "--cfg",
+                            "docsrs"
+                        ]
+                    }
+                }
+            },
+            "publish": null,
+            "authors": [
+                "KokaKiwi <kokakiwi@kokakiwi.net>"
+            ],
+            "categories": [
+                "encoding",
+                "no-std"
+            ],
+            "keywords": [
+                "no_std",
+                "hex"
+            ],
+            "readme": "README.md",
+            "repository": "https://github.com/KokaKiwi/rust-hex",
+            "homepage": null,
+            "documentation": "https://docs.rs/hex/",
+            "edition": "2018",
+            "links": null,
+            "default_run": null,
+            "rust_version": null
+        },
+        {
+            "name": "libc",
+            "version": "0.2.189",
+            "id": "registry+https://github.com/rust-lang/crates.io-index#libc@0.2.189",
+            "license": "MIT OR Apache-2.0",
+            "license_file": null,
+            "description": "Raw FFI bindings to platform libraries like libc.",
+            "source": "registry+https://github.com/rust-lang/crates.io-index",
+            "dependencies": [
+                {
+                    "name": "rustc-std-workspace-core",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.0.1",
+                    "kind": null,
+                    "rename": null,
+                    "optional": true,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                }
+            ],
+            "targets": [
+                {
+                    "kind": [
+                        "lib"
+                    ],
+                    "crate_types": [
+                        "lib"
+                    ],
+                    "name": "libc",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.189/src/lib.rs",
+                    "edition": "2021",
+                    "doc": true,
+                    "doctest": true,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "test"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "const_fn",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.189/tests/const_fn.rs",
+                    "edition": "2021",
+                    "doc": false,
+                    "doctest": false,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "custom-build"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "build-script-build",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.189/build.rs",
+                    "edition": "2021",
+                    "doc": false,
+                    "doctest": false,
+                    "test": false
+                }
+            ],
+            "features": {
+                "align": [],
+                "const-extern-fn": [],
+                "default": [
+                    "std"
+                ],
+                "extra_traits": [],
+                "rustc-dep-of-std": [
+                    "align",
+                    "rustc-std-workspace-core"
+                ],
+                "rustc-std-workspace-core": [
+                    "dep:rustc-std-workspace-core"
+                ],
+                "std": [],
+                "use_std": [
+                    "std"
+                ]
+            },
+            "manifest_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.189/Cargo.toml",
+            "metadata": {
+                "docs": {
+                    "rs": {
+                        "features": [
+                            "extra_traits"
+                        ],
+                        "default-target": "x86_64-unknown-linux-gnu",
+                        "targets": [
+                            "aarch64-apple-darwin",
+                            "aarch64-pc-windows-msvc",
+                            "aarch64-unknown-linux-gnu",
+                            "i686-pc-windows-msvc",
+                            "i686-unknown-linux-gnu",
+                            "x86_64-pc-windows-gnu",
+                            "x86_64-pc-windows-msvc",
+                            "x86_64-unknown-linux-gnu",
+                            "aarch64-pc-windows-gnullvm",
+                            "aarch64-unknown-linux-musl",
+                            "aarch64-unknown-linux-ohos",
+                            "arm-unknown-linux-gnueabi",
+                            "arm-unknown-linux-gnueabihf",
+                            "armv7-unknown-linux-gnueabihf",
+                            "armv7-unknown-linux-ohos",
+                            "i686-pc-windows-gnu",
+                            "loongarch64-unknown-linux-gnu",
+                            "loongarch64-unknown-linux-musl",
+                            "powerpc-unknown-linux-gnu",
+                            "powerpc64-unknown-linux-gnu",
+                            "powerpc64-unknown-linux-musl",
+                            "powerpc64le-unknown-linux-gnu",
+                            "powerpc64le-unknown-linux-musl",
+                            "riscv64gc-unknown-linux-gnu",
+                            "s390x-unknown-linux-gnu",
+                            "sparcv9-sun-solaris",
+                            "x86_64-apple-darwin",
+                            "x86_64-pc-solaris",
+                            "x86_64-pc-windows-gnullvm",
+                            "x86_64-unknown-freebsd",
+                            "x86_64-unknown-illumos",
+                            "x86_64-unknown-linux-musl",
+                            "x86_64-unknown-linux-ohos",
+                            "x86_64-unknown-netbsd",
+                            "aarch64-apple-ios",
+                            "aarch64-apple-tvos",
+                            "aarch64-apple-visionos",
+                            "aarch64-apple-watchos",
+                            "aarch64-linux-android",
+                            "aarch64-unknown-fuchsia",
+                            "arm-linux-androideabi",
+                            "arm-unknown-linux-musleabi",
+                            "arm-unknown-linux-musleabihf",
+                            "arm64ec-pc-windows-msvc",
+                            "armv5te-unknown-linux-gnueabi",
+                            "armv5te-unknown-linux-musleabi",
+                            "armv7-linux-androideabi",
+                            "armv7-unknown-linux-musleabihf",
+                            "i586-unknown-linux-gnu",
+                            "i586-unknown-linux-musl",
+                            "i686-linux-android",
+                            "i686-unknown-freebsd",
+                            "i686-unknown-linux-musl",
+                            "nvptx64-nvidia-cuda",
+                            "riscv64gc-unknown-linux-musl",
+                            "sparc64-unknown-linux-gnu",
+                            "thumbv7neon-linux-androideabi",
+                            "thumbv7neon-unknown-linux-gnueabihf",
+                            "wasm32-unknown-emscripten",
+                            "wasm32-unknown-unknown",
+                            "wasm32-wasip1",
+                            "wasm32-wasip2",
+                            "x86_64-fortanix-unknown-sgx",
+                            "x86_64-linux-android",
+                            "x86_64-unknown-fuchsia",
+                            "x86_64-unknown-linux-gnux32",
+                            "x86_64-unknown-redox",
+                            "aarch64-unknown-freebsd",
+                            "aarch64-unknown-hermit",
+                            "aarch64-unknown-illumos",
+                            "aarch64-unknown-netbsd",
+                            "aarch64-unknown-qnx",
+                            "aarch64-unknown-openbsd",
+                            "aarch64-unknown-redox",
+                            "aarch64-wrs-vxworks",
+                            "aarch64_be-unknown-linux-gnu",
+                            "aarch64_be-unknown-linux-musl",
+                            "armebv7r-none-eabi",
+                            "armebv7r-none-eabihf",
+                            "armv7-linux-androideabi",
+                            "armv7-wrs-vxworks-eabihf",
+                            "armv7r-none-eabi",
+                            "armv7r-none-eabihf",
+                            "hexagon-unknown-linux-musl",
+                            "i686-unknown-haiku",
+                            "i686-unknown-netbsd",
+                            "i686-unknown-openbsd",
+                            "i686-wrs-vxworks",
+                            "mips-unknown-linux-gnu",
+                            "mips-unknown-linux-musl",
+                            "mips64-unknown-linux-gnuabi64",
+                            "mips64-unknown-linux-muslabi64",
+                            "mips64el-unknown-linux-gnuabi64",
+                            "mips64el-unknown-linux-muslabi64",
+                            "mipsel-sony-psp",
+                            "mipsel-unknown-linux-gnu",
+                            "mipsel-unknown-linux-musl",
+                            "powerpc-unknown-linux-gnuspe",
+                            "powerpc-unknown-netbsd",
+                            "powerpc-wrs-vxworks",
+                            "powerpc-wrs-vxworks-spe",
+                            "powerpc64-ibm-aix",
+                            "powerpc64-unknown-freebsd",
+                            "powerpc64-unknown-linux-gnu",
+                            "powerpc64-wrs-vxworks",
+                            "riscv32-wrs-vxworks",
+                            "riscv32gc-unknown-linux-musl",
+                            "riscv32i-unknown-none-elf",
+                            "riscv32imac-unknown-none-elf",
+                            "riscv32imc-unknown-none-elf",
+                            "riscv64-wrs-vxworks",
+                            "riscv64gc-unknown-freebsd",
+                            "riscv64gc-unknown-hermit",
+                            "riscv64gc-unknown-none-elf",
+                            "riscv64imac-unknown-none-elf",
+                            "s390x-unknown-linux-musl",
+                            "sparc-unknown-linux-gnu",
+                            "sparc64-unknown-netbsd",
+                            "thumbv6m-none-eabi",
+                            "thumbv7em-none-eabi",
+                            "thumbv7em-none-eabihf",
+                            "thumbv7m-none-eabi",
+                            "wasm32-wasip3",
+                            "x86_64-apple-ios",
+                            "x86_64-pc-cygwin",
+                            "x86_64-unknown-dragonfly",
+                            "x86_64-unknown-haiku",
+                            "x86_64-unknown-hermit",
+                            "x86_64-unknown-hurd-gnu",
+                            "x86_64-unknown-l4re-uclibc",
+                            "x86_64-unknown-openbsd",
+                            "x86_64-wrs-vxworks"
+                        ],
+                        "cargo-args": [
+                            "-Zbuild-std=core"
+                        ]
+                    }
+                },
+                "cargo-semver-checks": {
+                    "lints": {
+                        "repr_align_removed": "warn",
+                        "global_value_marked_deprecated": "warn"
+                    }
+                }
+            },
+            "publish": null,
+            "authors": [],
+            "categories": [
+                "external-ffi-bindings",
+                "no-std",
+                "os"
+            ],
+            "keywords": [
+                "libc",
+                "ffi",
+                "bindings",
+                "operating",
+                "system"
+            ],
+            "readme": "README.md",
+            "repository": "https://github.com/rust-lang/libc",
+            "homepage": null,
+            "documentation": null,
+            "edition": "2021",
+            "links": null,
+            "default_run": null,
+            "rust_version": "1.65"
+        },
+        {
+            "name": "log",
+            "version": "0.4.34",
+            "id": "registry+https://github.com/rust-lang/crates.io-index#log@0.4.34",
+            "license": "MIT OR Apache-2.0",
+            "license_file": null,
+            "description": "A lightweight logging facade for Rust\n",
+            "source": "registry+https://github.com/rust-lang/crates.io-index",
+            "dependencies": [
+                {
+                    "name": "serde_core",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.0",
+                    "kind": null,
+                    "rename": null,
+                    "optional": true,
+                    "uses_default_features": false,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "sval",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^2.16",
+                    "kind": null,
+                    "rename": null,
+                    "optional": true,
+                    "uses_default_features": false,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "sval_ref",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^2.16",
+                    "kind": null,
+                    "rename": null,
+                    "optional": true,
+                    "uses_default_features": false,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "value-bag",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.12",
+                    "kind": null,
+                    "rename": null,
+                    "optional": true,
+                    "uses_default_features": false,
+                    "features": [
+                        "inline-i128"
+                    ],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "proc-macro2",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.0.63",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": false,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "serde",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.0",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [
+                        "derive"
+                    ],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "serde_json",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.0",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "serde_test",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.0",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "sval",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^2.16",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "sval_derive",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^2.16",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "value-bag",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.12",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [
+                        "test"
+                    ],
+                    "target": null,
+                    "registry": null
+                }
+            ],
+            "targets": [
+                {
+                    "kind": [
+                        "lib"
+                    ],
+                    "crate_types": [
+                        "lib"
+                    ],
+                    "name": "log",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/log-0.4.34/src/lib.rs",
+                    "edition": "2021",
+                    "doc": true,
+                    "doctest": true,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "test"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "integration",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/log-0.4.34/tests/integration.rs",
+                    "edition": "2021",
+                    "doc": false,
+                    "doctest": false,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "test"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "macros",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/log-0.4.34/tests/macros.rs",
+                    "edition": "2021",
+                    "doc": false,
+                    "doctest": false,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "bench"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "value",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/log-0.4.34/benches/value.rs",
+                    "edition": "2021",
+                    "doc": false,
+                    "doctest": false,
+                    "test": false
+                }
+            ],
+            "features": {
+                "alloc": [],
+                "kv": [],
+                "kv_serde": [
+                    "kv_std",
+                    "value-bag/serde",
+                    "serde"
+                ],
+                "kv_std": [
+                    "std",
+                    "kv",
+                    "value-bag/error"
+                ],
+                "kv_sval": [
+                    "kv",
+                    "value-bag/sval",
+                    "sval",
+                    "sval_ref"
+                ],
+                "kv_unstable": [
+                    "kv",
+                    "value-bag"
+                ],
+                "kv_unstable_serde": [
+                    "kv_serde",
+                    "kv_unstable_std"
+                ],
+                "kv_unstable_std": [
+                    "kv_std",
+                    "kv_unstable"
+                ],
+                "kv_unstable_sval": [
+                    "kv_sval",
+                    "kv_unstable"
+                ],
+                "max_level_debug": [],
+                "max_level_error": [],
+                "max_level_info": [],
+                "max_level_off": [],
+                "max_level_trace": [],
+                "max_level_warn": [],
+                "release_max_level_debug": [],
+                "release_max_level_error": [],
+                "release_max_level_info": [],
+                "release_max_level_off": [],
+                "release_max_level_trace": [],
+                "release_max_level_warn": [],
+                "serde": [
+                    "serde_core"
+                ],
+                "serde_core": [
+                    "dep:serde_core"
+                ],
+                "std": [
+                    "alloc"
+                ],
+                "sval": [
+                    "dep:sval"
+                ],
+                "sval_ref": [
+                    "dep:sval_ref"
+                ],
+                "value-bag": [
+                    "dep:value-bag"
+                ]
+            },
+            "manifest_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/log-0.4.34/Cargo.toml",
+            "metadata": {
+                "docs": {
+                    "rs": {
+                        "features": [
+                            "std",
+                            "serde",
+                            "kv_std",
+                            "kv_sval",
+                            "kv_serde"
+                        ]
+                    }
+                }
+            },
+            "publish": null,
+            "authors": [
+                "The Rust Project Developers"
+            ],
+            "categories": [
+                "development-tools::debugging"
+            ],
+            "keywords": [
+                "logging"
+            ],
+            "readme": "README.md",
+            "repository": "https://github.com/rust-lang/log",
+            "homepage": null,
+            "documentation": "https://docs.rs/log",
+            "edition": "2021",
+            "links": null,
+            "default_run": null,
+            "rust_version": "1.71.0"
+        },
+        {
+            "name": "main",
+            "version": "0.1.0",
+            "id": "path+file:///home/fakeuser/dev/tmp/test-workspaces/dep-name-collision/main#0.1.0",
+            "license": null,
+            "license_file": null,
+            "description": null,
+            "source": null,
+            "dependencies": [
+                {
+                    "name": "libc",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^0.2",
+                    "kind": null,
+                    "rename": "both",
+                    "optional": true,
+                    "uses_default_features": false,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "log",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^0.4",
+                    "kind": null,
+                    "rename": "kinds",
+                    "optional": true,
+                    "uses_default_features": false,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "either",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1",
+                    "kind": null,
+                    "rename": "plain",
+                    "optional": false,
+                    "uses_default_features": false,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "bytes",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1",
+                    "kind": null,
+                    "rename": "renamed",
+                    "optional": true,
+                    "uses_default_features": false,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "hex",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^0.4",
+                    "kind": "build",
+                    "rename": "kinds",
+                    "optional": true,
+                    "uses_default_features": false,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "byteorder",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1",
+                    "kind": null,
+                    "rename": "plain",
+                    "optional": false,
+                    "uses_default_features": false,
+                    "features": [],
+                    "target": "cfg(any())",
+                    "registry": null
+                },
+                {
+                    "name": "bitflags",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^2",
+                    "kind": null,
+                    "rename": "renamed",
+                    "optional": true,
+                    "uses_default_features": false,
+                    "features": [],
+                    "target": "cfg(any())",
+                    "registry": null
+                },
+                {
+                    "name": "arrayvec",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^0.7",
+                    "kind": null,
+                    "rename": "split",
+                    "optional": true,
+                    "uses_default_features": false,
+                    "features": [],
+                    "target": "cfg(target_os = \"linux\")",
+                    "registry": null
+                },
+                {
+                    "name": "memchr",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^2",
+                    "kind": null,
+                    "rename": "both",
+                    "optional": true,
+                    "uses_default_features": false,
+                    "features": [],
+                    "target": "cfg(unix)",
+                    "registry": null
+                },
+                {
+                    "name": "tinyvec",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1",
+                    "kind": null,
+                    "rename": "split",
+                    "optional": true,
+                    "uses_default_features": false,
+                    "features": [],
+                    "target": "cfg(windows)",
+                    "registry": null
+                }
+            ],
+            "targets": [
+                {
+                    "kind": [
+                        "lib"
+                    ],
+                    "crate_types": [
+                        "lib"
+                    ],
+                    "name": "main",
+                    "src_path": "/home/fakeuser/dev/tmp/test-workspaces/dep-name-collision/main/src/lib.rs",
+                    "edition": "2021",
+                    "doc": true,
+                    "doctest": true,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "custom-build"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "build-script-build",
+                    "src_path": "/home/fakeuser/dev/tmp/test-workspaces/dep-name-collision/main/build.rs",
+                    "edition": "2021",
+                    "doc": false,
+                    "doctest": false,
+                    "test": false
+                }
+            ],
+            "features": {
+                "both-dep-colon": [
+                    "dep:both"
+                ],
+                "both-weak-slash": [
+                    "both?/std"
+                ],
+                "default": [],
+                "dep-colon": [
+                    "dep:renamed"
+                ],
+                "kinds-dep-colon": [
+                    "dep:kinds"
+                ],
+                "kinds-slash": [
+                    "kinds/std"
+                ],
+                "plain-slash": [
+                    "plain/std"
+                ],
+                "slash": [
+                    "renamed/std"
+                ],
+                "split-dep-colon": [
+                    "dep:split"
+                ],
+                "split-slash": [
+                    "split/std"
+                ],
+                "weak-slash": [
+                    "renamed?/std"
+                ]
+            },
+            "manifest_path": "/home/fakeuser/dev/tmp/test-workspaces/dep-name-collision/main/Cargo.toml",
+            "metadata": null,
+            "publish": [],
+            "authors": [
+                "Fake Author <fakeauthor@example.com>"
+            ],
+            "categories": [],
+            "keywords": [],
+            "readme": null,
+            "repository": null,
+            "homepage": null,
+            "documentation": null,
+            "edition": "2021",
+            "links": null,
+            "default_run": null,
+            "rust_version": null
+        },
+        {
+            "name": "memchr",
+            "version": "2.8.3",
+            "id": "registry+https://github.com/rust-lang/crates.io-index#memchr@2.8.3",
+            "license": "Unlicense OR MIT",
+            "license_file": null,
+            "description": "Provides extremely fast (uses SIMD on x86_64, aarch64 and wasm32) routines for\n1, 2 or 3 byte search and single substring search.\n",
+            "source": "registry+https://github.com/rust-lang/crates.io-index",
+            "dependencies": [
+                {
+                    "name": "rustc-std-workspace-core",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.0.0",
+                    "kind": null,
+                    "rename": "core",
+                    "optional": true,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "log",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^0.4.20",
+                    "kind": null,
+                    "rename": null,
+                    "optional": true,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "quickcheck",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.0.3",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": false,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                }
+            ],
+            "targets": [
+                {
+                    "kind": [
+                        "lib"
+                    ],
+                    "crate_types": [
+                        "lib"
+                    ],
+                    "name": "memchr",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/memchr-2.8.3/src/lib.rs",
+                    "edition": "2021",
+                    "doc": true,
+                    "doctest": true,
+                    "test": true
+                }
+            ],
+            "features": {
+                "alloc": [],
+                "core": [
+                    "dep:core"
+                ],
+                "default": [
+                    "std"
+                ],
+                "libc": [],
+                "logging": [
+                    "dep:log"
+                ],
+                "rustc-dep-of-std": [
+                    "core"
+                ],
+                "std": [
+                    "alloc"
+                ],
+                "use_std": [
+                    "std"
+                ]
+            },
+            "manifest_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/memchr-2.8.3/Cargo.toml",
+            "metadata": {
+                "docs": {
+                    "rs": {
+                        "rustdoc-args": [
+                            "--generate-link-to-definition"
+                        ]
+                    }
+                }
+            },
+            "publish": null,
+            "authors": [
+                "Andrew Gallant <jamslam@gmail.com>",
+                "bluss"
+            ],
+            "categories": [],
+            "keywords": [
+                "memchr",
+                "memmem",
+                "substring",
+                "find",
+                "search"
+            ],
+            "readme": "README.md",
+            "repository": "https://github.com/BurntSushi/memchr",
+            "homepage": "https://github.com/BurntSushi/memchr",
+            "documentation": "https://docs.rs/memchr/",
+            "edition": "2021",
+            "links": null,
+            "default_run": null,
+            "rust_version": "1.61"
+        },
+        {
+            "name": "tinyvec",
+            "version": "1.13.2",
+            "id": "registry+https://github.com/rust-lang/crates.io-index#tinyvec@1.13.2",
+            "license": "Zlib OR Apache-2.0 OR MIT",
+            "license_file": null,
+            "description": "`tinyvec` provides 100% safe vec-like data structures.",
+            "source": "registry+https://github.com/rust-lang/crates.io-index",
+            "dependencies": [
+                {
+                    "name": "arbitrary",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1",
+                    "kind": null,
+                    "rename": null,
+                    "optional": true,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "bin-proto",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^0.12.5",
+                    "kind": null,
+                    "rename": null,
+                    "optional": true,
+                    "uses_default_features": false,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "borsh",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.2.0",
+                    "kind": null,
+                    "rename": null,
+                    "optional": true,
+                    "uses_default_features": false,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "defmt",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.0",
+                    "kind": null,
+                    "rename": null,
+                    "optional": true,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "generic-array",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.1.1",
+                    "kind": null,
+                    "rename": null,
+                    "optional": true,
+                    "uses_default_features": false,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "schemars",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.0",
+                    "kind": null,
+                    "rename": null,
+                    "optional": true,
+                    "uses_default_features": false,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "serde_core",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.0",
+                    "kind": null,
+                    "rename": null,
+                    "optional": true,
+                    "uses_default_features": false,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "tinyvec_macros",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^0.1",
+                    "kind": null,
+                    "rename": null,
+                    "optional": true,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "criterion",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^0.8.0",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "debugger_test",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^0.1",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "debugger_test_parser",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^0.1",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "serde_test",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.0",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "smallvec",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                }
+            ],
+            "targets": [
+                {
+                    "kind": [
+                        "lib"
+                    ],
+                    "crate_types": [
+                        "lib"
+                    ],
+                    "name": "tinyvec",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/tinyvec-1.13.2/src/lib.rs",
+                    "edition": "2018",
+                    "doc": true,
+                    "doctest": true,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "test"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "arrayvec",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/tinyvec-1.13.2/tests/arrayvec.rs",
+                    "edition": "2018",
+                    "doc": false,
+                    "doctest": false,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "test"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "debugger_visualizer",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/tinyvec-1.13.2/tests/debugger_visualizer.rs",
+                    "edition": "2018",
+                    "required-features": [
+                        "debugger_visualizer"
+                    ],
+                    "doc": false,
+                    "doctest": false,
+                    "test": false
+                },
+                {
+                    "kind": [
+                        "test"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "no_std_macro",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/tinyvec-1.13.2/tests/no_std_macro.rs",
+                    "edition": "2018",
+                    "required-features": [
+                        "alloc"
+                    ],
+                    "doc": false,
+                    "doctest": false,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "test"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "tinyvec",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/tinyvec-1.13.2/tests/tinyvec.rs",
+                    "edition": "2018",
+                    "required-features": [
+                        "alloc",
+                        "std"
+                    ],
+                    "doc": false,
+                    "doctest": false,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "bench"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "macros",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/tinyvec-1.13.2/benches/macros.rs",
+                    "edition": "2018",
+                    "required-features": [
+                        "alloc"
+                    ],
+                    "doc": false,
+                    "doctest": false,
+                    "test": false
+                },
+                {
+                    "kind": [
+                        "bench"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "smallvec",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/tinyvec-1.13.2/benches/smallvec.rs",
+                    "edition": "2018",
+                    "required-features": [
+                        "alloc",
+                        "real_blackbox"
+                    ],
+                    "doc": false,
+                    "doctest": false,
+                    "test": false
+                }
+            ],
+            "features": {
+                "alloc": [
+                    "tinyvec_macros"
+                ],
+                "arbitrary": [
+                    "dep:arbitrary"
+                ],
+                "bin-proto": [
+                    "dep:bin-proto"
+                ],
+                "borsh": [
+                    "dep:borsh"
+                ],
+                "debugger_visualizer": [],
+                "default": [],
+                "defmt": [
+                    "dep:defmt"
+                ],
+                "experimental_write_impl": [],
+                "generic-array": [
+                    "dep:generic-array"
+                ],
+                "grab_spare_slice": [],
+                "latest_stable_rust": [
+                    "rustc_1_61"
+                ],
+                "nightly_slice_partition_dedup": [],
+                "real_blackbox": [
+                    "criterion/real_blackbox"
+                ],
+                "rustc_1_40": [],
+                "rustc_1_55": [],
+                "rustc_1_57": [],
+                "rustc_1_61": [
+                    "rustc_1_57"
+                ],
+                "schemars": [
+                    "dep:schemars",
+                    "alloc"
+                ],
+                "serde": [
+                    "dep:serde_core"
+                ],
+                "std": [
+                    "alloc"
+                ],
+                "tinyvec_macros": [
+                    "dep:tinyvec_macros"
+                ]
+            },
+            "manifest_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/tinyvec-1.13.2/Cargo.toml",
+            "metadata": {
+                "docs": {
+                    "rs": {
+                        "features": [
+                            "alloc",
+                            "std",
+                            "grab_spare_slice",
+                            "latest_stable_rust",
+                            "serde",
+                            "borsh",
+                            "defmt",
+                            "bin-proto",
+                            "schemars"
+                        ],
+                        "rustdoc-args": [
+                            "--cfg",
+                            "docs_rs"
+                        ]
+                    }
+                },
+                "playground": {
+                    "features": [
+                        "alloc",
+                        "std",
+                        "grab_spare_slice",
+                        "latest_stable_rust",
+                        "serde",
+                        "borsh",
+                        "schemars"
+                    ]
+                }
+            },
+            "publish": null,
+            "authors": [
+                "Lokathor <zefria@gmail.com>"
+            ],
+            "categories": [
+                "data-structures",
+                "no-std"
+            ],
+            "keywords": [
+                "vec",
+                "no_std",
+                "no-std"
+            ],
+            "readme": "README.md",
+            "repository": "https://github.com/Lokathor/tinyvec",
+            "homepage": null,
+            "documentation": null,
+            "edition": "2018",
+            "links": null,
+            "default_run": null,
+            "rust_version": null
+        },
+        {
+            "name": "tinyvec_macros",
+            "version": "0.1.1",
+            "id": "registry+https://github.com/rust-lang/crates.io-index#tinyvec_macros@0.1.1",
+            "license": "MIT OR Apache-2.0 OR Zlib",
+            "license_file": null,
+            "description": "Some macros for tiny containers",
+            "source": "registry+https://github.com/rust-lang/crates.io-index",
+            "dependencies": [],
+            "targets": [
+                {
+                    "kind": [
+                        "lib"
+                    ],
+                    "crate_types": [
+                        "lib"
+                    ],
+                    "name": "tinyvec_macros",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/tinyvec_macros-0.1.1/src/lib.rs",
+                    "edition": "2018",
+                    "doc": true,
+                    "doctest": true,
+                    "test": true
+                }
+            ],
+            "features": {},
+            "manifest_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/tinyvec_macros-0.1.1/Cargo.toml",
+            "metadata": null,
+            "publish": null,
+            "authors": [
+                "Soveu <marx.tomasz@gmail.com>"
+            ],
+            "categories": [],
+            "keywords": [],
+            "readme": null,
+            "repository": "https://github.com/Soveu/tinyvec_macros",
+            "homepage": null,
+            "documentation": null,
+            "edition": "2018",
+            "links": null,
+            "default_run": null,
+            "rust_version": null
+        }
+    ],
+    "workspace_members": [
+        "path+file:///home/fakeuser/dev/tmp/test-workspaces/dep-name-collision/main#0.1.0"
+    ],
+    "workspace_default_members": [
+        "path+file:///home/fakeuser/dev/tmp/test-workspaces/dep-name-collision/main#0.1.0"
+    ],
+    "resolve": {
+        "nodes": [
+            {
+                "id": "registry+https://github.com/rust-lang/crates.io-index#arrayvec@0.7.8",
+                "dependencies": [],
+                "deps": [],
+                "features": [
+                    "std"
+                ]
+            },
+            {
+                "id": "registry+https://github.com/rust-lang/crates.io-index#bitflags@2.13.2",
+                "dependencies": [],
+                "deps": [],
+                "features": [
+                    "std"
+                ]
+            },
+            {
+                "id": "registry+https://github.com/rust-lang/crates.io-index#byteorder@1.5.0",
+                "dependencies": [],
+                "deps": [],
+                "features": [
+                    "std"
+                ]
+            },
+            {
+                "id": "registry+https://github.com/rust-lang/crates.io-index#bytes@1.12.1",
+                "dependencies": [],
+                "deps": [],
+                "features": [
+                    "std"
+                ]
+            },
+            {
+                "id": "registry+https://github.com/rust-lang/crates.io-index#either@1.18.0",
+                "dependencies": [],
+                "deps": [],
+                "features": [
+                    "std"
+                ]
+            },
+            {
+                "id": "registry+https://github.com/rust-lang/crates.io-index#hex@0.4.3",
+                "dependencies": [],
+                "deps": [],
+                "features": [
+                    "alloc",
+                    "std"
+                ]
+            },
+            {
+                "id": "registry+https://github.com/rust-lang/crates.io-index#libc@0.2.189",
+                "dependencies": [],
+                "deps": [],
+                "features": [
+                    "std"
+                ]
+            },
+            {
+                "id": "registry+https://github.com/rust-lang/crates.io-index#log@0.4.34",
+                "dependencies": [],
+                "deps": [],
+                "features": [
+                    "alloc",
+                    "std"
+                ]
+            },
+            {
+                "id": "path+file:///home/fakeuser/dev/tmp/test-workspaces/dep-name-collision/main#0.1.0",
+                "dependencies": [
+                    "registry+https://github.com/rust-lang/crates.io-index#arrayvec@0.7.8",
+                    "registry+https://github.com/rust-lang/crates.io-index#bitflags@2.13.2",
+                    "registry+https://github.com/rust-lang/crates.io-index#byteorder@1.5.0",
+                    "registry+https://github.com/rust-lang/crates.io-index#bytes@1.12.1",
+                    "registry+https://github.com/rust-lang/crates.io-index#either@1.18.0",
+                    "registry+https://github.com/rust-lang/crates.io-index#hex@0.4.3",
+                    "registry+https://github.com/rust-lang/crates.io-index#libc@0.2.189",
+                    "registry+https://github.com/rust-lang/crates.io-index#log@0.4.34",
+                    "registry+https://github.com/rust-lang/crates.io-index#memchr@2.8.3",
+                    "registry+https://github.com/rust-lang/crates.io-index#tinyvec@1.13.2"
+                ],
+                "deps": [
+                    {
+                        "name": "split",
+                        "pkg": "registry+https://github.com/rust-lang/crates.io-index#arrayvec@0.7.8",
+                        "dep_kinds": [
+                            {
+                                "kind": null,
+                                "target": "cfg(target_os = \"linux\")"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "renamed",
+                        "pkg": "registry+https://github.com/rust-lang/crates.io-index#bitflags@2.13.2",
+                        "dep_kinds": [
+                            {
+                                "kind": null,
+                                "target": "cfg(any())"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "plain",
+                        "pkg": "registry+https://github.com/rust-lang/crates.io-index#byteorder@1.5.0",
+                        "dep_kinds": [
+                            {
+                                "kind": null,
+                                "target": "cfg(any())"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "renamed",
+                        "pkg": "registry+https://github.com/rust-lang/crates.io-index#bytes@1.12.1",
+                        "dep_kinds": [
+                            {
+                                "kind": null,
+                                "target": null
+                            }
+                        ]
+                    },
+                    {
+                        "name": "plain",
+                        "pkg": "registry+https://github.com/rust-lang/crates.io-index#either@1.18.0",
+                        "dep_kinds": [
+                            {
+                                "kind": null,
+                                "target": null
+                            }
+                        ]
+                    },
+                    {
+                        "name": "kinds",
+                        "pkg": "registry+https://github.com/rust-lang/crates.io-index#hex@0.4.3",
+                        "dep_kinds": [
+                            {
+                                "kind": "build",
+                                "target": null
+                            }
+                        ]
+                    },
+                    {
+                        "name": "both",
+                        "pkg": "registry+https://github.com/rust-lang/crates.io-index#libc@0.2.189",
+                        "dep_kinds": [
+                            {
+                                "kind": null,
+                                "target": null
+                            }
+                        ]
+                    },
+                    {
+                        "name": "kinds",
+                        "pkg": "registry+https://github.com/rust-lang/crates.io-index#log@0.4.34",
+                        "dep_kinds": [
+                            {
+                                "kind": null,
+                                "target": null
+                            }
+                        ]
+                    },
+                    {
+                        "name": "both",
+                        "pkg": "registry+https://github.com/rust-lang/crates.io-index#memchr@2.8.3",
+                        "dep_kinds": [
+                            {
+                                "kind": null,
+                                "target": "cfg(unix)"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "split",
+                        "pkg": "registry+https://github.com/rust-lang/crates.io-index#tinyvec@1.13.2",
+                        "dep_kinds": [
+                            {
+                                "kind": null,
+                                "target": "cfg(windows)"
+                            }
+                        ]
+                    }
+                ],
+                "features": [
+                    "both-dep-colon",
+                    "both-weak-slash",
+                    "default",
+                    "dep-colon",
+                    "kinds-dep-colon",
+                    "kinds-slash",
+                    "plain-slash",
+                    "slash",
+                    "split-dep-colon",
+                    "split-slash",
+                    "weak-slash"
+                ]
+            },
+            {
+                "id": "registry+https://github.com/rust-lang/crates.io-index#memchr@2.8.3",
+                "dependencies": [],
+                "deps": [],
+                "features": [
+                    "alloc",
+                    "std"
+                ]
+            },
+            {
+                "id": "registry+https://github.com/rust-lang/crates.io-index#tinyvec@1.13.2",
+                "dependencies": [
+                    "registry+https://github.com/rust-lang/crates.io-index#tinyvec_macros@0.1.1"
+                ],
+                "deps": [
+                    {
+                        "name": "tinyvec_macros",
+                        "pkg": "registry+https://github.com/rust-lang/crates.io-index#tinyvec_macros@0.1.1",
+                        "dep_kinds": [
+                            {
+                                "kind": null,
+                                "target": null
+                            }
+                        ]
+                    }
+                ],
+                "features": [
+                    "alloc",
+                    "std",
+                    "tinyvec_macros"
+                ]
+            },
+            {
+                "id": "registry+https://github.com/rust-lang/crates.io-index#tinyvec_macros@0.1.1",
+                "dependencies": [],
+                "deps": [],
+                "features": []
+            }
+        ],
+        "root": null
+    },
+    "target_directory": "/home/fakeuser/dev/tmp/test-workspaces/dep-name-collision/target",
+    "build_directory": "/home/fakeuser/dev/tmp/test-workspaces/dep-name-collision/target",
+    "version": 1,
+    "workspace_root": "/home/fakeuser/dev/tmp/test-workspaces/dep-name-collision",
+    "metadata": null
+}
