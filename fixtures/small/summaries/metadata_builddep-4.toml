@@ -20,7 +20,7 @@ workspace-path = 'normaldep'
 name = 'builddep'
 version = '0.1.0'
 workspace-path = 'builddep'
-features = []
+features = ['alloc', 'std']
 
 [[metadata.features-only]]
 name = 'normaldep'
@@ -33,7 +33,7 @@ name = 'builddep'
 version = '0.1.0'
 workspace-path = 'builddep'
 status = 'initial'
-features = []
+features = ['alloc', 'std']
 
 [[host-package]]
 name = 'devdep'
