@@ -284,6 +284,18 @@ impl<'g> FeatureQuery<'g> {
     /// Resolves this query into a set of known feature IDs.
     ///
     /// This is the entry point for iterators.
+    ///
+    /// The result is every feature reachable from the initials, ignoring any
+    /// conditions attached to it (such as whether it is a dev-dependency or a
+    /// weak dependency). This does not determine which features Cargo would
+    /// enable in a particular build.
+    ///
+    /// To simulate a Cargo build, pass a set of workspace features to
+    /// [`FeatureSet::into_cargo_set`], then inspect
+    /// [`CargoSet::target_features`] and [`CargoSet::host_features`].
+    ///
+    /// [`CargoSet::target_features`]: crate::graph::cargo::CargoSet::target_features
+    /// [`CargoSet::host_features`]: crate::graph::cargo::CargoSet::host_features
     pub fn resolve(self) -> FeatureSet<'g> {
         FeatureSet::new(self)
     }
