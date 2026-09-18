@@ -904,8 +904,13 @@ impl<'g> ConditionalLink<'g> {
     ///
     /// For other kinds of links, the return value is fixed:
     ///
-    /// * `foo/std` and `dep:foo` activate every declaration of `foo`, so their
-    ///   links are always `Unsplit`.
+    /// * A link from a feature with `foo/std` to `foo`'s `std` feature is
+    ///   `Unsplit`, since `foo/std` applies to every declaration of `foo`.
+    /// * A link from a feature with `foo/std` to `dep:foo`, or to a feature
+    ///   named `foo` in the same package, is `Optional`, since only optional
+    ///   declarations of `foo` activate these.
+    /// * A link from a feature with `dep:foo` to `dep:foo` is `Unsplit`, since
+    ///   `dep:foo` activates every declaration of `foo`.
     /// * A link from a package's base feature into a dependency is `Required`.
     /// * A link from `dep:foo` into `foo` is `Optional`.
     ///

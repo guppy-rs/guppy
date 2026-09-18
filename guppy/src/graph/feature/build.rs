@@ -139,7 +139,8 @@ impl FeatureGraphBuildState {
                     };
 
                     // If the package is present as an optional dependency, it is
-                    // implicitly activated by the feature:
+                    // implicitly activated by the feature, but only where one
+                    // of its optional declarations applies:
                     // from (`main`, `a`) to (`main`, `dep:dep`)
                     //
                     // But this is skipped for weak `dep?/foo`, which never
@@ -149,53 +150,55 @@ impl FeatureGraphBuildState {
                     // `dep:dep` (and thus the optional declaration). The weak
                     // cross edge above is sufficient on its own.
                     if !*weak
-                        && let Some(same_node) = self.make_named_feature_node(
+                        && let Some(optional) =
+                            EnabledLink::new(Self::make_optional_conditional_link_impl(link))
+                    {
+                        if let Some(same_node) = self.make_named_feature_node(
                             &metadata,
                             from_label,
                             &metadata,
                             FeatureLabel::OptionalDependency(dep_name),
                             // Don't warn if this dep isn't optional.
                             false,
-                        )
-                    {
-                        nodes_edges.push((
-                            same_node,
-                            Self::make_named_feature_cross_edge(link, SlashForm::Strong),
-                        ));
-                    }
+                        ) {
+                            nodes_edges
+                                .push((same_node, Self::make_same_package_slash_edge(&optional)));
+                        }
 
-                    // Finally, (`main`, `a`) to (`main`, `dep`) -- if this is a non-weak dependency
-                    // and a named feature by this name is present, it also gets activated (even if
-                    // the named feature has no relation to the optional dependency).
-                    //
-                    // For example:
-                    //
-                    // server = ["hyper/server"]
-                    //
-                    // will also activate the named feature `hyper`.
-                    //
-                    // One thing to be careful of here is that we don't want to insert self-edges.
-                    // For example:
-                    //
-                    // tokio = ["dep:tokio", "tokio/net"]
-                    //
-                    // should not insert a self-edge from `tokio` to `tokio`. The second condition
-                    // checks this.
-                    if !*weak
-                        && &**dep_name != from_named_feature
-                        && let Some(same_named_feature_node) = self.make_named_feature_node(
-                            &metadata,
-                            from_label,
-                            &metadata,
-                            FeatureLabel::Named(dep_name),
-                            // Don't warn if this dep isn't optional.
-                            false,
-                        )
-                    {
-                        nodes_edges.push((
-                            same_named_feature_node,
-                            Self::make_named_feature_cross_edge(link, SlashForm::Strong),
-                        ));
+                        // Finally, (`main`, `a`) to (`main`, `dep`) -- if this
+                        // is a non-weak optional dependency and a named feature
+                        // by this name is present, it also gets activated (even
+                        // if the named feature has no relation to the optional
+                        // dependency).
+                        //
+                        // For example:
+                        //
+                        // server = ["hyper/server"]
+                        //
+                        // will also activate the named feature `hyper`.
+                        //
+                        // One thing to be careful of here is that we don't want
+                        // to insert self-edges. For example:
+                        //
+                        // tokio = ["dep:tokio", "tokio/net"]
+                        //
+                        // should not insert a self-edge from `tokio` to
+                        // `tokio`. The first condition checks this.
+                        if &**dep_name != from_named_feature
+                            && let Some(same_named_feature_node) = self.make_named_feature_node(
+                                &metadata,
+                                from_label,
+                                &metadata,
+                                FeatureLabel::Named(dep_name),
+                                // Don't warn if this dep isn't optional.
+                                false,
+                            )
+                        {
+                            nodes_edges.push((
+                                same_named_feature_node,
+                                Self::make_same_package_slash_edge(&optional),
+                            ));
+                        }
                     }
                 }
             }
@@ -276,13 +279,24 @@ impl FeatureGraphBuildState {
     /// (a link (`from`, `a`) to (`dep`, `foo`) is created.
     ///
     /// If `dep` is optional and the reference is not weak, the edge (`from`, `a`)
-    /// to (`from`, `dep`) is also a `NamedFeatureWithSlash` edge.
+    /// to (`from`, `dep`) is also a `NamedFeatureWithSlash` edge, created by
+    /// `make_same_package_slash_edge`.
     fn make_named_feature_cross_edge(link: &PackageLink<'_>, slash: SlashForm) -> FeatureEdge {
         // This edge is enabled if the feature is enabled, which means the union of (required,
         // optional) build conditions.
         FeatureEdge::NamedFeatureWithSlash {
             link: Self::make_full_conditional_link_impl(link),
             slash,
+        }
+    }
+
+    /// Creates the edge (`from`, `a`) to (`from`, `dep:dep`) or (`from`, `dep`)
+    /// for a non-weak `dep/foo`. Cargo only activates these through the
+    /// optional declarations of `dep`, so `optional` covers just those.
+    fn make_same_package_slash_edge(optional: &EnabledLink) -> FeatureEdge {
+        FeatureEdge::NamedFeatureWithSlash {
+            link: optional.get().clone(),
+            slash: SlashForm::Strong,
         }
     }
 
