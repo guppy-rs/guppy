@@ -531,6 +531,15 @@ mod small {
 
     proptest_suite!(metadata_weak_namespaced_features);
 
+    // A fixture where one dependency name resolves to two different packages.
+    #[test]
+    fn metadata_dep_name_collision() {
+        let metadata_dep_name_collision = JsonFixture::metadata_dep_name_collision();
+        metadata_dep_name_collision.verify();
+    }
+
+    proptest_suite!(metadata_dep_name_collision);
+
     // Test Windows path handling in fixtures with path dependencies.
     #[test]
     fn metadata_cycle1_windows() {

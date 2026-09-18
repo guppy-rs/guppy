@@ -1,0 +1,55 @@
+# This file is @generated. To regenerate, run:
+#    cargo run -p fixture-manager -- generate-hakari --fixture metadata_dep_name_collision
+
+### BEGIN HAKARI SECTION
+# resolver = 'install'
+# unify-target-host = 'unify-if-both'
+# output-single-feature = true
+# dep-format-version = '1'
+# workspace-hack-line-style = 'workspace-dotted'
+# platforms = ['armv7-sony-vita-newlibeabihf', 'i686-pc-windows-gnullvm']
+# [[traversal-excludes.ids]]
+# name = 'arrayvec'
+# version = '0.7.8'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'bytes'
+# version = '1.12.1'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'either'
+# version = '1.18.0'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'hex'
+# version = '0.4.3'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'log'
+# version = '0.4.34'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'memchr'
+# version = '2.8.3'
+# crates-io = true
+# [[final-excludes.ids]]
+# name = 'tinyvec'
+# version = '1.13.2'
+# crates-io = true
+#
+# [[final-excludes.ids]]
+# name = 'tinyvec_macros'
+# version = '0.1.1'
+# crates-io = true
+
+[dependencies]
+libc = { version = "0.2", default-features = false, features = ["std"] }
+
+### END HAKARI SECTION
+
+# This part of the file should be preserved at the end.
