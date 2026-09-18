@@ -574,25 +574,12 @@ static NEVER_OPTIONAL_CASES: &[CargoResolutionCase] = &[
 // fixture's JSON.
 #[test]
 fn weak_feature_on_never_optional_dep() {
-    let mut metadata: serde_json::Value =
-        serde_json::from_str(JsonFixture::metadata_builddep().json())
-            .expect("builddep fixture is valid JSON");
-    let main = metadata["packages"]
-        .as_array_mut()
-        .expect("packages is an array")
-        .iter_mut()
-        .find(|package| package["id"] == json::METADATA_BUILDDEP_MAIN)
-        .expect("main is in the builddep fixture");
     // `main` only lists targetuser under `[dependencies]`, without
     // `optional = true`.
-    main["features"]
-        .as_object_mut()
-        .expect("features is a map")
-        .insert(
-            "targetuser-weak".to_owned(),
-            serde_json::json!(["targetuser?/reqbuilddep"]),
-        );
-    let graph = PackageGraph::from_json(metadata.to_string()).expect("patched metadata is valid");
+    let graph = builddep_graph_with_main_features(&[(
+        "targetuser-weak",
+        serde_json::json!(["targetuser?/reqbuilddep"]),
+    )]);
 
     for case in NEVER_OPTIONAL_CASES {
         case.check(&graph, json::METADATA_BUILDDEP_MAIN, "");
@@ -673,6 +660,28 @@ impl SeenLink {
             dev: VisitStatus::new(link.dev()),
         }
     }
+}
+
+// Returns the builddep fixture with `features` patched into `main`.
+//
+// `cargo metadata` can produce manifests the fixtures don't cover, so some
+// tests need a shape that isn't checked in. Patching the JSON keeps the rest
+// of the fixture intact.
+fn builddep_graph_with_main_features(features: &[(&str, serde_json::Value)]) -> PackageGraph {
+    let mut metadata: serde_json::Value =
+        serde_json::from_str(JsonFixture::metadata_builddep().json())
+            .expect("builddep fixture is valid JSON");
+    let main = metadata["packages"]
+        .as_array_mut()
+        .expect("packages is an array")
+        .iter_mut()
+        .find(|package| package["id"] == json::METADATA_BUILDDEP_MAIN)
+        .expect("main is in the builddep fixture");
+    let main_features = main["features"].as_object_mut().expect("features is a map");
+    for (name, value) in features {
+        main_features.insert((*name).to_owned(), value.clone());
+    }
+    PackageGraph::from_json(metadata.to_string()).expect("patched metadata is valid")
 }
 
 // Resolves `features` on `main` with a visitor that accepts every link, and
