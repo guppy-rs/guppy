@@ -1,8 +1,8 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-//! Tests for weak dependency features (`dep?/feature`) on a dependency that is
-//! required in one declaration and optional in another.
+//! Tests for weak dependency features (`dep?/feature`), mostly on a dependency
+//! that is required in one declaration and optional in another.
 //!
 //! The `builddep` fixture's `main` has a build script. The parts of its
 //! manifest exercised here are:

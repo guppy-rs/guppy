@@ -1175,7 +1175,8 @@ pub enum SlashForm {
     Strong,
 
     /// The weak form, `a = ["foo?/b"]`, on a dependency that has at least one
-    /// optional declaration to hold back.
+    /// optional declaration. For those declarations, the feature only applies
+    /// once `foo` is activated.
     Weak(Box<WeakSlashImpl>),
 }
 
