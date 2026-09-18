@@ -164,7 +164,7 @@ where
 }
 
 /// Buffer state for a single weak index in an in-progress resolver.
-pub(super) enum SingleBufferState<'g> {
+enum SingleBufferState<'g> {
     /// The optional halves seen so far, held until the buffer is released.
     Buffered(SingleBufferVec<'g>),
 
