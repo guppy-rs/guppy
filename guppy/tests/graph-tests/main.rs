@@ -18,6 +18,7 @@ mod dep_name_collision;
 mod feature_helpers;
 mod graph_tests;
 mod invalid_tests;
+mod strong_slash;
 #[cfg(feature = "summaries")]
 mod summary_tests;
 mod weak_namespaced;

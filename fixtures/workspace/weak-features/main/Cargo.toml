@@ -51,3 +51,7 @@ hostuser-normaldep = ["hostuser/normaldep"]
 targetuser-reqbuilddep = ["targetuser/reqbuilddep"]
 dep-colon = ["dep:optbuilddep"]
 slash = ["optbuilddep/std"]
+
+# targetuser is never optional, so `targetuser/reqbuilddep` in the default set
+# must not enable this feature, even though it shares targetuser's name.
+targetuser = []

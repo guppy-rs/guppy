@@ -35,7 +35,7 @@ workspace-path = 'normaldep'
 name = 'main'
 version = '0.1.0'
 workspace-path = 'main'
-features = ['dep-colon', 'devdep', 'devdep-weak', 'hostuser-normaldep', 'normaldep', 'normaldep-weak', 'platdep', 'platdep-weak', 'pmdep', 'pmdep-weak', 'reqbuilddep', 'reqbuilddep-weak', 'slash', 'targetuser-reqbuilddep', 'windows-dep-colon']
+features = ['builddep', 'builddep-slash', 'dep-colon', 'devdep', 'devdep-weak', 'hostuser-normaldep', 'normaldep', 'normaldep-weak', 'platdep', 'platdep-slash', 'platdep-weak', 'pmdep', 'pmdep-weak', 'reqbuilddep', 'reqbuilddep-weak', 'slash', 'targetuser-reqbuilddep', 'windows-dep-colon']
 optional-deps = ['devdep', 'normaldep', 'optbuilddep', 'platdep', 'pmdep', 'reqbuilddep', 'winbuilddep']
 
 [[metadata.features-only]]

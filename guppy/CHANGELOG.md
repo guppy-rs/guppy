@@ -143,6 +143,50 @@
   returns the same set as `FeatureQuery::resolve`. Forward queries are
   unchanged.
 
+- A `foo/std` entry could also turn on a feature named `foo` in the same
+  package, in cases where Cargo doesn't. For example:
+
+  ```toml
+  [package]
+  name = "main"
+
+  [dependencies]
+  bar = { version = "1" }
+
+  [target.'cfg(unix)'.dependencies]
+  foo = { version = "1" }
+
+  [target.'cfg(windows)'.dependencies]
+  foo = { version = "1", optional = true }
+
+  [features]
+  foo-std = ["foo/std"]
+  bar = []
+  bar-std = ["bar/std"]
+  ```
+
+  On Unix:
+
+  - Enabling `foo-std` turns on `foo`'s `std` feature. It doesn't turn on
+    `main`'s `foo` feature, because `foo` is only optional on Windows.
+  - Enabling `bar-std` turns on `bar`'s `std` feature. It doesn't turn on
+    `main`'s `bar` feature, because `bar` is never optional.
+
+  Previously, guppy also turned on:
+
+  - `main`'s `foo` feature on Unix.
+  - `main`'s `bar` feature on all platforms.
+
+  guppy now matches Cargo:
+
+  - `foo/std` only turns on `main`'s `foo` feature if an optional declaration
+    of `foo` applies to the platform. Here, that is true only on Windows.
+  - `bar` has no optional declarations, so `bar/std` never turns on `main`'s
+    `bar` feature.
+
+  As part of this change, `ConditionalLink::declarations` returns `Optional`,
+  not `Unsplit`, for the links from `foo-std` to `dep:foo` and to `foo`.
+
 - Features that refer to a dependency name shared by two packages now
   activate both of them ([#682]).
 
