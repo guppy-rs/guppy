@@ -531,7 +531,7 @@ mod small {
 
     proptest_suite!(metadata_weak_namespaced_features);
 
-    // A fixture where one dependency name resolves to two different packages.
+    // A fixture where dependency names resolve to several different packages.
     #[test]
     fn metadata_dep_name_collision() {
         let metadata_dep_name_collision = JsonFixture::metadata_dep_name_collision();

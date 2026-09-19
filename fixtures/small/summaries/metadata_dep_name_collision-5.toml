@@ -39,6 +39,13 @@ status = 'direct'
 features = []
 
 [[target-package]]
+name = 'fastrand'
+version = '2.5.0'
+crates-io = true
+status = 'direct'
+features = []
+
+[[target-package]]
 name = 'once_cell'
 version = '1.21.4'
 crates-io = true
