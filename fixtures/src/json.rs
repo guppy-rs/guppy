@@ -189,6 +189,20 @@ pub static METADATA_DEP_NAME_COLLISION_LOG: &str =
     "registry+https://github.com/rust-lang/crates.io-index#log@0.4.34";
 pub static METADATA_DEP_NAME_COLLISION_HEX: &str =
     "registry+https://github.com/rust-lang/crates.io-index#hex@0.4.3";
+pub static METADATA_DEP_NAME_COLLISION_BASE64_0_21: &str =
+    "registry+https://github.com/rust-lang/crates.io-index#base64@0.21.7";
+pub static METADATA_DEP_NAME_COLLISION_BASE64_0_22: &str =
+    "registry+https://github.com/rust-lang/crates.io-index#base64@0.22.1";
+pub static METADATA_DEP_NAME_COLLISION_ONCE_CELL: &str =
+    "registry+https://github.com/rust-lang/crates.io-index#once_cell@1.21.4";
+pub static METADATA_DEP_NAME_COLLISION_PERCENT_ENCODING: &str =
+    "registry+https://github.com/rust-lang/crates.io-index#percent-encoding@2.3.2";
+pub static METADATA_DEP_NAME_COLLISION_ANYHOW: &str =
+    "registry+https://github.com/rust-lang/crates.io-index#anyhow@1.0.104";
+pub static METADATA_DEP_NAME_COLLISION_FOLDHASH: &str =
+    "registry+https://github.com/rust-lang/crates.io-index#foldhash@0.1.5";
+pub static METADATA_DEP_NAME_COLLISION_ADLER2: &str =
+    "registry+https://github.com/rust-lang/crates.io-index#adler2@2.0.1";
 
 pub static METADATA_LIBRA_PATH: &str = "../large/metadata_libra.json";
 pub static METADATA_LIBRA_ADMISSION_CONTROL_SERVICE: &str = "admission-control-service 0.1.0 (path+file:///Users/fakeuser/local/libra/admission_control/admission-control-service)";

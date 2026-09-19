@@ -17,8 +17,8 @@ triple = 'i686-win7-windows-gnu'
 target-features = 'unknown'
 flags = ['abc']
 [[metadata.omitted-packages.ids]]
-name = 'hex'
-version = '0.4.3'
+name = 'either'
+version = '1.18.0'
 crates-io = true
 
 [[target-package]]
@@ -26,8 +26,15 @@ name = 'main'
 version = '0.1.0'
 workspace-path = 'main'
 status = 'initial'
-features = ['both-dep-colon', 'both-weak-slash', 'default', 'dep-colon', 'kinds-dep-colon', 'kinds-slash', 'plain-slash', 'slash', 'split-dep-colon', 'split-slash', 'weak-slash']
-optional-deps = ['both', 'kinds', 'renamed', 'split']
+features = ['base64-dep-colon', 'base64-slash', 'both-dep-colon', 'both-weak-slash', 'default', 'dep-colon', 'kinds-dep-colon', 'kinds-slash', 'mixed-dep-colon', 'mixed-slash', 'mixed-weak-slash', 'plain-slash', 'slash', 'split-dep-colon', 'split-slash', 'three-dep-colon', 'three-slash', 'weak-slash']
+optional-deps = ['base64', 'both', 'kinds', 'mixed', 'renamed', 'split', 'three']
+
+[[target-package]]
+name = 'anyhow'
+version = '1.0.104'
+crates-io = true
+status = 'direct'
+features = ['std']
 
 [[target-package]]
 name = 'arrayvec'
@@ -37,6 +44,20 @@ status = 'direct'
 features = ['std']
 
 [[target-package]]
+name = 'base64'
+version = '0.21.7'
+crates-io = true
+status = 'direct'
+features = ['alloc', 'std']
+
+[[target-package]]
+name = 'base64'
+version = '0.22.1'
+crates-io = true
+status = 'direct'
+features = ['alloc', 'std']
+
+[[target-package]]
 name = 'bytes'
 version = '1.12.1'
 crates-io = true
@@ -44,8 +65,8 @@ status = 'direct'
 features = ['std']
 
 [[target-package]]
-name = 'either'
-version = '1.18.0'
+name = 'foldhash'
+version = '0.1.5'
 crates-io = true
 status = 'direct'
 features = ['std']
@@ -67,6 +88,20 @@ features = ['alloc', 'std']
 [[target-package]]
 name = 'memchr'
 version = '2.8.3'
+crates-io = true
+status = 'direct'
+features = ['alloc', 'std']
+
+[[target-package]]
+name = 'once_cell'
+version = '1.21.4'
+crates-io = true
+status = 'direct'
+features = ['alloc', 'race', 'std']
+
+[[target-package]]
+name = 'percent-encoding'
+version = '2.3.2'
 crates-io = true
 status = 'direct'
 features = ['alloc', 'std']

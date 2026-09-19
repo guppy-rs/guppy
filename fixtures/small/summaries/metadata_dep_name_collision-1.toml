@@ -23,13 +23,13 @@ flags = ['test-flag']
 [metadata.target-platform]
 spec = 'always'
 [[metadata.omitted-packages.ids]]
-name = 'arrayvec'
-version = '0.7.8'
+name = 'adler2'
+version = '2.0.1'
 crates-io = true
 
 [[metadata.omitted-packages.ids]]
-name = 'tinyvec_macros'
-version = '0.1.1'
+name = 'tinyvec'
+version = '1.13.2'
 crates-io = true
 
 [[target-package]]
@@ -37,8 +37,15 @@ name = 'main'
 version = '0.1.0'
 workspace-path = 'main'
 status = 'initial'
-features = ['both-dep-colon', 'both-weak-slash', 'default', 'dep-colon', 'kinds-dep-colon', 'kinds-slash', 'plain-slash', 'slash', 'split-dep-colon', 'split-slash', 'weak-slash']
-optional-deps = ['both', 'kinds', 'renamed', 'split']
+features = ['base64-dep-colon', 'base64-slash', 'both-dep-colon', 'both-weak-slash', 'default', 'dep-colon', 'kinds-dep-colon', 'kinds-slash', 'mixed-dep-colon', 'mixed-slash', 'mixed-weak-slash', 'plain-slash', 'slash', 'split-dep-colon', 'split-slash', 'three-dep-colon', 'three-slash', 'weak-slash']
+optional-deps = ['base64', 'both', 'kinds', 'mixed', 'renamed', 'split', 'three']
+
+[[target-package]]
+name = 'base64'
+version = '0.21.7'
+crates-io = true
+status = 'direct'
+features = ['alloc', 'std']
 
 [[target-package]]
 name = 'bytes'
@@ -67,6 +74,13 @@ version = '0.4.34'
 crates-io = true
 status = 'direct'
 features = ['alloc', 'std']
+
+[[target-package]]
+name = 'once_cell'
+version = '1.21.4'
+crates-io = true
+status = 'direct'
+features = ['alloc', 'race', 'std']
 
 [[host-package]]
 name = 'hex'

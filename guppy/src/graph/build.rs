@@ -822,12 +822,15 @@ impl<'g> DependencyReqs<'g> {
                 // A dependency requirement matches this package if all of the following are true:
                 //
                 // 1. The resolved_name matches.
-                // 2. The Cargo version matches (XXX is this necessary?)
+                // 2. The Cargo version matches.
                 // 3. The dependency kind and target is found in dep_kinds.
                 if !req_resolved_name.matches(resolved_name) {
                     return None;
                 }
 
+                // This version check separates dependencies with the same name
+                // only when dep_kinds is missing (which is true for older
+                // versions of Cargo). Otherwise, point 3 above does.
                 if !cargo_version_matches(&dep.req, &package_data.version) {
                     return None;
                 }

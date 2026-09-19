@@ -9,13 +9,13 @@
 # workspace-hack-line-style = 'workspace-dotted'
 # platforms = ['aarch64-unknown-hermit', 'armv6k-nintendo-3ds']
 # [[traversal-excludes.ids]]
-# name = 'either'
-# version = '1.18.0'
+# name = 'byteorder'
+# version = '1.5.0'
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
-# name = 'libc'
-# version = '0.2.189'
+# name = 'hex'
+# version = '0.4.3'
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
@@ -24,22 +24,27 @@
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
-# name = 'tinyvec_macros'
-# version = '0.1.1'
+# name = 'once_cell'
+# version = '1.21.4'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'tinyvec'
+# version = '1.13.2'
 # crates-io = true
 # [[final-excludes.ids]]
-# name = 'bitflags'
-# version = '2.13.2'
+# name = 'base64'
+# version = '0.21.7'
 # crates-io = true
 #
 # [[final-excludes.ids]]
-# name = 'either'
-# version = '1.18.0'
+# name = 'byteorder'
+# version = '1.5.0'
 # crates-io = true
 #
 # [[final-excludes.ids]]
-# name = 'libc'
-# version = '0.2.189'
+# name = 'hex'
+# version = '0.4.3'
 # crates-io = true
 #
 # [[final-excludes.ids]]
@@ -49,10 +54,12 @@
 
 [dependencies]
 bytes = { version = "1", default-features = false, features = ["std"] }
+either = { version = "1", default-features = false, features = ["std"] }
+libc = { version = "0.2", default-features = false, features = ["std"] }
 log = { version = "0.4", default-features = false, features = ["std"] }
 
-[build-dependencies]
-hex = { version = "0.4", default-features = false, features = ["std"] }
+[target.armv6k-nintendo-3ds.dependencies]
+percent-encoding = { version = "2", default-features = false, features = ["std"] }
 
 ### END HAKARI SECTION
 

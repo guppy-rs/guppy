@@ -9,13 +9,18 @@
 # workspace-hack-line-style = 'full'
 # platforms = ['powerpc-unknown-linux-gnu', 'riscv64gc-unknown-hermit', 'hexagon-unknown-qurt']
 # [[traversal-excludes.ids]]
-# name = 'bitflags'
-# version = '2.13.2'
+# name = 'arrayvec'
+# version = '0.7.8'
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
-# name = 'either'
-# version = '1.18.0'
+# name = 'bytes'
+# version = '1.12.1'
+# crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'hex'
+# version = '0.4.3'
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
@@ -24,29 +29,31 @@
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
-# name = 'log'
-# version = '0.4.34'
-# crates-io = true
-#
-# [[traversal-excludes.ids]]
-# name = 'memchr'
-# version = '2.8.3'
+# name = 'once_cell'
+# version = '1.21.4'
 # crates-io = true
 # [[final-excludes.ids]]
-# name = 'bitflags'
-# version = '2.13.2'
+# name = 'anyhow'
+# version = '1.0.104'
 # crates-io = true
 #
 # [[final-excludes.ids]]
-# name = 'hex'
-# version = '0.4.3'
+# name = 'foldhash'
+# version = '0.1.5'
 # crates-io = true
 
 [dependencies]
-bytes = { version = "1", default-features = false, features = ["std"] }
+base64 = { version = "0.21", default-features = false, features = ["std"] }
+either = { version = "1", default-features = false, features = ["std"] }
+log = { version = "0.4", default-features = false, features = ["std"] }
 
 [target.powerpc-unknown-linux-gnu.dependencies]
-arrayvec = { version = "0.7", default-features = false, features = ["std"] }
+memchr = { version = "2", default-features = false, features = ["std"] }
+percent-encoding = { version = "2", default-features = false, features = ["std"] }
+
+[target.hexagon-unknown-qurt.dependencies]
+memchr = { version = "2", default-features = false, features = ["std"] }
+percent-encoding = { version = "2", default-features = false, features = ["std"] }
 
 ### END HAKARI SECTION
 

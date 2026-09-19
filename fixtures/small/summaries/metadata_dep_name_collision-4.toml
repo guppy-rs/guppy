@@ -10,18 +10,18 @@ target-platform = []
 [metadata.host-platform]
 spec = 'any'
 [[metadata.omitted-packages.ids]]
+name = 'base64'
+version = '0.21.7'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
 name = 'byteorder'
 version = '1.5.0'
 crates-io = true
 
 [[metadata.omitted-packages.ids]]
-name = 'bytes'
-version = '1.12.1'
-crates-io = true
-
-[[metadata.omitted-packages.ids]]
-name = 'libc'
-version = '0.2.189'
+name = 'hex'
+version = '0.4.3'
 crates-io = true
 
 [[metadata.features-only]]

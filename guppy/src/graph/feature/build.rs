@@ -142,7 +142,7 @@ impl FeatureGraphBuildState {
                         SlashForm::Strong
                     };
 
-                    // Dependency from (`main`, `a`) to (`dep, `foo`)
+                    // Dependency from (`main`, `a`) to (`dep`, `foo`)
                     if let Some(cross_node) = self.make_named_feature_node(
                         &metadata,
                         from_label,
@@ -301,7 +301,7 @@ impl FeatureGraphBuildState {
     /// a = ["dep/foo"]
     /// ```
     ///
-    /// (a link (`from`, `a`) to (`dep`, `foo`) is created.
+    /// A link (`from`, `a`) to (`dep`, `foo`) is created.
     ///
     /// If `dep` is optional and the reference is not weak, the edge (`from`, `a`)
     /// to (`from`, `dep`) is also a `NamedFeatureWithSlash` edge, created by
