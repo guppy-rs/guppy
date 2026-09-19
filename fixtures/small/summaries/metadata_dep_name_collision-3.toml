@@ -12,24 +12,24 @@ spec = 'any'
 [metadata.target-platform]
 spec = 'any'
 [[metadata.omitted-packages.ids]]
-name = 'libc'
-version = '0.2.189'
+name = 'futures-sink'
+version = '0.3.34'
 crates-io = true
 
 [[metadata.features-only]]
 name = 'main'
 version = '0.1.0'
 workspace-path = 'main'
-features = ['base64-dep-colon', 'base64-slash', 'both-dep-colon', 'both-weak-slash', 'default', 'dep-colon', 'kinds-dep-colon', 'kinds-slash', 'mixed-dep-colon', 'mixed-slash', 'mixed-weak-slash', 'plain-slash', 'slash', 'split-dep-colon', 'split-slash', 'three-dep-colon', 'three-slash', 'weak-slash']
-optional-deps = ['base64', 'both', 'kinds', 'mixed', 'renamed', 'split', 'three']
+features = ['base64-dep-colon', 'base64-slash', 'both-dep-colon', 'both-weak-slash', 'default', 'dep-colon', 'devkinds-dep-colon', 'devkinds-slash', 'kinds-dep-colon', 'kinds-slash', 'mixed-dep-colon', 'mixed-slash', 'mixed-weak-slash', 'named', 'named-slash', 'plain-slash', 'slash', 'split-dep-colon', 'split-slash', 'three-dep-colon', 'three-slash', 'weak-slash']
+optional-deps = ['base64', 'both', 'devkinds', 'kinds', 'mixed', 'named', 'renamed', 'split', 'three']
 
 [[target-package]]
 name = 'main'
 version = '0.1.0'
 workspace-path = 'main'
 status = 'initial'
-features = ['base64-dep-colon', 'base64-slash', 'both-dep-colon', 'both-weak-slash', 'default', 'dep-colon', 'kinds-dep-colon', 'kinds-slash', 'mixed-dep-colon', 'mixed-slash', 'mixed-weak-slash', 'plain-slash', 'slash', 'split-dep-colon', 'split-slash', 'three-dep-colon', 'three-slash', 'weak-slash']
-optional-deps = ['base64', 'both', 'kinds', 'mixed', 'renamed', 'split', 'three']
+features = ['base64-dep-colon', 'base64-slash', 'both-dep-colon', 'both-weak-slash', 'default', 'dep-colon', 'devkinds-dep-colon', 'devkinds-slash', 'kinds-dep-colon', 'kinds-slash', 'mixed-dep-colon', 'mixed-slash', 'mixed-weak-slash', 'named', 'named-slash', 'plain-slash', 'slash', 'split-dep-colon', 'split-slash', 'three-dep-colon', 'three-slash', 'weak-slash']
+optional-deps = ['base64', 'both', 'devkinds', 'kinds', 'mixed', 'named', 'renamed', 'split', 'three']
 
 [[target-package]]
 name = 'adler2'
@@ -95,11 +95,32 @@ status = 'direct'
 features = []
 
 [[target-package]]
+name = 'fnv'
+version = '1.0.7'
+crates-io = true
+status = 'direct'
+features = ['std']
+
+[[target-package]]
 name = 'foldhash'
 version = '0.1.5'
 crates-io = true
 status = 'direct'
 features = []
+
+[[target-package]]
+name = 'futures-core'
+version = '0.3.34'
+crates-io = true
+status = 'direct'
+features = []
+
+[[target-package]]
+name = 'libc'
+version = '0.2.189'
+crates-io = true
+status = 'direct'
+features = ['std']
 
 [[target-package]]
 name = 'log'
