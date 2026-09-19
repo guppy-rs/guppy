@@ -3,6 +3,8 @@
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+## [0.19.0] - 2026-09-19
+
 ### Added
 
 - `ConditionalLink::declarations`, which returns a new `LinkDeclarations`
@@ -1282,6 +1284,7 @@ lazy_static = "0.2"
 - Initial release.
 
 <!-- next-url -->
+[0.19.0]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.19.0
 [0.18.0]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.18.0
 [0.17.26]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.26
 [0.17.25]: https://github.com/guppy-rs/guppy/releases/tag/guppy-0.17.25
