@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+## [0.9.39] - 2026-09-19
+
 ### Added
 
 - `cargo hakari explain` now produces more helpful explanations in several cases.
@@ -433,6 +435,7 @@ This was tagged, but never released due to
 Initial release.
 
 <!-- next-url -->
+[0.9.39]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.39
 [0.9.38]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.38
 [0.9.37]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.37
 [0.9.36]: https://github.com/guppy-rs/guppy/releases/tag/cargo-hakari-0.9.36
