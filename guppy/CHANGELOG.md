@@ -187,11 +187,13 @@
   As part of this change, `ConditionalLink::declarations` returns `Optional`,
   not `Unsplit`, for the links from `foo-std` to `dep:foo` and to `foo`.
 
-- Features that refer to a dependency name shared by two packages now
-  activate both of them ([#682]).
+- Features that refer to a dependency name shared by several packages now take
+  all of those packages into account ([#682]).
 
-  With Cargo, a `package = "..."` rename can make two declarations share one
-  name. For example, `semver` 1.0.28 does this:
+  One dependency name can resolve to several packages, either through a
+  `package = "..."` rename or through different versions of one package
+  declared for different targets. For example, `semver` 1.0.28 does something
+  like this:
 
   ```toml
   [dependencies]
@@ -204,13 +206,20 @@
   serde = ["dep:serde"]
   ```
 
-  The name `serde` resolves to both `serde_core` and `serde`. Previously the
-  feature graph kept only one of the two, so enabling semver's `serde` feature
-  activated whichever package happened to survive. If that was `serde`, which
-  `cfg(any())` never builds, `serde_core` was left out of the build entirely.
-  Now `dep:serde` and `serde/feature` entries consider every package under the
-  name, and the platform conditions of all of them are unioned, matching
-  Cargo.
+  The name `serde` resolves to both `serde_core` and `serde`. Previously, the
+  feature graph kept only one of the packages under each name. For `semver`,
+  that was `serde`, which `cfg(any())` never builds, so enabling the `serde`
+  feature left `serde_core` out of the build entirely.
+
+  Now, matching Cargo:
+
+  - `dep:serde` is activated wherever any declaration of `serde` applies.
+  - `serde/feature` and `serde?/feature` turn on `feature` in each package,
+    under that package's own platform conditions.
+
+  As a result, if only some of the packages under a name have a feature that
+  `name/feature` refers to, the feature graph now reports a missing-feature
+  warning for the others.
 
   Thanks [UebelAndre](https://github.com/UebelAndre) for your first contribution!
 
