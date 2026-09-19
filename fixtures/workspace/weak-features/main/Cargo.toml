@@ -12,12 +12,14 @@ build = "build.rs"
 normaldep = { path = "../normaldep" }
 reqbuilddep = { path = "../reqbuilddep", optional = true }
 targetuser = { path = "../targetuser" }
+coll = { version = "0.1", package = "collreq" }
 
 [build-dependencies]
 normaldep = { path = "../normaldep", optional = true }
 reqbuilddep = { path = "../reqbuilddep" }
 hostuser = { path = "../hostuser" }
 optbuilddep = { path = "../optbuilddep", optional = true }
+coll = { version = "0.1", package = "collbuild", optional = true }
 
 [target.'cfg(unix)'.dependencies]
 platdep = { path = "../platdep" }
@@ -26,6 +28,7 @@ pmdep = { path = "../pmdep" }
 [target.'cfg(windows)'.dependencies]
 platdep = { path = "../platdep", optional = true }
 pmdep = { path = "../pmdep", optional = true }
+coll = { version = "0.1", package = "collwin", optional = true }
 
 [features]
 # The default set is what the cargo-compare proptests exercise most: the
@@ -41,6 +44,7 @@ default = [
     "hostuser-normaldep",
     "targetuser-reqbuilddep",
     "dep-colon",
+    "coll-weak",
 ]
 
 normaldep-weak = ["normaldep?/std"]
@@ -51,6 +55,12 @@ hostuser-normaldep = ["hostuser/normaldep"]
 targetuser-reqbuilddep = ["targetuser/reqbuilddep"]
 dep-colon = ["dep:optbuilddep"]
 slash = ["optbuilddep/std"]
+
+# `coll` is one dependency name for three packages: collreq everywhere, collwin
+# on Windows, and collbuild as a build dependency. The weak and non-weak forms
+# have to reach each package under its own conditions.
+coll-weak = ["coll?/std"]
+coll-slash = ["coll/std"]
 
 # targetuser is never optional, so `targetuser/reqbuilddep` in the default set
 # must not enable this feature, even though it shares targetuser's name.

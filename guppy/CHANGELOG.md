@@ -16,8 +16,10 @@
 
 - `ConditionalLink::package_link` is replaced by `package_links`, an iterator
   over every `PackageLink` the conditional link was derived from. This is
-  usually one link, but a `package = "..."` rename can make one dependency
-  name resolve to several packages. For example, consider this `Cargo.toml`:
+  usually one link, but one dependency name can resolve to several packages,
+  either through a `package = "..."` rename or through different versions of
+  one package declared for different targets. For example, consider this
+  `Cargo.toml`:
 
   ```toml
   [package]
@@ -41,9 +43,9 @@
     dependency name, so `package_links` returns both `main -> serde_core` and
     `main -> serde`.
   - `main/serde -> serde_core/std`, from `serde/std`. `package_links` returns
-    just `main -> serde_core`.
+    only `main -> serde_core`.
   - `main/serde -> serde/std`, also from `serde/std`. `package_links` returns
-    just `main -> serde`.
+    only `main -> serde`.
 
 - `FeatureQuery::resolve_with` and `resolve_with_fn` now visit a weak dependency
   feature (`dep?/feature`) once for each kind of declaration of `dep`, not once
@@ -70,6 +72,48 @@
   This is part of the fix to weak dependency features described below.
 
 ### Fixed
+
+- Features that refer to a dependency name shared by several packages now take
+  all of those packages into account ([#682]).
+
+  One dependency name can resolve to several packages, either through a
+  `package = "..."` rename or through different versions of one package
+  declared for different targets. For example, `semver` 1.0.28 does something
+  like this:
+
+  ```toml
+  [dependencies]
+  serde = { version = "1", package = "serde_core", optional = true }
+
+  [target.'cfg(any())'.dependencies]
+  serde = { version = "1", optional = true }
+
+  [features]
+  serde = ["dep:serde"]
+  ```
+
+  The name `serde` resolves to both `serde_core` and `serde`. Previously, the
+  feature graph kept only one of the packages under each name. For `semver`,
+  that was `serde`, which `cfg(any())` never builds, so enabling the `serde`
+  feature left `serde_core` out of guppy's feature resolution, and therefore
+  out of `CargoSet` results.
+
+  Now, matching Cargo:
+
+  - `dep:serde` is activated wherever any declaration of `serde` applies.
+  - `serde/feature` turns on `feature` in each package, under that package's
+    own platform conditions. It also activates `dep:serde` wherever an
+    optional declaration of any of the packages applies.
+  - `serde?/feature` turns on `feature` in each package that is otherwise
+    activated, again under that package's own platform conditions.
+
+  As a result, if only some of the packages under a name have a feature that
+  `name/feature` or `name?/feature` refers to, the feature graph now reports a
+  missing-feature warning for the others. (Cargo itself rejects such a
+  manifest, so this only happens with metadata that didn't come from Cargo.)
+
+  Thanks [UebelAndre](https://github.com/UebelAndre) for your first
+  contribution!
 
 - With the version 2 and 3 feature resolvers, an optional build dependency
   activated only through its own package's features was never built:
@@ -186,6 +230,8 @@
 
   As part of this change, `ConditionalLink::declarations` returns `Optional`,
   not `Unsplit`, for the links from `foo-std` to `dep:foo` and to `foo`.
+
+[#682]: https://github.com/guppy-rs/guppy/pull/682
 
 ## [0.18.0] - 2026-08-25
 
@@ -426,7 +472,7 @@ Cargo metadata generated on Windows is now parseable on Unix. Windows paths are 
  - `Workspace::default_members()` and `Workspace::default_member_ids()` iterate over workspace default members (requires Cargo 1.71+; returns empty iterator for older Cargo versions).
  - `PackageLink::registry()` returns the registry URL for a dependency, if it uses a non-default registry.
  - `PackageLink::path()` returns the file system path for path dependencies.
- 
+
 ## [0.17.23] - 2025-10-12
 
 ### Changed

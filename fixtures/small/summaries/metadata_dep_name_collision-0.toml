@@ -34,7 +34,7 @@ name = 'anyhow'
 version = '1.0.104'
 crates-io = true
 status = 'direct'
-features = []
+features = ['std']
 
 [[target-package]]
 name = 'arrayvec'
@@ -55,42 +55,42 @@ name = 'base64'
 version = '0.22.1'
 crates-io = true
 status = 'direct'
-features = []
+features = ['alloc', 'std']
 
 [[target-package]]
 name = 'bytes'
 version = '1.12.1'
 crates-io = true
 status = 'direct'
-features = []
+features = ['std']
 
 [[target-package]]
 name = 'either'
 version = '1.18.0'
 crates-io = true
 status = 'direct'
-features = []
+features = ['std']
 
 [[target-package]]
 name = 'foldhash'
 version = '0.1.5'
 crates-io = true
 status = 'direct'
-features = []
+features = ['std']
 
 [[target-package]]
 name = 'futures-core'
 version = '0.3.34'
 crates-io = true
 status = 'direct'
-features = []
+features = ['alloc', 'std']
 
 [[target-package]]
 name = 'futures-sink'
 version = '0.3.34'
 crates-io = true
 status = 'direct'
-features = []
+features = ['alloc', 'std']
 
 [[target-package]]
 name = 'libc'
@@ -104,14 +104,14 @@ name = 'log'
 version = '0.4.34'
 crates-io = true
 status = 'direct'
-features = []
+features = ['alloc', 'std']
 
 [[target-package]]
 name = 'memchr'
 version = '2.8.3'
 crates-io = true
 status = 'direct'
-features = []
+features = ['alloc', 'std']
 
 [[target-package]]
 name = 'once_cell'
@@ -125,11 +125,19 @@ name = 'percent-encoding'
 version = '2.3.2'
 crates-io = true
 status = 'direct'
-features = []
+features = ['alloc', 'std']
 
 [[target-package]]
 name = 'tinyvec'
 version = '1.13.2'
 crates-io = true
 status = 'direct'
+features = ['alloc', 'std', 'tinyvec_macros']
+optional-deps = ['tinyvec_macros']
+
+[[target-package]]
+name = 'tinyvec_macros'
+version = '0.1.1'
+crates-io = true
+status = 'transitive'
 features = []

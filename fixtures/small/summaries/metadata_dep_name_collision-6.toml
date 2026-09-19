@@ -55,21 +55,21 @@ name = 'bytes'
 version = '1.12.1'
 crates-io = true
 status = 'direct'
-features = []
+features = ['std']
 
 [[target-package]]
 name = 'either'
 version = '1.18.0'
 crates-io = true
 status = 'direct'
-features = []
+features = ['std']
 
 [[target-package]]
 name = 'futures-core'
 version = '0.3.34'
 crates-io = true
 status = 'direct'
-features = []
+features = ['alloc', 'std']
 
 [[target-package]]
 name = 'libc'
@@ -83,7 +83,7 @@ name = 'log'
 version = '0.4.34'
 crates-io = true
 status = 'direct'
-features = []
+features = ['alloc', 'std']
 
 [[target-package]]
 name = 'once_cell'

@@ -43,22 +43,22 @@
 # crates-io = true
 
 [dependencies]
-bytes = { version = "1", default-features = false }
-either = { version = "1", default-features = false }
+bytes = { version = "1", default-features = false, features = ["std"] }
+either = { version = "1", default-features = false, features = ["std"] }
 libc = { version = "0.2", default-features = false, features = ["std"] }
-log = { version = "0.4", default-features = false }
+log = { version = "0.4", default-features = false, features = ["std"] }
 once_cell = { version = "1", default-features = false, features = ["std"] }
 
 [build-dependencies]
 hex = { version = "0.4", default-features = false, features = ["std"] }
 
 [target.powerpc-unknown-linux-gnu.dependencies]
-anyhow = { version = "1", default-features = false }
+anyhow = { version = "1", default-features = false, features = ["std"] }
 fnv = { version = "1", default-features = false, features = ["std"] }
-percent-encoding = { version = "2", default-features = false }
+percent-encoding = { version = "2", default-features = false, features = ["std"] }
 
 [target.hexagon-unknown-qurt.dependencies]
-percent-encoding = { version = "2", default-features = false }
+percent-encoding = { version = "2", default-features = false, features = ["std"] }
 
 ### END HAKARI SECTION
 

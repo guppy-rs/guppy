@@ -31,21 +31,21 @@
 # [final-excludes]
 
 [dependencies]
-bytes = { version = "1", default-features = false }
-either = { version = "1", default-features = false }
+bytes = { version = "1", default-features = false, features = ["std"] }
+either = { version = "1", default-features = false, features = ["std"] }
 fastrand = { version = "2", default-features = false, features = ["alloc", "std"] }
-futures-core = { version = "0.3", default-features = false }
-log = { version = "0.4", default-features = false }
+futures-core = { version = "0.3", default-features = false, features = ["alloc", "std"] }
+log = { version = "0.4", default-features = false, features = ["alloc", "std"] }
 
 [build-dependencies]
 hex = { version = "0.4", default-features = false, features = ["alloc", "std"] }
 
 [target.x86_64-unknown-linux-gnumsan.dependencies]
-anyhow = { version = "1", default-features = false }
+anyhow = { version = "1", default-features = false, features = ["std"] }
 arrayvec = { version = "0.7", default-features = false, features = ["std"] }
 fnv = { version = "1", default-features = false, features = ["std"] }
-memchr = { version = "2", default-features = false }
-percent-encoding = { version = "2", default-features = false }
+memchr = { version = "2", default-features = false, features = ["alloc", "std"] }
+percent-encoding = { version = "2", default-features = false, features = ["alloc", "std"] }
 
 ### END HAKARI SECTION
 

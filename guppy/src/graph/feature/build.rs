@@ -70,10 +70,16 @@ impl FeatureGraphBuildState {
     }
 
     pub(super) fn add_named_feature_edges(&mut self, metadata: PackageMetadata<'_>) {
-        let dep_name_to_link: AHashMap<_, _> = metadata
-            .direct_links()
-            .map(|link| (link.dep_name(), link))
-            .collect();
+        // A dependency name can map to more than one link in a few different
+        // scenarios. See guppy/tests/graph-tests/dep_name_collision.rs for more
+        // information, including examples.
+        let mut dep_name_to_links: AHashMap<&str, SmallVec<[PackageLink<'_>; 1]>> = AHashMap::new();
+        for link in metadata.direct_links() {
+            dep_name_to_links
+                .entry(link.dep_name())
+                .or_default()
+                .push(link);
+        }
 
         metadata
             .named_features_full()
@@ -87,7 +93,7 @@ impl FeatureGraphBuildState {
                             metadata,
                             from_feature,
                             feature_dep,
-                            &dep_name_to_link,
+                            &dep_name_to_links,
                         )
                     })
                     // The flat_map above holds an &mut reference to self, which is why it needs to
@@ -105,7 +111,7 @@ impl FeatureGraphBuildState {
         metadata: PackageMetadata<'_>,
         from_named_feature: &str,
         feature_dep: &NamedFeatureDep,
-        dep_name_to_link: &AHashMap<&str, PackageLink>,
+        dep_name_to_links: &AHashMap<&str, SmallVec<[PackageLink<'_>; 1]>>,
     ) -> SmallVec<[(FeatureNode, FeatureEdge); 3]> {
         let from_label = FeatureLabel::Named(from_named_feature);
         let mut nodes_edges: SmallVec<[(FeatureNode, FeatureEdge); 3]> = SmallVec::new();
@@ -116,32 +122,41 @@ impl FeatureGraphBuildState {
                 feature,
                 weak,
             } => {
-                if let Some(link) = dep_name_to_link.get(dep_name.as_ref()) {
-                    let slash = if *weak {
-                        self.make_weak_slash_impl(&metadata, link)
-                    } else {
-                        SlashForm::Strong
-                    };
+                if let Some(links) = dep_name_to_links.get(dep_name.as_ref()) {
+                    // A cross-package edge lands on a different node per link,
+                    // so emit one per link.
+                    //
+                    // If the dependency is weak, each link with optional
+                    // declarations also gets its own weak index.
+                    for link in links {
+                        let slash = if *weak {
+                            self.make_weak_slash_impl(&metadata, link)
+                        } else {
+                            SlashForm::Strong
+                        };
 
-                    // Dependency from (`main`, `a`) to (`dep`, `foo`)
-                    if let Some(cross_node) = self.make_named_feature_node(
-                        &metadata,
-                        from_label,
-                        &link.to(),
-                        FeatureLabel::Named(feature.as_ref()),
-                        true,
-                    ) {
-                        // This is a cross-package link. The platform-specific
-                        // requirements still apply, so grab them from the
-                        // PackageLink.
-                        nodes_edges
-                            .push((cross_node, Self::make_named_feature_cross_edge(link, slash)));
-                    };
+                        // Dependency from (`main`, `a`) to (`dep`, `foo`).
+                        if let Some(cross_node) = self.make_named_feature_node(
+                            &metadata,
+                            from_label,
+                            &link.to(),
+                            FeatureLabel::Named(feature.as_ref()),
+                            true,
+                        ) {
+                            // This is a cross-package link. The
+                            // platform-specific requirements still apply, so
+                            // grab them from the PackageLink.
+                            nodes_edges.push((
+                                cross_node,
+                                Self::make_named_feature_cross_edge(link, slash),
+                            ));
+                        };
+                    }
 
-                    // If the package is present as an optional dependency, it is
-                    // implicitly activated by the feature, but only where one
-                    // of its optional declarations applies:
-                    // from (`main`, `a`) to (`main`, `dep:dep`)
+                    // If any link corresponding to this name has an optional
+                    // declaration, it is implicitly activated wherever one of
+                    // those (across all links) applies, e.g. from (`main`, `a`)
+                    // to (`main`, `dep:dep`).
                     //
                     // But this is skipped for weak `dep?/foo`, which never
                     // activates `dep:dep`. If we stored these kinds of edges,
@@ -151,7 +166,10 @@ impl FeatureGraphBuildState {
                     // cross edge above is sufficient on its own.
                     if !*weak
                         && let Some(optional) =
-                            EnabledLink::new(Self::make_optional_conditional_link_impl(link))
+                            EnabledLink::new(Self::make_merged_conditional_link_impl(
+                                links,
+                                Self::make_optional_conditional_link_impl,
+                            ))
                     {
                         if let Some(same_node) = self.make_named_feature_node(
                             &metadata,
@@ -220,12 +238,13 @@ impl FeatureGraphBuildState {
                     &metadata,
                     FeatureLabel::OptionalDependency(dep_name.as_ref()),
                     true,
-                ) && let Some(link) = dep_name_to_link.get(dep_name.as_ref())
+                ) && let Some(links) = dep_name_to_links.get(dep_name.as_ref())
                 {
                     nodes_edges.push((
                         same_node,
-                        FeatureEdge::NamedFeatureDepColon(Self::make_full_conditional_link_impl(
-                            link,
+                        FeatureEdge::NamedFeatureDepColon(Self::make_merged_conditional_link_impl(
+                            links,
+                            Self::make_full_conditional_link_impl,
                         )),
                     ));
                 }
@@ -278,9 +297,9 @@ impl FeatureGraphBuildState {
     ///
     /// A link (`from`, `a`) to (`dep`, `foo`) is created.
     ///
-    /// If `dep` is optional and the reference is not weak, the edge (`from`, `a`)
-    /// to (`from`, `dep`) is also a `NamedFeatureWithSlash` edge, created by
-    /// `make_same_package_slash_edge`.
+    /// If any link for `dep` has an optional declaration and the reference is
+    /// not weak, the edge (`from`, `a`) to (`from`, `dep`) is also a
+    /// `NamedFeatureWithSlash` edge, created by `make_same_package_slash_edge`.
     fn make_named_feature_cross_edge(link: &PackageLink<'_>, slash: SlashForm) -> FeatureEdge {
         // This edge is enabled if the feature is enabled, which means the union of (required,
         // optional) build conditions.
@@ -293,6 +312,8 @@ impl FeatureGraphBuildState {
     /// Creates the edge (`from`, `a`) to (`from`, `dep:dep`) or (`from`, `dep`)
     /// for a non-weak `dep/foo`. Cargo only activates these through the
     /// optional declarations of `dep`, so `optional` covers just those.
+    /// (`optional` does cover the optional declarations across every link for
+    /// the dependency name, though.)
     fn make_same_package_slash_edge(optional: &EnabledLink) -> FeatureEdge {
         FeatureEdge::NamedFeatureWithSlash {
             link: optional.get().clone(),
@@ -300,9 +321,12 @@ impl FeatureGraphBuildState {
         }
     }
 
-    /// Returns [`SlashForm::Strong`] if the dependency has no optional
-    /// declarations -- in that case, `foo?/b` behaves like `foo/b`, so modeling
+    /// Returns [`SlashForm::Strong`] if the dependency link has no optional
+    /// declarations. In that case, `foo?/b` behaves like `foo/b`, so modeling
     /// weak dependencies isn't required.
+    ///
+    /// Otherwise, returns [`SlashForm::Weak`] and registers a weak index
+    /// released by `dep:foo`.
     fn make_weak_slash_impl(
         &mut self,
         metadata: &PackageMetadata<'_>,
@@ -351,6 +375,20 @@ impl FeatureGraphBuildState {
             required.extend(&req.inner.optional.build_if);
             required
         })
+    }
+
+    /// Creates a conditional link for each link in `links`, and unions them.
+    ///
+    /// `links` must be non-empty.
+    fn make_merged_conditional_link_impl<'g>(
+        links: &[PackageLink<'g>],
+        make_link: impl Fn(&PackageLink<'g>) -> ConditionalLinkImpl,
+    ) -> ConditionalLinkImpl {
+        links
+            .iter()
+            .map(make_link)
+            .reduce(ConditionalLinkImpl::union)
+            .expect("links is non-empty")
     }
 
     fn make_conditional_link_impl<'g>(

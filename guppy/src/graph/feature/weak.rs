@@ -4,10 +4,10 @@
 //! Support for weak features.
 //!
 //! A weak feature such as `a = ["foo?/std"]` is a single edge in the feature
-//! graph, but Cargo applies it to each declaration of `foo` separately. guppy
-//! models that by splitting the edge's link into two halves, and running the
-//! traversal through the buffered edge filter in
-//! [`crate::petgraph_support::dfs`]:
+//! graph for each package `foo` resolves to (usually one), but Cargo applies
+//! it to each declaration of `foo` separately. guppy models that by splitting
+//! each edge's link into two halves, and running the traversal through the
+//! buffered edge filter in [`crate::petgraph_support::dfs`]:
 //!
 //! * The half covering `foo`'s required declarations is offered to the visitor
 //!   as soon as the edge is reached. It is absent if `foo` has no required

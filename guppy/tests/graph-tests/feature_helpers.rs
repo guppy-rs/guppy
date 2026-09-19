@@ -14,11 +14,12 @@ use guppy::{
     },
     platform::PlatformStatus,
 };
-use std::iter;
+use std::{collections::BTreeSet, iter};
 use target_spec::{Platform, TargetFeatures};
 
 pub(super) const LINUX: &str = "x86_64-unknown-linux-gnu";
 pub(super) const WINDOWS: &str = "x86_64-pc-windows-msvc";
+pub(super) const MACOS: &str = "aarch64-apple-darwin";
 
 pub(super) struct CargoResolutionCase {
     /// The Cargo feature resolver version -- v2 by default.
@@ -225,7 +226,7 @@ pub(super) enum VisitStatus {
     Always,
     Never,
     // Enabled on platforms matching these target specs.
-    Specs(Vec<String>),
+    Specs(BTreeSet<String>),
 }
 
 impl VisitStatus {
