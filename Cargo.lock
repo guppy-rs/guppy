@@ -562,6 +562,7 @@ dependencies = [
  "clap",
  "color-eyre",
  "dialoguer",
+ "diffy",
  "duct",
  "enable-ansi-support",
  "env_logger",
@@ -2693,7 +2694,6 @@ name = "guppy-workspace-hack"
 version = "0.1.0"
 dependencies = [
  "aho-corasick",
- "anstyle",
  "bit-set",
  "bit-vec",
  "bitflags 2.13.1",
@@ -2701,6 +2701,7 @@ dependencies = [
  "clap",
  "clap_builder",
  "clap_derive",
+ "diffy",
  "foldhash 0.2.0",
  "getrandom 0.3.4",
  "hashbrown 0.17.1",

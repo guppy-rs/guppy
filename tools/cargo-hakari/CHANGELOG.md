@@ -5,46 +5,63 @@ All notable changes to this project will be documented in this file.
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+### Added
+
+- `cargo hakari explain` now produces more helpful explanations in several cases.
+
 ### Changed
 
 - Builtin targets updated to Rust 1.98.
+
 - `.config/hakari.toml` is now parsed strictly according to the TOML 1.1
   specification; configuration that the lenient `toml` 0.5 parser accepted but
   that is not valid TOML is now rejected.
+
 - MSRV updated to Rust 1.91, as required by dependencies.
 
 ### Fixed
 
-- `cargo hakari generate` no longer adds third-party packages that depend on
-  the workspace-hack package, or on a workspace member that hakari manages,
-  directly or transitively through normal or build dependencies. (Dev-only
-  dependencies are ignored, since Cargo permits cycles through them.) This
-  happens when a workspace member is also published and a `[patch]` section
-  redirects the published version's workspace-hack dependency back into the
-  workspace. In that case hakari would end up introducing a cycle ([#499]).
-- `cargo hakari manage-deps` now adds a normal `workspace-hack` dependency to
-  workspace members whose existing dependency on it is dev-only or build-only.
-  Previously such members were treated as already managed, even though their
-  normal builds weren't unified. A `[dev-dependencies]` line is removed at the
-  same time, since it is redundant once the normal dependency exists.
-- `cargo hakari manage-deps` now removes the `workspace-hack` dependency from
-  the `[dev-dependencies]`, `[build-dependencies]` and platform-specific
-  `[target.*]` sections of excluded crates. Previously only `[dependencies]`
-  was edited, so a crate with a dev-, build- or platform-specific dependency on
-  the workspace-hack was reported as needing a change on every run.
-- `cargo hakari manage-deps` no longer adds an unconditional `workspace-hack`
-  dependency to a crate whose only `[dependencies]` line for it is
-  platform-specific or optional and has no version requirement. Previously,
-  with `dep-format-version` 2 or later and a `workspace-hack-line-style` other
-  than `workspace-dotted`, such a line was treated as needing an update, and the
-  update was written as a new unconditional line rather than in place.
-- `cargo hakari generate` no longer adds workspace packages to the
-  workspace-hack. Previously, a workspace member depended on by a third-party
-  package could be added to the workspace-hack, which would form a cycle.
-- Generated names for path and workspace dependencies in the workspace-hack
-  package no longer depend on `camino`'s `Hash` implementation, which changed
-  in `camino` 1.2.3. The output is unchanged from cargo-hakari 0.9.38, so
-  upgrading does not churn existing workspace-hack packages.
+- `cargo hakari generate` no longer accidentally creates cycles:
+
+  - `cargo hakari generate` no longer adds third-party packages that depend on
+    the workspace-hack package, or on a workspace member that hakari manages,
+    directly or transitively through normal or build dependencies. (Dev-only
+    dependencies are ignored, since Cargo permits cycles through them.) This
+    happens when a workspace member is also published and a `[patch]` section
+    redirects the published version's workspace-hack dependency back into the
+    workspace. In that case hakari would end up introducing a cycle ([#499]).
+
+  - `cargo hakari generate` no longer adds workspace packages to the
+    workspace-hack. Previously, a workspace member depended on by a third-party
+    package could be added to the workspace-hack, which would form a cycle.
+
+- `cargo hakari manage-deps` now behaves correctly in more situations:
+
+  - `cargo hakari manage-deps` adds a normal `workspace-hack` dependency to
+    workspace members whose existing dependency on it is dev-only or build-only.
+    Previously, such members were treated as already managed, even though their
+    normal builds weren't unified.
+
+    A `[dev-dependencies]` line is removed at the same time, since it is 
+    redundant once the normal dependency exists.
+
+  - `cargo hakari manage-deps` now removes the `workspace-hack` dependency from
+    the `[dev-dependencies]`, `[build-dependencies]` and platform-specific
+    `[target.*]` sections of excluded crates. Previously only `[dependencies]`
+    was edited, so a crate with one of these other kinds of dependencies
+    on the workspace-hack was reported as needing a change on every run.
+
+  - `cargo hakari manage-deps` no longer adds an unconditional `workspace-hack`
+    dependency to a crate whose only `[dependencies]` line for it is
+    platform-specific or optional and has no version requirement. Previously,
+    with `dep-format-version` 2 or later and a `workspace-hack-line-style` other
+    than `workspace-dotted`, such a line was treated as needing an update, and
+    the update was written as a new unconditional line rather than in place.
+
+- Updated guppy to 0.19.0, which fixes a number of bugs around Cargo simulation.
+  In our testing across several real-world workspaces, we did not find any
+  where the workspace-hack contents changed. If they changed for you, please
+  update your workspace-hack `Cargo.toml`.
 
 [#499]: https://github.com/guppy-rs/guppy/issues/499
 

@@ -21,10 +21,9 @@
   - Configuration files are parsed strictly according to the TOML 1.1
     specification; documents that the lenient `toml` 0.5 parser accepted but
     that are not valid TOML are now rejected.
-- Updated the re-exported `diffy` to 0.5.1, so `HakariCargoToml::diff_toml`
-  now returns `diffy` 0.5's `Patch`. `diffy` 0.5 is `no_std` by default and
-  puts colored output behind a feature; hakari enables its `std` and `color`
-  features so the re-exported API matches what 0.4 provided.
+- Updated the re-exported `diffy` to 0.5.2. hakari does not enable any of
+  `diffy`'s optional features. To use `PatchFormatter::with_color`, add a
+  direct dependency on `diffy` 0.5 with the `color` feature enabled.
 - MSRV updated to Rust 1.91, as required by dependencies.
 
 ### Fixed
@@ -45,6 +44,10 @@
   output now matches hakari built against `camino` 1.2.2 and earlier. Builds
   of hakari 0.17.9 against `camino` 1.2.3 or later produced different names;
   those revert to the original names with this release.
+- Updated guppy to 0.19.0, which fixes a number of bugs around Cargo simulation.
+  In our testing across several real-world workspaces, we did not find any
+  where the workspace-hack contents changed. If they changed for you, please
+  update your workspace-hack `Cargo.toml`.
 
 [#499]: https://github.com/guppy-rs/guppy/issues/499
 
