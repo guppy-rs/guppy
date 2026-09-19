@@ -1,13 +1,12 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-use crate::feature_helpers::{assert_features_for_package, feature_ids};
+use crate::feature_helpers::{assert_features_for_package, conditional_links_from, feature_ids};
 use fixtures::{
     json::{self, JsonFixture},
     package_id,
 };
 use guppy::graph::{
-    DependencyDirection,
     cargo::{CargoOptions, CargoResolverVersion, CargoSet},
     feature::{
         ConditionalLink, FeatureId, FeatureLabel, FeatureLinkContext, FeatureSet, StandardFeatures,
@@ -347,13 +346,8 @@ fn package_links_for_conditional_links() {
     let arrayvec = package_id(json::METADATA_WEAK_NAMESPACED_ARRAYVEC);
     let bar = FeatureId::named(&main, "bar");
 
-    let mut actual: Vec<_> = graph
-        .feature_graph()
-        .query_forward([bar])
-        .expect("bar is a feature")
-        .resolve()
-        .conditional_links(DependencyDirection::Forward)
-        .filter(|link| link.from().feature_id() == bar)
+    let mut actual: Vec<_> = conditional_links_from(graph, bar)
+        .into_iter()
         .map(|link| {
             let package_links: Vec<_> = link
                 .package_links()
