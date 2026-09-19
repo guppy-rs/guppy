@@ -14,8 +14,8 @@
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
-# name = 'hex'
-# version = '0.4.3'
+# name = 'futures-sink'
+# version = '0.3.34'
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
@@ -24,13 +24,8 @@
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
-# name = 'log'
-# version = '0.4.34'
-# crates-io = true
-#
-# [[traversal-excludes.ids]]
-# name = 'percent-encoding'
-# version = '2.3.2'
+# name = 'once_cell'
+# version = '1.21.4'
 # crates-io = true
 #
 # [final-excludes]
@@ -38,12 +33,19 @@
 [dependencies]
 bytes = { version = "1", default-features = false, features = ["std"] }
 either = { version = "1", default-features = false, features = ["std"] }
-once_cell = { version = "1", default-features = false, features = ["alloc", "race", "std"] }
+fastrand = { version = "2", default-features = false, features = ["alloc", "std"] }
+futures-core = { version = "0.3", default-features = false, features = ["alloc", "std"] }
+log = { version = "0.4", default-features = false, features = ["alloc", "std"] }
+
+[build-dependencies]
+hex = { version = "0.4", default-features = false, features = ["alloc", "std"] }
 
 [target.x86_64-unknown-linux-gnumsan.dependencies]
 anyhow = { version = "1", default-features = false, features = ["std"] }
 arrayvec = { version = "0.7", default-features = false, features = ["std"] }
+fnv = { version = "1", default-features = false, features = ["std"] }
 memchr = { version = "2", default-features = false, features = ["alloc", "std"] }
+percent-encoding = { version = "2", default-features = false, features = ["alloc", "std"] }
 
 ### END HAKARI SECTION
 

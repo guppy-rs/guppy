@@ -290,3 +290,32 @@ pub(super) fn conditional_links_from<'g>(
         .filter(|link| link.from().feature_id() == from)
         .collect()
 }
+
+// Resolves `features` on `initial` with a visitor that accepts every link, and
+// returns the visits of the link from `<initial>/<from_feature>` to
+// `<to_package>/<to_feature>`, in order.
+pub(super) fn weak_edge_visits(
+    graph: &PackageGraph,
+    initial: &str,
+    features: &str,
+    from_feature: &str,
+    to_package: &PackageId,
+    to_feature: &str,
+) -> Vec<SeenLink> {
+    let initial = package_id(initial);
+    let weak_from = FeatureId::named(&initial, from_feature);
+    let weak_to = FeatureId::named(to_package, to_feature);
+
+    let mut visits = Vec::new();
+    graph
+        .feature_graph()
+        .query_forward(feature_ids(&initial, features))
+        .expect("valid feature IDs")
+        .resolve_with_fn(|_, link| {
+            if link.from().feature_id() == weak_from && link.to().feature_id() == weak_to {
+                visits.push(SeenLink::from_link(&link));
+            }
+            true
+        });
+    visits
+}

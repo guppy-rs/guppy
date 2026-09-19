@@ -14,11 +14,6 @@
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
-# name = 'bitflags'
-# version = '2.13.2'
-# crates-io = true
-#
-# [[traversal-excludes.ids]]
 # name = 'byteorder'
 # version = '1.5.0'
 # crates-io = true
@@ -34,14 +29,19 @@
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
-# name = 'libc'
-# version = '0.2.189'
+# name = 'fastrand'
+# version = '2.5.0'
 # crates-io = true
 #
 # [[traversal-excludes.ids]]
-# name = 'memchr'
-# version = '2.8.3'
+# name = 'hex'
+# version = '0.4.3'
 # crates-io = true
+#
+# [[traversal-excludes.ids]]
+# name = 'main'
+# version = '0.1.0'
+# workspace-path = 'main'
 # [[final-excludes.ids]]
 # name = 'percent-encoding'
 # version = '2.3.2'
@@ -51,19 +51,6 @@
 # name = 'tinyvec_macros'
 # version = '0.1.1'
 # crates-io = true
-
-[dependencies]
-base64-647d43efb71741da = { package = "base64", version = "0.21", default-features = false, features = ["alloc", "std"] }
-log = { version = "0.4", default-features = false, features = ["alloc", "std"] }
-once_cell = { version = "1", default-features = false, features = ["alloc", "race", "std"] }
-
-[build-dependencies]
-hex = { version = "0.4", default-features = false, features = ["alloc", "std"] }
-
-[target.i686-pc-windows-gnullvm.dependencies]
-base64-3c51e837cfc5589a = { package = "base64", version = "0.22", default-features = false, features = ["alloc", "std"] }
-foldhash = { version = "0.1", default-features = false, features = ["std"] }
-tinyvec = { version = "1", default-features = false, features = ["alloc", "std", "tinyvec_macros"] }
 
 ### END HAKARI SECTION
 

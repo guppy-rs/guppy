@@ -11,17 +11,17 @@ target-platform = []
 spec = 'any'
 [[metadata.omitted-packages.ids]]
 name = 'base64'
-version = '0.21.7'
+version = '0.22.1'
 crates-io = true
 
 [[metadata.omitted-packages.ids]]
-name = 'byteorder'
-version = '1.5.0'
+name = 'bytes'
+version = '1.12.1'
 crates-io = true
 
 [[metadata.omitted-packages.ids]]
-name = 'hex'
-version = '0.4.3'
+name = 'futures-core'
+version = '0.3.34'
 crates-io = true
 
 [[metadata.features-only]]

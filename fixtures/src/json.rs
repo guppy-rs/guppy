@@ -203,6 +203,14 @@ pub static METADATA_DEP_NAME_COLLISION_FOLDHASH: &str =
     "registry+https://github.com/rust-lang/crates.io-index#foldhash@0.1.5";
 pub static METADATA_DEP_NAME_COLLISION_ADLER2: &str =
     "registry+https://github.com/rust-lang/crates.io-index#adler2@2.0.1";
+pub static METADATA_DEP_NAME_COLLISION_FNV: &str =
+    "registry+https://github.com/rust-lang/crates.io-index#fnv@1.0.7";
+pub static METADATA_DEP_NAME_COLLISION_FUTURES_SINK: &str =
+    "registry+https://github.com/rust-lang/crates.io-index#futures-sink@0.3.34";
+pub static METADATA_DEP_NAME_COLLISION_FUTURES_CORE: &str =
+    "registry+https://github.com/rust-lang/crates.io-index#futures-core@0.3.34";
+pub static METADATA_DEP_NAME_COLLISION_FASTRAND: &str =
+    "registry+https://github.com/rust-lang/crates.io-index#fastrand@2.5.0";
 
 pub static METADATA_LIBRA_PATH: &str = "../large/metadata_libra.json";
 pub static METADATA_LIBRA_ADMISSION_CONTROL_SERVICE: &str = "admission-control-service 0.1.0 (path+file:///Users/fakeuser/local/libra/admission_control/admission-control-service)";

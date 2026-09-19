@@ -15,12 +15,13 @@ use guppy::{
     errors::FeatureGraphWarning,
     graph::{
         BuildTargetId, BuildTargetKind, DependencyDirection, EnabledStatus, PackageGraph,
-        PackageLink, PackageMetadata, PackageSource, Workspace, feature::StandardFeatures,
+        PackageLink, PackageMetadata, PackageSource, Workspace,
+        feature::{FeatureLabel, StandardFeatures},
     },
     platform::{EnabledTernary, Platform, PlatformSpec},
 };
 use pretty_assertions::assert_eq;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 /// This captures metadata fields that are relevant for tests. They are meant to be written out
 /// lazily as tests are filled out -- feel free to add more details as necessary!
@@ -315,6 +316,10 @@ impl FixtureDetails {
     /// Asserts invariants for `ConditionalLink::package_links`.
     ///
     /// * Every conditional link starts at its `from` feature's package.
+    /// * All of a conditional link's package links share one dependency name,
+    ///   and end at distinct packages.
+    /// * A link to `dep:name` has package links with the dependency name
+    ///   `name`.
     /// * A cross-package one has exactly one package link, ending at its `to`
     ///   feature's package.
     pub fn assert_conditional_link_package_links(&self, graph: &PackageGraph, msg: &str) {
@@ -329,13 +334,39 @@ impl FixtureDetails {
                 !package_links.is_empty(),
                 "{msg}: {link:?} has at least one package link"
             );
+            let dep_name = package_links[0].dep_name();
             for package_link in &package_links {
                 assert_eq!(
                     package_link.from().id(),
                     from.package_id(),
                     "{msg}: {link:?}: package link starts at the from package"
                 );
+                assert_eq!(
+                    package_link.dep_name(),
+                    dep_name,
+                    "{msg}: {link:?}: package links share one dependency name"
+                );
             }
+            let to_ids: BTreeSet<_> = package_links
+                .iter()
+                .map(|package_link| package_link.to().id())
+                .collect();
+            assert_eq!(
+                to_ids.len(),
+                package_links.len(),
+                "{msg}: {link:?}: package links end at distinct packages"
+            );
+            match to.label() {
+                FeatureLabel::OptionalDependency(to_dep_name) => {
+                    assert_eq!(
+                        dep_name, to_dep_name,
+                        "{msg}: {link:?}: package links to dep:{to_dep_name} have that \
+                         dependency name"
+                    );
+                }
+                FeatureLabel::Base | FeatureLabel::Named(_) => {}
+            }
+
             if from.package_id() != to.package_id() {
                 let [package_link] = package_links.as_slice() else {
                     panic!("{msg}: {link:?}: cross-package link has exactly one package link");
