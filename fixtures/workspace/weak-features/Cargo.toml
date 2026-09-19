@@ -1,3 +1,12 @@
+# Path dependencies can't give one dependency name several packages: Cargo
+# requires every declaration of a name to have the same source path. So `main`
+# declares the coll* packages as registry dependencies, and this patches them
+# to the local crates. This must come before [workspace]; see below.
+[patch.crates-io]
+collreq = { path = "collreq" }
+collwin = { path = "collwin" }
+collbuild = { path = "collbuild" }
+
 [workspace]
 members = [
     "main",
@@ -8,6 +17,9 @@ members = [
     "pmdep",
     "hostuser",
     "targetuser",
+    "collreq",
+    "collwin",
+    "collbuild",
 ]
 # The cargo-compare tests will add resolver = "1" or "2" to the end of this
 # file.

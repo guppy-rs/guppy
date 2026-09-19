@@ -893,7 +893,8 @@ impl<'g> ConditionalLink<'g> {
     /// method is the way to tell them apart. The link is followed if the
     /// visitor accepts either one.
     ///
-    /// If `foo` has no required declarations, the required link is skipped.
+    /// If `foo` has no required declarations for this package, the required
+    /// link is skipped.
     /// When each link is offered depends on the query's direction; see
     /// [`FeatureLinkVisitor::visit_link`].
     ///
@@ -905,7 +906,8 @@ impl<'g> ConditionalLink<'g> {
     /// For other kinds of links, the return value is fixed:
     ///
     /// * A link from a feature with `foo/std` to `foo`'s `std` feature is
-    ///   `Unsplit`, since `foo/std` applies to every declaration of `foo`.
+    ///   `Unsplit`, since `foo/std` applies to every declaration of `foo` that
+    ///   resolves to that package.
     /// * A link from a feature with `foo/std` to `dep:foo`, or to a feature
     ///   named `foo` in the same package, is `Optional`, since only optional
     ///   declarations of `foo` activate these.
@@ -952,6 +954,12 @@ impl<'g> ConditionalLink<'g> {
     ///   only `main -> serde_core`.
     /// * `main/serde -> serde/std`, also from `serde/std`. This method returns
     ///   only `main -> serde`.
+    ///
+    /// A link that covers only some declarations (see
+    /// [`declarations`](Self::declarations)) omits packages with none of those
+    /// declarations. For example, a link from `foo/std` to `dep:foo` covers
+    /// only optional declarations, so it omits a package that is only ever a
+    /// required dependency named `foo`.
     ///
     /// The order in which links are returned is unspecified.
     pub fn package_links(&self) -> impl ExactSizeIterator<Item = PackageLink<'g>> + 'g {
@@ -1172,15 +1180,15 @@ pub enum SlashForm {
     /// is enabled. There are three ways to get here:
     ///
     /// * The feature is written without the `?`, as `a = ["foo/b"]`.
-    /// * It is written as `foo?/b`, but `foo` has no optional declarations, so
-    ///   `foo?/b` means the same as `foo/b`.
+    /// * It is written as `foo?/b`, but `foo` has no optional declarations for
+    ///   this package, so `foo?/b` means the same as `foo/b` here.
     /// * `a` has both forms, as in `a = ["foo?/b", "foo/b"]`. Both map to the
     ///   same edge, and the non-weak form wins.
     Strong,
 
-    /// The weak form, `a = ["foo?/b"]`, on a dependency that has at least one
-    /// optional declaration. For those declarations, the feature only applies
-    /// once `foo` is activated.
+    /// The weak form, `a = ["foo?/b"]`, on a package that `foo` has at least
+    /// one optional declaration for. For those declarations, the feature only
+    /// applies once `foo` is activated.
     Weak(Box<WeakSlashImpl>),
 }
 
@@ -1238,6 +1246,10 @@ impl ConditionalLinkImpl {
         self.normal.is_never() && self.build.is_never() && self.dev.is_never()
     }
 
+    /// Unions two links for the same dependency name.
+    ///
+    /// A link that is never enabled contributes nothing, including its package
+    /// edges, so [`ConditionalLink::package_links`] omits it.
     pub(super) fn union(mut self, other: Self) -> Self {
         debug_assert_eq!(
             self.declarations, other.declarations,

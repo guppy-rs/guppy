@@ -178,7 +178,8 @@
 //! ```
 //!
 //! The expected results were obtained from Cargo 1.98.1 with
-//! `cargo build --unit-graph -Z unstable-options`, under resolver version 2.
+//! `cargo build --unit-graph -Z unstable-options`, under resolver version 2
+//! unless noted otherwise.
 
 use crate::feature_helpers::{
     CargoResolutionCase, MACOS, SeenLink, VisitStatus, WINDOWS, conditional_links_from,
@@ -193,6 +194,7 @@ use guppy::{
     errors::{FeatureBuildStage, FeatureGraphWarning},
     graph::{
         PackageGraph,
+        cargo::CargoResolverVersion,
         feature::{FeatureId, LinkDeclarations},
     },
 };
@@ -322,6 +324,15 @@ static CASES: &[CargoResolutionCase] = &[
         (json::METADATA_DEP_NAME_COLLISION_HEX,       Some("alloc std")),
         (json::METADATA_DEP_NAME_COLLISION_LOG,       None),
     ]),
+    // The same with the v1 resolver.
+    CargoResolutionCase::new(&["kinds-slash"]).resolver(CargoResolverVersion::V1).target_expected(&[
+        (json::METADATA_DEP_NAME_COLLISION_MAIN,      Some("default kinds-slash dep:kinds")),
+        (json::METADATA_DEP_NAME_COLLISION_LOG,       Some("alloc std")),
+        (json::METADATA_DEP_NAME_COLLISION_HEX,       None),
+    ]).host_expected(&[
+        (json::METADATA_DEP_NAME_COLLISION_HEX,       Some("alloc std")),
+        (json::METADATA_DEP_NAME_COLLISION_LOG,       None),
+    ]),
 
     // [features]
     // split-dep-colon = ["dep:split"]
@@ -331,6 +342,13 @@ static CASES: &[CargoResolutionCase] = &[
     // neither package is built.
     CargoResolutionCase::new(&["split-dep-colon"]).target_platform(MACOS).target_expected(&[
         (json::METADATA_DEP_NAME_COLLISION_MAIN,     Some("default split-dep-colon")),
+        (json::METADATA_DEP_NAME_COLLISION_ARRAYVEC, None),
+        (json::METADATA_DEP_NAME_COLLISION_TINYVEC,  None),
+    ]),
+    // The v1 resolver doesn't filter features by platform, so `dep:split` is
+    // activated on macOS, but neither package is built.
+    CargoResolutionCase::new(&["split-dep-colon"]).resolver(CargoResolverVersion::V1).target_platform(MACOS).target_expected(&[
+        (json::METADATA_DEP_NAME_COLLISION_MAIN,     Some("default split-dep-colon dep:split")),
         (json::METADATA_DEP_NAME_COLLISION_ARRAYVEC, None),
         (json::METADATA_DEP_NAME_COLLISION_TINYVEC,  None),
     ]),
@@ -409,6 +427,13 @@ static CASES: &[CargoResolutionCase] = &[
     // `dep:mixed` isn't activated and only once_cell gets `std`.
     CargoResolutionCase::new(&["mixed-slash"]).target_platform(WINDOWS).target_expected(&[
         (json::METADATA_DEP_NAME_COLLISION_MAIN,             Some("default mixed-slash")),
+        (json::METADATA_DEP_NAME_COLLISION_ONCE_CELL,        Some("alloc race std")),
+        (json::METADATA_DEP_NAME_COLLISION_PERCENT_ENCODING, None),
+    ]),
+    // The v1 resolver doesn't filter features by platform, so `dep:mixed` is
+    // activated on Windows, but percent-encoding still isn't built.
+    CargoResolutionCase::new(&["mixed-slash"]).resolver(CargoResolverVersion::V1).target_platform(WINDOWS).target_expected(&[
+        (json::METADATA_DEP_NAME_COLLISION_MAIN,             Some("default mixed-slash dep:mixed")),
         (json::METADATA_DEP_NAME_COLLISION_ONCE_CELL,        Some("alloc race std")),
         (json::METADATA_DEP_NAME_COLLISION_PERCENT_ENCODING, None),
     ]),
@@ -491,6 +516,47 @@ static CASES: &[CargoResolutionCase] = &[
         (json::METADATA_DEP_NAME_COLLISION_MAIN,         Some("default named-slash")),
         (json::METADATA_DEP_NAME_COLLISION_FNV,          None),
         (json::METADATA_DEP_NAME_COLLISION_FUTURES_SINK, None),
+    ]),
+    // The v1 resolver doesn't filter features by platform, so both `dep:named`
+    // and the feature `named` are activated on macOS.
+    CargoResolutionCase::new(&["named-slash"]).resolver(CargoResolverVersion::V1).target_platform(MACOS).target_expected(&[
+        (json::METADATA_DEP_NAME_COLLISION_MAIN,         Some("default named named-slash dep:named")),
+        (json::METADATA_DEP_NAME_COLLISION_FNV,          None),
+        (json::METADATA_DEP_NAME_COLLISION_FUTURES_SINK, None),
+    ]),
+
+    // [dependencies]
+    // devkinds = { package = "futures-core", optional = true }
+    //
+    // [dev-dependencies]
+    // devkinds = { package = "fastrand" }
+    //
+    // [features]
+    // devkinds-dep-colon = ["dep:devkinds"]
+    // devkinds-slash = ["devkinds/std"]
+    //
+    // Without dev-dependencies, only futures-core is built.
+    CargoResolutionCase::new(&["devkinds-slash"]).target_expected(&[
+        (json::METADATA_DEP_NAME_COLLISION_MAIN,         Some("default devkinds-slash dep:devkinds")),
+        (json::METADATA_DEP_NAME_COLLISION_FUTURES_CORE, Some("alloc std")),
+        (json::METADATA_DEP_NAME_COLLISION_FASTRAND,     None),
+    ]),
+    // With dev-dependencies, both packages get `std`.
+    CargoResolutionCase::new(&["devkinds-slash"]).include_dev().target_expected(&[
+        (json::METADATA_DEP_NAME_COLLISION_MAIN,         Some("default devkinds-slash dep:devkinds")),
+        (json::METADATA_DEP_NAME_COLLISION_FUTURES_CORE, Some("alloc std")),
+        (json::METADATA_DEP_NAME_COLLISION_FASTRAND,     Some("alloc std")),
+    ]),
+    // The same with the v1 resolver.
+    CargoResolutionCase::new(&["devkinds-slash"]).resolver(CargoResolverVersion::V1).include_dev().target_expected(&[
+        (json::METADATA_DEP_NAME_COLLISION_MAIN,         Some("default devkinds-slash dep:devkinds")),
+        (json::METADATA_DEP_NAME_COLLISION_FUTURES_CORE, Some("alloc std")),
+        (json::METADATA_DEP_NAME_COLLISION_FASTRAND,     Some("alloc std")),
+    ]),
+    CargoResolutionCase::new(&["devkinds-dep-colon"]).include_dev().target_expected(&[
+        (json::METADATA_DEP_NAME_COLLISION_MAIN,         Some("default devkinds-dep-colon dep:devkinds")),
+        (json::METADATA_DEP_NAME_COLLISION_FUTURES_CORE, Some("")),
+        (json::METADATA_DEP_NAME_COLLISION_FASTRAND,     Some("")),
     ]),
 ];
 
@@ -729,7 +795,10 @@ fn weak_edges_are_per_link() {
 }
 
 /// Test that `name/feature` warns about each package under the name that is
-/// missing `feature`, even if another package under the name has it.
+/// missing `feature`, even if another package under the name has it, and still
+/// links to the packages that have it.
+///
+/// Cargo rejects such a manifest, so this patches the fixture's metadata.
 #[test]
 fn missing_feature_warns_per_link() {
     let graph = graph_with_patched_json(JsonFixture::metadata_dep_name_collision(), |metadata| {
@@ -765,6 +834,26 @@ fn missing_feature_warns_per_link() {
     assert_eq!(
         actual, expected,
         "renamed/std and renamed?/std warn for bitflags, but not for bytes"
+    );
+
+    let bytes = package_id(json::METADATA_DEP_NAME_COLLISION_BYTES);
+    let mut expected_links = vec![
+        (
+            FeatureId::optional_dependency(&main, "renamed"),
+            vec!["bitflags", "bytes"],
+            normal_only(LinkDeclarations::Optional, VisitStatus::Always),
+        ),
+        (
+            FeatureId::named(&bytes, "std"),
+            vec!["bytes"],
+            normal_only(LinkDeclarations::Unsplit, VisitStatus::Always),
+        ),
+    ];
+    sort_links(&mut expected_links);
+    assert_eq!(
+        links_out_of(&graph, &main, "slash"),
+        expected_links,
+        "renamed/std still links to bytes/std and dep:renamed"
     );
 }
 

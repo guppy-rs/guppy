@@ -3,6 +3,18 @@
 version = 4
 
 [[package]]
+name = "collbuild"
+version = "0.1.0"
+
+[[package]]
+name = "collreq"
+version = "0.1.0"
+
+[[package]]
+name = "collwin"
+version = "0.1.0"
+
+[[package]]
 name = "hostuser"
 version = "0.1.0"
 dependencies = [
@@ -13,6 +25,9 @@ dependencies = [
 name = "main"
 version = "0.1.0"
 dependencies = [
+ "collbuild",
+ "collreq",
+ "collwin",
  "hostuser",
  "normaldep",
  "optbuilddep",
