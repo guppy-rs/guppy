@@ -1846,7 +1846,28 @@ impl<'g> PackageLink<'g> {
         (self.from(), self.to())
     }
 
-    /// Returns the name for this dependency edge. This can be affected by a crate rename.
+    /// Returns the name for this dependency edge. This can be affected by a
+    /// crate rename.
+    ///
+    /// A dependency name is not unique within a package. Declarations under
+    /// one name can resolve to different packages. For example:
+    ///
+    /// ```toml
+    /// [dependencies]
+    /// bitflags = "1"
+    ///
+    /// [target.'cfg(windows)'.dependencies]
+    /// bitflags = "2"
+    /// ```
+    ///
+    /// Here, the package has two links named `bitflags`, one to each version.
+    /// Feature entries such as `dep:bitflags` and `bitflags/std` refer to
+    /// both.
+    ///
+    /// Conversely, Cargo accepts declarations of the same package whose names
+    /// differ only in `-` versus `_`, such as `foo-bar` under `[dependencies]`
+    /// and `foo_bar` under `[build-dependencies]`. Such a link has one name
+    /// per spelling, but this method returns only one of them.
     pub fn dep_name(&self) -> &'g str {
         &self.inner.dep_name
     }
