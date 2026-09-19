@@ -3,6 +3,8 @@
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+## [0.18.0] - 2026-09-19
+
 ### Added
 
 - `Hakari::structural_excludes` and `Hakari::is_structural_excluded` report
@@ -440,6 +442,7 @@ Internal updates for `cargo-hakari 0.9.8`.
 Initial release.
 
 <!-- next-url -->
+[0.18.0]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.18.0
 [0.17.9]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.17.9
 [0.17.8]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.17.8
 [0.17.7]: https://github.com/guppy-rs/guppy/releases/tag/hakari-0.17.7
