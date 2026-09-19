@@ -923,9 +923,8 @@ impl<'g> ConditionalLink<'g> {
 
     /// Returns the `PackageLink`s this `ConditionalLink` was derived from.
     ///
-    /// This is usually one link, but a `package = "..."` rename can make one
-    /// dependency name resolve to several packages. For example, consider this
-    /// `Cargo.toml`:
+    /// This is usually one link, but in some circumstances a single name can
+    /// resolve to several packages. For example, consider this `Cargo.toml`:
     ///
     /// ```toml
     /// [package]
@@ -950,9 +949,9 @@ impl<'g> ConditionalLink<'g> {
     ///   dependency name, so this method returns both `main -> serde_core` and
     ///   `main -> serde`. The link's platform status is the union of theirs.
     /// * `main/serde -> serde_core/std`, from `serde/std`. This method returns
-    ///   just `main -> serde_core`.
+    ///   only `main -> serde_core`.
     /// * `main/serde -> serde/std`, also from `serde/std`. This method returns
-    ///   just `main -> serde`.
+    ///   only `main -> serde`.
     ///
     /// The order in which links are returned is unspecified.
     pub fn package_links(&self) -> impl ExactSizeIterator<Item = PackageLink<'g>> + 'g {
@@ -1190,10 +1189,11 @@ pub enum SlashForm {
 #[derive(Clone, Debug)]
 #[doc(hidden)]
 pub struct WeakSlashImpl {
-    /// The half covering `foo`'s required declarations, absent if it has none.
+    /// The half covering the link's required declarations. Absent if there are
+    /// no required declarations.
     pub(super) required: Option<EnabledLink>,
 
-    /// The half covering `foo`'s optional declarations. Always present: an
+    /// The half covering the link's optional declarations. Always present: an
     /// edge with no optional declarations is [`SlashForm::Strong`].
     pub(super) optional: EnabledLink,
 
@@ -1236,6 +1236,30 @@ impl ConditionalLinkImpl {
     #[inline]
     pub(super) fn is_never(&self) -> bool {
         self.normal.is_never() && self.build.is_never() && self.dev.is_never()
+    }
+
+    pub(super) fn union(mut self, other: Self) -> Self {
+        debug_assert_eq!(
+            self.declarations, other.declarations,
+            "unioned links cover the same declarations"
+        );
+        if other.is_never() {
+            return self;
+        }
+        if self.is_never() {
+            return other;
+        }
+        for edge_ix in other.package_edge_ixs.iter() {
+            debug_assert!(
+                !self.package_edge_ixs.0.contains(&edge_ix),
+                "unioned links have distinct package edges"
+            );
+        }
+        self.package_edge_ixs.0.extend(other.package_edge_ixs.0);
+        self.normal.extend(&other.normal);
+        self.build.extend(&other.build);
+        self.dev.extend(&other.dev);
+        self
     }
 }
 
@@ -1305,10 +1329,6 @@ pub(super) struct PackageEdgeIxs(SmallVec<[EdgeIndex<PackageIx>; 4]>);
 impl PackageEdgeIxs {
     pub(super) fn single(edge_ix: EdgeIndex<PackageIx>) -> Self {
         Self(iter::once(edge_ix).collect())
-    }
-
-    pub(super) fn push(&mut self, edge_ix: EdgeIndex<PackageIx>) {
-        self.0.push(edge_ix);
     }
 
     pub(super) fn iter(&self) -> impl ExactSizeIterator<Item = EdgeIndex<PackageIx>> + '_ {

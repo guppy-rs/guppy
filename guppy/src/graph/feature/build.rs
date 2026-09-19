@@ -19,7 +19,7 @@ use cargo_metadata::DependencyKind;
 use once_cell::sync::OnceCell;
 use petgraph::{prelude::*, visit::IntoEdgeReferences};
 use smallvec::SmallVec;
-use std::{iter, slice};
+use std::iter;
 
 pub(super) type FeaturePetgraph = Graph<FeatureNode, FeatureEdge, Directed, FeatureIx>;
 pub(super) type FeatureEdgeReference<'g> = <&'g FeaturePetgraph as IntoEdgeReferences>::EdgeRef;
@@ -135,7 +135,7 @@ impl FeatureGraphBuildState {
                             SlashForm::Strong
                         };
 
-                        // Dependency from (`main`, `a`) to (`dep`, `foo`)
+                        // Dependency from (`main`, `a`) to (`dep`, `foo`).
                         if let Some(cross_node) = self.make_named_feature_node(
                             &metadata,
                             from_label,
@@ -153,12 +153,10 @@ impl FeatureGraphBuildState {
                         };
                     }
 
-                    // If the package (or packages under the same dependency
-                    // name; see guppy/tests/graph-tests/dep_name_collision.rs)
-                    // is present as an optional dependency, it is implicitly
-                    // activated by the feature, but only where one of its
-                    // optional declarations applies: from (`main`, `a`) to
-                    // (`main`, `dep:dep`).
+                    // If any link corresponding to this name has an optional
+                    // declaration, it is implicitly activated wherever one of
+                    // those (across all links) applies, e.g. from (`main`, `a`)
+                    // to (`main`, `dep:dep`).
                     //
                     // But this is skipped for weak `dep?/foo`, which never
                     // activates `dep:dep`. If we stored these kinds of edges,
@@ -168,7 +166,10 @@ impl FeatureGraphBuildState {
                     // cross edge above is sufficient on its own.
                     if !*weak
                         && let Some(optional) =
-                            EnabledLink::new(Self::make_optional_conditional_link_impl(links))
+                            EnabledLink::new(Self::make_merged_conditional_link_impl(
+                                links,
+                                Self::make_optional_conditional_link_impl,
+                            ))
                     {
                         if let Some(same_node) = self.make_named_feature_node(
                             &metadata,
@@ -241,8 +242,9 @@ impl FeatureGraphBuildState {
                 {
                     nodes_edges.push((
                         same_node,
-                        FeatureEdge::NamedFeatureDepColon(Self::make_full_conditional_link_impl(
+                        FeatureEdge::NamedFeatureDepColon(Self::make_merged_conditional_link_impl(
                             links,
+                            Self::make_full_conditional_link_impl,
                         )),
                     ));
                 }
@@ -295,14 +297,14 @@ impl FeatureGraphBuildState {
     ///
     /// A link (`from`, `a`) to (`dep`, `foo`) is created.
     ///
-    /// If `dep` is optional and the reference is not weak, the edge (`from`, `a`)
-    /// to (`from`, `dep`) is also a `NamedFeatureWithSlash` edge, created by
-    /// `make_same_package_slash_edge`.
+    /// If any link for `dep` has an optional declaration and the reference is
+    /// not weak, the edge (`from`, `a`) to (`from`, `dep`) is also a
+    /// `NamedFeatureWithSlash` edge, created by `make_same_package_slash_edge`.
     fn make_named_feature_cross_edge(link: &PackageLink<'_>, slash: SlashForm) -> FeatureEdge {
         // This edge is enabled if the feature is enabled, which means the union of (required,
         // optional) build conditions.
         FeatureEdge::NamedFeatureWithSlash {
-            link: Self::make_full_conditional_link_impl(slice::from_ref(link)),
+            link: Self::make_full_conditional_link_impl(link),
             slash,
         }
     }
@@ -310,6 +312,8 @@ impl FeatureGraphBuildState {
     /// Creates the edge (`from`, `a`) to (`from`, `dep:dep`) or (`from`, `dep`)
     /// for a non-weak `dep/foo`. Cargo only activates these through the
     /// optional declarations of `dep`, so `optional` covers just those.
+    /// (`optional` does cover the optional declarations across every link for
+    /// the dependency name, though.)
     fn make_same_package_slash_edge(optional: &EnabledLink) -> FeatureEdge {
         FeatureEdge::NamedFeatureWithSlash {
             link: optional.get().clone(),
@@ -318,22 +322,23 @@ impl FeatureGraphBuildState {
     }
 
     /// Returns [`SlashForm::Strong`] if the dependency link has no optional
-    /// declarations -- in that case, `foo?/b` behaves like `foo/b`, so modeling
+    /// declarations. In that case, `foo?/b` behaves like `foo/b`, so modeling
     /// weak dependencies isn't required.
+    ///
+    /// Otherwise, returns [`SlashForm::Weak`] and registers a weak index
+    /// released by `dep:foo`.
     fn make_weak_slash_impl(
         &mut self,
         metadata: &PackageMetadata<'_>,
         link: &PackageLink<'_>,
     ) -> SlashForm {
-        let optional = EnabledLink::new(Self::make_optional_conditional_link_impl(
-            slice::from_ref(link),
-        ));
+        let optional = EnabledLink::new(Self::make_optional_conditional_link_impl(link));
         let Some(optional) = optional else {
             return SlashForm::Strong;
         };
 
         let required = EnabledLink::new(Self::make_conditional_link_impl(
-            slice::from_ref(link),
+            link,
             LinkDeclarations::Required,
             |req| req.inner.required.build_if.clone(),
         ));
@@ -354,64 +359,50 @@ impl FeatureGraphBuildState {
         }))
     }
 
-    // Creates a conditional link covering only the optional declarations of a
-    // dependency name, across every link for that name.
-    fn make_optional_conditional_link_impl(links: &[PackageLink<'_>]) -> ConditionalLinkImpl {
-        Self::make_conditional_link_impl(links, LinkDeclarations::Optional, |req| {
+    fn make_optional_conditional_link_impl(link: &PackageLink<'_>) -> ConditionalLinkImpl {
+        Self::make_conditional_link_impl(link, LinkDeclarations::Optional, |req| {
             req.inner.optional.build_if.clone()
         })
     }
 
-    // Creates a "full" conditional link, unifying requirements across all
-    // dependency lines -- and, where one dependency name resolves to several
-    // packages, across every link for that name.
-    //
+    // Creates a "full" conditional link, unifying requirements across all dependency lines.
     // This should not be used in add_dependency_edges below!
-    fn make_full_conditional_link_impl(links: &[PackageLink<'_>]) -> ConditionalLinkImpl {
+    fn make_full_conditional_link_impl(link: &PackageLink<'_>) -> ConditionalLinkImpl {
         // This edge is enabled if the feature is enabled, which means the union of (required,
         // optional) build conditions.
-        Self::make_conditional_link_impl(links, LinkDeclarations::Unsplit, |req| {
+        Self::make_conditional_link_impl(link, LinkDeclarations::Unsplit, |req| {
             let mut required = req.inner.required.build_if.clone();
             required.extend(&req.inner.optional.build_if);
             required
         })
     }
 
-    /// Returns a [`ConditionalLinkImpl`] that unifies the given links across
-    /// all dependency lines.
+    /// Creates a conditional link for each link in `links`, and unions them.
     ///
     /// `links` must be non-empty.
-    fn make_conditional_link_impl<'g>(
+    fn make_merged_conditional_link_impl<'g>(
         links: &[PackageLink<'g>],
+        make_link: impl Fn(&PackageLink<'g>) -> ConditionalLinkImpl,
+    ) -> ConditionalLinkImpl {
+        links
+            .iter()
+            .map(make_link)
+            .reduce(ConditionalLinkImpl::union)
+            .expect("links is non-empty")
+    }
+
+    fn make_conditional_link_impl<'g>(
+        link: &PackageLink<'g>,
         declarations: LinkDeclarations,
         status: impl Fn(DependencyReq<'g>) -> PlatformStatusImpl,
     ) -> ConditionalLinkImpl {
-        let mut per_link = links.iter().map(|link| ConditionalLinkImpl {
+        ConditionalLinkImpl {
             package_edge_ixs: PackageEdgeIxs::single(link.edge_ix()),
             declarations,
             normal: status(link.normal()),
             build: status(link.build()),
             dev: status(link.dev()),
-        });
-        let mut combined = per_link.next().expect("links is non-empty");
-        for link in per_link {
-            // A link that is never enabled doesn't contribute anything, so
-            // package_links must not report it.
-            if link.is_never() {
-                continue;
-            }
-            if combined.is_never() {
-                combined = link;
-                continue;
-            }
-            for edge_ix in link.package_edge_ixs.iter() {
-                combined.package_edge_ixs.push(edge_ix);
-            }
-            combined.normal.extend(&link.normal);
-            combined.build.extend(&link.build);
-            combined.dev.extend(&link.dev);
         }
-        combined
     }
 
     pub(super) fn add_dependency_edges(&mut self, link: PackageLink<'_>) {

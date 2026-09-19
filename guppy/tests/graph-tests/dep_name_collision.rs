@@ -4,13 +4,18 @@
 //! Tests for the case where one dependency name maps to several different
 //! packages.
 //!
-//! See `add_named_feature_edges` in `guppy/src/graph/feature/build.rs` for how
-//! this arises, and why every `dep:name` and `name/feature` entry has to be
-//! resolved against all of the links.
+//! This happens when a package declares one dependency name more than once,
+//! for different targets or dependency kinds, and the declarations resolve to
+//! different packages: either through `package = "..."` renames, or as
+//! different versions of one package. Cargo then resolves features against
+//! each of those packages:
 //!
-//! The `dep-name-collision` fixture's `main` package declares eight such names,
-//! one per interesting combination of platforms, optionality and dependency
-//! kinds:
+//! * `dep:name` is activated wherever any declaration of `name` applies.
+//! * `name/feature` turns on `feature` in each package, under that package's
+//!   own platform conditions.
+//!
+//! The `dep-name-collision` fixture's `main` package declares ten such names,
+//! each exercising a different shape:
 //!
 //! ```toml
 //! [package]
@@ -35,6 +40,10 @@
 //! mixed-weak-slash = ["mixed?/std"]
 //! three-dep-colon = ["dep:three"]
 //! three-slash = ["three/std"]
+//! named = ["dep:named", "named/std"]
+//! named-slash = ["named/std"]
+//! devkinds-dep-colon = ["dep:devkinds"]
+//! devkinds-slash = ["devkinds/std"]
 //!
 //! # One link everywhere, one link never: the shape semver 1.0.28 uses to keep
 //! # a package in the lockfile without ever building it.
@@ -139,6 +148,33 @@
 //! package = "adler2"
 //! optional = true
 //! default-features = false
+//!
+//! # A feature named after the dependency, as with semver 1.0.28's `serde`.
+//! # One link per platform.
+//! [target.'cfg(target_os = "linux")'.dependencies.named]
+//! version = "1"
+//! package = "fnv"
+//! optional = true
+//! default-features = false
+//!
+//! [target.'cfg(windows)'.dependencies.named]
+//! version = "0.3"
+//! package = "futures-sink"
+//! optional = true
+//! default-features = false
+//!
+//! # One link an optional normal dependency, the other a required
+//! # dev-dependency.
+//! [dependencies.devkinds]
+//! version = "0.3"
+//! package = "futures-core"
+//! optional = true
+//! default-features = false
+//!
+//! [dev-dependencies.devkinds]
+//! version = "2"
+//! package = "fastrand"
+//! default-features = false
 //! ```
 //!
 //! The expected results were obtained from Cargo 1.98.1 with
@@ -146,15 +182,19 @@
 
 use crate::feature_helpers::{
     CargoResolutionCase, MACOS, SeenLink, VisitStatus, WINDOWS, conditional_links_from,
-    graph_with_patched_json, specs,
+    graph_with_patched_json, specs, weak_edge_visits,
 };
 use fixtures::{
     json::{self, JsonFixture},
     package_id,
 };
-use guppy::graph::{
-    PackageGraph,
-    feature::{FeatureId, LinkDeclarations},
+use guppy::{
+    PackageId,
+    errors::{FeatureBuildStage, FeatureGraphWarning},
+    graph::{
+        PackageGraph,
+        feature::{FeatureId, LinkDeclarations},
+    },
 };
 use std::collections::BTreeMap;
 
@@ -180,64 +220,6 @@ static CASES: &[CargoResolutionCase] = &[
         (json::METADATA_DEP_NAME_COLLISION_MAIN,     Some("default slash dep:renamed")),
         (json::METADATA_DEP_NAME_COLLISION_BYTES,    Some("std")),
         (json::METADATA_DEP_NAME_COLLISION_BITFLAGS, None),
-    ]),
-    // [features]
-    // weak-slash = ["renamed?/std"]
-    //
-    // A weak `renamed?/std` on its own activates nothing.
-    CargoResolutionCase::new(&["weak-slash"]).target_expected(&[
-        (json::METADATA_DEP_NAME_COLLISION_MAIN,     Some("default weak-slash")),
-        (json::METADATA_DEP_NAME_COLLISION_BYTES,    None),
-        (json::METADATA_DEP_NAME_COLLISION_BITFLAGS, None),
-    ]),
-    // [features]
-    // weak-slash = ["renamed?/std"]
-    // dep-colon = ["dep:renamed"]
-    //
-    // Once `dep:renamed` activates the dependency, the buffered weak edge
-    // flushes and bytes gets `std`.
-    CargoResolutionCase::new(&["weak-slash", "dep-colon"]).target_expected(&[
-        (json::METADATA_DEP_NAME_COLLISION_MAIN,     Some("default dep-colon weak-slash dep:renamed")),
-        (json::METADATA_DEP_NAME_COLLISION_BYTES,    Some("std")),
-        (json::METADATA_DEP_NAME_COLLISION_BITFLAGS, None),
-    ]),
-
-    // [features]
-    // split-dep-colon = ["dep:split"]
-    //
-    // `split` resolves to two packages:
-    //
-    // * arrayvec, declared under `cfg(target_os = "linux")`.
-    // * tinyvec, declared under `cfg(windows)`.
-    //
-    // The two conditions are unioned, so `dep:split` activates on both
-    // platforms, pulling in only the package that is buildable there.
-    CargoResolutionCase::new(&["split-dep-colon"]).target_expected(&[
-        (json::METADATA_DEP_NAME_COLLISION_MAIN,     Some("default split-dep-colon dep:split")),
-        (json::METADATA_DEP_NAME_COLLISION_ARRAYVEC, Some("")),
-        (json::METADATA_DEP_NAME_COLLISION_TINYVEC,  None),
-    ]),
-    // The same on Windows.
-    CargoResolutionCase::new(&["split-dep-colon"]).target_platform(WINDOWS).target_expected(&[
-        (json::METADATA_DEP_NAME_COLLISION_MAIN,     Some("default split-dep-colon dep:split")),
-        (json::METADATA_DEP_NAME_COLLISION_ARRAYVEC, None),
-        (json::METADATA_DEP_NAME_COLLISION_TINYVEC,  Some("")),
-    ]),
-    // [features]
-    // split-slash = ["split/std"]
-    //
-    // `split` resolves to arrayvec and tinyvec as above.
-    CargoResolutionCase::new(&["split-slash"]).target_expected(&[
-        (json::METADATA_DEP_NAME_COLLISION_MAIN,     Some("default split-slash dep:split")),
-        (json::METADATA_DEP_NAME_COLLISION_ARRAYVEC, Some("std")),
-        (json::METADATA_DEP_NAME_COLLISION_TINYVEC,  None),
-    ]),
-    // The same on Windows. tinyvec's `std` implies `alloc`, which implies its
-    // optional `tinyvec_macros` dependency.
-    CargoResolutionCase::new(&["split-slash"]).target_platform(WINDOWS).target_expected(&[
-        (json::METADATA_DEP_NAME_COLLISION_MAIN,     Some("default split-slash dep:split")),
-        (json::METADATA_DEP_NAME_COLLISION_ARRAYVEC, None),
-        (json::METADATA_DEP_NAME_COLLISION_TINYVEC,  Some("alloc std tinyvec_macros dep:tinyvec_macros")),
     ]),
 
     // [features]
@@ -277,16 +259,26 @@ static CASES: &[CargoResolutionCase] = &[
 
     // [dependencies]
     // plain = { package = "either" }
+    // mixed = { package = "once_cell" }
     //
     // [target.'cfg(any())'.dependencies]
     // plain = { package = "byteorder" }
     //
-    // Neither declaration is optional, so there is no `dep:plain` feature and
-    // either is always built, even with no features enabled.
+    // [target.'cfg(unix)'.dependencies]
+    // mixed = { package = "percent-encoding", optional = true }
+    //
+    // Neither of `plain`'s declarations is optional, so there is no
+    // `dep:plain` feature and either is always built, even with no features
+    // enabled.
+    //
+    // `mixed` resolves to two packages, one required and one optional. With no
+    // features enabled, only once_cell is built.
     CargoResolutionCase::new(&[]).target_expected(&[
-        (json::METADATA_DEP_NAME_COLLISION_MAIN,      Some("default")),
-        (json::METADATA_DEP_NAME_COLLISION_EITHER,    Some("")),
-        (json::METADATA_DEP_NAME_COLLISION_BYTEORDER, None),
+        (json::METADATA_DEP_NAME_COLLISION_MAIN,             Some("default")),
+        (json::METADATA_DEP_NAME_COLLISION_EITHER,           Some("")),
+        (json::METADATA_DEP_NAME_COLLISION_BYTEORDER,        None),
+        (json::METADATA_DEP_NAME_COLLISION_ONCE_CELL,        Some("")),
+        (json::METADATA_DEP_NAME_COLLISION_PERCENT_ENCODING, None),
     ]),
     // [features]
     // plain-slash = ["plain/std"]
@@ -342,15 +334,6 @@ static CASES: &[CargoResolutionCase] = &[
         (json::METADATA_DEP_NAME_COLLISION_ARRAYVEC, None),
         (json::METADATA_DEP_NAME_COLLISION_TINYVEC,  None),
     ]),
-    // [features]
-    // split-slash = ["split/std"]
-    //
-    // The same for `split/std` on macOS.
-    CargoResolutionCase::new(&["split-slash"]).target_platform(MACOS).target_expected(&[
-        (json::METADATA_DEP_NAME_COLLISION_MAIN,     Some("default split-slash")),
-        (json::METADATA_DEP_NAME_COLLISION_ARRAYVEC, None),
-        (json::METADATA_DEP_NAME_COLLISION_TINYVEC,  None),
-    ]),
 
     // [features]
     // base64-dep-colon = ["dep:base64"]
@@ -365,12 +348,6 @@ static CASES: &[CargoResolutionCase] = &[
         (json::METADATA_DEP_NAME_COLLISION_MAIN,        Some("base64-dep-colon default dep:base64")),
         (json::METADATA_DEP_NAME_COLLISION_BASE64_0_21, Some("")),
         (json::METADATA_DEP_NAME_COLLISION_BASE64_0_22, None),
-    ]),
-    // On Windows, both versions are built.
-    CargoResolutionCase::new(&["base64-dep-colon"]).target_platform(WINDOWS).target_expected(&[
-        (json::METADATA_DEP_NAME_COLLISION_MAIN,        Some("base64-dep-colon default dep:base64")),
-        (json::METADATA_DEP_NAME_COLLISION_BASE64_0_21, Some("")),
-        (json::METADATA_DEP_NAME_COLLISION_BASE64_0_22, Some("")),
     ]),
     // [features]
     // base64-slash = ["base64/std"]
@@ -389,19 +366,6 @@ static CASES: &[CargoResolutionCase] = &[
         (json::METADATA_DEP_NAME_COLLISION_BASE64_0_22, Some("alloc std")),
     ]),
 
-    // [dependencies]
-    // mixed = { package = "once_cell" }
-    //
-    // [target.'cfg(unix)'.dependencies]
-    // mixed = { package = "percent-encoding", optional = true }
-    //
-    // `mixed` resolves to two packages, one required and one optional. With no
-    // features enabled, only once_cell is built.
-    CargoResolutionCase::new(&[]).target_expected(&[
-        (json::METADATA_DEP_NAME_COLLISION_MAIN,             Some("default")),
-        (json::METADATA_DEP_NAME_COLLISION_ONCE_CELL,        Some("")),
-        (json::METADATA_DEP_NAME_COLLISION_PERCENT_ENCODING, None),
-    ]),
     // [features]
     // mixed-weak-slash = ["mixed?/std"]
     //
@@ -504,180 +468,303 @@ static CASES: &[CargoResolutionCase] = &[
         (json::METADATA_DEP_NAME_COLLISION_FOLDHASH, None),
         (json::METADATA_DEP_NAME_COLLISION_ADLER2,   Some("std")),
     ]),
+
+    // [features]
+    // named = ["dep:named", "named/std"]
+    // named-slash = ["named/std"]
+    //
+    // `named` resolves to two packages:
+    //
+    // * fnv, declared under `cfg(target_os = "linux")`.
+    // * futures-sink, declared under `cfg(windows)`.
+    //
+    // A non-weak `named/std` also activates the feature with the same name as
+    // the dependency, `named`.
+    CargoResolutionCase::new(&["named-slash"]).target_expected(&[
+        (json::METADATA_DEP_NAME_COLLISION_MAIN,         Some("default named named-slash dep:named")),
+        (json::METADATA_DEP_NAME_COLLISION_FNV,          Some("std")),
+        (json::METADATA_DEP_NAME_COLLISION_FUTURES_SINK, None),
+    ]),
+    // Neither declaration applies on macOS, so neither `dep:named` nor the
+    // feature `named` is activated.
+    CargoResolutionCase::new(&["named-slash"]).target_platform(MACOS).target_expected(&[
+        (json::METADATA_DEP_NAME_COLLISION_MAIN,         Some("default named-slash")),
+        (json::METADATA_DEP_NAME_COLLISION_FNV,          None),
+        (json::METADATA_DEP_NAME_COLLISION_FUTURES_SINK, None),
+    ]),
 ];
 
-/// Test that `ConditionalLink::package_links` reports every package a
-/// dependency name resolves to.
+/// Test the conditional links out of features that refer to a dependency name
+/// with several packages: which package links each one is derived from, and
+/// its platform statuses.
+///
+/// Links that share a dependency name are unioned in `direct_links` order, so
+/// this is checked with both the original and the reversed link order.
 #[test]
-fn package_links_report_every_package() {
-    let graph = JsonFixture::metadata_dep_name_collision().graph();
+fn conditional_links_out_of_features() {
+    let fixture = JsonFixture::metadata_dep_name_collision();
+    let reversed_graph = reversed_link_order_graph();
+
     let main = package_id(json::METADATA_DEP_NAME_COLLISION_MAIN);
     let bytes = package_id(json::METADATA_DEP_NAME_COLLISION_BYTES);
     let bitflags = package_id(json::METADATA_DEP_NAME_COLLISION_BITFLAGS);
-
-    let links_out_of = |feature| {
-        let from = FeatureId::named(&main, feature);
-        let mut links: Vec<_> = conditional_links_from(graph, from)
-            .into_iter()
-            .map(|link| {
-                let mut to_names: Vec<_> = link
-                    .package_links()
-                    .map(|package_link| package_link.to().name())
-                    .collect();
-                to_names.sort();
-                (link.to().feature_id(), to_names)
-            })
-            .collect();
-        links.sort();
-        links
-    };
-
-    assert_eq!(
-        links_out_of("dep-colon"),
-        [(
-            FeatureId::optional_dependency(&main, "renamed"),
-            vec!["bitflags", "bytes"],
-        )],
-        "dep:renamed is derived from both links"
-    );
-
-    assert_eq!(
-        links_out_of("slash"),
-        [
-            (
-                FeatureId::optional_dependency(&main, "renamed"),
-                vec!["bitflags", "bytes"],
-            ),
-            (FeatureId::named(&bitflags, "std"), vec!["bitflags"]),
-            (FeatureId::named(&bytes, "std"), vec!["bytes"]),
-        ],
-        "each cross-package link is derived from one link, dep:renamed from both"
-    );
-
-    // TODO-RAINCLAUDE: once_cell has no optional declaration, so the Optional
-    // link to dep:mixed must not report it.
     let once_cell = package_id(json::METADATA_DEP_NAME_COLLISION_ONCE_CELL);
     let percent_encoding = package_id(json::METADATA_DEP_NAME_COLLISION_PERCENT_ENCODING);
+    let fnv = package_id(json::METADATA_DEP_NAME_COLLISION_FNV);
+    let futures_sink = package_id(json::METADATA_DEP_NAME_COLLISION_FUTURES_SINK);
+    let futures_core = package_id(json::METADATA_DEP_NAME_COLLISION_FUTURES_CORE);
+    let fastrand = package_id(json::METADATA_DEP_NAME_COLLISION_FASTRAND);
+
+    let expected: Vec<(&str, Vec<ExpectedLink<'_>>)> = vec![
+        (
+            "dep-colon",
+            vec![(
+                FeatureId::optional_dependency(&main, "renamed"),
+                vec!["bitflags", "bytes"],
+                normal_only(LinkDeclarations::Unsplit, VisitStatus::Always),
+            )],
+        ),
+        (
+            "slash",
+            vec![
+                (
+                    FeatureId::optional_dependency(&main, "renamed"),
+                    vec!["bitflags", "bytes"],
+                    normal_only(LinkDeclarations::Optional, VisitStatus::Always),
+                ),
+                (
+                    FeatureId::named(&bitflags, "std"),
+                    vec!["bitflags"],
+                    normal_only(LinkDeclarations::Unsplit, specs(&["any()"])),
+                ),
+                (
+                    FeatureId::named(&bytes, "std"),
+                    vec!["bytes"],
+                    normal_only(LinkDeclarations::Unsplit, VisitStatus::Always),
+                ),
+            ],
+        ),
+        (
+            "mixed-slash",
+            vec![
+                // once_cell has no optional declaration, so the `Optional` link
+                // to `dep:mixed` isn't derived from it.
+                (
+                    FeatureId::optional_dependency(&main, "mixed"),
+                    vec!["percent-encoding"],
+                    normal_only(LinkDeclarations::Optional, specs(&["unix"])),
+                ),
+                (
+                    FeatureId::named(&once_cell, "std"),
+                    vec!["once_cell"],
+                    normal_only(LinkDeclarations::Unsplit, VisitStatus::Always),
+                ),
+                (
+                    FeatureId::named(&percent_encoding, "std"),
+                    vec!["percent-encoding"],
+                    normal_only(LinkDeclarations::Unsplit, specs(&["unix"])),
+                ),
+            ],
+        ),
+        (
+            "three-dep-colon",
+            vec![(
+                FeatureId::optional_dependency(&main, "three"),
+                vec!["adler2", "anyhow", "foldhash"],
+                normal_only(
+                    LinkDeclarations::Unsplit,
+                    specs(&["target_os = \"linux\"", "target_os = \"macos\"", "windows"]),
+                ),
+            )],
+        ),
+        (
+            "kinds-dep-colon",
+            vec![(
+                FeatureId::optional_dependency(&main, "kinds"),
+                vec!["hex", "log"],
+                SeenLink {
+                    declarations: LinkDeclarations::Unsplit,
+                    normal: VisitStatus::Always,
+                    build: VisitStatus::Always,
+                    dev: VisitStatus::Never,
+                },
+            )],
+        ),
+        (
+            "named-slash",
+            vec![
+                (
+                    FeatureId::optional_dependency(&main, "named"),
+                    vec!["fnv", "futures-sink"],
+                    normal_only(
+                        LinkDeclarations::Optional,
+                        specs(&["target_os = \"linux\"", "windows"]),
+                    ),
+                ),
+                (
+                    FeatureId::named(&main, "named"),
+                    vec!["fnv", "futures-sink"],
+                    normal_only(
+                        LinkDeclarations::Optional,
+                        specs(&["target_os = \"linux\"", "windows"]),
+                    ),
+                ),
+                (
+                    FeatureId::named(&fnv, "std"),
+                    vec!["fnv"],
+                    normal_only(LinkDeclarations::Unsplit, specs(&["target_os = \"linux\""])),
+                ),
+                (
+                    FeatureId::named(&futures_sink, "std"),
+                    vec!["futures-sink"],
+                    normal_only(LinkDeclarations::Unsplit, specs(&["windows"])),
+                ),
+            ],
+        ),
+        (
+            "devkinds-dep-colon",
+            vec![(
+                FeatureId::optional_dependency(&main, "devkinds"),
+                vec!["fastrand", "futures-core"],
+                SeenLink {
+                    declarations: LinkDeclarations::Unsplit,
+                    normal: VisitStatus::Always,
+                    build: VisitStatus::Never,
+                    dev: VisitStatus::Always,
+                },
+            )],
+        ),
+        (
+            "devkinds-slash",
+            vec![
+                (
+                    FeatureId::optional_dependency(&main, "devkinds"),
+                    vec!["futures-core"],
+                    normal_only(LinkDeclarations::Optional, VisitStatus::Always),
+                ),
+                (
+                    FeatureId::named(&fastrand, "std"),
+                    vec!["fastrand"],
+                    SeenLink {
+                        declarations: LinkDeclarations::Unsplit,
+                        normal: VisitStatus::Never,
+                        build: VisitStatus::Never,
+                        dev: VisitStatus::Always,
+                    },
+                ),
+                (
+                    FeatureId::named(&futures_core, "std"),
+                    vec!["futures-core"],
+                    normal_only(LinkDeclarations::Unsplit, VisitStatus::Always),
+                ),
+            ],
+        ),
+    ];
+
+    for (graph, link_order) in [(fixture.graph(), "original"), (&reversed_graph, "reversed")] {
+        for (from_feature, expected_links) in &expected {
+            let mut expected_links = expected_links.clone();
+            sort_links(&mut expected_links);
+            assert_eq!(
+                links_out_of(graph, &main, from_feature),
+                expected_links,
+                "with {link_order} link order, links out of {from_feature} match"
+            );
+        }
+    }
+}
+
+/// Test that a weak `name?/feature` is weak separately for each package the
+/// name resolves to.
+///
+/// Each link with an optional declaration is held back until `dep:name` is
+/// activated. A link without one, like once_cell's, isn't weak at all.
+#[test]
+fn weak_edges_are_per_link() {
+    let graph = JsonFixture::metadata_dep_name_collision().graph();
+    let libc = package_id(json::METADATA_DEP_NAME_COLLISION_LIBC);
+    let memchr = package_id(json::METADATA_DEP_NAME_COLLISION_MEMCHR);
+    let once_cell = package_id(json::METADATA_DEP_NAME_COLLISION_ONCE_CELL);
+    let percent_encoding = package_id(json::METADATA_DEP_NAME_COLLISION_PERCENT_ENCODING);
+
+    let visits = |features, from_feature, to_package| {
+        weak_edge_visits(
+            graph,
+            json::METADATA_DEP_NAME_COLLISION_MAIN,
+            features,
+            from_feature,
+            to_package,
+            "std",
+        )
+    };
+
+    for to_package in [&libc, &memchr] {
+        assert_eq!(
+            visits("both-weak-slash", "both-weak-slash", to_package),
+            Vec::<SeenLink>::new(),
+            "without dep:both, the weak edge to {to_package}/std isn't visited"
+        );
+    }
     assert_eq!(
-        links_out_of("mixed-slash"),
-        [
-            (
-                FeatureId::optional_dependency(&main, "mixed"),
-                vec!["percent-encoding"],
-            ),
-            (FeatureId::named(&once_cell, "std"), vec!["once_cell"]),
-            (
-                FeatureId::named(&percent_encoding, "std"),
-                vec!["percent-encoding"],
-            ),
-        ],
-        "dep:mixed is derived only from the link with an optional declaration"
+        visits("both-weak-slash both-dep-colon", "both-weak-slash", &libc),
+        [normal_only(LinkDeclarations::Optional, VisitStatus::Always)],
+        "dep:both releases the weak edge to libc/std"
+    );
+    assert_eq!(
+        visits("both-weak-slash both-dep-colon", "both-weak-slash", &memchr),
+        [normal_only(LinkDeclarations::Optional, specs(&["unix"]))],
+        "dep:both releases the weak edge to memchr/std"
+    );
+
+    assert_eq!(
+        visits("mixed-weak-slash", "mixed-weak-slash", &once_cell),
+        [normal_only(LinkDeclarations::Unsplit, VisitStatus::Always)],
+        "once_cell has no optional declaration, so its edge isn't weak"
+    );
+    assert_eq!(
+        visits("mixed-weak-slash", "mixed-weak-slash", &percent_encoding),
+        Vec::<SeenLink>::new(),
+        "without dep:mixed, the weak edge to percent-encoding/std isn't visited"
     );
 }
 
-/// Test that the link to `dep:name` unions the platform statuses of every
-/// package the name resolves to.
+/// Test that `name/feature` warns about each package under the name that is
+/// missing `feature`, even if another package under the name has it.
 #[test]
-fn dep_colon_link_statuses_are_unioned() {
-    let graph = JsonFixture::metadata_dep_name_collision().graph();
+fn missing_feature_warns_per_link() {
+    let graph = graph_with_patched_json(JsonFixture::metadata_dep_name_collision(), |metadata| {
+        let bitflags = metadata["packages"]
+            .as_array_mut()
+            .expect("packages is an array")
+            .iter_mut()
+            .find(|package| package["id"] == json::METADATA_DEP_NAME_COLLISION_BITFLAGS)
+            .expect("bitflags is in the fixture");
+        bitflags["features"]
+            .as_object_mut()
+            .expect("features is a map")
+            .remove("std")
+            .expect("bitflags has a std feature");
+    });
     let main = package_id(json::METADATA_DEP_NAME_COLLISION_MAIN);
+    let bitflags = package_id(json::METADATA_DEP_NAME_COLLISION_BITFLAGS);
 
-    let dep_link = |feature, dep_name| {
-        let to = FeatureId::optional_dependency(&main, dep_name);
-        let links: Vec<_> = conditional_links_from(graph, FeatureId::named(&main, feature))
-            .iter()
-            .filter(|link| link.to().feature_id() == to)
-            .map(SeenLink::from_link)
-            .collect();
-        links
-    };
-
-    // [target.'cfg(target_os = "linux")'.dependencies]
-    // split = { package = "arrayvec", optional = true }
-    //
-    // [target.'cfg(windows)'.dependencies]
-    // split = { package = "tinyvec", optional = true }
-    //
-    // [features]
-    // split-dep-colon = ["dep:split"]
-    //
-    // `dep:split` is enabled on Linux and on Windows.
+    let mut actual = graph.feature_graph().build_warnings().to_vec();
+    actual.sort();
+    let mut expected: Vec<_> = ["slash", "weak-slash"]
+        .into_iter()
+        .map(|from_feature| FeatureGraphWarning::MissingFeature {
+            stage: FeatureBuildStage::AddNamedFeatureEdges {
+                package_id: main.clone(),
+                from_feature: from_feature.to_owned(),
+            },
+            package_id: bitflags.clone(),
+            feature_name: "std".to_owned(),
+        })
+        .collect();
+    expected.sort();
     assert_eq!(
-        dep_link("split-dep-colon", "split"),
-        [SeenLink {
-            declarations: LinkDeclarations::Unsplit,
-            normal: specs(&["target_os = \"linux\"", "windows"]),
-            build: VisitStatus::Never,
-            dev: VisitStatus::Never,
-        }],
-        "dep:split is enabled wherever arrayvec or tinyvec is"
-    );
-
-    // [target.'cfg(target_os = "linux")'.dependencies]
-    // three = { package = "anyhow", optional = true }
-    //
-    // [target.'cfg(windows)'.dependencies]
-    // three = { package = "foldhash", optional = true }
-    //
-    // [target.'cfg(target_os = "macos")'.dependencies]
-    // three = { package = "adler2", optional = true }
-    //
-    // [features]
-    // three-dep-colon = ["dep:three"]
-    //
-    // `dep:three` is enabled on all three platforms.
-    assert_eq!(
-        dep_link("three-dep-colon", "three"),
-        [SeenLink {
-            declarations: LinkDeclarations::Unsplit,
-            normal: specs(&["target_os = \"linux\"", "target_os = \"macos\"", "windows",]),
-            build: VisitStatus::Never,
-            dev: VisitStatus::Never,
-        }],
-        "dep:three is enabled wherever anyhow, foldhash or adler2 is"
-    );
-
-    // [dependencies]
-    // mixed = { package = "once_cell" }
-    //
-    // [target.'cfg(unix)'.dependencies]
-    // mixed = { package = "percent-encoding", optional = true }
-    //
-    // [features]
-    // mixed-slash = ["mixed/std"]
-    //
-    // `mixed/std` activates `dep:mixed` only through the optional declaration,
-    // so the link is enabled on Unix alone.
-    assert_eq!(
-        dep_link("mixed-slash", "mixed"),
-        [SeenLink {
-            declarations: LinkDeclarations::Optional,
-            normal: specs(&["unix"]),
-            build: VisitStatus::Never,
-            dev: VisitStatus::Never,
-        }],
-        "dep:mixed is enabled wherever percent-encoding's optional declaration is"
-    );
-
-    // [dependencies]
-    // kinds = { package = "log", optional = true }
-    //
-    // [build-dependencies]
-    // kinds = { package = "hex", optional = true }
-    //
-    // [features]
-    // kinds-dep-colon = ["dep:kinds"]
-    //
-    // log contributes the normal status and hex the build status.
-    assert_eq!(
-        dep_link("kinds-dep-colon", "kinds"),
-        [SeenLink {
-            declarations: LinkDeclarations::Unsplit,
-            normal: VisitStatus::Always,
-            build: VisitStatus::Always,
-            dev: VisitStatus::Never,
-        }],
-        "dep:kinds is enabled as a normal dependency and a build dependency"
+        actual, expected,
+        "renamed/std and renamed?/std warn for bitflags, but not for bytes"
     );
 }
 
@@ -695,18 +782,7 @@ fn resolution_matches_cargo() {
 #[test]
 fn resolution_independent_of_link_order() {
     let fixture = JsonFixture::metadata_dep_name_collision();
-    let reversed_graph = graph_with_patched_json(fixture, |metadata| {
-        let main_node = metadata["resolve"]["nodes"]
-            .as_array_mut()
-            .expect("resolve.nodes is an array")
-            .iter_mut()
-            .find(|node| node["id"] == json::METADATA_DEP_NAME_COLLISION_MAIN)
-            .expect("main is in the resolve");
-        main_node["deps"]
-            .as_array_mut()
-            .expect("deps is an array")
-            .reverse();
-    });
+    let reversed_graph = reversed_link_order_graph();
 
     let original = links_by_dep_name(fixture.graph());
     let reversed = links_by_dep_name(&reversed_graph);
@@ -730,6 +806,61 @@ fn resolution_independent_of_link_order() {
             json::METADATA_DEP_NAME_COLLISION_MAIN,
             "with reversed link order: ",
         );
+    }
+}
+
+/// A conditional link: the feature it leads to, the sorted names of the
+/// packages its package links end at, and its statuses.
+type ExpectedLink<'a> = (FeatureId<'a>, Vec<&'a str>, SeenLink);
+
+/// Returns the fixture with `main`'s resolve dependencies reversed, which
+/// reverses the order of the links under each dependency name.
+fn reversed_link_order_graph() -> PackageGraph {
+    graph_with_patched_json(JsonFixture::metadata_dep_name_collision(), |metadata| {
+        let main_node = metadata["resolve"]["nodes"]
+            .as_array_mut()
+            .expect("resolve.nodes is an array")
+            .iter_mut()
+            .find(|node| node["id"] == json::METADATA_DEP_NAME_COLLISION_MAIN)
+            .expect("main is in the resolve");
+        main_node["deps"]
+            .as_array_mut()
+            .expect("deps is an array")
+            .reverse();
+    })
+}
+
+/// Returns the conditional links out of `main/<from_feature>`, sorted.
+fn links_out_of<'g>(
+    graph: &'g PackageGraph,
+    main: &'g PackageId,
+    from_feature: &'g str,
+) -> Vec<ExpectedLink<'g>> {
+    let mut links: Vec<_> = conditional_links_from(graph, FeatureId::named(main, from_feature))
+        .into_iter()
+        .map(|link| {
+            let mut to_names: Vec<_> = link
+                .package_links()
+                .map(|package_link| package_link.to().name())
+                .collect();
+            to_names.sort_unstable();
+            (link.to().feature_id(), to_names, SeenLink::from_link(&link))
+        })
+        .collect();
+    sort_links(&mut links);
+    links
+}
+
+fn sort_links(links: &mut [ExpectedLink<'_>]) {
+    links.sort_by(|(a_to, a_names, _), (b_to, b_names, _)| (a_to, a_names).cmp(&(b_to, b_names)));
+}
+
+fn normal_only(declarations: LinkDeclarations, normal: VisitStatus) -> SeenLink {
+    SeenLink {
+        declarations,
+        normal,
+        build: VisitStatus::Never,
+        dev: VisitStatus::Never,
     }
 }
 

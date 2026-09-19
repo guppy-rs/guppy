@@ -16,8 +16,10 @@
 
 - `ConditionalLink::package_link` is replaced by `package_links`, an iterator
   over every `PackageLink` the conditional link was derived from. This is
-  usually one link, but a `package = "..."` rename can make one dependency
-  name resolve to several packages. For example, consider this `Cargo.toml`:
+  usually one link, but one dependency name can resolve to several packages,
+  either through a `package = "..."` rename or through different versions of
+  one package declared for different targets. For example, consider this
+  `Cargo.toml`:
 
   ```toml
   [package]
@@ -209,19 +211,24 @@
   The name `serde` resolves to both `serde_core` and `serde`. Previously, the
   feature graph kept only one of the packages under each name. For `semver`,
   that was `serde`, which `cfg(any())` never builds, so enabling the `serde`
-  feature left `serde_core` out of the build entirely.
+  feature left `serde_core` out of guppy's feature resolution, and therefore
+  out of `CargoSet` results.
 
   Now, matching Cargo:
 
   - `dep:serde` is activated wherever any declaration of `serde` applies.
-  - `serde/feature` and `serde?/feature` turn on `feature` in each package,
-    under that package's own platform conditions.
+  - `serde/feature` turns on `feature` in each package, under that package's
+    own platform conditions. It also activates `dep:serde` wherever an
+    optional declaration of any of the packages applies.
+  - `serde?/feature` turns on `feature` in each package that is otherwise
+    activated, again under that package's own platform conditions.
 
   As a result, if only some of the packages under a name have a feature that
   `name/feature` refers to, the feature graph now reports a missing-feature
   warning for the others.
 
-  Thanks [UebelAndre](https://github.com/UebelAndre) for your first contribution!
+  Thanks [UebelAndre](https://github.com/UebelAndre) for your first
+  contribution!
 
 [#682]: https://github.com/guppy-rs/guppy/pull/682
 
