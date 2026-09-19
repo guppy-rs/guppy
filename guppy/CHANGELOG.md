@@ -116,7 +116,7 @@
   contribution!
 
 - With the version 2 and 3 feature resolvers, an optional build dependency
-  activated only through its own package's features was never built:
+  activated only through its own package's features was never built ([#699]):
 
   ```toml
   [build-dependencies]
@@ -129,109 +129,113 @@
   Enabling `bundled` now builds `cc` on the host, as Cargo does. `cc/feature`
   entries and the version 1 resolver were not affected.
 
-- Fixed a number of bugs in guppy's simulation of weak dependency features
-  (`dep?/feature`). guppy tracked whether `dep` was activated at all, whereas
-  Cargo resolves each declaration of `dep` on its own. Consider:
+- Fixed a number of more contrived cases in guppy's simulation of Cargo's
+  feature resolution:
 
-  ```toml
-  [dependencies]
-  foo = { version = "1" }
-  bar = { version = "1", optional = true }
+  - Several bugs with weak dependency features (`dep?/feature`). guppy tracked
+    whether `dep` was activated at all, whereas Cargo resolves each declaration
+    of `dep` on its own. Consider:
 
-  [build-dependencies]
-  foo = { version = "1", optional = true }
-  bar = { version = "1" }
-  helper = { version = "1" }  # helper depends on foo itself
+    ```toml
+    [dependencies]
+    foo = { version = "1" }
+    bar = { version = "1", optional = true }
 
-  [features]
-  weak = ["foo?/std", "bar?/std"]
-  ```
+    [build-dependencies]
+    foo = { version = "1", optional = true }
+    bar = { version = "1" }
+    helper = { version = "1" }  # helper depends on foo itself
 
-  Previously, enabling `weak`:
+    [features]
+    weak = ["foo?/std", "bar?/std"]
+    ```
 
-  - activated `dep:foo`, so `foo` was also built on the host. It no longer
-    does, and the feature graph no longer has an edge from `weak` to
-    `dep:foo`. A dependency required on one platform and optional on another
-    had `dep:foo` added the same way.
-  - enabled `std` on the `foo` that `helper` builds on the host, even though
-    nothing had activated foo's optional build declaration. Now only the `foo`
-    built on the target gets `std`.
-  - activated `dep:bar` in the same way, so `bar` was also built on the target.
-    Now `bar` only gets `std` on the host, where it is required, and is not
-    built on the target.
+    Previously, enabling `weak`:
 
-  Of these, the second did not affect the version 1 resolver, which unifies
-  features across the host and the target.
+    - activated `dep:foo`, so `foo` was also built on the host. It no longer
+      does, and the feature graph no longer has an edge from `weak` to
+      `dep:foo`. A dependency required on one platform and optional on another
+      had `dep:foo` added the same way.
+    - enabled `std` on the `foo` that `helper` builds on the host, even though
+      nothing had activated foo's optional build declaration. Now only the `foo`
+      built on the target gets `std`.
+    - activated `dep:bar` in the same way, so `bar` was also built on the
+      target. Now `bar` only gets `std` on the host, where it is required, and
+      is not built on the target.
 
-  As part of this fix, `FeatureQuery::resolve_with` and `resolve_with_fn` visit
-  a weak dependency feature once for each kind of declaration. See the entry
-  under "Changed" above.
+    Of these, the second did not affect the version 1 resolver, which unifies
+    features across the host and the target.
 
-- Reverse feature queries with `FeatureQuery::resolve_with` or
-  `resolve_with_fn` could leave out weak dependency features, depending on
-  which features the query started from. For example, `regex-automata` has:
+    As part of this fix, `FeatureQuery::resolve_with` and `resolve_with_fn`
+    visit a weak dependency feature once for each kind of declaration. See the
+    entry under "Changed" above.
 
-  ```toml
-  [dependencies]
-  aho-corasick = { version = "1", optional = true }
+  - Reverse feature queries with `FeatureQuery::resolve_with` or
+    `resolve_with_fn` could leave out weak dependency features, depending on
+    which features the query started from. For example, `regex-automata` has:
 
-  [features]
-  logging = ["aho-corasick?/logging"]
-  ```
+    ```toml
+    [dependencies]
+    aho-corasick = { version = "1", optional = true }
 
-  A reverse query from `aho-corasick/logging` did not return
-  `regex-automata/logging`.
+    [features]
+    logging = ["aho-corasick?/logging"]
+    ```
 
-  Reverse queries now offer both links of a weak dependency feature as soon as
-  it is reached. With a visitor that accepts every link, a reverse query
-  returns the same set as `FeatureQuery::resolve`. Forward queries are
-  unchanged.
+    A reverse query from `aho-corasick/logging` did not return
+    `regex-automata/logging`.
 
-- A `foo/std` entry could also turn on a feature named `foo` in the same
-  package, in cases where Cargo doesn't. For example:
+    Reverse queries now offer both links of a weak dependency feature as soon as
+    it is reached. With a visitor that accepts every link, a reverse query
+    returns the same set as `FeatureQuery::resolve`. Forward queries are
+    unchanged.
 
-  ```toml
-  [package]
-  name = "main"
+  - A `foo/std` entry could also turn on a feature named `foo` in the same
+    package, in cases where Cargo doesn't. For example:
 
-  [dependencies]
-  bar = { version = "1" }
+    ```toml
+    [package]
+    name = "main"
 
-  [target.'cfg(unix)'.dependencies]
-  foo = { version = "1" }
+    [dependencies]
+    bar = { version = "1" }
 
-  [target.'cfg(windows)'.dependencies]
-  foo = { version = "1", optional = true }
+    [target.'cfg(unix)'.dependencies]
+    foo = { version = "1" }
 
-  [features]
-  foo-std = ["foo/std"]
-  bar = []
-  bar-std = ["bar/std"]
-  ```
+    [target.'cfg(windows)'.dependencies]
+    foo = { version = "1", optional = true }
 
-  On Unix:
+    [features]
+    foo-std = ["foo/std"]
+    bar = []
+    bar-std = ["bar/std"]
+    ```
 
-  - Enabling `foo-std` turns on `foo`'s `std` feature. It doesn't turn on
-    `main`'s `foo` feature, because `foo` is only optional on Windows.
-  - Enabling `bar-std` turns on `bar`'s `std` feature. It doesn't turn on
-    `main`'s `bar` feature, because `bar` is never optional.
+    On Unix:
 
-  Previously, guppy also turned on:
+    - Enabling `foo-std` turns on `foo`'s `std` feature. It doesn't turn on
+      `main`'s `foo` feature, because `foo` is only optional on Windows.
+    - Enabling `bar-std` turns on `bar`'s `std` feature. It doesn't turn on
+      `main`'s `bar` feature, because `bar` is never optional.
 
-  - `main`'s `foo` feature on Unix.
-  - `main`'s `bar` feature on all platforms.
+    Previously, guppy also turned on:
 
-  guppy now matches Cargo:
+    - `main`'s `foo` feature on Unix.
+    - `main`'s `bar` feature on all platforms.
 
-  - `foo/std` only turns on `main`'s `foo` feature if an optional declaration
-    of `foo` applies to the platform. Here, that is true only on Windows.
-  - `bar` has no optional declarations, so `bar/std` never turns on `main`'s
-    `bar` feature.
+    guppy now matches Cargo:
 
-  As part of this change, `ConditionalLink::declarations` returns `Optional`,
-  not `Unsplit`, for the links from `foo-std` to `dep:foo` and to `foo`.
+    - `foo/std` only turns on `main`'s `foo` feature if an optional declaration
+      of `foo` applies to the platform. Here, that is true only on Windows.
+    - `bar` has no optional declarations, so `bar/std` never turns on `main`'s
+      `bar` feature.
+
+    As part of this change, `ConditionalLink::declarations` returns `Optional`,
+    not `Unsplit`, for the links from `foo-std` to `dep:foo` and to `foo`.
 
 [#682]: https://github.com/guppy-rs/guppy/pull/682
+[#699]: https://github.com/guppy-rs/guppy/pull/699
 
 ## [0.18.0] - 2026-08-25
 
