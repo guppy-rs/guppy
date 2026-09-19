@@ -85,19 +85,16 @@
 
 use crate::feature_helpers::{
     CargoResolutionCase, SeenLink, VisitStatus, WINDOWS, feature_ids, graph_with_patched_json,
-    specs,
+    specs, weak_edge_visits,
 };
 use fixtures::{
     json::{self, JsonFixture},
     package_id,
 };
-use guppy::{
-    PackageId,
-    graph::{
-        DependencyDirection, PackageGraph,
-        cargo::CargoResolverVersion,
-        feature::{FeatureId, LinkDeclarations},
-    },
+use guppy::graph::{
+    DependencyDirection, PackageGraph,
+    cargo::CargoResolverVersion,
+    feature::{FeatureId, LinkDeclarations},
 };
 
 #[rustfmt::skip]
@@ -613,6 +610,7 @@ fn weak_feature_on_never_optional_dep() {
     let targetuser = package_id(json::METADATA_BUILDDEP_TARGETUSER);
     let visits = weak_edge_visits(
         &graph,
+        json::METADATA_BUILDDEP_MAIN,
         "targetuser-weak",
         "targetuser-weak",
         &targetuser,
@@ -677,34 +675,6 @@ fn builddep_graph_with_main_features(features: &[(&str, serde_json::Value)]) -> 
     })
 }
 
-// Resolves `features` on `main` with a visitor that accepts every link, and
-// returns the visits of the link from `main/<from_feature>` to
-// `<to_package>/<to_feature>`, in order.
-fn weak_edge_visits(
-    graph: &PackageGraph,
-    features: &str,
-    from_feature: &str,
-    to_package: &PackageId,
-    to_feature: &str,
-) -> Vec<SeenLink> {
-    let main = package_id(json::METADATA_BUILDDEP_MAIN);
-    let weak_from = FeatureId::named(&main, from_feature);
-    let weak_to = FeatureId::named(to_package, to_feature);
-
-    let mut visits = Vec::new();
-    graph
-        .feature_graph()
-        .query_forward(feature_ids(&main, features))
-        .expect("valid feature IDs")
-        .resolve_with_fn(|_, link| {
-            if link.from().feature_id() == weak_from && link.to().feature_id() == weak_to {
-                visits.push(SeenLink::from_link(&link));
-            }
-            true
-        });
-    visits
-}
-
 #[test]
 fn weak_edge_visits_each_declaration_once() {
     // [dependencies]
@@ -742,7 +712,14 @@ fn weak_edge_visits_each_declaration_once() {
     let normaldep = package_id(json::METADATA_BUILDDEP_NORMALDEP);
 
     for (features, expected) in cases {
-        let actual = weak_edge_visits(graph, features, "normaldep-weak", &normaldep, "std");
+        let actual = weak_edge_visits(
+            graph,
+            json::METADATA_BUILDDEP_MAIN,
+            features,
+            "normaldep-weak",
+            &normaldep,
+            "std",
+        );
         assert_eq!(
             &actual, expected,
             "for features {features:?}, visits of the weak edge match"
@@ -768,7 +745,14 @@ fn weak_edge_visits_each_declaration_once() {
 fn weak_edge_required_half_can_be_dev_only() {
     let graph = JsonFixture::metadata_builddep().graph();
     let devdep = package_id(json::METADATA_BUILDDEP_DEVDEP);
-    let actual = weak_edge_visits(graph, "devdep-weak devdep", "devdep-weak", &devdep, "std");
+    let actual = weak_edge_visits(
+        graph,
+        json::METADATA_BUILDDEP_MAIN,
+        "devdep-weak devdep",
+        "devdep-weak",
+        &devdep,
+        "std",
+    );
     assert_eq!(
         actual,
         [
@@ -809,6 +793,7 @@ fn weak_edge_halves_can_split_by_platform() {
     let platdep = package_id(json::METADATA_BUILDDEP_PLATDEP);
     let actual = weak_edge_visits(
         graph,
+        json::METADATA_BUILDDEP_MAIN,
         "platdep-weak platdep",
         "platdep-weak",
         &platdep,
