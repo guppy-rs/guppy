@@ -21,8 +21,8 @@ aho-corasick = { version = "1.1.5" }
 bit-set = { version = "0.8.0" }
 bit-vec = { version = "0.8.0" }
 camino = { version = "1.2.6", default-features = false, features = ["serde1"] }
-clap = { version = "4.6.6", features = ["derive", "unstable-markdown"] }
-clap_builder = { version = "4.6.6", default-features = false, features = ["color", "help", "std", "suggestions", "usage"] }
+clap = { version = "4.6.7", features = ["derive", "unstable-markdown"] }
+clap_builder = { version = "4.6.7", default-features = false, features = ["color", "help", "std", "suggestions", "usage"] }
 diffy = { version = "0.5.2", features = ["color"] }
 foldhash = { version = "0.2.0" }
 getrandom = { version = "0.3.4", default-features = false, features = ["std"] }
@@ -50,7 +50,7 @@ winnow = { version = "1.0.4" }
 zerocopy = { version = "0.8.56", default-features = false, features = ["derive", "simd"] }
 
 [build-dependencies]
-clap_derive = { version = "4.6.4", features = ["unstable-markdown"] }
+clap_derive = { version = "4.6.7", features = ["unstable-markdown"] }
 memchr = { version = "2.8.3" }
 proc-macro2 = { version = "1.0.107" }
 quote = { version = "1.0.47" }

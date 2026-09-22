@@ -33,7 +33,7 @@ camino = "1.2.6"
 cfg-if = "1.0.4"
 # Note that unstable-markdown is semver-exempt, so a clap bump may change how
 # help text renders. Check `cargo hakari <command> --help` when updating clap.
-clap = { version = "4.6.6", features = ["derive", "unstable-markdown"] }
+clap = { version = "4.6.7", features = ["derive", "unstable-markdown"] }
 # disable tracing integration since we don't use it
 color-eyre = { version = "0.6.5", default-features = false }
 dialoguer = "0.12.0"
