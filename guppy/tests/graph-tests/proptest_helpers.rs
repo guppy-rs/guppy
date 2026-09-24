@@ -1,7 +1,9 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-use fixtures::dep_helpers::{GraphAssert, GraphMetadata, GraphQuery, GraphSet, assert_link_order};
+use fixtures::dep_helpers::{
+    GraphAssert, GraphMetadata, GraphQuery, GraphSet, assert_link_order, assert_roots_in_topo_order,
+};
 use guppy::{
     PackageId,
     graph::{
@@ -586,6 +588,9 @@ pub(super) fn roots<'g, G: GraphAssert<'g>>(
         !root_ids.is_empty(),
         "ids is non-empty so root ids can't be empty either"
     );
+
+    let topo_ids = graph.ids(ids, query_direction, iter_direction);
+    assert_roots_in_topo_order(&root_ids, &topo_ids, msg);
     for (index1, index2) in query_indexes {
         let id1 = index1.get(&root_ids);
         let id2 = index2.get(&root_ids);

@@ -1197,3 +1197,43 @@ mod link_context {
         }
     }
 }
+
+mod root_order {
+    use super::*;
+    use fixtures::dep_helpers::{GraphAssert, assert_roots_in_topo_order};
+
+    /// When a cycle is a root of a set, `root_ids` returns its members together
+    /// and in topological order.
+    ///
+    /// For every fixture and cycle, this resolves the cycle's dependencies (so
+    /// the cycle is a forward root) and its dependents (so it's a reverse
+    /// root), and checks both directions of iteration.
+    #[test]
+    fn cycle_roots() {
+        for (name, fixture) in JsonFixture::all_fixtures() {
+            let graph = fixture.graph();
+            for cycle in graph.all_cycles() {
+                check_cycle_roots(graph, &cycle, name);
+            }
+            let feature_graph = graph.feature_graph();
+            for cycle in feature_graph.all_cycles() {
+                check_cycle_roots(feature_graph, &cycle, name);
+            }
+        }
+    }
+
+    fn check_cycle_roots<'g, G: GraphAssert<'g>>(graph: G, cycle: &[G::Id], name: &str) {
+        for query_direction in [DependencyDirection::Forward, DependencyDirection::Reverse] {
+            for iter_direction in [DependencyDirection::Forward, DependencyDirection::Reverse] {
+                let root_ids = graph.root_ids(cycle, query_direction, iter_direction);
+                let topo_ids = graph.ids(cycle, query_direction, iter_direction);
+                let msg = format!(
+                    "{name}: {} cycle {cycle:?}, query {query_direction:?}, \
+                     iter {iter_direction:?}",
+                    G::NAME,
+                );
+                assert_roots_in_topo_order(&root_ids, &topo_ids, &msg);
+            }
+        }
+    }
+}

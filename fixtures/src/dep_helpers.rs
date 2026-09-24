@@ -886,3 +886,23 @@ fn dep_link_ptrs<'g>(dep_links: impl IntoIterator<Item = PackageLink<'g>>) -> Ve
     triples.sort();
     triples
 }
+
+/// Asserts that `root_ids` is a subsequence of `topo_ids`.
+///
+/// The members of a cycle are adjacent in topological order, and (for forward
+/// traversals) are in non-dev order. So this also checks that a root cycle's
+/// members are returned together and in that order.
+pub fn assert_roots_in_topo_order<Id: Copy + Eq + fmt::Debug>(
+    root_ids: &[Id],
+    topo_ids: &[Id],
+    msg: &str,
+) {
+    let mut topo_iter = topo_ids.iter();
+    for root_id in root_ids {
+        assert!(
+            topo_iter.any(|id| id == root_id),
+            "{msg}: root IDs {root_ids:?} should appear in topological order {topo_ids:?}, \
+             but {root_id:?} is out of order or missing",
+        );
+    }
+}

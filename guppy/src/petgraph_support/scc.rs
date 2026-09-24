@@ -6,7 +6,9 @@ use petgraph::{
     algo::kosaraju_scc,
     graph::IndexType,
     prelude::*,
-    visit::{IntoNeighborsDirected, IntoNodeIdentifiers, NodeIndexable, VisitMap, Visitable},
+    visit::{
+        FilterNode, IntoNeighborsDirected, IntoNodeIdentifiers, NodeIndexable, VisitMap, Visitable,
+    },
 };
 use std::slice;
 
@@ -101,20 +103,30 @@ impl<Ix: IndexType> Sccs<Ix> {
     /// Returns all the nodes that have no incoming edges from outside their
     /// own SCC.
     ///
+    /// `graph` is the (possibly reversed) graph filtered to `included`.
+    ///
     /// Edges *within* an SCC -- including self-loop edges on single-node SCCs
-    /// -- don't disqualify a node. The result is one representative per
+    /// -- don't disqualify a node. The result is every member of each
     /// external multi-node SCC, plus every single-node SCC whose only
     /// incoming edge (if any) is a self-loop.
-    pub fn externals<'a, G>(&'a self, graph: G) -> impl Iterator<Item = NodeIndex<Ix>> + 'a
+    ///
+    /// Results are produced in `node_iter(direction)` order, so that roots
+    /// follow topological order and a cycle's members stay together.
+    pub fn externals<'a, G>(
+        &'a self,
+        graph: G,
+        included: impl FilterNode<NodeIndex<Ix>> + 'a,
+        direction: Direction,
+    ) -> impl Iterator<Item = NodeIndex<Ix>> + 'a
     where
-        G: 'a + IntoNodeIdentifiers + IntoNeighborsDirected<NodeId = NodeIndex<Ix>>,
+        G: 'a + IntoNeighborsDirected<NodeId = NodeIndex<Ix>>,
         Ix: IndexType,
     {
         // Consider each SCC as one logical node.
         let mut external_sccs = FixedBitSet::with_capacity(self.scc_count());
         let mut internal_sccs = FixedBitSet::with_capacity(self.scc_count());
-        graph
-            .node_identifiers()
+        self.node_iter(direction)
+            .filter(move |ix| included.include_node(*ix))
             .filter(move |ix| match self.multi_scc(*ix) {
                 Some(scc_idx) => {
                     // Consider one node identifier for each scc -- whichever one comes first.
@@ -240,7 +252,9 @@ mod tests {
         graph.add_edge(b, b, ());
 
         let sccs = Sccs::<u32>::new(&graph, |_| {});
-        let externals: HashSet<NodeIndex<u32>> = sccs.externals(&graph).collect();
+        let all: FixedBitSet = graph.node_indices().map(|ix| ix.index()).collect();
+        let externals: HashSet<NodeIndex<u32>> =
+            sccs.externals(&graph, &all, Direction::Outgoing).collect();
         assert_eq!(externals, HashSet::from([a]));
     }
 
@@ -265,7 +279,9 @@ mod tests {
         graph.add_edge(a, c, ());
 
         let sccs = Sccs::<u32>::new(&graph, |_| {});
-        let externals: HashSet<NodeIndex<u32>> = sccs.externals(&graph).collect();
+        let all: FixedBitSet = graph.node_indices().map(|ix| ix.index()).collect();
+        let externals: HashSet<NodeIndex<u32>> =
+            sccs.externals(&graph, &all, Direction::Outgoing).collect();
         assert_eq!(externals, HashSet::from([a, b]));
     }
 }
