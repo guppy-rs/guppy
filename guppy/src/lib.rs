@@ -48,6 +48,11 @@
 //!
 //! # Optional features
 //!
+//! * `custom-cfg-platforms`: Support for custom platforms defined by
+//!   `rustc --print=cfg` output, through `Platform::new_custom_cfg`.
+//! * `custom-platforms`: Support for custom platforms defined by a
+//!   [target specification JSON](https://doc.rust-lang.org/rustc/targets/custom.html)
+//!   file, through `Platform::new_custom`. Implies `custom-cfg-platforms`.
 //! * `proptest1`: Support for [property-based testing](https://jessitron.com/2013/04/25/property-based-testing-what-is-it/)
 //!   using the [`proptest`](https://altsysrq.github.io/proptest-book/intro.html) framework.
 //! * `rayon1`: Support for parallel iterators through [Rayon](docs.rs/rayon/1) (preliminary work

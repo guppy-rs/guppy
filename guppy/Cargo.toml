@@ -67,6 +67,8 @@ fixtures = { path = "../fixtures" }
 pretty_assertions = "1.4.1"
 
 [features]
+custom-cfg-platforms = ["target-spec/custom-cfg"]
+custom-platforms = ["custom-cfg-platforms", "target-spec/custom"]
 proptest1 = ["proptest", "proptest-derive", "target-spec/proptest1"]
 rayon1 = ["rayon"]
 summaries = ["guppy-summaries", "target-spec/summaries", "toml"]

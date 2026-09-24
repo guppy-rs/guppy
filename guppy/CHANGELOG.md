@@ -3,6 +3,18 @@
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+### Added
+
+- `custom-cfg-platforms` and `custom-platforms` features, which forward to the
+  `custom-cfg` and `custom` features of `target-spec`. These make
+  `Platform::new_custom_cfg` and `Platform::new_custom` available on the
+  `Platform` that guppy re-exports.
+
+  `target-spec` is a private dependency of guppy, so previously the only way to
+  enable them was to take a direct dependency on a version-matched `target-spec`
+  purely to turn the feature on, and then keep that version in sync by hand on
+  every guppy upgrade. `proptest1` and `summaries` already forward this way.
+
 ## [0.19.0] - 2026-09-19
 
 ### Added
