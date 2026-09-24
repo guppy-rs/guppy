@@ -41,7 +41,7 @@ ahash.workspace = true
 guppy-workspace-hack.workspace = true
 camino = "1.2.6"
 cargo_metadata.workspace = true
-cfg-if = "1.0.4"
+cfg-if = "1.0.5"
 debug-ignore = "1.0.5"
 guppy-summaries = { version = "0.8.0", path = "../guppy-summaries", optional = true }
 fixedbitset = { version = "0.5.7", default-features = false }
