@@ -43,7 +43,7 @@ diffy = { version = "0.5.2", features = ["color"] }
 duct = { version = "1.1.2", default-features = false }
 enable-ansi-support = "0.3.1"
 env_logger = "0.11.11"
-guppy = { version = "0.19.0", path = "../../guppy" }
+guppy = { version = "0.19.1", path = "../../guppy" }
 hakari = { version = "0.18.0", path = "../hakari", features = ["cli-support"] }
 iddqd.workspace = true
 log = "0.4.34"
