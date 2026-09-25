@@ -7,7 +7,7 @@
 //! desirable.
 
 use fixedbitset::FixedBitSet;
-use petgraph::{graph::IndexType, prelude::*};
+use petgraph::{graph::IndexType, prelude::*, visit::FilterNode};
 use std::iter::FromIterator;
 
 pub mod dfs;
@@ -19,6 +19,16 @@ pub mod walk;
 
 pub fn edge_triple<ER: EdgeRef>(edge_ref: ER) -> (ER::NodeId, ER::NodeId, ER::EdgeId) {
     (edge_ref.source(), edge_ref.target(), edge_ref.id())
+}
+
+/// Represents a node set that can both test membership and enumerate its
+/// elements.
+pub(crate) trait NodeSet<Ix: IndexType>: FilterNode<NodeIndex<Ix>> {
+    type Members: Iterator<Item = NodeIndex<Ix>>;
+
+    fn member_count(&self) -> usize;
+
+    fn members(&self) -> Self::Members;
 }
 
 #[derive(Clone, Debug, Default)]

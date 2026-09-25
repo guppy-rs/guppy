@@ -421,7 +421,7 @@ impl<'g> PackageSet<'g> {
     ) -> impl ExactSizeIterator<Item = &'g PackageId> + 'a {
         let graph = self.graph;
         self.core
-            .topo(self.graph.sccs(), direction)
+            .topo(self.graph.dep_graph(), self.graph.sccs(), direction)
             .map(move |package_ix| &graph.dep_graph[package_ix])
     }
 
