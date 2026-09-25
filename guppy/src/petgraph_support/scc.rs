@@ -1,54 +1,67 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-use ahash::AHashMap;
 use fixedbitset::FixedBitSet;
-use nested::Nested;
 use petgraph::{
     algo::kosaraju_scc,
     graph::IndexType,
     prelude::*,
-    visit::{IntoNeighborsDirected, IntoNodeIdentifiers, VisitMap, Visitable},
+    visit::{IntoNeighborsDirected, IntoNodeIdentifiers, NodeIndexable, VisitMap, Visitable},
 };
 use std::slice;
 
 #[derive(Clone, Debug)]
 pub(crate) struct Sccs<Ix: IndexType> {
-    sccs: Nested<Vec<NodeIndex<Ix>>>,
-    // Map of node indexes to the index of the SCC they belong to. If a node is not part of an SCC,
-    // then the corresponding index is not stored here.
-    multi_map: AHashMap<NodeIndex<Ix>, usize>,
+    /// All nodes in topological order. Each SCC is a contiguous subsequence,
+    /// stored in the order returned by the SCC sorter.
+    order: Vec<NodeIndex<Ix>>,
+    /// Each SCC's start in `order`, plus a sentinel at the end with the value
+    /// `order.len()`.
+    scc_bounds: Vec<Ix>,
+    /// The index of the SCC each node is in, by node index.
+    scc_of: Vec<Ix>,
 }
 
 impl<Ix: IndexType> Sccs<Ix> {
     /// Creates a new instance from the provided graph and the given sorter.
     pub fn new<G>(graph: G, mut scc_sorter: impl FnMut(&mut Vec<NodeIndex<Ix>>)) -> Self
     where
-        G: IntoNeighborsDirected<NodeId = NodeIndex<Ix>> + Visitable + IntoNodeIdentifiers,
+        G: IntoNeighborsDirected<NodeId = NodeIndex<Ix>>
+            + Visitable
+            + IntoNodeIdentifiers
+            + NodeIndexable,
         <G as Visitable>::Map: VisitMap<NodeIndex<Ix>>,
     {
-        // Use kosaraju_scc since it is iterative (tarjan_scc is recursive) and package graphs
-        // have unbounded depth.
+        let node_bound = graph.node_bound();
+        // Use kosaraju_scc since it is iterative (tarjan_scc is recursive) and
+        // package graphs have unbounded depth.
         let sccs = kosaraju_scc(graph);
-        let sccs: Nested<Vec<_>> = sccs
-            .into_iter()
-            .map(|mut scc| {
-                if scc.len() > 1 {
-                    scc_sorter(&mut scc);
-                }
-                scc
-            })
-            // kosaraju_scc returns its sccs in reverse topological order. Reverse it again for
-            // forward topological order.
-            .rev()
-            .collect();
-        let mut multi_map = AHashMap::new();
-        for (idx, scc) in sccs.iter().enumerate() {
+        let mut order = Vec::with_capacity(sccs.iter().map(Vec::len).sum());
+        let mut scc_bounds = Vec::with_capacity(sccs.len() + 1);
+        // kosaraju_scc returns its sccs in reverse topological order. Reverse
+        // it again for forward topological order.
+        for mut scc in sccs.into_iter().rev() {
             if scc.len() > 1 {
-                multi_map.extend(scc.iter().map(|ix| (*ix, idx)));
+                scc_sorter(&mut scc);
+            }
+            scc_bounds.push(Ix::new(order.len()));
+            order.extend(scc);
+        }
+        scc_bounds.push(Ix::new(order.len()));
+
+        let mut scc_of = vec![Ix::new(0); node_bound];
+        for (scc_idx, bounds) in scc_bounds.windows(2).enumerate() {
+            let (start, end) = (bounds[0].index(), bounds[1].index());
+            for ix in &order[start..end] {
+                scc_of[ix.index()] = Ix::new(scc_idx);
             }
         }
-        Self { sccs, multi_map }
+
+        Self {
+            order,
+            scc_bounds,
+            scc_of,
+        }
     }
 
     /// Returns true if `a` and `b` are in the same scc.
@@ -60,13 +73,7 @@ impl<Ix: IndexType> Sccs<Ix> {
     /// should additionally check [`Sccs::in_multi_scc`] and/or whether the
     /// node has a self-loop edge.
     pub fn is_same_scc(&self, a: NodeIndex<Ix>, b: NodeIndex<Ix>) -> bool {
-        if a == b {
-            return true;
-        }
-        match (self.multi_map.get(&a), self.multi_map.get(&b)) {
-            (Some(a_scc), Some(b_scc)) => a_scc == b_scc,
-            _ => false,
-        }
+        a == b || self.scc_of[a.index()] == self.scc_of[b.index()]
     }
 
     /// Returns true if `ix` belongs to an SCC with more than one element.
@@ -75,7 +82,7 @@ impl<Ix: IndexType> Sccs<Ix> {
     /// members lies on a directed cycle. Combined with a self-loop check on
     /// `ix`, this is enough to decide whether a node lies on any cycle.
     pub fn in_multi_scc(&self, ix: NodeIndex<Ix>) -> bool {
-        self.multi_map.contains_key(&ix)
+        self.multi_scc(ix).is_some()
     }
 
     /// Returns all the SCCs of this graph in forward topological order,
@@ -86,7 +93,9 @@ impl<Ix: IndexType> Sccs<Ix> {
     /// self-loop -- must consult the underlying graph for the self-loop
     /// check themselves.
     pub fn all_sccs(&self) -> impl DoubleEndedIterator<Item = &[NodeIndex<Ix>]> {
-        self.sccs.iter()
+        self.scc_bounds
+            .windows(2)
+            .map(|bounds| &self.order[bounds[0].index()..bounds[1].index()])
     }
 
     /// Returns all the nodes that have no incoming edges from outside their
@@ -102,12 +111,12 @@ impl<Ix: IndexType> Sccs<Ix> {
         Ix: IndexType,
     {
         // Consider each SCC as one logical node.
-        let mut external_sccs = FixedBitSet::with_capacity(self.sccs.len());
-        let mut internal_sccs = FixedBitSet::with_capacity(self.sccs.len());
+        let mut external_sccs = FixedBitSet::with_capacity(self.scc_count());
+        let mut internal_sccs = FixedBitSet::with_capacity(self.scc_count());
         graph
             .node_identifiers()
-            .filter(move |ix| match self.multi_map.get(ix) {
-                Some(&scc_idx) => {
+            .filter(move |ix| match self.multi_scc(*ix) {
+                Some(scc_idx) => {
                     // Consider one node identifier for each scc -- whichever one comes first.
                     if external_sccs.contains(scc_idx) {
                         return true;
@@ -116,8 +125,8 @@ impl<Ix: IndexType> Sccs<Ix> {
                         return false;
                     }
 
-                    let scc = &self.sccs[scc_idx];
-                    let is_external = scc
+                    let is_external = self
+                        .scc_members(scc_idx)
                         .iter()
                         .flat_map(|ix| {
                             // Look at all incoming nodes from every SCC member.
@@ -126,10 +135,7 @@ impl<Ix: IndexType> Sccs<Ix> {
                         .all(|neighbor_ix| {
                             // * Accept any nodes are in the same SCC.
                             // * Any other results imply that this isn't an external scc.
-                            match self.multi_map.get(&neighbor_ix) {
-                                Some(neighbor_scc_idx) => neighbor_scc_idx == &scc_idx,
-                                None => false,
-                            }
+                            self.scc_index(neighbor_ix) == scc_idx
                         });
                     if is_external {
                         external_sccs.insert(scc_idx);
@@ -156,9 +162,31 @@ impl<Ix: IndexType> Sccs<Ix> {
     /// Iterate over all nodes in the direction specified.
     pub fn node_iter(&self, direction: Direction) -> NodeIter<'_, Ix> {
         NodeIter {
-            node_ixs: self.sccs.data().iter(),
+            node_ixs: self.order.iter(),
             direction,
         }
+    }
+
+    fn scc_count(&self) -> usize {
+        self.scc_bounds.len() - 1
+    }
+
+    fn scc_members(&self, scc_idx: usize) -> &[NodeIndex<Ix>] {
+        &self.order[self.scc_start(scc_idx)..self.scc_start(scc_idx + 1)]
+    }
+
+    fn scc_start(&self, scc_idx: usize) -> usize {
+        self.scc_bounds[scc_idx].index()
+    }
+
+    fn scc_index(&self, ix: NodeIndex<Ix>) -> usize {
+        self.scc_of[ix.index()].index()
+    }
+
+    fn multi_scc(&self, ix: NodeIndex<Ix>) -> Option<usize> {
+        let scc_idx = self.scc_index(ix);
+        let scc_len = self.scc_start(scc_idx + 1) - self.scc_start(scc_idx);
+        (scc_len > 1).then_some(scc_idx)
     }
 }
 
