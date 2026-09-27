@@ -6,7 +6,8 @@ use std::fmt;
 use crate::{
     Error, PackageId,
     graph::{
-        DependencyDirection, FeatureGraphSpec, FeatureIx, PackageIx, PackageMetadata, PackageSet,
+        DependencyDirection, FeatureGraphSpec, FeatureIx, PackageGraph, PackageIx, PackageMetadata,
+        PackageSet,
         cargo::{CargoOptions, CargoSet},
         feature::{
             ConditionalLink, FeatureEdge, FeatureGraph, FeatureId, FeatureLinkContext,
@@ -391,13 +392,15 @@ impl<'g> FeatureSet<'g> {
     /// Converts this `FeatureSet` into a `PackageSet` containing all packages with any selected
     /// features (including the "base" feature).
     pub fn to_package_set(&self) -> PackageSet<'g> {
-        let included: IxBitSet = self
-            .core
+        PackageSet::from_included(self.graph.package_graph, self.package_ixs().0)
+    }
+
+    fn package_ixs(&self) -> IxBitSet {
+        self.core
             .included
             .ones()
             .map(|feature_ix| self.graph.package_ix_for_feature_ix(feature_ix))
-            .collect();
-        PackageSet::from_included(self.graph.package_graph, included.0)
+            .collect()
     }
 
     // ---
@@ -474,17 +477,23 @@ impl<'g> FeatureSet<'g> {
     ) -> impl Iterator<Item = FeatureList<'g>> + 'a {
         let package_graph = self.graph.package_graph;
 
-        // Use the package graph's SCCs for the topo order guarantee.
-        package_graph
-            .sccs()
-            .node_iter(direction.into())
-            .filter_map(move |package_ix| {
-                let package_id = &package_graph.dep_graph()[package_ix];
-                let package = package_graph
-                    .metadata(package_id)
-                    .expect("valid package ID");
-                self.features_for_package_impl(package)
-            })
+        let package_set = ResolveCore::<PackageGraph>::from_included(
+            self.package_ixs().0,
+            package_graph.dep_graph(),
+        );
+        // To make `Topo` stay small (this leads to a measurable perf
+        // difference), we make it borrow the set it is iterating on rather than
+        // own it. `package_set` is dropped when this function returns, and the
+        // returned iterator outlives it, so we are forced to collect the
+        // package indexes here.
+        let package_ixs: Vec<_> = package_set.topo(package_graph.sccs(), direction).collect();
+        package_ixs.into_iter().filter_map(move |package_ix| {
+            let package_id = &package_graph.dep_graph()[package_ix];
+            let package = package_graph
+                .metadata(package_id)
+                .expect("valid package ID");
+            self.features_for_package_impl(package)
+        })
     }
 
     /// Returns the set of "root feature" IDs in the specified direction.
