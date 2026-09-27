@@ -5,6 +5,7 @@
 # resolver = '3'
 # unify-target-host = 'replicate-target-on-host'
 # output-single-feature = true
+# exclude-dev-dependencies = true
 # dep-format-version = '1'
 # workspace-hack-line-style = 'workspace-dotted'
 # platforms = []

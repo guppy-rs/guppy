@@ -5,6 +5,7 @@
 # resolver = 'install'
 # unify-target-host = 'none'
 # output-single-feature = true
+# exclude-dev-dependencies = true
 # dep-format-version = '3'
 # workspace-hack-line-style = 'workspace-dotted'
 # platforms = ['xtensa-esp32s2-espidf']

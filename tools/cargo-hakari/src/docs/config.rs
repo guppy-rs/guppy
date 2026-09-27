@@ -97,6 +97,25 @@
 //! ]
 //! ```
 //!
+//! ## exclude-dev-dependencies
+//!
+//! Skip builds with dev-dependencies when unifying features.
+//!
+//! By default, `cargo hakari` unifies features across builds with and without
+//! dev-dependencies, so test-only features (like tokio's `test-util`) end up in
+//! release builds. With this option, only builds without dev-dependencies
+//! count. `cargo test` then rebuilds some dependencies with extra features, and
+//! `cargo hakari verify` skips builds with dev-dependencies.
+//!
+//! Has no effect with resolver version 1. A workspace crate used only as a
+//! dev-dependency still counts; add it to `traversal-excludes` to leave it out.
+//!
+//! Defaults to false.
+//!
+//! ```toml
+//! exclude-dev-dependencies = true
+//! ```
+//!
 //! ## traversal-excludes
 //!
 //! Crates to exclude while traversing the dependency graph.

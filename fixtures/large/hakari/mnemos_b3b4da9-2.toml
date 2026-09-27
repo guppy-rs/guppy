@@ -5,6 +5,7 @@
 # resolver = 'install'
 # unify-target-host = 'unify-if-both'
 # output-single-feature = false
+# exclude-dev-dependencies = true
 # dep-format-version = '1'
 # workspace-hack-line-style = 'workspace-dotted'
 # platforms = []
@@ -91,14 +92,13 @@ memchr = { version = "2", features = ["std", "use_std"] }
 miniz_oxide = { version = "0.7", default-features = false, features = ["with-alloc"] }
 mio = { version = "0.8", features = ["log", "net", "os-ext", "os-poll"] }
 nb = { version = "0.1", default-features = false, features = ["unstable"] }
-num-traits = { version = "0.2", features = ["i128", "libm", "std"] }
+num-traits = { version = "0.2", features = ["i128", "std"] }
 object = { version = "0.31", default-features = false, features = ["archive", "coff", "compression", "elf", "flate2", "macho", "pe", "read", "read_core", "ruzstd", "std", "unaligned", "xcoff"] }
 once_cell = { version = "1", features = ["alloc", "race", "std", "unstable"] }
 owo-colors = { version = "3", default-features = false, features = ["supports-color", "supports-colors"] }
 percent-encoding = { version = "2", features = ["alloc", "std"] }
 portable-atomic = { version = "1", features = ["critical-section", "fallback", "require-cas"] }
 postcard = { version = "1", features = ["alloc", "const_format", "experimental-derive", "heapless", "heapless-cas", "postcard-derive", "use-std"] }
-rand = { version = "0.8", features = ["alloc", "getrandom", "libc", "rand_chacha", "small_rng", "std", "std_rng"] }
 regex = { version = "1", features = ["perf", "perf-backtrack", "perf-cache", "perf-dfa", "perf-inline", "perf-literal", "perf-onepass", "std", "unicode", "unicode-age", "unicode-bool", "unicode-case", "unicode-gencat", "unicode-perl", "unicode-script", "unicode-segment"] }
 regex-automata = { version = "0.3", default-features = false, features = ["alloc", "dfa-onepass", "dfa-search", "hybrid", "meta", "nfa-backtrack", "nfa-pikevm", "nfa-thompson", "perf-inline", "perf-literal", "perf-literal-multisubstring", "perf-literal-substring", "std", "syntax", "unicode", "unicode-age", "unicode-bool", "unicode-case", "unicode-gencat", "unicode-perl", "unicode-script", "unicode-segment", "unicode-word-boundary"] }
 regex-syntax = { version = "0.7", features = ["std", "unicode", "unicode-age", "unicode-bool", "unicode-case", "unicode-gencat", "unicode-perl", "unicode-script", "unicode-segment"] }
@@ -164,14 +164,13 @@ maitake = { git = "https://github.com/hawkw/mycelium.git", rev = "101a4abaa19afd
 memchr = { version = "2", features = ["std", "use_std"] }
 miniz_oxide = { version = "0.7", default-features = false, features = ["with-alloc"] }
 mio = { version = "0.8", features = ["log", "net", "os-ext", "os-poll"] }
-num-traits = { version = "0.2", features = ["i128", "libm", "std"] }
+num-traits = { version = "0.2", features = ["i128", "std"] }
 object = { version = "0.31", default-features = false, features = ["archive", "coff", "compression", "elf", "flate2", "macho", "pe", "read", "read_core", "ruzstd", "std", "unaligned", "xcoff"] }
 once_cell = { version = "1", features = ["alloc", "race", "std", "unstable"] }
 owo-colors = { version = "3", default-features = false, features = ["supports-color", "supports-colors"] }
 percent-encoding = { version = "2", features = ["alloc", "std"] }
 portable-atomic = { version = "1", features = ["critical-section", "fallback", "require-cas"] }
 postcard = { version = "1", features = ["alloc", "const_format", "experimental-derive", "heapless", "heapless-cas", "postcard-derive", "use-std"] }
-rand = { version = "0.8", features = ["alloc", "getrandom", "libc", "rand_chacha", "small_rng", "std", "std_rng"] }
 regex = { version = "1", features = ["perf", "perf-backtrack", "perf-cache", "perf-dfa", "perf-inline", "perf-literal", "perf-onepass", "std", "unicode", "unicode-age", "unicode-bool", "unicode-case", "unicode-gencat", "unicode-perl", "unicode-script", "unicode-segment"] }
 regex-automata = { version = "0.3", default-features = false, features = ["alloc", "dfa-onepass", "dfa-search", "hybrid", "meta", "nfa-backtrack", "nfa-pikevm", "nfa-thompson", "perf-inline", "perf-literal", "perf-literal-multisubstring", "perf-literal-substring", "std", "syntax", "unicode", "unicode-age", "unicode-bool", "unicode-case", "unicode-gencat", "unicode-perl", "unicode-script", "unicode-segment", "unicode-word-boundary"] }
 regex-syntax = { version = "0.7", features = ["std", "unicode", "unicode-age", "unicode-bool", "unicode-case", "unicode-gencat", "unicode-perl", "unicode-script", "unicode-segment"] }

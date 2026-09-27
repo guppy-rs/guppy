@@ -5,6 +5,7 @@
 # resolver = '2'
 # unify-target-host = 'auto'
 # output-single-feature = true
+# exclude-dev-dependencies = true
 # dep-format-version = '1'
 # workspace-hack-line-style = 'version-only'
 # platforms = ['x86_64-unknown-linux-gnumsan']
@@ -33,7 +34,6 @@
 [dependencies]
 bytes = { version = "1", default-features = false, features = ["std"] }
 either = { version = "1", default-features = false, features = ["std"] }
-fastrand = { version = "2", default-features = false, features = ["alloc", "std"] }
 futures-core = { version = "0.3", default-features = false, features = ["alloc", "std"] }
 log = { version = "0.4", default-features = false, features = ["alloc", "std"] }
 

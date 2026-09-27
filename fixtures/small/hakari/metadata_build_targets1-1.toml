@@ -5,6 +5,7 @@
 # resolver = '1'
 # unify-target-host = 'unify-if-both'
 # output-single-feature = false
+# exclude-dev-dependencies = true
 # dep-format-version = '3'
 # workspace-hack-line-style = 'version-only'
 # platforms = ['aarch64-apple-visionos', 'wasm32-wasip2', 'aarch64-unknown-linux-musl']

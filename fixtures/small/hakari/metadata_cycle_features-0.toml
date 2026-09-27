@@ -5,6 +5,7 @@
 # resolver = '2'
 # unify-target-host = 'unify-if-both'
 # output-single-feature = true
+# exclude-dev-dependencies = true
 # dep-format-version = '1'
 # workspace-hack-line-style = 'version-only'
 # platforms = ['loongarch32-unknown-none-softfloat', 'riscv32imafc-esp-espidf', 'aarch64-unknown-qnx']

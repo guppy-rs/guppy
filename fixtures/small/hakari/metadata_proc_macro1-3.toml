@@ -5,6 +5,7 @@
 # resolver = 'install'
 # unify-target-host = 'replicate-target-on-host'
 # output-single-feature = false
+# exclude-dev-dependencies = true
 # dep-format-version = '2'
 # workspace-hack-line-style = 'full'
 # platforms = ['armv7a-vex-v5', 'aarch64-unknown-helenos']

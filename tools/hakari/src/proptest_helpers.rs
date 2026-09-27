@@ -45,6 +45,7 @@ impl<'g> HakariBuilder<'g> {
             any::<bool>(),
             any::<DepFormatVersion>(),
             any::<WorkspaceHackLineStyle>(),
+            any::<bool>(),
         )
             .prop_map(
                 move |(
@@ -57,6 +58,7 @@ impl<'g> HakariBuilder<'g> {
                     output_single_feature,
                     dep_format_version,
                     line_style,
+                    exclude_dev_dependencies,
                 )| {
                     let mut builder = HakariBuilder::new(graph, hakari_id)
                         .expect("HakariBuilder::new returned an error");
@@ -75,7 +77,8 @@ impl<'g> HakariBuilder<'g> {
                         .set_unify_target_host(unify_target_host)
                         .set_dep_format_version(dep_format_version)
                         .set_workspace_hack_line_style(line_style)
-                        .set_output_single_feature(output_single_feature);
+                        .set_output_single_feature(output_single_feature)
+                        .set_exclude_dev_dependencies(exclude_dev_dependencies);
                     builder
                 },
             )

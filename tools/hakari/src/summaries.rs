@@ -74,6 +74,10 @@ pub struct HakariBuilderSummary {
     #[serde(default)]
     pub output_single_feature: bool,
 
+    /// Whether builds with dev-dependencies are skipped.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub exclude_dev_dependencies: bool,
+
     /// Format version for hakari.
     #[serde(default)]
     pub dep_format_version: DepFormatVersion,
@@ -140,6 +144,7 @@ impl HakariBuilderSummary {
                 .collect(),
             unify_target_host: builder.unify_target_host(),
             output_single_feature: builder.output_single_feature(),
+            exclude_dev_dependencies: builder.exclude_dev_dependencies(),
             dep_format_version: builder.dep_format_version,
             workspace_hack_line_style: builder.workspace_hack_line_style,
         })

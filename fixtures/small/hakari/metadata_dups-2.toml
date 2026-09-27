@@ -5,6 +5,7 @@
 # resolver = '3'
 # unify-target-host = 'auto'
 # output-single-feature = true
+# exclude-dev-dependencies = true
 # dep-format-version = '4'
 # workspace-hack-line-style = 'workspace-dotted'
 # platforms = ['x86_64-unknown-linux-gnumsan', 'arm-unknown-linux-musleabi']
@@ -29,9 +30,6 @@
 # name = 'testcrate-dups'
 # version = '0.1.0'
 # workspace-path = ''
-
-[dependencies]
-bytes = { version = "0.3", default-features = false }
 
 ### END HAKARI SECTION
 
