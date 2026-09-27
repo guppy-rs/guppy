@@ -436,7 +436,7 @@ impl<'g> FeatureSet<'g> {
     ) -> impl ExactSizeIterator<Item = FeatureId<'g>> + 'a {
         let graph = self.graph;
         self.core
-            .topo(graph.sccs(), direction)
+            .topo(graph.dep_graph(), graph.sccs(), direction)
             .map(move |feature_ix| {
                 FeatureId::from_node(graph.package_graph(), &graph.dep_graph()[feature_ix])
             })
@@ -455,7 +455,7 @@ impl<'g> FeatureSet<'g> {
     ) -> impl ExactSizeIterator<Item = FeatureMetadata<'g>> + 'a {
         let graph = self.graph;
         self.core
-            .topo(graph.sccs(), direction)
+            .topo(graph.dep_graph(), graph.sccs(), direction)
             .map(move |feature_ix| {
                 graph
                     .metadata_for_node(graph.dep_graph()[feature_ix])
@@ -486,7 +486,9 @@ impl<'g> FeatureSet<'g> {
         // own it. `package_set` is dropped when this function returns, and the
         // returned iterator outlives it, so we are forced to collect the
         // package indexes here.
-        let package_ixs: Vec<_> = package_set.topo(package_graph.sccs(), direction).collect();
+        let package_ixs: Vec<_> = package_set
+            .topo(package_graph.dep_graph(), package_graph.sccs(), direction)
+            .collect();
         package_ixs.into_iter().filter_map(move |package_ix| {
             let package_id = &package_graph.dep_graph()[package_ix];
             let package = package_graph

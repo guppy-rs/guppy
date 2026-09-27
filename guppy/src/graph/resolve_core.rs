@@ -8,7 +8,7 @@ use crate::{
             BufferedEdgeFilter, ReversedBufferedFilter, SimpleEdgeFilterFn,
             dfs_next_buffered_filter,
         },
-        scc::{NodeIter, Sccs},
+        scc::{NodeIter, Sccs, SubsetSccs},
         walk::EdgeDfs,
     },
 };
@@ -167,7 +167,8 @@ impl<G: GraphSpec> ResolveCore<G> {
         sccs: &Sccs<G::Ix>,
         direction: DependencyDirection,
     ) -> Vec<NodeIndex<G::Ix>> {
-        // This uses the SCCs in self.sccs. If any node in an SCC is a root, so is any other.
+        // Every member of a root SCC is a root.
+        let sccs = self.subset_sccs(graph, sccs);
         match direction {
             DependencyDirection::Forward => sccs
                 .externals(
@@ -188,33 +189,25 @@ impl<G: GraphSpec> ResolveCore<G> {
 
     pub(super) fn topo<'g>(
         &'g self,
+        graph: &Graph<G::Node, G::Edge, Directed, G::Ix>,
         sccs: &'g Sccs<G::Ix>,
         direction: DependencyDirection,
     ) -> Topo<'g, G> {
-        // ---
-        // IMPORTANT
-        // ---
-        //
-        // This uses the same list of sccs that's computed for the entire graph. This is fine for
-        // resolve() -- over there, if one element of an SCC is present all others will be present
-        // as well.
-        //
-        // * However, with resolve_with() and a custom resolver, it is possible that SCCs in the
-        //   main graph aren't in the subgraph. That makes the returned order "incorrect", but it's
-        //   a very minor sin and probably not worth the extra complexity to deal with.
-        // * This requires iterating over every node in the graph even if the set of returned nodes
-        //   is very small. There's a tradeoff here between allocating memory to store a custom list
-        //   of SCCs and just using the one available. More benchmarking is required to figure out
-        //   the best approach.
-        //
-        // Note that the SCCs can be computed in reachable_map by adapting parts of kosaraju_scc.
-        let node_iter = sccs.node_iter(direction.into());
-
+        let node_iter = self
+            .subset_sccs(graph, sccs)
+            .node_iter(&self.included, direction.into());
         Topo {
             node_iter,
-            included: &self.included,
             remaining: self.included.len(),
         }
+    }
+
+    fn subset_sccs<'a>(
+        &self,
+        graph: &Graph<G::Node, G::Edge, Directed, G::Ix>,
+        sccs: &'a Sccs<G::Ix>,
+    ) -> SubsetSccs<'a, G::Ix> {
+        sccs.for_subset(graph, &self.included)
     }
 
     pub(super) fn links<'g>(
@@ -223,6 +216,7 @@ impl<G: GraphSpec> ResolveCore<G> {
         sccs: &Sccs<G::Ix>,
         direction: DependencyDirection,
     ) -> Links<'g, G> {
+        let sccs = self.subset_sccs(graph, sccs);
         let edge_dfs = match direction {
             DependencyDirection::Forward => {
                 let filtered_graph = NodeFiltered(graph, &self.included);
@@ -260,8 +254,7 @@ impl<G: GraphSpec> Eq for ResolveCore<G> {}
 /// An iterator over package nodes in topological order.
 #[derive(Clone, Debug)]
 pub(super) struct Topo<'g, G: GraphSpec> {
-    node_iter: NodeIter<'g, G::Ix>,
-    included: &'g IxSet<G>,
+    node_iter: NodeIter<'g, G::Ix, &'g IxSet<G>>,
     remaining: usize,
 }
 
@@ -269,14 +262,9 @@ impl<G: GraphSpec> Iterator for Topo<'_, G> {
     type Item = NodeIndex<G::Ix>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        for ix in &mut self.node_iter {
-            if !self.included.contains(ix) {
-                continue;
-            }
-            self.remaining -= 1;
-            return Some(ix);
-        }
-        None
+        let ix = self.node_iter.next()?;
+        self.remaining -= 1;
+        Some(ix)
     }
 
     fn size_hint(&self) -> (usize, Option<usize>) {
