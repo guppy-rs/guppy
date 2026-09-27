@@ -4,9 +4,12 @@
 use criterion::{BatchSize, Criterion, criterion_group, criterion_main};
 use guppy::{
     PackageId,
-    graph::{DependencyDirection, PackageGraph, PackageMetadata},
+    graph::{
+        DependencyDirection, PackageGraph, PackageMetadata, PackageSet,
+        feature::{FeatureGraph, FeatureId, FeatureSet},
+    },
 };
-use proptest::{collection::vec, prelude::*};
+use proptest::{collection::vec, prelude::*, sample::select};
 use proptest_ext::ValueGenerator;
 use std::{collections::HashMap, hint::black_box, time::Instant};
 
@@ -91,6 +94,224 @@ pub fn query_benchmarks(c: &mut Criterion) {
     });
 }
 
+/// Benchmarks for iterating over sets: roots, topological order and links.
+///
+/// Each benchmark runs an operation over a fixed batch of sets, in both
+/// directions. The batches are:
+///
+/// * `query`: sets returned by queries, which contain either all or none of
+///   each dependency cycle.
+/// * `split`: sets containing all but one member of the graph's largest
+///   cycle, plus a few other nodes. These split a cycle.
+/// * `small`: sets with a single member. Costs that scale with the size of the
+///   graph rather than the set stand out here.
+pub fn set_benchmarks(c: &mut Criterion) {
+    let package_graph = make_package_graph();
+    let mut gen = ValueGenerator::deterministic();
+
+    let package_sets = [
+        ("query", package_query_sets(&package_graph, &mut gen)),
+        ("split", package_split_sets(&package_graph, &mut gen)),
+        ("small", package_small_sets(&package_graph, &mut gen)),
+    ];
+    let mut group = c.benchmark_group("package_set");
+    for (name, sets) in &package_sets {
+        group.bench_function(format!("{name}/root_ids"), |b| {
+            b.iter(|| {
+                for_each_direction(sets, |set, direction| {
+                    black_box(set.root_ids(direction).count());
+                })
+            })
+        });
+        group.bench_function(format!("{name}/package_ids"), |b| {
+            b.iter(|| {
+                for_each_direction(sets, |set, direction| {
+                    black_box(set.package_ids(direction).count());
+                })
+            })
+        });
+        group.bench_function(format!("{name}/links"), |b| {
+            b.iter(|| {
+                for_each_direction(sets, |set, direction| {
+                    black_box(set.links(direction).count());
+                })
+            })
+        });
+    }
+    group.finish();
+
+    let feature_graph = package_graph.feature_graph();
+    let feature_sets = [
+        ("query", feature_query_sets(feature_graph, &mut gen)),
+        ("split", feature_split_sets(feature_graph, &mut gen)),
+        ("small", feature_small_sets(feature_graph, &mut gen)),
+    ];
+    let mut group = c.benchmark_group("feature_set");
+    for (name, sets) in &feature_sets {
+        group.bench_function(format!("{name}/root_ids"), |b| {
+            b.iter(|| {
+                for_each_direction(sets, |set, direction| {
+                    black_box(set.root_ids(direction).count());
+                })
+            })
+        });
+        group.bench_function(format!("{name}/feature_ids"), |b| {
+            b.iter(|| {
+                for_each_direction(sets, |set, direction| {
+                    black_box(set.feature_ids(direction).count());
+                })
+            })
+        });
+        group.bench_function(format!("{name}/links"), |b| {
+            b.iter(|| {
+                for_each_direction(sets, |set, direction| {
+                    black_box(set.links(direction).count());
+                })
+            })
+        });
+        group.bench_function(format!("{name}/packages_with_features"), |b| {
+            b.iter(|| {
+                for_each_direction(sets, |set, direction| {
+                    black_box(set.packages_with_features(direction).count());
+                })
+            })
+        });
+    }
+    group.finish();
+}
+
+/// The number of sets in each batch.
+const SET_BATCH_LEN: usize = 16;
+
+fn for_each_direction<S>(sets: &[S], mut f: impl FnMut(&S, DependencyDirection)) {
+    for set in sets {
+        for direction in [DependencyDirection::Forward, DependencyDirection::Reverse] {
+            f(set, direction);
+        }
+    }
+}
+
+fn package_query_sets<'g>(
+    graph: &'g PackageGraph,
+    gen: &mut ValueGenerator,
+) -> Vec<PackageSet<'g>> {
+    gen.generate(ids_directions_strategy(graph))
+        .into_iter()
+        .map(|(package_ids, query_direction, _)| {
+            graph
+                .query_directed(package_ids, query_direction)
+                .expect("valid package IDs")
+                .resolve()
+        })
+        .collect()
+}
+
+fn package_split_sets<'g>(
+    graph: &'g PackageGraph,
+    gen: &mut ValueGenerator,
+) -> Vec<PackageSet<'g>> {
+    let cycle = graph
+        .cycles()
+        .all_cycles()
+        .max_by_key(|cycle| cycle.len())
+        .expect("benchmark graph has a cycle");
+    assert!(cycle.len() >= 3, "largest cycle can be split");
+    let strategy = vec(
+        (
+            vec(graph.proptest1_id_strategy(), 8),
+            select((0..cycle.len()).collect::<Vec<_>>()),
+        ),
+        SET_BATCH_LEN,
+    );
+    gen.generate(strategy)
+        .into_iter()
+        .map(|(other_ids, skip)| {
+            let cycle_ids = cycle
+                .iter()
+                .enumerate()
+                .filter(|(i, _)| *i != skip)
+                .map(|(_, id)| *id);
+            graph
+                .resolve_ids(other_ids.into_iter().chain(cycle_ids))
+                .expect("valid package IDs")
+        })
+        .collect()
+}
+
+fn package_small_sets<'g>(
+    graph: &'g PackageGraph,
+    gen: &mut ValueGenerator,
+) -> Vec<PackageSet<'g>> {
+    gen.generate(vec(graph.proptest1_id_strategy(), SET_BATCH_LEN))
+        .into_iter()
+        .map(|package_id| graph.resolve_ids([package_id]).expect("valid package ID"))
+        .collect()
+}
+
+fn feature_query_sets<'g>(
+    graph: FeatureGraph<'g>,
+    gen: &mut ValueGenerator,
+) -> Vec<FeatureSet<'g>> {
+    let strategy = vec(
+        (
+            vec(graph.proptest1_id_strategy(), 32),
+            any::<DependencyDirection>(),
+        ),
+        SET_BATCH_LEN,
+    );
+    gen.generate(strategy)
+        .into_iter()
+        .map(|(feature_ids, query_direction)| {
+            graph
+                .query_directed(feature_ids, query_direction)
+                .expect("valid feature IDs")
+                .resolve()
+        })
+        .collect()
+}
+
+fn feature_split_sets<'g>(
+    graph: FeatureGraph<'g>,
+    gen: &mut ValueGenerator,
+) -> Vec<FeatureSet<'g>> {
+    let cycle: Vec<FeatureId<'g>> = graph
+        .cycles()
+        .all_cycles()
+        .max_by_key(|cycle| cycle.len())
+        .expect("benchmark graph has a feature cycle");
+    assert!(cycle.len() >= 3, "largest feature cycle can be split");
+    let strategy = vec(
+        (
+            vec(graph.proptest1_id_strategy(), 8),
+            select((0..cycle.len()).collect::<Vec<_>>()),
+        ),
+        SET_BATCH_LEN,
+    );
+    gen.generate(strategy)
+        .into_iter()
+        .map(|(other_ids, skip)| {
+            let cycle_ids = cycle
+                .iter()
+                .enumerate()
+                .filter(|(i, _)| *i != skip)
+                .map(|(_, id)| *id);
+            graph
+                .resolve_ids(other_ids.into_iter().chain(cycle_ids))
+                .expect("valid feature IDs")
+        })
+        .collect()
+}
+
+fn feature_small_sets<'g>(
+    graph: FeatureGraph<'g>,
+    gen: &mut ValueGenerator,
+) -> Vec<FeatureSet<'g>> {
+    gen.generate(vec(graph.proptest1_id_strategy(), SET_BATCH_LEN))
+        .into_iter()
+        .map(|feature_id| graph.resolve_ids([feature_id]).expect("valid feature ID"))
+        .collect()
+}
+
 fn make_package_graph() -> PackageGraph {
     // Use this package graph as a large and representative one.
     PackageGraph::from_json(include_str!(
@@ -134,5 +355,10 @@ fn ids_directions_strategy(
     )
 }
 
-criterion_group!(benches, construct_benchmarks, query_benchmarks);
+criterion_group!(
+    benches,
+    construct_benchmarks,
+    query_benchmarks,
+    set_benchmarks
+);
 criterion_main!(benches);
