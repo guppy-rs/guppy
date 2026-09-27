@@ -8,6 +8,11 @@ on:
 
 name: CI
 
+concurrency:
+  # Cancel in-progress runs when a PR branch is updated.
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   lint:
     name: Lint
