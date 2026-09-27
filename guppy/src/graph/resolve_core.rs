@@ -170,10 +170,18 @@ impl<G: GraphSpec> ResolveCore<G> {
         // This uses the SCCs in self.sccs. If any node in an SCC is a root, so is any other.
         match direction {
             DependencyDirection::Forward => sccs
-                .externals(&NodeFiltered(graph, &self.included))
+                .externals(
+                    &NodeFiltered(graph, &self.included),
+                    &self.included,
+                    direction.into(),
+                )
                 .collect(),
             DependencyDirection::Reverse => sccs
-                .externals(&NodeFiltered(Reversed(graph), &self.included))
+                .externals(
+                    &NodeFiltered(Reversed(graph), &self.included),
+                    &self.included,
+                    direction.into(),
+                )
                 .collect(),
         }
     }
@@ -218,13 +226,16 @@ impl<G: GraphSpec> ResolveCore<G> {
         let edge_dfs = match direction {
             DependencyDirection::Forward => {
                 let filtered_graph = NodeFiltered(graph, &self.included);
-                EdgeDfs::new(&filtered_graph, sccs.externals(&filtered_graph))
+                EdgeDfs::new(
+                    &filtered_graph,
+                    sccs.externals(&filtered_graph, &self.included, direction.into()),
+                )
             }
             DependencyDirection::Reverse => {
                 let filtered_reversed_graph = NodeFiltered(Reversed(graph), &self.included);
                 EdgeDfs::new(
                     &filtered_reversed_graph,
-                    sccs.externals(&filtered_reversed_graph),
+                    sccs.externals(&filtered_reversed_graph, &self.included, direction.into()),
                 )
             }
         };
