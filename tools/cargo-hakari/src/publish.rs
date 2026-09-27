@@ -45,12 +45,12 @@ pub(crate) fn publish_hakari(
         .expect("package is in workspace");
     let abs_path = workspace.root().join(workspace_dir);
 
-    let all_args = cargo_cli.all_args().join(" ");
+    let display_command = cargo_cli.display_command();
 
     info!(
         "{} {}\n---",
         "executing".style(output.styles.command),
-        all_args
+        display_command
     );
     let expression = cargo_cli.to_expression().dir(abs_path);
 
@@ -58,7 +58,7 @@ pub(crate) fn publish_hakari(
         Ok(_) => remove_dep.finish(true),
         Err(err) => {
             remove_dep.finish(false)?;
-            Err(err).wrap_err_with(|| format!("`{all_args}` failed"))
+            Err(err).wrap_err_with(|| format!("`{display_command}` failed"))
         }
     }
 }

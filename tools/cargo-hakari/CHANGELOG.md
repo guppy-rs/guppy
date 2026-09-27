@@ -11,6 +11,15 @@ All notable changes to this project will be documented in this file.
   panicking, if `hakari-package` isn't set in `hakari.toml`. The error explains
   how to set it.
 
+- When the `CARGO` environment variable isn't set (for example, when
+  `cargo-hakari` is run directly rather than as `cargo hakari`), `cargo-hakari`
+  now looks up `cargo` on `PATH`. Previously, it looked for `cargo` in the
+  current directory.
+
+- `cargo-hakari` no longer panics if the `CARGO` environment variable isn't
+  valid UTF-8. In that case, it also now reads the package graph with the
+  `cargo` that `CARGO` points to, rather than with `cargo` from `PATH`.
+
 ## [0.9.39] - 2026-09-19
 
 ### Added
