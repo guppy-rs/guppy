@@ -29,7 +29,7 @@ jobs:
       # Note: caching doesn't appear to work for rustdoc as of 2022-12-04, and we're exceeding cache
       # sizes anyway
 
-      - uses: taiki-e/install-action@040dca98aa7ebdea5d29fa0979fa5a7663be20bd # just
+      - uses: taiki-e/install-action@b6a061addd82b81aaeca51bdf2c53cd707996e5a # just
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
