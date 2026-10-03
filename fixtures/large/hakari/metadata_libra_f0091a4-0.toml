@@ -5,6 +5,7 @@
 # resolver = '3'
 # unify-target-host = 'auto'
 # output-single-feature = true
+# exclude-dev-dependencies = true
 # dep-format-version = '4'
 # workspace-hack-line-style = 'full'
 # platforms = ['armv6-none-eabi']
@@ -18,14 +19,11 @@
 [dependencies]
 adler32 = { version = "1", default-features = false }
 aho-corasick = { version = "0.7" }
-ansi_term-274715c4dabd11b0 = { package = "ansi_term", version = "0.9", default-features = false }
 anyhow = { version = "1" }
 arbitrary = { version = "0.4", default-features = false }
 arrayref = { version = "0.3", default-features = false }
 arrayvec-9fbad63c4bcf4a8f = { package = "arrayvec", version = "0.4", default-features = false }
 arrayvec-d8f496e17d97b5cb = { package = "arrayvec", version = "0.5" }
-assert_approx_eq = { version = "1", default-features = false }
-assert_matches = { version = "1", default-features = false }
 async-stream = { version = "0.2", default-features = false }
 atty = { version = "0.2", default-features = false }
 backtrace = { version = "0.3", features = ["serialize-serde"] }
@@ -38,7 +36,6 @@ bit-set = { version = "0.5" }
 bit-vec-3b31131e45eafb45 = { package = "bit-vec", version = "0.6" }
 bit-vec-d8f496e17d97b5cb = { package = "bit-vec", version = "0.5", default-features = false, features = ["std"] }
 bitflags = { version = "1" }
-bitvec = { version = "0.10" }
 blake2 = { version = "0.8", default-features = false }
 blake2-rfc = { version = "0.2" }
 block-buffer = { version = "0.7", default-features = false }
@@ -51,7 +48,6 @@ bytes-9fbad63c4bcf4a8f = { package = "bytes", version = "0.4", default-features 
 bytes-d8f496e17d97b5cb = { package = "bytes", version = "0.5" }
 bzip2-sys = { git = "https://github.com/alexcrichton/bzip2-rs.git", default-features = false }
 c_linked_list = { version = "1", default-features = false }
-cached = { version = "0.11", default-features = false }
 cast = { version = "0.2" }
 cfg-if = { version = "0.1", default-features = false }
 chacha20-poly1305-aead = { version = "0.1", default-features = false }
@@ -96,7 +92,6 @@ dtoa = { version = "0.4", default-features = false }
 ed25519-dalek-64d47c1a8d1e1aed = { package = "ed25519-dalek", version = "1.0.0-pre.3" }
 ed25519-dalek-903978446b7dd55b = { package = "ed25519-dalek", git = "https://github.com/calibra/ed25519-dalek.git", branch = "fiat", default-features = false, features = ["fiat_u64_backend", "serde", "std", "u64_backend"] }
 either = { version = "1" }
-encode_unicode = { version = "0.3" }
 endian-type = { version = "0.1", default-features = false }
 errno = { version = "0.2", default-features = false }
 failure = { version = "0.1" }
@@ -118,7 +113,6 @@ futures-util = { version = "0.3", default-features = false, features = ["async-a
 generic-array = { version = "0.12", default-features = false }
 get_if_addrs = { version = "0.5", default-features = false }
 getrandom = { version = "0.1", default-features = false, features = ["std"] }
-goldenfile = { version = "1", default-features = false }
 h2-6f8ce4dd05d13bba = { package = "h2", version = "0.2", default-features = false }
 h2-c65f7effa3be6d31 = { package = "h2", version = "0.1", default-features = false }
 hex = { version = "0.4" }
@@ -195,8 +189,6 @@ pin-project = { version = "0.4", default-features = false }
 pin-project-lite = { version = "0.1", default-features = false }
 pin-utils = { version = "0.1.0-alpha.4", default-features = false }
 pretty = { version = "0.9", default-features = false }
-prettydiff = { version = "0.3", default-features = false }
-prettytable-rs = { version = "0.8" }
 proc-macro-nested = { version = "0.1", default-features = false }
 prometheus = { version = "0.7", default-features = false }
 proptest = { version = "0.9" }
@@ -233,7 +225,6 @@ remove_dir_all = { version = "0.5", default-features = false }
 rental = { version = "0.5" }
 reqwest = { version = "0.10", default-features = false, features = ["blocking", "json", "rustls-tls"] }
 ring = { version = "0.16", features = ["std"] }
-ripemd160 = { version = "0.8" }
 rocksdb = { git = "https://github.com/pingcap/rust-rocksdb.git", rev = "3cd18c44d160a3cdba586d6502d51b7cc67efc59" }
 rusoto_core = { version = "0.42", default-features = false, features = ["rustls"] }
 rusoto_credential = { version = "0.42", default-features = false }
@@ -245,7 +236,7 @@ rusoto_signature = { version = "0.42", default-features = false }
 rust_decimal = { version = "1" }
 rustc-demangle = { version = "0.1", default-features = false }
 rustls = { version = "0.16" }
-rusty-fork = { version = "0.2" }
+rusty-fork = { version = "0.2", default-features = false, features = ["timeout"] }
 rustyline = { version = "6" }
 ryu = { version = "1", default-features = false }
 safemem = { version = "0.3" }
@@ -274,19 +265,15 @@ snow = { version = "0.6", features = ["ring-accelerated"] }
 spin = { version = "0.5", default-features = false }
 stable_deref_trait = { version = "1" }
 static_assertions = { version = "1", default-features = false }
-statistical = { version = "1", default-features = false }
-stats_alloc = { version = "0.1" }
 string = { version = "0.2" }
 strsim = { version = "0.8", default-features = false }
-structopt-468e82937335b1c9 = { package = "structopt", version = "0.3" }
-structopt-6f8ce4dd05d13bba = { package = "structopt", version = "0.2" }
+structopt = { version = "0.3" }
 strum = { version = "0.17", default-features = false }
 subtle-dff4ba8e3ae991db = { package = "subtle", version = "1", default-features = false }
 subtle-f595c2ba2a3f28df = { package = "subtle", version = "2" }
 take_mut = { version = "0.2", default-features = false }
 tempfile = { version = "3", default-features = false }
-term-3b31131e45eafb45 = { package = "term", version = "0.6" }
-term-d8f496e17d97b5cb = { package = "term", version = "0.5" }
+term = { version = "0.6" }
 termcolor = { version = "1", default-features = false }
 termion = { version = "1", default-features = false }
 textwrap = { version = "0.11", default-features = false }
@@ -366,14 +353,11 @@ zstd-sys = { git = "https://github.com/gyscos/zstd-rs.git" }
 [build-dependencies]
 adler32 = { version = "1", default-features = false }
 aho-corasick = { version = "0.7" }
-ansi_term-274715c4dabd11b0 = { package = "ansi_term", version = "0.9", default-features = false }
 anyhow = { version = "1" }
 arbitrary = { version = "0.4", default-features = false }
 arrayref = { version = "0.3", default-features = false }
 arrayvec-9fbad63c4bcf4a8f = { package = "arrayvec", version = "0.4", default-features = false }
 arrayvec-d8f496e17d97b5cb = { package = "arrayvec", version = "0.5" }
-assert_approx_eq = { version = "1", default-features = false }
-assert_matches = { version = "1", default-features = false }
 async-stream = { version = "0.2", default-features = false }
 async-stream-impl = { version = "0.2", default-features = false }
 async-trait = { version = "0.1", default-features = false }
@@ -391,7 +375,6 @@ bit-set = { version = "0.5" }
 bit-vec-3b31131e45eafb45 = { package = "bit-vec", version = "0.6" }
 bit-vec-d8f496e17d97b5cb = { package = "bit-vec", version = "0.5", default-features = false, features = ["std"] }
 bitflags = { version = "1" }
-bitvec = { version = "0.10" }
 blake2 = { version = "0.8", default-features = false }
 blake2-rfc = { version = "0.2" }
 block-buffer = { version = "0.7", default-features = false }
@@ -405,7 +388,6 @@ bytes-9fbad63c4bcf4a8f = { package = "bytes", version = "0.4", default-features 
 bytes-d8f496e17d97b5cb = { package = "bytes", version = "0.5" }
 bzip2-sys = { git = "https://github.com/alexcrichton/bzip2-rs.git", default-features = false }
 c_linked_list = { version = "1", default-features = false }
-cached = { version = "0.11", default-features = false }
 cast = { version = "0.2" }
 cc = { version = "1", default-features = false, features = ["parallel"] }
 cexpr = { version = "0.3", default-features = false }
@@ -455,7 +437,6 @@ dtoa = { version = "0.4", default-features = false }
 ed25519-dalek-64d47c1a8d1e1aed = { package = "ed25519-dalek", version = "1.0.0-pre.3" }
 ed25519-dalek-903978446b7dd55b = { package = "ed25519-dalek", git = "https://github.com/calibra/ed25519-dalek.git", branch = "fiat", default-features = false, features = ["fiat_u64_backend", "serde", "std", "u64_backend"] }
 either = { version = "1" }
-encode_unicode = { version = "0.3" }
 endian-type = { version = "0.1", default-features = false }
 env_logger = { version = "0.6" }
 errno = { version = "0.2", default-features = false }
@@ -482,7 +463,6 @@ generic-array = { version = "0.12", default-features = false }
 get_if_addrs = { version = "0.5", default-features = false }
 getrandom = { version = "0.1", default-features = false, features = ["std"] }
 glob = { version = "0.3", default-features = false }
-goldenfile = { version = "1", default-features = false }
 h2-6f8ce4dd05d13bba = { package = "h2", version = "0.2", default-features = false }
 h2-c65f7effa3be6d31 = { package = "h2", version = "0.1", default-features = false }
 heck = { version = "0.3", default-features = false }
@@ -570,8 +550,6 @@ pin-project-lite = { version = "0.1", default-features = false }
 pin-utils = { version = "0.1.0-alpha.4", default-features = false }
 pkg-config = { version = "0.3", default-features = false }
 pretty = { version = "0.9", default-features = false }
-prettydiff = { version = "0.3", default-features = false }
-prettytable-rs = { version = "0.8" }
 proc-macro-crate = { version = "0.1", default-features = false }
 proc-macro-error = { version = "0.4", default-features = false }
 proc-macro-error-attr = { version = "0.4", default-features = false }
@@ -622,7 +600,6 @@ rental = { version = "0.5" }
 rental-impl = { version = "0.5", default-features = false }
 reqwest = { version = "0.10", default-features = false, features = ["blocking", "json", "rustls-tls"] }
 ring = { version = "0.16", features = ["std"] }
-ripemd160 = { version = "0.8" }
 rocksdb = { git = "https://github.com/pingcap/rust-rocksdb.git", rev = "3cd18c44d160a3cdba586d6502d51b7cc67efc59" }
 rusoto_core = { version = "0.42", default-features = false, features = ["rustls"] }
 rusoto_credential = { version = "0.42", default-features = false }
@@ -637,7 +614,7 @@ rustc-hash = { version = "1" }
 rustc_version = { version = "0.2", default-features = false }
 rustls = { version = "0.16" }
 rustversion = { version = "1", default-features = false }
-rusty-fork = { version = "0.2" }
+rusty-fork = { version = "0.2", default-features = false, features = ["timeout"] }
 rustyline = { version = "6" }
 ryu = { version = "1", default-features = false }
 safemem = { version = "0.3" }
@@ -669,14 +646,10 @@ snow = { version = "0.6", features = ["ring-accelerated"] }
 spin = { version = "0.5", default-features = false }
 stable_deref_trait = { version = "1" }
 static_assertions = { version = "1", default-features = false }
-statistical = { version = "1", default-features = false }
-stats_alloc = { version = "0.1" }
 string = { version = "0.2" }
 strsim = { version = "0.8", default-features = false }
-structopt-468e82937335b1c9 = { package = "structopt", version = "0.3" }
-structopt-6f8ce4dd05d13bba = { package = "structopt", version = "0.2" }
-structopt-derive-6f8ce4dd05d13bba = { package = "structopt-derive", version = "0.2", default-features = false }
-structopt-derive-9fbad63c4bcf4a8f = { package = "structopt-derive", version = "0.4", default-features = false }
+structopt = { version = "0.3" }
+structopt-derive = { version = "0.4", default-features = false }
 strum = { version = "0.17", default-features = false }
 strum_macros = { version = "0.17", default-features = false }
 subtle-dff4ba8e3ae991db = { package = "subtle", version = "1", default-features = false }
@@ -687,8 +660,7 @@ syn-mid = { version = "0.5", default-features = false }
 synstructure = { version = "0.12" }
 take_mut = { version = "0.2", default-features = false }
 tempfile = { version = "3", default-features = false }
-term-3b31131e45eafb45 = { package = "term", version = "0.6" }
-term-d8f496e17d97b5cb = { package = "term", version = "0.5" }
+term = { version = "0.6" }
 termcolor = { version = "1", default-features = false }
 termion = { version = "1", default-features = false }
 textwrap = { version = "0.11", default-features = false }
@@ -775,7 +747,7 @@ zeroize_derive = { version = "1", default-features = false }
 zstd-sys = { git = "https://github.com/gyscos/zstd-rs.git" }
 
 [target.armv6-none-eabi.dependencies]
-ansi_term-a6292c17cd707f01 = { package = "ansi_term", version = "0.11", default-features = false }
+ansi_term = { version = "0.11", default-features = false }
 c2-chacha = { version = "0.2", default-features = false, features = ["simd", "std"] }
 encoding_rs = { version = "0.8", default-features = false }
 futures-util = { version = "0.3" }
@@ -790,7 +762,7 @@ tokio-rustls-5ef9efb8ec2df382 = { package = "tokio-rustls", version = "0.12", de
 unicase = { version = "2", default-features = false }
 
 [target.armv6-none-eabi.build-dependencies]
-ansi_term-a6292c17cd707f01 = { package = "ansi_term", version = "0.11", default-features = false }
+ansi_term = { version = "0.11", default-features = false }
 c2-chacha = { version = "0.2", default-features = false, features = ["simd", "std"] }
 encoding_rs = { version = "0.8", default-features = false }
 futures-util = { version = "0.3" }

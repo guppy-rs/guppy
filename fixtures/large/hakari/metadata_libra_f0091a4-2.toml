@@ -5,6 +5,7 @@
 # resolver = '2'
 # unify-target-host = 'auto'
 # output-single-feature = false
+# exclude-dev-dependencies = true
 # dep-format-version = '4'
 # workspace-hack-line-style = 'workspace-dotted'
 # platforms = ['loongarch64-unknown-none']
@@ -37,7 +38,6 @@ backtrace = { version = "0.3", features = ["serialize-serde"] }
 byteorder = { version = "1", features = ["i128"] }
 bytes = { version = "0.4", default-features = false, features = ["either"] }
 chrono = { version = "0.4", features = ["serde"] }
-clap = { version = "2" }
 curve25519-dalek = { git = "https://github.com/calibra/curve25519-dalek.git", branch = "fiat", default-features = false, features = ["fiat_u64_backend", "std", "u64_backend"] }
 digest = { version = "0.8", default-features = false, features = ["std"] }
 ed25519-dalek = { git = "https://github.com/calibra/ed25519-dalek.git", branch = "fiat", default-features = false, features = ["fiat_u64_backend", "serde", "std", "u64_backend"] }
@@ -65,7 +65,7 @@ rand_core-9fbad63c4bcf4a8f = { package = "rand_core", version = "0.4", default-f
 regex-syntax = { version = "0.6" }
 reqwest = { version = "0.10", default-features = false, features = ["blocking", "json", "rustls-tls"] }
 ring = { version = "0.16", features = ["std"] }
-rusty-fork = { version = "0.2" }
+rusty-fork = { version = "0.2", default-features = false, features = ["timeout"] }
 serde = { version = "1", features = ["derive", "rc"] }
 sha2 = { version = "0.8" }
 sha3 = { version = "0.8" }
@@ -83,7 +83,6 @@ byteorder = { version = "1", features = ["i128"] }
 bytes = { version = "0.4", default-features = false, features = ["either"] }
 cc = { version = "1", default-features = false, features = ["parallel"] }
 chrono = { version = "0.4", features = ["serde"] }
-clap = { version = "2" }
 curve25519-dalek = { git = "https://github.com/calibra/curve25519-dalek.git", branch = "fiat", default-features = false, features = ["fiat_u64_backend", "std", "u64_backend"] }
 digest = { version = "0.8", default-features = false, features = ["std"] }
 ed25519-dalek = { git = "https://github.com/calibra/ed25519-dalek.git", branch = "fiat", default-features = false, features = ["fiat_u64_backend", "serde", "std", "u64_backend"] }
@@ -113,7 +112,7 @@ rand_core-9fbad63c4bcf4a8f = { package = "rand_core", version = "0.4", default-f
 regex-syntax = { version = "0.6" }
 reqwest = { version = "0.10", default-features = false, features = ["blocking", "json", "rustls-tls"] }
 ring = { version = "0.16", features = ["std"] }
-rusty-fork = { version = "0.2" }
+rusty-fork = { version = "0.2", default-features = false, features = ["timeout"] }
 serde = { version = "1", features = ["derive", "rc"] }
 sha2 = { version = "0.8" }
 sha3 = { version = "0.8" }

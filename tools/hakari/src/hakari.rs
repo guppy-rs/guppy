@@ -43,6 +43,7 @@ pub struct HakariBuilder<'g> {
     pub(crate) registries: BiHashMap<Registry, ahash::RandomState>,
     unify_target_host: UnifyTargetHost,
     output_single_feature: bool,
+    exclude_dev_dependencies: bool,
     pub(crate) dep_format_version: DepFormatVersion,
     pub(crate) workspace_hack_line_style: WorkspaceHackLineStyle,
 }
@@ -82,6 +83,7 @@ impl<'g> HakariBuilder<'g> {
             registries: BiHashMap::default(),
             unify_target_host: UnifyTargetHost::default(),
             output_single_feature: false,
+            exclude_dev_dependencies: false,
             dep_format_version: DepFormatVersion::default(),
             workspace_hack_line_style: WorkspaceHackLineStyle::default(),
         })
@@ -334,6 +336,30 @@ impl<'g> HakariBuilder<'g> {
         self.output_single_feature
     }
 
+    /// Skip builds with dev-dependencies when unifying features.
+    ///
+    /// By default, Hakari unifies features across builds with and without
+    /// dev-dependencies, so test-only features (like tokio's `test-util`) end
+    /// up in release builds. With this option, only builds without
+    /// dev-dependencies count. `cargo test` then rebuilds some dependencies
+    /// with extra features, and [`verify`](Self::verify) skips builds with
+    /// dev-dependencies.
+    ///
+    /// Has no effect with
+    /// [`CargoResolverVersion::V1`](guppy::graph::cargo::CargoResolverVersion::V1).
+    /// A workspace crate used only as a dev-dependency still counts; pass it to
+    /// [`add_traversal_excludes`](Self::add_traversal_excludes) to leave it
+    /// out.
+    pub fn set_exclude_dev_dependencies(&mut self, exclude_dev_dependencies: bool) -> &mut Self {
+        self.exclude_dev_dependencies = exclude_dev_dependencies;
+        self
+    }
+
+    /// Returns the current value of `exclude_dev_dependencies`.
+    pub fn exclude_dev_dependencies(&self) -> bool {
+        self.exclude_dev_dependencies
+    }
+
     /// Version of hakari data to output.
     ///
     /// For more, see the documentation for [`DepFormatVersion`](DepFormatVersion).
@@ -504,6 +530,7 @@ mod summaries {
                 verify_mode: false,
                 unify_target_host: summary.unify_target_host,
                 output_single_feature: summary.output_single_feature,
+                exclude_dev_dependencies: summary.exclude_dev_dependencies,
                 dep_format_version: summary.dep_format_version,
                 workspace_hack_line_style: summary.workspace_hack_line_style,
                 platforms,
@@ -1058,7 +1085,8 @@ impl<'g, 'b> ComputedMapBuild<'g, 'b> {
         // but unfortunately we cannot exploit this property because it doesn't account for the fact
         // that some dependencies might not be built *at all*, under certain feature combinations.
         //
-        // That's also why we simulate builds with and without dev-only dependencies in all cases.
+        // That's also why we simulate builds with and without dev-only
+        // dependencies.
         //
         // For example, for:
         //
@@ -1092,6 +1120,12 @@ impl<'g, 'b> ComputedMapBuild<'g, 'b> {
             (StandardFeatures::All, false),
             (StandardFeatures::All, true),
         ];
+
+        // Skip the builds with dev-dependencies if they're excluded.
+        let features_include_dev: Vec<_> = features_include_dev
+            .into_iter()
+            .filter(|&(_, include_dev)| !(include_dev && builder.exclude_dev_dependencies))
+            .collect();
 
         // Features for the "always" platform spec.
         let always_features = features_include_dev
@@ -2089,6 +2123,48 @@ mod tests {
         .into_iter()
         .map(PackageId::new)
         .collect()
+    }
+
+    #[test]
+    fn exclude_dev_dependencies() {
+        // In this fixture, dev-dependencies enable the `default` feature of
+        // num-traits, and are the only reason byteorder has two feature sets.
+        let fixture = JsonFixture::metadata_guppy_78cb7e8();
+        let mut builder =
+            HakariBuilder::new(fixture.graph(), None).expect("hakari builder is created");
+        let with_dev = builder.clone().compute();
+        builder.set_exclude_dev_dependencies(true);
+        let without_dev = builder.compute();
+
+        fn features<'g>(hakari: &Hakari<'g>, name: &str) -> Option<Vec<&'g str>> {
+            let target_key = OutputKey {
+                platform_idx: None,
+                build_platform: BuildPlatform::Target,
+            };
+            hakari.output_map[&target_key]
+                .values()
+                .find(|(package, _)| package.name() == name)
+                .map(|(_, features)| features.iter().copied().collect())
+        }
+        assert_eq!(
+            features(&with_dev, "num-traits"),
+            Some(vec!["default", "std"]),
+        );
+        assert_eq!(features(&without_dev, "num-traits"), Some(vec!["std"]));
+        assert_eq!(features(&with_dev, "byteorder"), Some(vec!["std"]));
+        assert_eq!(features(&without_dev, "byteorder"), None);
+
+        // In this fixture, leaving out dev-dependencies adds no features.
+        for (key, packages) in &without_dev.output_map {
+            for (id, (package, features)) in packages {
+                let (_, with_dev_features) = &with_dev.output_map[key][id];
+                assert!(
+                    features.is_subset(with_dev_features),
+                    "{}: {features:?} is not a subset of {with_dev_features:?}",
+                    package.name(),
+                );
+            }
+        }
     }
 
     fn reverse_dep_builder() -> HakariBuilder<'static> {

@@ -5,6 +5,7 @@
 # resolver = '3'
 # unify-target-host = 'none'
 # output-single-feature = false
+# exclude-dev-dependencies = true
 # dep-format-version = '1'
 # workspace-hack-line-style = 'workspace-dotted'
 # platforms = ['armv6-unknown-freebsd']

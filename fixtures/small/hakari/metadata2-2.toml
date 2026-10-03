@@ -5,6 +5,7 @@
 # resolver = 'install'
 # unify-target-host = 'replicate-target-on-host'
 # output-single-feature = false
+# exclude-dev-dependencies = true
 # dep-format-version = '4'
 # workspace-hack-line-style = 'full'
 # platforms = ['riscv64gc-unknown-netbsd', 'aarch64-unknown-none', 'riscv32imafc-unknown-none-elf']
