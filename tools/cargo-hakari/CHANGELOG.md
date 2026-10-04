@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+### Fixed
+
+- `cargo hakari` commands other than `init` now exit with an error, rather than
+  panicking, if `hakari-package` isn't set in `hakari.toml`. The error explains
+  how to set it.
+
 ## [0.9.39] - 2026-09-19
 
 ### Added

@@ -234,6 +234,7 @@
 //!   option, or
 //! * there is a bugfix involved.
 
+mod builder;
 mod cargo_cli;
 mod command;
 mod docs;
