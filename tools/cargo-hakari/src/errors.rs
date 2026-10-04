@@ -3,6 +3,7 @@
 
 use crate::output::{OutputContext, Styles};
 use camino::Utf8PathBuf;
+use hakari::summaries::HakariConfig;
 use indenter::{Format, indented};
 use log::error;
 use owo_colors::OwoColorize;
@@ -11,6 +12,7 @@ use std::{
     fmt::{self, Write as _},
     io,
     process::ExitStatus,
+    str::FromStr,
 };
 use thiserror::Error;
 
@@ -42,6 +44,23 @@ pub enum ExpectedError {
         #[source]
         error: io::Error,
     },
+    #[error("failed to deserialize Hakari config at {config_path}")]
+    ConfigDeserializeFailed {
+        config_path: Utf8PathBuf,
+        #[source]
+        error: <HakariConfig as FromStr>::Err,
+    },
+    #[error("failed to resolve Hakari config at {config_path}")]
+    ConfigResolveFailed {
+        config_path: Utf8PathBuf,
+        #[source]
+        error: Box<guppy::Error>,
+    },
+    #[error(
+        "`hakari-package` is not set in {config_path}, so cargo hakari can't \
+         tell which crate is the workspace-hack"
+    )]
+    HakariPackageNotSet { config_path: Utf8PathBuf },
     #[error("failed to update Cargo.lock: could not run `{command}`")]
     LockfileUpdateExecFailed {
         /// The full command line (see `CargoCli::display_command`).
@@ -64,6 +83,9 @@ impl ExpectedError {
         match self {
             Self::ConfigNotFound { .. }
             | Self::ConfigReadFailed { .. }
+            | Self::ConfigDeserializeFailed { .. }
+            | Self::ConfigResolveFailed { .. }
+            | Self::HakariPackageNotSet { .. }
             | Self::LockfileUpdateExecFailed { .. }
             | Self::LockfileUpdateFailed { .. } => ERROR_EXIT_CODE,
         }
@@ -110,6 +132,44 @@ impl fmt::Display for ErrorReport<'_> {
                     config_path.style(styles.config_path),
                 )?;
             }
+            ExpectedError::ConfigDeserializeFailed {
+                config_path,
+                error: _,
+            } => {
+                write!(
+                    f,
+                    "failed to deserialize Hakari config at {}",
+                    config_path.style(styles.config_path),
+                )?;
+            }
+            ExpectedError::ConfigResolveFailed {
+                config_path,
+                error: _,
+            } => {
+                write!(
+                    f,
+                    "failed to resolve Hakari config at {}",
+                    config_path.style(styles.config_path),
+                )?;
+            }
+            ExpectedError::HakariPackageNotSet { config_path } => {
+                write!(
+                    f,
+                    "`hakari-package` is not set in {}, so cargo hakari can't \
+                     tell which crate is the workspace-hack",
+                    config_path.style(styles.config_path),
+                )?;
+                write_hint(
+                    f,
+                    "set `hakari-package` to that crate's name, for example \
+                     `hakari-package = \"workspace-hack\"`",
+                )?;
+                write_hint(
+                    f,
+                    "if that crate doesn't exist yet, run \
+                     `cargo hakari init --skip-config <path>` first",
+                )?;
+            }
             ExpectedError::LockfileUpdateExecFailed { command, error: _ } => {
                 write!(
                     f,
@@ -131,6 +191,10 @@ impl fmt::Display for ErrorReport<'_> {
 
         write_causes(f, self.error.source())
     }
+}
+
+fn write_hint(f: &mut fmt::Formatter<'_>, hint: impl fmt::Display) -> fmt::Result {
+    write!(f, "\n(hint: {hint})")
 }
 
 // (Ported from DisplayErrorChain in nextest-runner.)
@@ -245,6 +309,56 @@ mod tests {
             "permission denied",
         ));
         assert_report_snapshot(&error, file!["snapshots/errors/config_read_failed.txt"]);
+        assert_eq!(error.process_exit_code(), 1);
+    }
+
+    #[test]
+    fn report_config_deserialize_failed() {
+        // In these TOML contents, the string on line 2 is not closed. It spans
+        // several lines and ends with a newline.
+        let toml_error = "hakari-package = \"workspace-hack\"\nresolver = \"2\n"
+            .parse::<HakariConfig>()
+            .expect_err("an unterminated string is rejected");
+        let error = ExpectedError::ConfigDeserializeFailed {
+            config_path: "/workspace/.config/hakari.toml".into(),
+            error: toml_error,
+        };
+        assert_report_snapshot(
+            &error,
+            file!["snapshots/errors/config_deserialize_failed.txt"],
+        );
+        assert_eq!(
+            error.to_string(),
+            "failed to deserialize Hakari config at /workspace/.config/hakari.toml",
+        );
+        assert_eq!(error.process_exit_code(), 1);
+    }
+
+    #[test]
+    fn report_config_resolve_failed() {
+        let error = ExpectedError::ConfigResolveFailed {
+            config_path: "/workspace/.config/hakari.toml".into(),
+            error: Box::new(guppy::Error::UnknownWorkspaceName("nope".to_owned())),
+        };
+        assert_report_snapshot(&error, file!["snapshots/errors/config_resolve_failed.txt"]);
+        assert_eq!(
+            error.to_string(),
+            "failed to resolve Hakari config at /workspace/.config/hakari.toml",
+        );
+        assert_eq!(error.process_exit_code(), 1);
+    }
+
+    #[test]
+    fn report_hakari_package_not_set() {
+        let error = ExpectedError::HakariPackageNotSet {
+            config_path: "/workspace/.config/hakari.toml".into(),
+        };
+        assert_report_snapshot(&error, file!["snapshots/errors/hakari_package_not_set.txt"]);
+        assert_eq!(
+            error.to_string(),
+            "`hakari-package` is not set in /workspace/.config/hakari.toml, \
+             so cargo hakari can't tell which crate is the workspace-hack",
+        );
         assert_eq!(error.process_exit_code(), 1);
     }
 

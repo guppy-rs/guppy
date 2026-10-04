@@ -1,0 +1,3 @@
+failed to resolve Hakari config at /workspace/.config/hakari.toml
+  caused by:
+  - unknown workspace package name: nope
