@@ -238,6 +238,7 @@ mod builder;
 mod cargo_cli;
 mod command;
 mod docs;
+mod errors;
 mod helpers;
 mod output;
 mod publish;
@@ -249,3 +250,5 @@ pub use docs::*;
 // Not part of the stable API.
 #[doc(hidden)]
 pub use command::Args;
+#[doc(hidden)]
+pub use errors::ExpectedError;

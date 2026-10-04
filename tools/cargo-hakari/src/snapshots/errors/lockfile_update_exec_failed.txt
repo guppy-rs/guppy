@@ -1,0 +1,3 @@
+failed to update Cargo.lock: could not run `/opt/rust/bin/cargo tree`
+  caused by:
+  - program not found

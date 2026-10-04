@@ -29,7 +29,7 @@ impl<'a> CargoCli<'a> {
         Self::with_cargo_program(command, output, cargo_program())
     }
 
-    fn with_cargo_program(
+    pub(crate) fn with_cargo_program(
         command: &'a str,
         output: OutputContext,
         cargo_program: OsString,

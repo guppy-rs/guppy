@@ -1,0 +1,3 @@
+failed to read Hakari config at /workspace/.config/hakari.toml
+  caused by:
+  - permission denied

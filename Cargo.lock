@@ -571,10 +571,13 @@ dependencies = [
  "guppy-workspace-hack",
  "hakari",
  "iddqd",
+ "indenter",
  "log",
  "owo-colors",
+ "snapbox",
  "supports-color 3.0.2",
  "tempfile",
+ "thiserror",
 ]
 
 [[package]]

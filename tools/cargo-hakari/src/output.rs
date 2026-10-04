@@ -76,9 +76,11 @@ impl OutputOpts {
     }
 }
 
+// This is pub, not pub(crate), because the hidden-but-public
+// `ExpectedError::display_to_stderr` accepts it as a parameter.
 #[derive(Clone, Debug)]
 #[must_use]
-pub(crate) struct OutputContext {
+pub struct OutputContext {
     pub(crate) quiet: bool,
     pub(crate) verbose: bool,
     pub(crate) color: Color,

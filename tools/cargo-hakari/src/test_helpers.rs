@@ -7,9 +7,15 @@ use crate::{
 };
 use camino::Utf8Path;
 use fixtures::json::JsonFixture;
-use std::sync::Arc;
+#[cfg(windows)]
+use std::os::windows::process::ExitStatusExt;
 #[cfg(unix)]
-use std::{fs, os::unix::fs::PermissionsExt, path::Path};
+use std::{
+    fs,
+    os::unix::{fs::PermissionsExt, process::ExitStatusExt},
+    path::Path,
+};
+use std::{process::ExitStatus, sync::Arc};
 
 pub(crate) fn output_context() -> OutputContext {
     OutputContext {
@@ -34,6 +40,17 @@ pub(crate) fn reverse_dep_builder() -> BuilderWithHakariPackage<'static> {
     )
     .expect("config with hakari-package resolves");
     builder
+}
+
+/// Returns the status of a process that exited with this code.
+#[cfg(unix)]
+pub(crate) fn exit_status(code: u8) -> ExitStatus {
+    ExitStatus::from_raw(i32::from(code) << 8)
+}
+
+#[cfg(windows)]
+pub(crate) fn exit_status(code: u8) -> ExitStatus {
+    ExitStatus::from_raw(u32::from(code))
 }
 
 #[cfg(unix)]

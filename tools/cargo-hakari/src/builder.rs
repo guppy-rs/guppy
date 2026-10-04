@@ -1,7 +1,7 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-use crate::helpers::read_contents;
+use crate::helpers::read_config_contents;
 use camino::Utf8Path;
 use color_eyre::eyre::{Result, WrapErr, bail};
 use guppy::graph::{PackageGraph, PackageMetadata, PackageSet};
@@ -90,7 +90,7 @@ impl<'g> BuilderWithHakariPackage<'g> {
 pub(crate) fn make_builder_and_output(
     package_graph: &PackageGraph,
 ) -> Result<(BuilderWithHakariPackage<'_>, HakariOutputOptions)> {
-    let (config_path, contents) = read_contents(
+    let (config_path, contents) = read_config_contents(
         package_graph.workspace().root(),
         [DEFAULT_CONFIG_PATH, FALLBACK_CONFIG_PATH],
     )
