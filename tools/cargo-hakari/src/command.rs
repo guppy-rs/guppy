@@ -3,6 +3,7 @@
 
 use crate::{
     builder::{BuilderWithHakariPackage, make_builder_and_output},
+    cargo_cli::cargo_program,
     helpers::regenerate_lockfile,
     output::{OutputContext, OutputOpts, Styles},
     publish::publish_hakari,
@@ -106,7 +107,8 @@ enum Command {
 impl Command {
     fn exec(self, output: OutputOpts) -> Result<i32> {
         let output = output.init();
-        let metadata_command = MetadataCommand::new();
+        let mut metadata_command = MetadataCommand::new();
+        metadata_command.cargo_path(cargo_program());
         let package_graph = metadata_command
             .build_graph()
             .context("building package graph failed")?;
