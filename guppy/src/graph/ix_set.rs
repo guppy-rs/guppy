@@ -1,7 +1,7 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-use crate::graph::GraphSpec;
+use crate::{graph::GraphSpec, petgraph_support::NodeSet};
 use fixedbitset::{FixedBitSet, Ones};
 use petgraph::{graph::NodeIndex, visit::FilterNode};
 use std::{fmt, marker::PhantomData};
@@ -182,6 +182,18 @@ impl<G: GraphSpec> ExactSizeIterator for IxOnes<'_, G> {
 impl<G: GraphSpec> FilterNode<NodeIndex<G::Ix>> for &IxSet<G> {
     fn include_node(&self, node: NodeIndex<G::Ix>) -> bool {
         self.contains(node)
+    }
+}
+
+impl<'a, G: GraphSpec> NodeSet<G::Ix> for &'a IxSet<G> {
+    type Members = IxOnes<'a, G>;
+
+    fn member_count(&self) -> usize {
+        self.len()
+    }
+
+    fn members(&self) -> IxOnes<'a, G> {
+        self.ones()
     }
 }
 

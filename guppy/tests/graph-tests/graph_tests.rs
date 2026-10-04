@@ -1237,3 +1237,79 @@ mod root_order {
         }
     }
 }
+
+mod split_cycles {
+    use super::*;
+    use fixtures::dep_helpers::{GraphAssert, assert_induced_order, assert_link_order};
+
+    /// A set that only includes part of a cycle breaks it, so its roots and
+    /// iteration order must come from the SCCs of the set, not of the whole
+    /// graph.
+    ///
+    /// For every fixture, for every cycle of 3+ nodes, this checks the set
+    /// formed by removing each member respectively. Two-node cycles are skipped
+    /// since removing a member leaves a single node.
+    #[test]
+    fn remove_one_member() {
+        for (name, fixture) in JsonFixture::all_fixtures() {
+            let graph = fixture.graph();
+            for cycle in graph.all_cycles() {
+                for remaining in cycle_minus_one(&cycle) {
+                    let set = graph
+                        .resolve_ids(remaining.iter().copied())
+                        .expect("valid package IDs");
+                    let msg = format!("{name}: package cycle {cycle:?} minus one");
+                    assert_induced_order(graph, &set, &msg);
+                    for direction in [DependencyDirection::Forward, DependencyDirection::Reverse] {
+                        assert_link_order(
+                            set.links(direction),
+                            set.root_ids(direction),
+                            direction,
+                            &msg,
+                        );
+
+                        let package_ids: Vec<_> = set.package_ids(direction).collect();
+                        let feature_package_ids: Vec<_> = set
+                            .to_feature_set(StandardFeatures::All)
+                            .packages_with_features(direction)
+                            .map(|feature_list| feature_list.package().id())
+                            .collect();
+                        assert_eq!(
+                            package_ids, feature_package_ids,
+                            "{msg}: packages_with_features matches package_ids ({direction:?})",
+                        );
+                    }
+                }
+            }
+
+            let feature_graph = graph.feature_graph();
+            for cycle in feature_graph.all_cycles() {
+                for remaining in cycle_minus_one(&cycle) {
+                    let set = feature_graph
+                        .resolve_ids(remaining.iter().copied())
+                        .expect("valid feature IDs");
+                    let msg = format!("{name}: feature cycle {cycle:?} minus one");
+                    assert_induced_order(feature_graph, &set, &msg);
+                }
+            }
+        }
+    }
+
+    /// For a cycle of 3+ members, returns each way to remove one member.
+    /// Otherwise, returns an empty list.
+    fn cycle_minus_one<Id: Copy>(cycle: &[Id]) -> Vec<Vec<Id>> {
+        if cycle.len() < 3 {
+            return Vec::new();
+        }
+        (0..cycle.len())
+            .map(|skip| {
+                cycle
+                    .iter()
+                    .enumerate()
+                    .filter(|(i, _)| *i != skip)
+                    .map(|(_, id)| *id)
+                    .collect()
+            })
+            .collect()
+    }
+}

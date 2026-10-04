@@ -1,22 +1,22 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-use crate::{cargo_cli::CargoCli, helpers::regenerate_lockfile, output::OutputContext};
+use crate::{
+    builder::BuilderWithHakariPackage, cargo_cli::CargoCli, helpers::regenerate_lockfile,
+    output::OutputContext,
+};
 use color_eyre::{Result, eyre::WrapErr};
 use guppy::graph::PackageMetadata;
-use hakari::HakariBuilder;
 use log::{error, info};
 use owo_colors::OwoColorize;
 
 pub(crate) fn publish_hakari(
     package_name: &str,
-    builder: HakariBuilder<'_>,
+    builder: BuilderWithHakariPackage<'_>,
     pass_through: &[String],
     output: OutputContext,
 ) -> Result<()> {
-    let hakari_package = builder
-        .hakari_package()
-        .expect("hakari-package must be specified in hakari.toml");
+    let hakari_package = builder.hakari_package();
     let workspace = builder.graph().workspace();
     let package = workspace.member_by_name(package_name)?;
 
@@ -45,12 +45,12 @@ pub(crate) fn publish_hakari(
         .expect("package is in workspace");
     let abs_path = workspace.root().join(workspace_dir);
 
-    let all_args = cargo_cli.all_args().join(" ");
+    let display_command = cargo_cli.display_command();
 
     info!(
         "{} {}\n---",
         "executing".style(output.styles.command),
-        all_args
+        display_command
     );
     let expression = cargo_cli.to_expression().dir(abs_path);
 
@@ -58,7 +58,7 @@ pub(crate) fn publish_hakari(
         Ok(_) => remove_dep.finish(true),
         Err(err) => {
             remove_dep.finish(false)?;
-            Err(err).wrap_err_with(|| format!("`{all_args}` failed"))
+            Err(err).wrap_err_with(|| format!("`{display_command}` failed"))
         }
     }
 }
@@ -71,17 +71,13 @@ struct TempRemoveDep<'g> {
 
 impl<'g> TempRemoveDep<'g> {
     fn new(
-        builder: HakariBuilder<'g>,
+        builder: BuilderWithHakariPackage<'g>,
         package: PackageMetadata<'g>,
         output: OutputContext,
     ) -> Result<Self> {
-        let hakari_package = builder
-            .hakari_package()
-            .expect("hakari-package must be specified in hakari.toml");
+        let hakari_package = builder.hakari_package();
         let package_set = package.to_package_set();
-        let remove_ops = builder
-            .remove_dep_ops(&package_set, false)
-            .expect("hakari-package must be specified in hakari.toml");
+        let remove_ops = builder.remove_dep_ops(&package_set, false);
         let inner = if remove_ops.is_empty() {
             info!(
                 "dependency from {} to {} not present",
@@ -136,7 +132,7 @@ impl Drop for TempRemoveDep<'_> {
 
 #[derive(Debug)]
 struct TempRemoveDepInner<'g> {
-    builder: HakariBuilder<'g>,
+    builder: BuilderWithHakariPackage<'g>,
     package: PackageMetadata<'g>,
     output: OutputContext,
 }
@@ -144,10 +140,7 @@ struct TempRemoveDepInner<'g> {
 impl TempRemoveDepInner<'_> {
     fn finish(self, success: bool) -> Result<()> {
         let package_set = self.package.to_package_set();
-        let add_ops = self
-            .builder
-            .add_dep_ops(&package_set, true)
-            .expect("hakari-package must be specified in hakari.toml");
+        let add_ops = self.builder.add_dep_ops(&package_set, true);
 
         if success {
             info!(
@@ -155,7 +148,6 @@ impl TempRemoveDepInner<'_> {
                 self.package.name().style(self.output.styles.package_name),
                 self.builder
                     .hakari_package()
-                    .unwrap()
                     .name()
                     .style(self.output.styles.package_name),
             );

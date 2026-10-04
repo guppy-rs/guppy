@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use fixtures::dep_helpers::{
-    GraphAssert, GraphMetadata, GraphQuery, GraphSet, assert_link_order, assert_roots_in_topo_order,
+    GraphAssert, GraphMetadata, GraphQuery, GraphSet, assert_induced_order, assert_link_order,
+    assert_roots_in_topo_order,
 };
 use guppy::{
     PackageId,
@@ -93,6 +94,26 @@ macro_rules! proptest_suite {
             #[test]
             fn proptest_feature_query_roots() {
                 run_feature_query_roots(JsonFixture::$name().graph());
+            }
+
+            #[test]
+            fn proptest_query_induced_order() {
+                run_query_induced_order(JsonFixture::$name().graph());
+            }
+
+            #[test]
+            fn proptest_feature_query_induced_order() {
+                run_feature_query_induced_order(JsonFixture::$name().graph());
+            }
+
+            #[test]
+            fn proptest_subset_induced_order() {
+                run_subset_induced_order(JsonFixture::$name().graph());
+            }
+
+            #[test]
+            fn proptest_feature_subset_induced_order() {
+                run_feature_subset_induced_order(JsonFixture::$name().graph());
             }
 
             #[test]
@@ -313,6 +334,67 @@ pub(super) fn run_feature_query_roots(package_graph: &'static PackageGraph) {
         query_indexes in vec((any::<Index>(), any::<Index>()), 0..128),
     )| {
         roots(feature_graph, &ids, query_direction, iter_direction, query_indexes, "feature_query_roots")?;
+    });
+}
+
+pub(super) fn run_query_induced_order(graph: &'static PackageGraph) {
+    proptest!(|(
+        ids in vec(graph.proptest1_id_strategy(), 1..16),
+        query_direction in any::<DependencyDirection>(),
+    )| {
+        let set = graph.resolve(&ids, query_direction);
+        assert_induced_order(graph, &set, "query_induced_order");
+    });
+}
+
+pub(super) fn run_feature_query_induced_order(package_graph: &'static PackageGraph) {
+    let feature_graph = package_graph.feature_graph();
+    proptest!(|(
+        ids in vec(feature_graph.proptest1_id_strategy(), 1..16),
+        query_direction in any::<DependencyDirection>(),
+    )| {
+        let set = feature_graph.resolve(&ids, query_direction);
+        assert_induced_order(feature_graph, &set, "feature_query_induced_order");
+    });
+}
+
+/// Checks sets that split a dependency cycle.
+///
+/// Only sets built directly from IDs can split a dependency cycle, since query
+/// results always contain either all or none of a cycle. So this test builds
+/// its sets from IDs directly, and biases its IDs towards cycle members.
+pub(super) fn run_subset_induced_order(graph: &'static PackageGraph) {
+    let cycle_members: Vec<_> = graph.all_cycles().into_iter().flatten().collect();
+
+    proptest!(|(
+        other_ids in vec(graph.proptest1_id_strategy(), 0..8),
+        cycle_ids in prop::sample::subsequence(cycle_members.clone(), 0..=cycle_members.len()),
+    )| {
+        let ids: Vec<_> = other_ids.into_iter().chain(cycle_ids).collect();
+        let set = graph.resolve_ids(ids.iter().copied()).expect("valid package IDs");
+        assert_induced_order(graph, &set, "subset_induced_order");
+        for direction in [DependencyDirection::Forward, DependencyDirection::Reverse] {
+            assert_link_order(
+                set.links(direction),
+                set.root_ids(direction),
+                direction,
+                "subset_induced_order: link order",
+            );
+        }
+    });
+}
+
+pub(super) fn run_feature_subset_induced_order(package_graph: &'static PackageGraph) {
+    let feature_graph = package_graph.feature_graph();
+    let cycle_members: Vec<_> = feature_graph.all_cycles().into_iter().flatten().collect();
+
+    proptest!(|(
+        other_ids in vec(feature_graph.proptest1_id_strategy(), 0..8),
+        cycle_ids in prop::sample::subsequence(cycle_members.clone(), 0..=cycle_members.len()),
+    )| {
+        let ids: Vec<_> = other_ids.into_iter().chain(cycle_ids).collect();
+        let set = feature_graph.resolve_ids(ids.iter().copied()).expect("valid feature IDs");
+        assert_induced_order(feature_graph, &set, "feature_subset_induced_order");
     });
 }
 

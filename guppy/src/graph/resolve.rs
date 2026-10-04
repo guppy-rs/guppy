@@ -7,7 +7,7 @@ use crate::{
         DependencyDirection, PackageGraph, PackageIx, PackageLink, PackageLinkImpl,
         PackageMetadata, PackageQuery,
         feature::{FeatureFilter, FeatureSet},
-        resolve_core::{ResolveCore, Topo},
+        resolve_core::ResolveCore,
     },
     petgraph_support::{
         IxBitSet,
@@ -399,11 +399,8 @@ impl<'g> PackageSet<'g> {
     /// This will cause the feature graph to be constructed if it hasn't been done so already.
     pub fn to_feature_set(&self, filter: impl FeatureFilter<'g>) -> FeatureSet<'g> {
         let feature_graph = self.graph.feature_graph();
-        let included: IxBitSet = feature_graph.feature_ixs_for_package_ixs_filtered(
-            // The direction of iteration doesn't matter.
-            self.ixs(DependencyDirection::Forward),
-            filter,
-        );
+        let included: IxBitSet =
+            feature_graph.feature_ixs_for_package_ixs_filtered(self.sorted_ixs(), filter);
         FeatureSet::from_included(feature_graph, included)
     }
 
@@ -424,12 +421,8 @@ impl<'g> PackageSet<'g> {
     ) -> impl ExactSizeIterator<Item = &'g PackageId> + 'a {
         let graph = self.graph;
         self.core
-            .topo(self.graph.sccs(), direction)
+            .topo(self.graph.dep_graph(), self.graph.sccs(), direction)
             .map(move |package_ix| &graph.dep_graph[package_ix])
-    }
-
-    pub(super) fn ixs(&'g self, direction: DependencyDirection) -> Topo<'g, PackageGraph> {
-        self.core.topo(self.graph.sccs(), direction)
     }
 
     /// Iterates over package metadatas, in topological order in the direction specified.

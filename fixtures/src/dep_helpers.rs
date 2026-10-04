@@ -13,7 +13,7 @@ use guppy::{
 };
 use pretty_assertions::assert_eq;
 use std::{
-    collections::{BTreeSet, HashSet},
+    collections::{BTreeSet, HashMap, HashSet},
     fmt,
     hash::Hash,
     iter,
@@ -383,6 +383,17 @@ pub trait GraphAssert<'g>: Copy + fmt::Debug {
 
     fn directly_depends_on(&self, a_id: Self::Id, b_id: Self::Id) -> Result<bool, Error>;
 
+    /// Upper bound on the size of sets checked by [`assert_induced_order`].
+    ///
+    /// We set this based on the cost of [`Self::direct_dependencies_within`].
+    const INDUCED_GRAPH_MAX_LEN: usize;
+
+    /// Returns the direct dependencies of `id` that are members of `set`.
+    ///
+    /// This is used to build an `InducedGraph`, so it must not rely on the
+    /// SCC-based iteration code under test.
+    fn direct_dependencies_within(&self, id: Self::Id, set: &[Self::Id]) -> Vec<Self::Id>;
+
     /// Returns true if there is a self-loop edge on `id` in the graph,
     /// computed via a different code path than `directly_depends_on` so it
     /// can be used as an independent oracle.
@@ -622,6 +633,9 @@ impl<'g> GraphAssert<'g> for &'g PackageGraph {
     type Query = PackageQuery<'g>;
     type Set = PackageSet<'g>;
     const NAME: &'static str = "package";
+    // Package graphs are small enough, and `direct_links` fast enough, to
+    // check every set.
+    const INDUCED_GRAPH_MAX_LEN: usize = usize::MAX;
 
     fn depends_on(&self, a_id: Self::Id, b_id: Self::Id) -> Result<bool, Error> {
         PackageGraph::depends_on(self, a_id, b_id)
@@ -629,6 +643,16 @@ impl<'g> GraphAssert<'g> for &'g PackageGraph {
 
     fn directly_depends_on(&self, a_id: Self::Id, b_id: Self::Id) -> Result<bool, Error> {
         PackageGraph::directly_depends_on(self, a_id, b_id)
+    }
+
+    fn direct_dependencies_within(&self, id: Self::Id, set: &[Self::Id]) -> Vec<Self::Id> {
+        let set: HashSet<_> = set.iter().copied().collect();
+        self.metadata(id)
+            .expect("valid ID")
+            .direct_links()
+            .map(|link| link.to().id())
+            .filter(|to| set.contains(to))
+            .collect()
     }
 
     fn has_self_edge(&self, id: Self::Id) -> bool {
@@ -734,6 +758,9 @@ impl<'g> GraphAssert<'g> for FeatureGraph<'g> {
     type Query = FeatureQuery<'g>;
     type Set = FeatureSet<'g>;
     const NAME: &'static str = "feature";
+    // Feature sets can have thousands of members, and
+    // `direct_dependencies_within` is quadratic.
+    const INDUCED_GRAPH_MAX_LEN: usize = 256;
 
     fn depends_on(&self, a_id: Self::Id, b_id: Self::Id) -> Result<bool, Error> {
         FeatureGraph::depends_on(self, a_id, b_id)
@@ -741,6 +768,16 @@ impl<'g> GraphAssert<'g> for FeatureGraph<'g> {
 
     fn directly_depends_on(&self, a_id: Self::Id, b_id: Self::Id) -> Result<bool, Error> {
         FeatureGraph::directly_depends_on(self, a_id, b_id)
+    }
+
+    fn direct_dependencies_within(&self, id: Self::Id, set: &[Self::Id]) -> Vec<Self::Id> {
+        // Feature metadata doesn't currently expose direct links, and
+        // `FeatureSet::links` uses the SCC-based code under test, so check each
+        // pair instead to provide independent verification.
+        set.iter()
+            .copied()
+            .filter(|other| self.directly_depends_on(id, *other).expect("valid IDs"))
+            .collect()
     }
 
     fn has_self_edge(&self, id: Self::Id) -> bool {
@@ -904,5 +941,175 @@ pub fn assert_roots_in_topo_order<Id: Copy + Eq + fmt::Debug>(
             "{msg}: root IDs {root_ids:?} should appear in topological order {topo_ids:?}, \
              but {root_id:?} is out of order or missing",
         );
+    }
+}
+
+/// Checks `root_ids` and iteration order of `set`, in both directions,
+/// against a model of the subgraph induced by `set`.
+///
+/// Sets larger than `G::INDUCED_GRAPH_MAX_LEN` are skipped.
+pub fn assert_induced_order<'g, G: GraphAssert<'g>>(graph: G, set: &G::Set, msg: &str) {
+    if set.len() > G::INDUCED_GRAPH_MAX_LEN {
+        return;
+    }
+    let ids = set.ids(DependencyDirection::Forward);
+    assert_eq!(ids.len(), set.len(), "{msg}: ids() yields every member");
+    let induced = InducedGraph::new(graph, &ids);
+    for direction in [DependencyDirection::Forward, DependencyDirection::Reverse] {
+        induced.assert_roots(&set.root_ids(direction), direction, msg);
+        induced.assert_topo_order(&set.ids(direction), direction, msg);
+    }
+}
+
+/// An independent model of the subgraph induced by a set: its members plus
+/// every edge between two members.
+///
+/// guppy's set iterators and `root_ids` must agree with the strongly connected
+/// components of this subgraph, which can be finer than those of the whole
+/// graph when the set omits part of a cycle. This model computes SCCs by
+/// brute-force transitive closure, in the classic style of an inefficient
+/// oracle for a model-based test.
+struct InducedGraph<Id> {
+    ids: Vec<Id>,
+    index: HashMap<Id, usize>,
+    /// Forward (dependent -> dependency) adjacency lists.
+    adjacency: Vec<Vec<usize>>,
+    /// `reachable[a][b]` is true if `b` is reachable from `a` in forward
+    /// direction, including the empty path from `a` to itself.
+    reachable: Vec<Vec<bool>>,
+}
+
+impl<Id: Copy + Eq + Hash + fmt::Debug> InducedGraph<Id> {
+    /// Builds the subgraph of `graph` induced by `ids`, which must be
+    /// unique.
+    fn new<'g, G: GraphAssert<'g, Id = Id>>(graph: G, ids: &[Id]) -> Self {
+        let ids = ids.to_vec();
+        let index: HashMap<Id, usize> = ids.iter().enumerate().map(|(i, id)| (*id, i)).collect();
+        let adjacency: Vec<Vec<usize>> = ids
+            .iter()
+            .map(|id| {
+                graph
+                    .direct_dependencies_within(*id, &ids)
+                    .iter()
+                    .map(|dep| index[dep])
+                    .collect()
+            })
+            .collect();
+
+        let reachable = (0..ids.len())
+            .map(|start| {
+                let mut seen = vec![false; ids.len()];
+                seen[start] = true;
+                let mut stack = vec![start];
+                while let Some(node) = stack.pop() {
+                    for &next in &adjacency[node] {
+                        if !seen[next] {
+                            seen[next] = true;
+                            stack.push(next);
+                        }
+                    }
+                }
+                seen
+            })
+            .collect();
+
+        Self {
+            ids,
+            index,
+            adjacency,
+            reachable,
+        }
+    }
+
+    fn same_scc(&self, a: usize, b: usize) -> bool {
+        self.reachable[a][b] && self.reachable[b][a]
+    }
+
+    /// Returns the edges oriented for `direction`: for `Reverse`, each edge
+    /// points from a dependency to its dependent.
+    fn directed_edges(
+        &self,
+        direction: DependencyDirection,
+    ) -> impl Iterator<Item = (usize, usize)> + '_ {
+        self.adjacency
+            .iter()
+            .enumerate()
+            .flat_map(|(from, tos)| tos.iter().map(move |&to| (from, to)))
+            .map(move |(from, to)| match direction {
+                DependencyDirection::Forward => (from, to),
+                DependencyDirection::Reverse => (to, from),
+            })
+    }
+
+    /// Returns the members whose SCC has no incoming edge, in `direction`,
+    /// from outside that SCC.
+    fn expected_roots(&self, direction: DependencyDirection) -> HashSet<Id> {
+        let mut has_external_incoming = vec![false; self.ids.len()];
+        for (from, to) in self.directed_edges(direction) {
+            if !self.same_scc(from, to) {
+                has_external_incoming[to] = true;
+            }
+        }
+        (0..self.ids.len())
+            .filter(|&node| {
+                (0..self.ids.len())
+                    .filter(|&other| self.same_scc(node, other))
+                    .all(|member| !has_external_incoming[member])
+            })
+            .map(|node| self.ids[node])
+            .collect()
+    }
+
+    /// Asserts that `roots` is exactly the set of roots in `direction`,
+    /// without duplicates.
+    fn assert_roots(&self, roots: &[Id], direction: DependencyDirection, msg: &str) {
+        let root_set: HashSet<Id> = roots.iter().copied().collect();
+        assert_eq!(
+            roots.len(),
+            root_set.len(),
+            "{msg}: root IDs should be unique"
+        );
+        assert_eq!(
+            root_set,
+            self.expected_roots(direction),
+            "{msg}: roots should match the induced subgraph's roots ({direction:?})"
+        );
+    }
+
+    /// Asserts that `order` contains every member exactly once, and that
+    /// every edge between two different SCCs points forward in `order` for
+    /// `direction`.
+    fn assert_topo_order(&self, order: &[Id], direction: DependencyDirection, msg: &str) {
+        let mut position = vec![None; self.ids.len()];
+        for (pos, id) in order.iter().enumerate() {
+            let node = *self
+                .index
+                .get(id)
+                .unwrap_or_else(|| panic!("{msg}: {id:?} in order is not in the set"));
+            assert!(
+                position[node].replace(pos).is_none(),
+                "{msg}: {id:?} appears more than once in order"
+            );
+        }
+        let position: Vec<usize> = position
+            .into_iter()
+            .enumerate()
+            .map(|(node, pos)| {
+                pos.unwrap_or_else(|| panic!("{msg}: {:?} missing from order", self.ids[node]))
+            })
+            .collect();
+
+        for (from, to) in self.directed_edges(direction) {
+            if !self.same_scc(from, to) {
+                assert!(
+                    position[from] < position[to],
+                    "{msg}: {:?} -> {:?} is an edge ({direction:?}), \
+                     but {:?} appears first in order",
+                    self.ids[from],
+                    self.ids[to],
+                    self.ids[to],
+                );
+            }
+        }
     }
 }

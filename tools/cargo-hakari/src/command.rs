@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use crate::{
-    helpers::{read_contents, regenerate_lockfile},
+    builder::{BuilderWithHakariPackage, make_builder_and_output},
+    cargo_cli::cargo_program,
+    helpers::regenerate_lockfile,
     output::{OutputContext, OutputOpts, Styles},
     publish::publish_hakari,
 };
@@ -14,11 +16,10 @@ use guppy::{
     graph::{PackageGraph, PackageSet},
 };
 use hakari::{
-    DepFormatVersion, Hakari, HakariBuilder, HakariCargoToml, HakariOutputOptions, TomlNameEntry,
-    TomlOutError,
+    DepFormatVersion, Hakari, HakariCargoToml, HakariOutputOptions, TomlNameEntry, TomlOutError,
     cli_ops::{HakariInit, WorkspaceOps},
     diffy::PatchFormatter,
-    summaries::{DEFAULT_CONFIG_PATH, FALLBACK_CONFIG_PATH, HakariConfig},
+    summaries::DEFAULT_CONFIG_PATH,
 };
 use iddqd::{IdOrdItem, IdOrdMap, id_upcast};
 use log::{error, info};
@@ -106,7 +107,8 @@ enum Command {
 impl Command {
     fn exec(self, output: OutputOpts) -> Result<i32> {
         let output = output.init();
-        let metadata_command = MetadataCommand::new();
+        let mut metadata_command = MetadataCommand::new();
+        metadata_command.cargo_path(cargo_program());
         let package_graph = metadata_command
             .build_graph()
             .context("building package graph failed")?;
@@ -310,13 +312,11 @@ enum CommandWithBuilder {
 impl CommandWithBuilder {
     fn exec(
         self,
-        builder: HakariBuilder<'_>,
+        builder: BuilderWithHakariPackage<'_>,
         hakari_output: HakariOutputOptions,
         output: OutputContext,
     ) -> Result<i32> {
-        let hakari_package = *builder
-            .hakari_package()
-            .expect("hakari-package must be specified in hakari.toml");
+        let hakari_package = builder.hakari_package();
 
         match self {
             CommandWithBuilder::Generate { diff } => {
@@ -353,9 +353,7 @@ impl CommandWithBuilder {
                     ) => Err(err).with_context(|| "error generating new hakari.toml")?,
                 };
 
-                let existing_toml = hakari
-                    .read_toml()
-                    .expect("hakari-package must be specified")?;
+                let existing_toml = builder.read_toml()?;
 
                 let exit_code =
                     write_to_cargo_toml(existing_toml, &toml_out, diff, output.clone())?;
@@ -398,9 +396,7 @@ impl CommandWithBuilder {
                 dry_run,
                 yes,
             } => {
-                let ops = builder
-                    .manage_dep_ops(&packages.to_package_set(builder.graph())?)
-                    .expect("hakari-package must be specified in hakari.toml");
+                let ops = builder.manage_dep_ops(&packages.to_package_set(builder.graph())?);
                 if ops.is_empty() {
                     info!("no operations to perform");
                     return Ok(0);
@@ -415,9 +411,7 @@ impl CommandWithBuilder {
                 dry_run,
                 yes,
             } => {
-                let ops = builder
-                    .remove_dep_ops(&packages.to_package_set(builder.graph())?, false)
-                    .expect("hakari-package must be specified in hakari.toml");
+                let ops = builder.remove_dep_ops(&packages.to_package_set(builder.graph())?, false);
                 if ops.is_empty() {
                     info!("no operations to perform");
                     return Ok(0);
@@ -461,9 +455,7 @@ impl CommandWithBuilder {
                 Ok(0)
             }
             CommandWithBuilder::Disable { diff } => {
-                let existing_toml = builder
-                    .read_toml()
-                    .expect("hakari-package must be specified")?;
+                let existing_toml = builder.read_toml()?;
                 write_to_cargo_toml(existing_toml, DISABLE_MESSAGE, diff, output)
             }
         }
@@ -847,28 +839,6 @@ fn cwd_rel_to_workspace_rel(path: &Utf8Path, workspace_root: &Utf8Path) -> Resul
         .with_context(|| format!("path {abs_path} is not inside workspace root {workspace_root}"))
 }
 
-fn make_builder_and_output(
-    package_graph: &PackageGraph,
-) -> Result<(HakariBuilder<'_>, HakariOutputOptions)> {
-    let (config_path, contents) = read_contents(
-        package_graph.workspace().root(),
-        [DEFAULT_CONFIG_PATH, FALLBACK_CONFIG_PATH],
-    )
-    .wrap_err("error reading Hakari config")?;
-
-    let config: HakariConfig = contents
-        .parse()
-        .wrap_err_with(|| format!("error deserializing Hakari config at {config_path}"))?;
-
-    let builder = config
-        .builder
-        .to_hakari_builder(package_graph)
-        .wrap_err_with(|| format!("error resolving Hakari config at {config_path}"))?;
-    let hakari_output = config.output.to_options();
-
-    Ok((builder, hakari_output))
-}
-
 fn write_to_cargo_toml(
     existing_toml: HakariCargoToml,
     new_contents: &str,
@@ -955,6 +925,7 @@ mod tests {
         METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_PUBLISHED,
         METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK,
     };
+    use hakari::HakariBuilder;
 
     /// Configuration excludes to apply to the hakari-reverse-dep fixture, as
     /// package IDs.
