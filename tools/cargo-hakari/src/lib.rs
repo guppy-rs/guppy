@@ -241,6 +241,8 @@ mod docs;
 mod helpers;
 mod output;
 mod publish;
+#[cfg(test)]
+mod test_helpers;
 
 pub use docs::*;
 
