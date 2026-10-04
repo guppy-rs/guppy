@@ -5,6 +5,7 @@
 # resolver = 'install'
 # unify-target-host = 'auto'
 # output-single-feature = true
+# exclude-dev-dependencies = true
 # dep-format-version = '4'
 # workspace-hack-line-style = 'workspace-dotted'
 # platforms = []
@@ -42,18 +43,15 @@ aho-corasick = { version = "0.7" }
 ansi_term = { version = "0.11", default-features = false }
 anyhow = { version = "1" }
 ascii = { version = "0.9", default-features = false, features = ["std"] }
-assert_matches = { version = "1", default-features = false }
 atty = { version = "0.2", default-features = false }
 bit-set = { version = "0.5" }
 bit-vec = { version = "0.6", default-features = false, features = ["std"] }
 bitflags = { version = "1" }
 bitmaps = { version = "2" }
-bstr = { version = "0.2", features = ["serde1"] }
 byteorder = { version = "1", default-features = false, features = ["std"] }
 bytesize = { version = "1", default-features = false }
 cargo = { git = "https://github.com/rust-lang/cargo.git", rev = "0227f048fcb7c798026ede6cc20c92befc84c3a4", default-features = false }
 cargo-platform = { git = "https://github.com/rust-lang/cargo.git", rev = "0227f048fcb7c798026ede6cc20c92befc84c3a4", default-features = false }
-cast = { version = "0.2" }
 cfg-expr = { version = "0.4" }
 cfg-if = { version = "0.1", default-features = false }
 chrono = { version = "0.4" }
@@ -62,15 +60,8 @@ combine = { version = "3" }
 console = { version = "0.11" }
 crates-io = { git = "https://github.com/rust-lang/cargo.git", rev = "0227f048fcb7c798026ede6cc20c92befc84c3a4", default-features = false }
 crc32fast = { version = "1" }
-criterion = { version = "0.3" }
-criterion-plot = { version = "0.4", default-features = false }
-crossbeam-channel = { version = "0.4", default-features = false }
-crossbeam-deque = { version = "0.7", default-features = false }
-crossbeam-epoch = { version = "0.8" }
 crossbeam-utils = { version = "0.7" }
 crypto-hash = { version = "0.3", default-features = false }
-csv = { version = "1", default-features = false }
-csv-core = { version = "0.1" }
 curl = { version = "0.4", features = ["http2"] }
 curl-sys = { version = "0.4", features = ["http2"] }
 dialoguer = { version = "0.6", default-features = false }
@@ -86,7 +77,6 @@ getrandom = { version = "0.1", default-features = false, features = ["std"] }
 git2 = { version = "0.13" }
 git2-curl = { version = "0.14", default-features = false }
 glob = { version = "0.3", default-features = false }
-half = { version = "1", default-features = false }
 hashbrown = { version = "0.9", default-features = false, features = ["raw"] }
 hex-468e82937335b1c9 = { package = "hex", version = "0.3", default-features = false }
 hex-9fbad63c4bcf4a8f = { package = "hex", version = "0.4" }
@@ -99,7 +89,7 @@ im-rc = { version = "15", default-features = false }
 indexmap = { version = "1", default-features = false }
 itertools-274715c4dabd11b0 = { package = "itertools", version = "0.9" }
 itertools-c38e5c1d305a1b54 = { package = "itertools", version = "0.8" }
-itoa = { version = "0.4" }
+itoa = { version = "0.4", default-features = false }
 jobserver = { version = "0.1", default-features = false }
 lazy_static = { version = "1", default-features = false }
 lazycell = { version = "1", default-features = false }
@@ -111,15 +101,12 @@ libz-sys = { version = "1", default-features = false, features = ["libc"] }
 linked-hash-map = { version = "0.5", default-features = false }
 log = { version = "0.4", default-features = false, features = ["std"] }
 matches = { version = "0.1", default-features = false }
-maybe-uninit = { version = "2", default-features = false }
 memchr = { version = "2", features = ["use_std"] }
-memoffset = { version = "0.5" }
 nested = { version = "0.1", default-features = false }
 num-integer = { version = "0.1", default-features = false }
-num-traits = { version = "0.2" }
+num-traits = { version = "0.2", default-features = false, features = ["std"] }
 num_cpus = { version = "1", default-features = false }
 once_cell = { version = "1" }
-oorandom = { version = "11", default-features = false }
 opener = { version = "0.4", default-features = false }
 pathdiff = { version = "0.2", default-features = false }
 percent-encoding = { version = "2", default-features = false }
@@ -133,10 +120,7 @@ rand_chacha = { version = "0.2", default-features = false, features = ["std"] }
 rand_core = { version = "0.5", default-features = false, features = ["std"] }
 rand_xorshift = { version = "0.2", default-features = false }
 rand_xoshiro = { version = "0.4", default-features = false }
-rayon = { version = "1", default-features = false }
-rayon-core = { version = "1", default-features = false }
 regex = { version = "1" }
-regex-automata = { version = "0.1", default-features = false }
 regex-syntax = { version = "0.6" }
 remove_dir_all = { version = "0.5", default-features = false }
 rustc-workspace-hack = { version = "1", default-features = false }
@@ -144,11 +128,9 @@ rustfix = { version = "0.5", default-features = false }
 rusty-fork = { version = "0.3", default-features = false, features = ["timeout"] }
 ryu = { version = "1", default-features = false }
 same-file = { version = "1", default-features = false }
-scopeguard = { version = "1", default-features = false }
 semver = { version = "0.10", features = ["serde"] }
 semver-parser = { version = "0.7", default-features = false }
 serde = { version = "1", features = ["derive"] }
-serde_cbor = { version = "0.11" }
 serde_ignored = { version = "0.1", default-features = false }
 serde_json = { version = "1", features = ["raw_value"] }
 shell-escape = { version = "0.1", default-features = false }
@@ -166,7 +148,6 @@ terminal_size = { version = "0.1", default-features = false }
 textwrap = { version = "0.11", default-features = false }
 thread_local = { version = "1", default-features = false }
 time = { version = "0.1", default-features = false }
-tinytemplate = { version = "1", default-features = false }
 tinyvec = { version = "0.3", features = ["alloc"] }
 toml = { version = "0.5" }
 toml_edit = { version = "0.2", default-features = false }

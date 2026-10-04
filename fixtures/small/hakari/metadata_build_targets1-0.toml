@@ -5,6 +5,7 @@
 # resolver = '3'
 # unify-target-host = 'replicate-target-on-host'
 # output-single-feature = false
+# exclude-dev-dependencies = true
 # dep-format-version = '4'
 # workspace-hack-line-style = 'full'
 # platforms = ['riscv32imafc-unknown-none-elf', 'aarch64_be-unknown-linux-gnu_ilp32', 'i686-unknown-uefi']

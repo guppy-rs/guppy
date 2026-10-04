@@ -5,6 +5,7 @@
 # resolver = 'install'
 # unify-target-host = 'replicate-target-on-host'
 # output-single-feature = true
+# exclude-dev-dependencies = true
 # dep-format-version = '3'
 # workspace-hack-line-style = 'version-only'
 # platforms = ['aarch64-unknown-linux-pauthtest']
@@ -21,11 +22,8 @@
 # [final-excludes]
 
 [dependencies]
-aho-corasick = { version = "1", default-features = false, features = ["perf-literal", "std"] }
-async-stream = { version = "0.3", default-features = false }
 atomic-waker = { version = "1", default-features = false }
 bytes = { version = "1" }
-env_logger = { version = "0.10" }
 equivalent = { version = "1", default-features = false }
 fnv = { version = "1" }
 futures-channel = { version = "0.3" }
@@ -39,41 +37,25 @@ http-body = { version = "1", default-features = false }
 http = { version = "1" }
 httparse = { version = "1" }
 httpdate = { version = "1", default-features = false }
-humantime = { version = "2", default-features = false }
-hyper = { version = "1", features = ["full"] }
+hyper = { version = "1", features = ["client", "http1", "http2", "server"] }
 indexmap = { version = "2" }
-is-terminal = { version = "0.4", default-features = false }
 itoa = { version = "1", default-features = false }
-log = { version = "0.4", default-features = false, features = ["std"] }
-memchr = { version = "2", default-features = false, features = ["std"] }
-mio = { version = "1", default-features = false, features = ["net", "os-ext"] }
 once_cell = { version = "1" }
 pin-project-lite = { version = "0.2", default-features = false }
 pin-utils = { version = "0.1", default-features = false }
-pretty_env_logger = { version = "0.5", default-features = false }
-regex-automata = { version = "0.4", default-features = false, features = ["dfa-onepass", "hybrid", "meta", "nfa-backtrack", "perf-inline", "perf-literal"] }
-regex-syntax = { version = "0.8", default-features = false, features = ["std"] }
-regex = { version = "1", default-features = false, features = ["perf", "std"] }
 slab = { version = "0.4" }
 smallvec = { version = "1", default-features = false, features = ["const_new"] }
-termcolor = { version = "1", default-features = false }
-tokio-stream = { version = "0.1" }
-tokio-test = { version = "0.4", default-features = false }
 tokio-util = { version = "0.7", features = ["codec", "io"] }
-tokio = { version = "1", features = ["io-util", "macros", "net", "signal", "test-util"] }
+tokio = { version = "1", features = ["io-util", "sync"] }
 tracing-core = { version = "0.1", default-features = false, features = ["std"] }
 tracing = { version = "0.1", default-features = false, features = ["std"] }
 try-lock = { version = "0.2", default-features = false }
 want = { version = "0.3", default-features = false }
 
 [build-dependencies]
-aho-corasick = { version = "1", default-features = false, features = ["perf-literal", "std"] }
-async-stream-impl = { version = "0.3", default-features = false }
-async-stream = { version = "0.3", default-features = false }
 atomic-waker = { version = "1", default-features = false }
 autocfg = { version = "1", default-features = false }
 bytes = { version = "1" }
-env_logger = { version = "0.10" }
 equivalent = { version = "1", default-features = false }
 fnv = { version = "1" }
 futures-channel = { version = "0.3" }
@@ -87,57 +69,20 @@ http-body = { version = "1", default-features = false }
 http = { version = "1" }
 httparse = { version = "1" }
 httpdate = { version = "1", default-features = false }
-humantime = { version = "2", default-features = false }
-hyper = { version = "1", features = ["full"] }
+hyper = { version = "1", features = ["client", "http1", "http2", "server"] }
 indexmap = { version = "2" }
-is-terminal = { version = "0.4", default-features = false }
 itoa = { version = "1", default-features = false }
-log = { version = "0.4", default-features = false, features = ["std"] }
-memchr = { version = "2", default-features = false, features = ["std"] }
-mio = { version = "1", default-features = false, features = ["net", "os-ext"] }
 once_cell = { version = "1" }
 pin-project-lite = { version = "0.2", default-features = false }
 pin-utils = { version = "0.1", default-features = false }
-pretty_env_logger = { version = "0.5", default-features = false }
-proc-macro2 = { version = "1" }
-quote = { version = "1" }
-regex-automata = { version = "0.4", default-features = false, features = ["dfa-onepass", "hybrid", "meta", "nfa-backtrack", "perf-inline", "perf-literal"] }
-regex-syntax = { version = "0.8", default-features = false, features = ["std"] }
-regex = { version = "1", default-features = false, features = ["perf", "std"] }
 slab = { version = "0.4" }
 smallvec = { version = "1", default-features = false, features = ["const_new"] }
-syn = { version = "2", features = ["full", "visit-mut"] }
-termcolor = { version = "1", default-features = false }
-tokio-macros = { version = "2", default-features = false }
-tokio-stream = { version = "0.1" }
-tokio-test = { version = "0.4", default-features = false }
 tokio-util = { version = "0.7", features = ["codec", "io"] }
-tokio = { version = "1", features = ["io-util", "macros", "net", "signal", "test-util"] }
+tokio = { version = "1", features = ["io-util", "sync"] }
 tracing-core = { version = "0.1", default-features = false, features = ["std"] }
 tracing = { version = "0.1", default-features = false, features = ["std"] }
 try-lock = { version = "0.2", default-features = false }
-unicode-ident = { version = "1", default-features = false }
 want = { version = "0.3", default-features = false }
-
-[target.aarch64-unknown-linux-pauthtest.dependencies]
-ipnetwork = { version = "0.20" }
-libc = { version = "0.2" }
-no-std-net = { version = "0.6", default-features = false, features = ["std"] }
-pnet_base = { version = "0.35", default-features = false, features = ["std"] }
-pnet_datalink = { version = "0.35" }
-pnet_sys = { version = "0.35", default-features = false }
-serde = { version = "1" }
-signal-hook-registry = { version = "1", default-features = false }
-
-[target.aarch64-unknown-linux-pauthtest.build-dependencies]
-ipnetwork = { version = "0.20" }
-libc = { version = "0.2" }
-no-std-net = { version = "0.6", default-features = false, features = ["std"] }
-pnet_base = { version = "0.35", default-features = false, features = ["std"] }
-pnet_datalink = { version = "0.35" }
-pnet_sys = { version = "0.35", default-features = false }
-serde = { version = "1" }
-signal-hook-registry = { version = "1", default-features = false }
 
 ### END HAKARI SECTION
 

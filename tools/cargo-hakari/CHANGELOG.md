@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+### Added
+
+- New `exclude-dev-dependencies` option to unify features only across builds
+  without dev-dependencies.
+
 ### Fixed
 
 - `cargo hakari` commands other than `init` now exit with an error, rather than

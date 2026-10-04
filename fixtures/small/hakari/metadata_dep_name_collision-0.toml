@@ -5,6 +5,7 @@
 # resolver = 'install'
 # unify-target-host = 'auto'
 # output-single-feature = true
+# exclude-dev-dependencies = true
 # dep-format-version = '4'
 # workspace-hack-line-style = 'workspace-dotted'
 # platforms = ['aarch64-unknown-hermit', 'armv6k-nintendo-3ds']

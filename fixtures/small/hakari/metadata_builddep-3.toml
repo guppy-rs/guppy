@@ -5,6 +5,7 @@
 # resolver = '1'
 # unify-target-host = 'unify-if-both'
 # output-single-feature = true
+# exclude-dev-dependencies = true
 # dep-format-version = '2'
 # workspace-hack-line-style = 'workspace-dotted'
 # platforms = ['loongarch64-unknown-linux-musl', 'thumbv7a-none-eabihf']

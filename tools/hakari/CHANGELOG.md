@@ -3,6 +3,11 @@
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+### Added
+
+- `HakariBuilder::set_exclude_dev_dependencies` (`exclude-dev-dependencies` in
+  config) to unify features only across builds without dev-dependencies.
+
 ## [0.18.0] - 2026-09-19
 
 ### Added
