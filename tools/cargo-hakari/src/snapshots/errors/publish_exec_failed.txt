@@ -1,0 +1,3 @@
+failed to publish hrd-member-normal: could not run `/opt/rust/bin/cargo publish --dry-run --allow-dirty`
+  caused by:
+  - program not found

@@ -1,0 +1,1 @@
+failed to publish hrd-member-normal: `/opt/rust/bin/cargo publish --dry-run --allow-dirty` failed with exit status: 101

@@ -1,0 +1,5 @@
+failed to re-add the dependency on hrd-workspace-hack to hrd-member-normal after removing it for publishing
+(hint: after fixing the cause, run `cargo hakari manage-deps -p hrd-member-normal` to add it back, unless the Hakari config excludes hrd-member-normal)
+  caused by:
+  - for path /Users/fakeuser/local/testcrates/hakari-reverse-dep/workspace, unable to canonicalize workspace root
+  - No such file or directory (os error 2)
