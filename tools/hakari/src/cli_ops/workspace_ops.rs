@@ -13,6 +13,7 @@ use guppy::{
 };
 use owo_colors::{OwoColorize, Style};
 use std::{borrow::Cow, cmp::Ordering, collections::BTreeMap, error, fmt, fs, io, io::Write};
+use thiserror::Error;
 use toml_edit::{
     Array, DocumentMut, Formatted, InlineTable, Item, Table, TableLike, TomlError, Value,
 };
@@ -58,10 +59,9 @@ impl<'g, 'a> WorkspaceOps<'g, 'a> {
     pub fn apply(&self) -> Result<(), ApplyError> {
         let workspace_root = self.graph.workspace().root();
         let canonical_workspace_root = workspace_root.canonicalize_utf8().map_err(|error| {
-            ApplyError::io(
-                "unable to canonicalize workspace root",
-                workspace_root.to_owned(),
-                error,
+            ApplyError::new(
+                workspace_root,
+                ApplyErrorKind::CanonicalizeWorkspaceRoot { error },
             )
         })?;
         for op in &self.ops {
@@ -107,8 +107,9 @@ impl<'g> WorkspaceOp<'g, '_> {
                 for (rel_path, contents) in root_files {
                     let abs_path = canonical_workspace_root.join(rel_path.as_ref());
                     let parent = abs_path.parent().expect("abs path should have a parent");
-                    std::fs::create_dir_all(parent)
-                        .map_err(|err| ApplyError::io("error creating directories", parent, err))?;
+                    std::fs::create_dir_all(parent).map_err(|error| {
+                        ApplyError::new(parent, ApplyErrorKind::CreateDirs { error })
+                    })?;
                     write_contents(contents, &abs_path)?;
                 }
 
@@ -160,13 +161,14 @@ impl<'g> WorkspaceOp<'g, '_> {
                 Some(parent) => abs_path.join(parent),
                 None => abs_path.clone(),
             };
-            std::fs::create_dir_all(&dir_path)
-                .map_err(|err| ApplyError::io("error creating directories", &dir_path, err))?;
+            std::fs::create_dir_all(&dir_path).map_err(|error| {
+                ApplyError::new(&dir_path, ApplyErrorKind::CreateDirs { error })
+            })?;
 
             // Write out the file.
             dir_path.push(
                 path.file_name().ok_or_else(|| {
-                    ApplyError::misc("does not contain a file name", path.as_ref())
+                    ApplyError::new(path.as_ref(), ApplyErrorKind::MissingFileName)
                 })?,
             );
             write_contents(contents, &dir_path)?;
@@ -181,7 +183,17 @@ impl<'g> WorkspaceOp<'g, '_> {
         let root_toml_path = workspace_root.join("Cargo.toml");
 
         let mut doc = read_toml(&root_toml_path)?;
-        let members = Self::get_workspace_members_array(&root_toml_path, &mut doc)?;
+        Self::add_to_workspace_members(&mut doc, crate_path).map_err(|error| {
+            ApplyError::new(&root_toml_path, ApplyErrorKind::WorkspaceSection { error })
+        })?;
+        write_document(&doc, &root_toml_path)
+    }
+
+    fn add_to_workspace_members(
+        doc: &mut DocumentMut,
+        crate_path: &Utf8Path,
+    ) -> Result<(), WorkspaceSectionError> {
+        let members = Self::get_workspace_members_array(doc)?;
 
         let add = |members: &mut Array, idx: usize| {
             // idx can be within the array (0..members.len()) or at the end (members.len() + 1).
@@ -219,10 +231,10 @@ impl<'g> WorkspaceOp<'g, '_> {
                     }
                 }
                 None => {
-                    return Err(ApplyError::misc(
-                        "workspace.members contains non-strings",
-                        root_toml_path,
-                    ));
+                    return Err(WorkspaceSectionError::MemberNotAString {
+                        index: idx,
+                        found: member.type_name(),
+                    });
                 }
             }
         }
@@ -231,57 +243,34 @@ impl<'g> WorkspaceOp<'g, '_> {
             add(members, members.len());
         }
 
-        write_document(&doc, &root_toml_path)
+        Ok(())
     }
 
-    fn get_workspace_members_array<'doc>(
-        root_toml_path: &Utf8Path,
-        doc: &'doc mut DocumentMut,
-    ) -> Result<&'doc mut Array, ApplyError> {
+    fn get_workspace_members_array(
+        doc: &mut DocumentMut,
+    ) -> Result<&mut Array, WorkspaceSectionError> {
         let doc_table = doc.as_table_mut();
         let workspace_table = match doc_table.get_mut("workspace") {
             Some(Item::Table(workspace_table)) => workspace_table,
             Some(other) => {
-                return Err(ApplyError::misc(
-                    format!(
-                        "expected [workspace] to be a table, found {}",
-                        other.type_name()
-                    ),
-                    root_toml_path,
-                ));
+                return Err(WorkspaceSectionError::NotATable {
+                    found: other.type_name(),
+                });
             }
             None => {
-                return Err(ApplyError::misc(
-                    "[workspace] section not found",
-                    root_toml_path,
-                ));
+                return Err(WorkspaceSectionError::NotFound);
             }
         };
 
         let members = match workspace_table.get_mut("members") {
-            Some(Item::Value(members)) => match members.as_array_mut() {
-                Some(members) => members,
-                None => {
-                    return Err(ApplyError::misc(
-                        "workspace.members is not an array",
-                        root_toml_path,
-                    ));
-                }
-            },
+            Some(Item::Value(Value::Array(members))) => members,
             Some(other) => {
-                return Err(ApplyError::misc(
-                    format!(
-                        "expected workspace.members to be an array, found {}",
-                        other.type_name()
-                    ),
-                    root_toml_path,
-                ));
+                return Err(WorkspaceSectionError::MembersNotAnArray {
+                    found: other.type_name(),
+                });
             }
             None => {
-                return Err(ApplyError::misc(
-                    "workspace.members not found",
-                    root_toml_path,
-                ));
+                return Err(WorkspaceSectionError::MembersNotFound);
             }
         };
         Ok(members)
@@ -309,7 +298,7 @@ impl<'g> WorkspaceOp<'g, '_> {
         let path_table = Self::inline_table_for_add(version, dep_format, line_style, &path);
 
         add_dependency_to_document(&mut doc, name, path_table)
-            .map_err(|error| ApplyError::misc(error.message(), manifest_path))?;
+            .map_err(|error| ApplyError::new(manifest_path, ApplyErrorKind::NotATable { error }))?;
 
         write_document(&doc, manifest_path)
     }
@@ -369,7 +358,7 @@ impl<'g> WorkspaceOp<'g, '_> {
         let manifest_path = package.manifest_path();
         let mut doc = read_toml(manifest_path)?;
         remove_dependency_from_document(&mut doc, name)
-            .map_err(|error| ApplyError::misc(error.message(), manifest_path))?;
+            .map_err(|error| ApplyError::new(manifest_path, ApplyErrorKind::NotATable { error }))?;
 
         write_document(&doc, manifest_path)
     }
@@ -381,9 +370,15 @@ impl<'g> WorkspaceOp<'g, '_> {
 
 /// The name of a `Cargo.toml` dependency section.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-enum DependencySection {
+pub enum DependencySection {
+    /// A normal dependency in the `[dependencies]` or `[target.*.dependencies]`
+    /// sections.
     Normal,
+    /// A dev dependency in the `[dev-dependencies]` or
+    /// `[target.*.dev-dependencies]` sections.
     Dev,
+    /// A build dependency in the `[build-dependencies]` or
+    /// `[target.*.build-dependencies]` sections.
     Build,
 }
 
@@ -401,36 +396,32 @@ impl DependencySection {
 
 /// An error while editing a manifest document: an entry that should be a
 /// table isn't one.
-#[derive(Clone, Debug, Eq, PartialEq)]
-enum NotATableError {
+#[derive(Clone, Debug, Eq, PartialEq, Error)]
+#[non_exhaustive]
+pub enum NotATableError {
     /// A top-level dependency section.
-    Section { section: DependencySection },
-    /// The `[target]` table.
-    Target,
-    /// A `[target.<platform>]` entry.
-    Platform { platform: String },
-    /// A `[target.<platform>.<section>]` entry.
-    PlatformSection {
-        platform: String,
+    #[error("[{}] is not a table", .section.key())]
+    Section {
+        /// The section that is not a table.
         section: DependencySection,
     },
-}
-
-impl NotATableError {
-    fn message(&self) -> String {
-        match self {
-            NotATableError::Section { section } => {
-                format!("[{}] is not a table", section.key())
-            }
-            NotATableError::Target => "[target] is not a table".to_owned(),
-            NotATableError::Platform { platform } => {
-                format!("[target.'{platform}'] is not a table")
-            }
-            NotATableError::PlatformSection { platform, section } => {
-                format!("[target.'{platform}'.{}] is not a table", section.key())
-            }
-        }
-    }
+    /// The `[target]` table.
+    #[error("[target] is not a table")]
+    Target,
+    /// A `[target.<platform>]` entry.
+    #[error("[target.'{platform}'] is not a table")]
+    Platform {
+        /// The platform key, without TOML quoting or escapes.
+        platform: String,
+    },
+    /// A `[target.<platform>.<section>]` entry.
+    #[error("[target.'{platform}'.{}] is not a table", .section.key())]
+    PlatformSection {
+        /// The platform key, without TOML quoting or escapes.
+        platform: String,
+        /// The section under the platform that is not a table.
+        section: DependencySection,
+    },
 }
 
 /// Adds or replaces the entry for `name` in `[dependencies]`, creating the
@@ -568,17 +559,20 @@ fn canonical_rel_path(
     // Canonicalize the path now to remove .. etc.
     let canonical_path = abs_path
         .canonicalize_utf8()
-        .map_err(|err| ApplyError::io("error canonicalizing path", &abs_path, err))?;
-    canonical_path
-        .strip_prefix(canonical_base)
-        .map_err(|_| {
+        .map_err(|error| ApplyError::new(&abs_path, ApplyErrorKind::CanonicalizePath { error }))?;
+    match canonical_path.strip_prefix(canonical_base) {
+        Ok(rel_path) => Ok(rel_path.to_owned()),
+        Err(_) => {
             // This can happen under some symlink scenarios.
-            ApplyError::misc(
-                format!("canonical path is not within base path {canonical_base}"),
+            Err(ApplyError::new(
                 &abs_path,
-            )
-        })
-        .map(|p| p.to_owned())
+                ApplyErrorKind::PathOutsideBase {
+                    canonical_path,
+                    canonical_base: canonical_base.to_owned(),
+                },
+            ))
+        }
+    }
 }
 
 // ---
@@ -587,9 +581,13 @@ fn canonical_rel_path(
 
 fn read_toml(manifest_path: &Utf8Path) -> Result<DocumentMut, ApplyError> {
     let toml = fs::read_to_string(manifest_path)
-        .map_err(|err| ApplyError::io("error reading TOML file", manifest_path, err))?;
+        .map_err(|error| ApplyError::new(manifest_path, ApplyErrorKind::ReadManifest { error }))?;
+    parse_toml(&toml, manifest_path)
+}
+
+fn parse_toml(toml: &str, manifest_path: &Utf8Path) -> Result<DocumentMut, ApplyError> {
     toml.parse::<DocumentMut>()
-        .map_err(|err| ApplyError::toml("error deserializing TOML file", manifest_path, err))
+        .map_err(|error| ApplyError::new(manifest_path, ApplyErrorKind::ParseManifest { error }))
 }
 
 fn write_contents(contents: &[u8], path: &Utf8Path) -> Result<(), ApplyError> {
@@ -607,8 +605,8 @@ fn write_atomic(
     let atomic_file = AtomicFile::new(path, OverwriteBehavior::AllowOverwrite);
     match atomic_file.write(cb) {
         Ok(()) => Ok(()),
-        Err(atomicwrites::Error::Internal(err)) | Err(atomicwrites::Error::User(err)) => {
-            Err(ApplyError::io("error writing file", path, err))
+        Err(atomicwrites::Error::Internal(error)) | Err(atomicwrites::Error::User(error)) => {
+            Err(ApplyError::new(path, ApplyErrorKind::WriteFile { error }))
         }
     }
 }
@@ -616,77 +614,174 @@ fn write_atomic(
 /// An error that occurred while writing out changes to a workspace.
 #[derive(Debug)]
 pub struct ApplyError {
-    message: String,
     path: Utf8PathBuf,
     kind: Box<ApplyErrorKind>,
 }
 
 impl ApplyError {
-    /// Returns the message corresponding to the error.
-    #[inline]
-    pub fn message(&self) -> &str {
-        &self.message
-    }
-
     /// Returns the path at which the error occurred.
     #[inline]
     pub fn path(&self) -> &Utf8Path {
         &self.path
     }
 
-    // ---
-    // Helper methods
-    // ---
-    fn io(message: impl Into<String>, path: impl Into<Utf8PathBuf>, err: io::Error) -> Self {
-        Self {
-            message: message.into(),
-            path: path.into(),
-            kind: Box::new(ApplyErrorKind::Io { err }),
-        }
+    /// Returns the kind of error that occurred.
+    #[inline]
+    pub fn kind(&self) -> &ApplyErrorKind {
+        &self.kind
     }
 
-    fn toml(
-        message: impl Into<String>,
-        path: impl Into<Utf8PathBuf>,
-        err: toml_edit::TomlError,
-    ) -> Self {
+    fn new(path: impl Into<Utf8PathBuf>, kind: ApplyErrorKind) -> Self {
         Self {
-            message: message.into(),
             path: path.into(),
-            kind: Box::new(ApplyErrorKind::Toml { err }),
-        }
-    }
-
-    fn misc(message: impl Into<String>, path: impl Into<Utf8PathBuf>) -> Self {
-        Self {
-            message: message.into(),
-            path: path.into(),
-            kind: Box::new(ApplyErrorKind::Misc),
+            kind: Box::new(kind),
         }
     }
 }
 
 impl fmt::Display for ApplyError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "for path {}, {}", self.path, self.message)
+        write!(f, "for path {}, {}", self.path, self.kind)
     }
 }
 
 impl error::Error for ApplyError {
     fn source(&self) -> Option<&(dyn error::Error + 'static)> {
-        match &*self.kind {
-            ApplyErrorKind::Io { err } => Some(err),
-            ApplyErrorKind::Toml { err } => Some(err),
-            ApplyErrorKind::Misc => None,
-        }
+        // The kind's message is part of this error's Display, so skip over
+        // the kind in the source chain to avoid printing its message twice.
+        error::Error::source(&*self.kind)
     }
 }
 
-#[derive(Debug)]
-enum ApplyErrorKind {
-    Io { err: io::Error },
-    Toml { err: TomlError },
-    Misc,
+/// The kind of error that occurred while applying workspace operations.
+///
+/// Returned by [`ApplyError::kind`]. To access the corresponding path, use
+/// [`ApplyError::path`].
+#[derive(Debug, Error)]
+#[non_exhaustive]
+pub enum ApplyErrorKind {
+    /// The workspace root could not be canonicalized.
+    #[error("unable to canonicalize workspace root")]
+    CanonicalizeWorkspaceRoot {
+        /// The underlying error.
+        #[source]
+        error: io::Error,
+    },
+
+    /// A path, when joined to the canonical workspace root, could not be canonicalized.
+    #[error("error canonicalizing path")]
+    CanonicalizePath {
+        /// The underlying error.
+        #[source]
+        error: io::Error,
+    },
+
+    /// The canonical form of the path is not within the canonical workspace root.
+    ///
+    /// This can happen due to symlinks, `..` components, or an absolute path.
+    #[error("canonical path is not within base path {canonical_base}")]
+    PathOutsideBase {
+        /// The canonical form of the path.
+        canonical_path: Utf8PathBuf,
+        /// The canonical base the path was expected to be within.
+        canonical_base: Utf8PathBuf,
+    },
+
+    /// The directory at the path, or one of its parents, could not be created.
+    #[error("error creating directories")]
+    CreateDirs {
+        /// The underlying error.
+        #[source]
+        error: io::Error,
+    },
+
+    /// The path of a file to be created does not end in a file name.
+    ///
+    /// Here, [`ApplyError::path`] is relative to the new crate's directory.
+    #[error("does not contain a file name")]
+    MissingFileName,
+
+    /// The manifest could not be read.
+    #[error("error reading TOML file")]
+    ReadManifest {
+        /// The underlying error.
+        #[source]
+        error: io::Error,
+    },
+
+    /// The manifest is not valid TOML.
+    #[error("error deserializing TOML file")]
+    ParseManifest {
+        /// The underlying error.
+        #[source]
+        error: TomlError,
+    },
+
+    /// The file could not be written.
+    #[error("error writing file")]
+    WriteFile {
+        /// The underlying error.
+        #[source]
+        error: io::Error,
+    },
+
+    /// The root manifest's `[workspace]` section does not have the shape needed
+    /// to add a member to it.
+    #[error(transparent)]
+    WorkspaceSection {
+        /// What is wrong with the section.
+        error: WorkspaceSectionError,
+    },
+
+    /// An entry in the manifest that should be a table is not one.
+    #[error(transparent)]
+    NotATable {
+        /// Which entry is not a table.
+        error: NotATableError,
+    },
+}
+
+/// An error occurred modifying the root manifest's `[workspace]` section.
+///
+/// Part of [`ApplyErrorKind::WorkspaceSection`].
+#[derive(Clone, Debug, Eq, PartialEq, Error)]
+#[non_exhaustive]
+pub enum WorkspaceSectionError {
+    /// The root manifest has no `[workspace]` section.
+    #[error("[workspace] section not found")]
+    NotFound,
+
+    /// `[workspace]` in the root manifest is not a table.
+    ///
+    /// Currently, an inline table is rejected as well.
+    #[error("expected [workspace] to be a table, found {found}")]
+    NotATable {
+        /// The name of the TOML type found instead, as returned by toml_edit's
+        /// [`Item::type_name`].
+        found: &'static str,
+    },
+
+    /// The root manifest does not have a `workspace.members` field.
+    #[error("workspace.members not found")]
+    MembersNotFound,
+
+    /// `workspace.members` in the root manifest is not an array.
+    #[error("expected workspace.members to be an array, found {found}")]
+    MembersNotAnArray {
+        /// The name of the TOML type found instead, as returned by toml_edit's
+        /// [`Item::type_name`].
+        found: &'static str,
+    },
+
+    /// An element of `workspace.members` in the root manifest is not a string.
+    #[error("workspace.members contains non-strings")]
+    MemberNotAString {
+        /// zero-based index of the element.
+        index: usize,
+        /// The name of the TOML type found instead, as returned by toml_edit's
+        /// [`Item::type_name`].
+        found: &'static str,
+    },
 }
 
 /// A display formatter for [`WorkspaceOps`].
@@ -850,6 +945,8 @@ fn package_names_paths<'g>(package_set: &PackageSet<'g>) -> Vec<(&'g str, &'g Ut
 #[cfg(test)]
 mod tests {
     use super::*;
+    use fixtures::json::JsonFixture;
+    use std::iter;
 
     fn hack_dep() -> InlineTable {
         WorkspaceOp::inline_table_for_add(
@@ -862,6 +959,20 @@ mod tests {
 
     fn parse(toml: &str) -> DocumentMut {
         toml.parse().expect("test manifest is valid TOML")
+    }
+
+    fn canonical_manifest_dir() -> Utf8PathBuf {
+        Utf8Path::new(env!("CARGO_MANIFEST_DIR"))
+            .canonicalize_utf8()
+            .expect("crate directory is canonicalized")
+    }
+
+    fn file_map(path: &str) -> BTreeMap<Cow<'_, Utf8Path>, Cow<'_, [u8]>> {
+        BTreeMap::from([(Cow::Borrowed(Utf8Path::new(path)), Cow::Borrowed(&[][..]))])
+    }
+
+    fn io_error() -> io::Error {
+        io::Error::other("io error")
     }
 
     #[test]
@@ -1100,6 +1211,398 @@ name = "foo"
                 section: DependencySection::Build
             }),
         );
+    }
+
+    #[test]
+    fn apply_rejects_missing_workspace_root() {
+        let graph = JsonFixture::metadata1().graph();
+        let error = WorkspaceOps::new(graph, [])
+            .apply()
+            .expect_err("the fixture's workspace root doesn't exist");
+        assert_eq!(error.path(), graph.workspace().root());
+        let ApplyErrorKind::CanonicalizeWorkspaceRoot { error: io_error } = error.kind() else {
+            panic!("expected CanonicalizeWorkspaceRoot, found {error:?}");
+        };
+        assert_eq!(io_error.kind(), io::ErrorKind::NotFound);
+    }
+
+    #[test]
+    fn canonical_rel_path_returns_path_within_base() {
+        let base = canonical_manifest_dir();
+        let rel_path =
+            canonical_rel_path("src".into(), &base).expect("src is within the crate directory");
+        assert_eq!(rel_path, "src");
+    }
+
+    #[test]
+    fn canonical_rel_path_rejects_missing_path() {
+        let base = canonical_manifest_dir();
+        let error =
+            canonical_rel_path("does-not-exist".into(), &base).expect_err("the path doesn't exist");
+        assert_eq!(error.path(), base.join("does-not-exist"));
+        let ApplyErrorKind::CanonicalizePath { error: io_error } = error.kind() else {
+            panic!("expected CanonicalizePath, found {error:?}");
+        };
+        assert_eq!(io_error.kind(), io::ErrorKind::NotFound);
+    }
+
+    #[test]
+    fn canonical_rel_path_rejects_path_outside_base() {
+        let base = canonical_manifest_dir();
+        let error =
+            canonical_rel_path("..".into(), &base).expect_err("the parent is outside the base");
+        assert_eq!(error.path(), base.join(".."));
+        let ApplyErrorKind::PathOutsideBase {
+            canonical_path,
+            canonical_base,
+        } = error.kind()
+        else {
+            panic!("expected PathOutsideBase, found {error:?}");
+        };
+        assert_eq!(
+            canonical_path,
+            base.parent().expect("crate directory has a parent"),
+        );
+        assert_eq!(canonical_base, &base);
+    }
+
+    #[test]
+    fn create_new_crate_rejects_directory_under_file() {
+        let base = canonical_manifest_dir();
+        let error =
+            WorkspaceOp::create_new_crate(&base, "Cargo.toml".into(), &file_map("src/lib.rs"))
+                .expect_err("Cargo.toml is a file, so no directory can be created under it");
+        assert_eq!(error.path(), base.join("Cargo.toml").join("src"));
+        let ApplyErrorKind::CreateDirs { error: _ } = error.kind() else {
+            panic!("expected CreateDirs, found {error:?}");
+        };
+    }
+
+    #[test]
+    fn create_new_crate_rejects_missing_file_name() {
+        let base = canonical_manifest_dir();
+        let error = WorkspaceOp::create_new_crate(&base, "src".into(), &file_map(".."))
+            .expect_err("`..` has no file name");
+        assert_eq!(error.path(), "..");
+        let ApplyErrorKind::MissingFileName = error.kind() else {
+            panic!("expected MissingFileName, found {error:?}");
+        };
+    }
+
+    #[test]
+    fn read_toml_rejects_missing_manifest() {
+        let manifest_path = canonical_manifest_dir()
+            .join("does-not-exist")
+            .join("Cargo.toml");
+        let error = read_toml(&manifest_path).expect_err("the manifest doesn't exist");
+        assert_eq!(error.path(), manifest_path);
+        let ApplyErrorKind::ReadManifest { error: io_error } = error.kind() else {
+            panic!("expected ReadManifest, found {error:?}");
+        };
+        assert_eq!(io_error.kind(), io::ErrorKind::NotFound);
+    }
+
+    #[test]
+    fn parse_toml_rejects_invalid_toml() {
+        let error =
+            parse_toml("[workspace", "Cargo.toml".into()).expect_err("the table header is open");
+        assert_eq!(error.path(), "Cargo.toml");
+        let ApplyErrorKind::ParseManifest { error: _ } = error.kind() else {
+            panic!("expected ParseManifest, found {error:?}");
+        };
+    }
+
+    #[test]
+    fn write_contents_rejects_missing_parent() {
+        let path = canonical_manifest_dir()
+            .join("does-not-exist")
+            .join("file.txt");
+        let error = write_contents(&[], &path).expect_err("the parent directory doesn't exist");
+        assert_eq!(error.path(), path);
+        let ApplyErrorKind::WriteFile { error: _ } = error.kind() else {
+            panic!("expected WriteFile, found {error:?}");
+        };
+    }
+
+    #[test]
+    fn workspace_members_rejects_missing_workspace_section() {
+        let mut doc = parse(
+            r#"[package]
+name = "foo"
+"#,
+        );
+        assert_eq!(
+            WorkspaceOp::get_workspace_members_array(&mut doc).expect_err("[workspace] is missing"),
+            WorkspaceSectionError::NotFound,
+        );
+    }
+
+    #[test]
+    fn workspace_members_rejects_non_table_workspace() {
+        for (toml, expected_found) in [
+            ("workspace = 1\n", "integer"),
+            ("workspace = { members = [] }\n", "inline table"),
+        ] {
+            let mut doc = parse(toml);
+            assert_eq!(
+                WorkspaceOp::get_workspace_members_array(&mut doc)
+                    .expect_err("[workspace] is not a table"),
+                WorkspaceSectionError::NotATable {
+                    found: expected_found
+                },
+                "for manifest {toml:?}",
+            );
+        }
+    }
+
+    #[test]
+    fn workspace_members_rejects_missing_members() {
+        let mut doc = parse("[workspace]\n");
+        assert_eq!(
+            WorkspaceOp::get_workspace_members_array(&mut doc)
+                .expect_err("workspace.members is missing"),
+            WorkspaceSectionError::MembersNotFound,
+        );
+    }
+
+    #[test]
+    fn workspace_members_rejects_non_array_members() {
+        for (toml, expected_found) in [
+            ("[workspace]\nmembers = \"foo\"\n", "string"),
+            ("[workspace]\nmembers = { foo = 1 }\n", "inline table"),
+            ("[workspace.members]\nfoo = 1\n", "table"),
+            ("[[workspace.members]]\nfoo = 1\n", "array of tables"),
+        ] {
+            let mut doc = parse(toml);
+            assert_eq!(
+                WorkspaceOp::get_workspace_members_array(&mut doc)
+                    .expect_err("workspace.members is not an array"),
+                WorkspaceSectionError::MembersNotAnArray {
+                    found: expected_found
+                },
+                "for manifest {toml:?}",
+            );
+        }
+    }
+
+    #[test]
+    fn add_to_workspace_members_rejects_non_string_member() {
+        let mut doc = parse(
+            r#"[workspace]
+members = ["a", 1]
+"#,
+        );
+        assert_eq!(
+            WorkspaceOp::add_to_workspace_members(&mut doc, "b".into()),
+            Err(WorkspaceSectionError::MemberNotAString {
+                index: 1,
+                found: "integer",
+            }),
+        );
+    }
+
+    #[test]
+    fn add_to_workspace_members_inserts_in_order() {
+        let mut doc = parse(
+            r#"[workspace]
+members = [
+    "a",
+    "c",
+]
+"#,
+        );
+        WorkspaceOp::add_to_workspace_members(&mut doc, "b".into())
+            .expect("workspace.members is an array of strings");
+        assert_eq!(
+            doc.to_string(),
+            r#"[workspace]
+members = [
+    "a",
+    "b",
+    "c",
+]
+"#,
+        );
+    }
+
+    #[test]
+    fn add_to_workspace_members_appends_after_last_member() {
+        let mut doc = parse(
+            r#"[workspace]
+members = [
+    "a",
+    "b",
+]
+"#,
+        );
+        WorkspaceOp::add_to_workspace_members(&mut doc, "c".into())
+            .expect("workspace.members is an array of strings");
+        assert_eq!(
+            doc.to_string(),
+            r#"[workspace]
+members = [
+    "a",
+    "b",
+    "c",
+]
+"#,
+        );
+    }
+
+    #[test]
+    fn add_to_workspace_members_skips_existing_member() {
+        let toml = r#"[workspace]
+members = [
+    "a",
+    "b",
+]
+"#;
+        let mut doc = parse(toml);
+        WorkspaceOp::add_to_workspace_members(&mut doc, "b".into())
+            .expect("workspace.members is an array of strings");
+        assert_eq!(doc.to_string(), toml, "the existing member is not repeated");
+    }
+
+    #[test]
+    fn apply_error_display_and_source() {
+        let toml_error = "["
+            .parse::<DocumentMut>()
+            .expect_err("the table header is open");
+        let cases = [
+            (
+                ApplyErrorKind::CanonicalizeWorkspaceRoot { error: io_error() },
+                "for path Cargo.toml, unable to canonicalize workspace root",
+                Some(io_error().to_string()),
+            ),
+            (
+                ApplyErrorKind::CanonicalizePath { error: io_error() },
+                "for path Cargo.toml, error canonicalizing path",
+                Some(io_error().to_string()),
+            ),
+            (
+                ApplyErrorKind::PathOutsideBase {
+                    canonical_path: "/elsewhere/Cargo.toml".into(),
+                    canonical_base: "/workspace".into(),
+                },
+                "for path Cargo.toml, canonical path is not within base path /workspace",
+                None,
+            ),
+            (
+                ApplyErrorKind::CreateDirs { error: io_error() },
+                "for path Cargo.toml, error creating directories",
+                Some(io_error().to_string()),
+            ),
+            (
+                ApplyErrorKind::MissingFileName,
+                "for path Cargo.toml, does not contain a file name",
+                None,
+            ),
+            (
+                ApplyErrorKind::ReadManifest { error: io_error() },
+                "for path Cargo.toml, error reading TOML file",
+                Some(io_error().to_string()),
+            ),
+            (
+                ApplyErrorKind::ParseManifest {
+                    error: toml_error.clone(),
+                },
+                "for path Cargo.toml, error deserializing TOML file",
+                Some(toml_error.to_string()),
+            ),
+            (
+                ApplyErrorKind::WriteFile { error: io_error() },
+                "for path Cargo.toml, error writing file",
+                Some(io_error().to_string()),
+            ),
+            (
+                ApplyErrorKind::WorkspaceSection {
+                    error: WorkspaceSectionError::NotFound,
+                },
+                "for path Cargo.toml, [workspace] section not found",
+                None,
+            ),
+            (
+                ApplyErrorKind::WorkspaceSection {
+                    error: WorkspaceSectionError::NotATable { found: "integer" },
+                },
+                "for path Cargo.toml, expected [workspace] to be a table, found integer",
+                None,
+            ),
+            (
+                ApplyErrorKind::WorkspaceSection {
+                    error: WorkspaceSectionError::MembersNotFound,
+                },
+                "for path Cargo.toml, workspace.members not found",
+                None,
+            ),
+            (
+                ApplyErrorKind::WorkspaceSection {
+                    error: WorkspaceSectionError::MembersNotAnArray { found: "string" },
+                },
+                "for path Cargo.toml, expected workspace.members to be an array, found string",
+                None,
+            ),
+            (
+                ApplyErrorKind::WorkspaceSection {
+                    error: WorkspaceSectionError::MemberNotAString {
+                        index: 1,
+                        found: "integer",
+                    },
+                },
+                "for path Cargo.toml, workspace.members contains non-strings",
+                None,
+            ),
+            (
+                ApplyErrorKind::NotATable {
+                    error: NotATableError::Section {
+                        section: DependencySection::Normal,
+                    },
+                },
+                "for path Cargo.toml, [dependencies] is not a table",
+                None,
+            ),
+            (
+                ApplyErrorKind::NotATable {
+                    error: NotATableError::Target,
+                },
+                "for path Cargo.toml, [target] is not a table",
+                None,
+            ),
+            (
+                ApplyErrorKind::NotATable {
+                    error: NotATableError::Platform {
+                        platform: "cfg(unix)".to_owned(),
+                    },
+                },
+                "for path Cargo.toml, [target.'cfg(unix)'] is not a table",
+                None,
+            ),
+            (
+                ApplyErrorKind::NotATable {
+                    error: NotATableError::PlatformSection {
+                        platform: "cfg(unix)".to_owned(),
+                        section: DependencySection::Dev,
+                    },
+                },
+                "for path Cargo.toml, [target.'cfg(unix)'.dev-dependencies] is not a table",
+                None,
+            ),
+        ];
+
+        for (kind, expected_display, expected_source) in cases {
+            let error = ApplyError::new("Cargo.toml", kind);
+            assert_eq!(error.to_string(), expected_display);
+            let chain: Vec<String> =
+                iter::successors(Some(&error as &dyn error::Error), |error| error.source())
+                    .map(|error| error.to_string())
+                    .collect();
+            let mut expected_chain = vec![expected_display.to_owned()];
+            expected_chain.extend(expected_source);
+            assert_eq!(
+                chain, expected_chain,
+                "each message appears once in the source chain",
+            );
+        }
     }
 
     #[test]

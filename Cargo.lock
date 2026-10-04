@@ -2759,6 +2759,7 @@ dependencies = [
  "serde",
  "tabular",
  "target-spec",
+ "thiserror",
  "toml",
  "toml_edit",
  "twox-hash",
