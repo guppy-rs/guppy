@@ -1,0 +1,4 @@
+failed to write updated contents to Cargo.toml for my-workspace-hack
+  caused by:
+  - error while reading path '/workspace/my-workspace-hack/Cargo.toml'
+  - permission denied

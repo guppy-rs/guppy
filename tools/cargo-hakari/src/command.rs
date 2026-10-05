@@ -4,7 +4,7 @@
 use crate::{
     builder::{BuilderWithHakariPackage, make_builder_and_output},
     cargo_cli::cargo_program,
-    errors::{ExpectedError, InitError, Result},
+    errors::{ExpectedError, HakariCargoTomlUpdateError, InitError, Result},
     helpers::regenerate_lockfile,
     output::{OutputContext, OutputOpts, Styles},
     publish::publish_hakari,
@@ -356,13 +356,25 @@ impl CommandWithBuilder {
                         | err @ TomlOutError::UnrecognizedExternal { .. }
                         | err @ TomlOutError::PathWithoutHakari { .. }
                         | err,
-                    ) => Err(err).with_context(|| "error generating new hakari.toml")?,
+                    ) => Err(ExpectedError::HakariCargoTomlUpdateFailed {
+                        error: HakariCargoTomlUpdateError::ContentsGenerate {
+                            hakari_package_name: hakari_package.name().to_owned(),
+                            error: err,
+                        },
+                    })?,
                 };
 
-                let existing_toml = builder.read_toml()?;
+                let existing_toml = builder
+                    .read_toml()
+                    .map_err(|error| ExpectedError::HakariCargoTomlUpdateFailed { error })?;
 
-                let exit_code =
-                    write_to_cargo_toml(existing_toml, &toml_out, diff, output.clone())?;
+                let exit_code = write_to_cargo_toml(
+                    existing_toml,
+                    &toml_out,
+                    diff,
+                    hakari_package.name(),
+                    output.clone(),
+                )?;
                 if hakari.builder().dep_format_version() < DepFormatVersion::latest() {
                     info!(
                         "new hakari format version available: {latest} (current: {})\n\
@@ -464,8 +476,16 @@ impl CommandWithBuilder {
                 Ok(0)
             }
             CommandWithBuilder::Disable { diff } => {
-                let existing_toml = builder.read_toml()?;
-                write_to_cargo_toml(existing_toml, DISABLE_MESSAGE, diff, output)
+                let existing_toml = builder
+                    .read_toml()
+                    .map_err(|error| ExpectedError::HakariCargoTomlUpdateFailed { error })?;
+                Ok(write_to_cargo_toml(
+                    existing_toml,
+                    DISABLE_MESSAGE,
+                    diff,
+                    hakari_package.name(),
+                    output,
+                )?)
             }
         }
     }
@@ -886,8 +906,9 @@ fn write_to_cargo_toml(
     existing_toml: HakariCargoToml,
     new_contents: &str,
     diff: bool,
+    hakari_package_name: &str,
     output: OutputContext,
-) -> eyre::Result<i32> {
+) -> Result<i32> {
     if diff {
         let patch = existing_toml.diff_toml(new_contents);
         if patch.hunks().is_empty() {
@@ -905,9 +926,14 @@ fn write_to_cargo_toml(
         if !existing_toml.is_changed(new_contents) {
             info!("no changes detected");
         } else {
-            existing_toml
-                .write_to_file(new_contents)
-                .with_context(|| "error writing updated Hakari contents")?;
+            existing_toml.write_to_file(new_contents).map_err(|error| {
+                ExpectedError::HakariCargoTomlUpdateFailed {
+                    error: HakariCargoTomlUpdateError::Write {
+                        hakari_package_name: hakari_package_name.to_owned(),
+                        error,
+                    },
+                }
+            })?;
             info!("contents updated");
             regenerate_lockfile(output)?;
         }
@@ -962,14 +988,15 @@ fn apply_on_dialog(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_helpers::non_utf8_path;
+    use crate::test_helpers::{non_utf8_path, output_context};
     use fixtures::json::{
         JsonFixture, METADATA_HAKARI_REVERSE_DEP_LEAF, METADATA_HAKARI_REVERSE_DEP_MEMBER_FEATURES,
         METADATA_HAKARI_REVERSE_DEP_MEMBER_NORMAL, METADATA_HAKARI_REVERSE_DEP_NORMAL_ON_HACK,
         METADATA_HAKARI_REVERSE_DEP_VIA_MEMBER_PUBLISHED,
         METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK,
     };
-    use hakari::HakariBuilder;
+    use hakari::{CargoTomlError, HakariBuilder};
+    use tempfile::TempDir;
 
     /// Configuration excludes to apply to the hakari-reverse-dep fixture, as
     /// package IDs.
@@ -1460,5 +1487,84 @@ mod tests {
             panic!("expected CurrentDirNotUtf8, found {error:?}");
         };
         assert_eq!(error_current_dir, &non_utf8_path());
+    }
+
+    // write_status a workspace-hack Cargo.toml with an empty generated section
+    // to a new temporary directory, and returns its path.
+    fn temp_hakari_cargo_toml() -> (TempDir, Utf8PathBuf) {
+        let dir = TempDir::new().expect("created temp dir");
+        let toml_path =
+            Utf8PathBuf::try_from(dir.path().join("Cargo.toml")).expect("temp dir path is UTF-8");
+        std::fs::write(
+            &toml_path,
+            "[package]\nname = \"my-workspace-hack\"\n\n\
+             ### BEGIN HAKARI SECTION\n### END HAKARI SECTION\n",
+        )
+        .expect("wrote Cargo.toml");
+        (dir, toml_path)
+    }
+
+    #[test]
+    fn write_to_cargo_toml_diff_exit_codes() {
+        let (_dir, toml_path) = temp_hakari_cargo_toml();
+        let contents = std::fs::read_to_string(&toml_path).expect("Cargo.toml is read");
+
+        for (new_contents, expected) in [("[dependencies]\n", 1), ("", 0)] {
+            let existing_toml =
+                HakariCargoToml::new(toml_path.clone()).expect("Cargo.toml is read");
+            let exit_code = write_to_cargo_toml(
+                existing_toml,
+                new_contents,
+                true,
+                "my-workspace-hack",
+                output_context(),
+            )
+            .expect("a diff is computed without writing");
+            assert_eq!(exit_code, expected, "exit code for {new_contents:?}");
+        }
+        assert_eq!(
+            std::fs::read_to_string(&toml_path).expect("Cargo.toml is read"),
+            contents,
+            "--diff doesn't write",
+        );
+    }
+
+    #[test]
+    fn write_to_cargo_toml_write_failure() {
+        let (dir, toml_path) = temp_hakari_cargo_toml();
+        let existing_toml = HakariCargoToml::new(toml_path.clone()).expect("Cargo.toml is read");
+        dir.close().expect("removed temp dir");
+
+        let error = write_to_cargo_toml(
+            existing_toml,
+            "[dependencies]\n",
+            false,
+            "my-workspace-hack",
+            output_context(),
+        )
+        .expect_err("the directory to write to doesn't exist");
+        let ExpectedError::HakariCargoTomlUpdateFailed {
+            error: update_error,
+        } = &error
+        else {
+            panic!("expected HakariCargoTomlUpdateFailed, found {error:?}");
+        };
+        let HakariCargoTomlUpdateError::Write {
+            hakari_package_name,
+            error: cargo_toml_error,
+        } = update_error
+        else {
+            panic!("expected Write, found {update_error:?}");
+        };
+        assert_eq!(hakari_package_name, "my-workspace-hack");
+        let CargoTomlError::Io {
+            toml_path: error_toml_path,
+            error: io_error,
+        } = cargo_toml_error
+        else {
+            panic!("expected Io, found {cargo_toml_error:?}");
+        };
+        assert_eq!(error_toml_path, &toml_path);
+        assert_eq!(io_error.kind(), io::ErrorKind::NotFound);
     }
 }

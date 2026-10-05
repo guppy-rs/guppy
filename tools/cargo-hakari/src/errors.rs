@@ -4,6 +4,7 @@
 use crate::output::{OutputContext, Styles};
 use camino::Utf8PathBuf;
 use hakari::{
+    CargoTomlError, TomlOutError,
     cli_ops::{self, ApplyError},
     summaries::HakariConfig,
 };
@@ -100,6 +101,10 @@ pub enum ExpectedError {
     /// `cargo hakari init` failed.
     #[error(transparent)]
     InitFailed { error: InitError },
+    /// `cargo hakari generate` or `cargo hakari disable` failed to update the
+    /// workspace-hack's `Cargo.toml`.
+    #[error(transparent)]
+    HakariCargoTomlUpdateFailed { error: HakariCargoTomlUpdateError },
     #[error(
         "failed to remove the dependency on {hakari_package_name} from \
          {package_name} before publishing"
@@ -154,6 +159,7 @@ impl ExpectedError {
             | Self::WorkspacePackageResolveFailed { .. }
             | Self::PackageGraphBuildFailed { .. }
             | Self::InitFailed { .. }
+            | Self::HakariCargoTomlUpdateFailed { .. }
             | Self::PublishDepRemoveFailed { .. }
             | Self::PublishDepRestoreFailed { .. }
             | Self::PublishExecFailed { .. }
@@ -211,6 +217,34 @@ pub enum InitError {
     /// Hakari failed to initialize a workspace-hack crate.
     #[error(transparent)]
     PreconditionFailed { error: cli_ops::InitError },
+}
+
+/// Why `cargo hakari generate` or `cargo hakari disable` failed.
+///
+/// Part of [`ExpectedError::HakariCargoTomlUpdateFailed`].
+#[derive(Debug, Error)]
+pub enum HakariCargoTomlUpdateError {
+    #[error("failed to generate new contents for {hakari_package_name}")]
+    ContentsGenerate {
+        hakari_package_name: String,
+        #[source]
+        error: TomlOutError,
+    },
+    #[error(
+        "failed to read the generated section of Cargo.toml for \
+         {hakari_package_name}"
+    )]
+    Read {
+        hakari_package_name: String,
+        #[source]
+        error: CargoTomlError,
+    },
+    #[error("failed to write updated contents to Cargo.toml for {hakari_package_name}")]
+    Write {
+        hakari_package_name: String,
+        #[source]
+        error: CargoTomlError,
+    },
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -305,6 +339,9 @@ impl fmt::Display for ErrorReport<'_> {
             }
             ExpectedError::InitFailed { error } => {
                 write_init_error(f, error)?;
+            }
+            ExpectedError::HakariCargoTomlUpdateFailed { error } => {
+                write_hakari_cargo_toml_update_error(f, error, styles)?;
             }
             ExpectedError::PublishDepRemoveFailed {
                 package_name,
@@ -412,6 +449,45 @@ fn write_init_error(f: &mut fmt::Formatter<'_>, error: &InitError) -> fmt::Resul
     }
 }
 
+fn write_hakari_cargo_toml_update_error(
+    f: &mut fmt::Formatter<'_>,
+    error: &HakariCargoTomlUpdateError,
+    styles: &Styles,
+) -> fmt::Result {
+    match error {
+        HakariCargoTomlUpdateError::ContentsGenerate {
+            hakari_package_name,
+            error: _,
+        } => {
+            write!(
+                f,
+                "failed to generate new contents for {}",
+                hakari_package_name.style(styles.package_name),
+            )
+        }
+        HakariCargoTomlUpdateError::Read {
+            hakari_package_name,
+            error: _,
+        } => {
+            write!(
+                f,
+                "failed to read the generated section of Cargo.toml for {}",
+                hakari_package_name.style(styles.package_name),
+            )
+        }
+        HakariCargoTomlUpdateError::Write {
+            hakari_package_name,
+            error: _,
+        } => {
+            write!(
+                f,
+                "failed to write updated contents to Cargo.toml for {}",
+                hakari_package_name.style(styles.package_name),
+            )
+        }
+    }
+}
+
 fn write_hint(f: &mut fmt::Formatter<'_>, hint: impl fmt::Display) -> fmt::Result {
     write!(f, "\n(hint: {hint})")
 }
@@ -454,6 +530,7 @@ mod tests {
     use super::*;
     #[cfg(unix)]
     use crate::test_helpers::{exit_status, non_utf8_path, reverse_dep_builder};
+    use guppy::PackageId;
     use snapbox::{Data, assert_data_eq, file};
 
     #[derive(Debug, Error)]
@@ -661,6 +738,51 @@ mod tests {
                 },
                 report: file!["snapshots/errors/init_precondition_failed.txt"],
                 one_line: "IO error while accessing /workspace/workspace-hack",
+                exit_code: 1,
+            },
+            Example {
+                error: ExpectedError::HakariCargoTomlUpdateFailed {
+                    error: HakariCargoTomlUpdateError::ContentsGenerate {
+                        hakari_package_name: "my-workspace-hack".to_owned(),
+                        error: TomlOutError::UnrecognizedExternal {
+                            package_id: PackageId::new("foo 1.2.3 (svn+https://example.com/foo)"),
+                            source: "svn+https://example.com/foo".to_owned(),
+                        },
+                    },
+                },
+                report: file!["snapshots/errors/hakari_contents_generate_failed.txt"],
+                one_line: "failed to generate new contents for my-workspace-hack",
+                exit_code: 1,
+            },
+            Example {
+                error: ExpectedError::HakariCargoTomlUpdateFailed {
+                    error: HakariCargoTomlUpdateError::Read {
+                        hakari_package_name: "my-workspace-hack".to_owned(),
+                        error: CargoTomlError::GeneratedSectionNotFound {
+                            toml_path: "/workspace/my-workspace-hack/Cargo.toml".into(),
+                        },
+                    },
+                },
+                report: file!["snapshots/errors/hakari_cargo_toml_read_failed.txt"],
+                one_line: "failed to read the generated section of Cargo.toml for \
+                           my-workspace-hack",
+                exit_code: 1,
+            },
+            Example {
+                error: ExpectedError::HakariCargoTomlUpdateFailed {
+                    error: HakariCargoTomlUpdateError::Write {
+                        hakari_package_name: "my-workspace-hack".to_owned(),
+                        error: CargoTomlError::Io {
+                            toml_path: "/workspace/my-workspace-hack/Cargo.toml".into(),
+                            error: io::Error::new(
+                                io::ErrorKind::PermissionDenied,
+                                "permission denied",
+                            ),
+                        },
+                    },
+                },
+                report: file!["snapshots/errors/hakari_cargo_toml_write_failed.txt"],
+                one_line: "failed to write updated contents to Cargo.toml for my-workspace-hack",
                 exit_code: 1,
             },
             Example {

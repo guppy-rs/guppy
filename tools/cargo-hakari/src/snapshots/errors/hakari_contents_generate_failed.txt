@@ -1,0 +1,3 @@
+failed to generate new contents for my-workspace-hack
+  caused by:
+  - for third-party dependency 'foo 1.2.3 (svn+https://example.com/foo)', unrecognized external source svn+https://example.com/foo
