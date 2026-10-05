@@ -10,7 +10,7 @@ use crate::{
 };
 use camino::{Utf8Path, Utf8PathBuf};
 use clap::Parser;
-use color_eyre::eyre::{Result, WrapErr, bail};
+use color_eyre::eyre::{self, WrapErr, bail};
 use guppy::{
     MetadataCommand, PackageId, Version,
     graph::{PackageGraph, PackageSet},
@@ -60,7 +60,7 @@ impl Args {
     /// Executes the command.
     ///
     /// Returns the exit status, or an error on failure.
-    pub fn exec(self) -> Result<i32> {
+    pub fn exec(self) -> eyre::Result<i32> {
         self.command.exec(self.global.output)
     }
 }
@@ -105,7 +105,7 @@ enum Command {
 }
 
 impl Command {
-    fn exec(self, output: OutputOpts) -> Result<i32> {
+    fn exec(self, output: OutputOpts) -> eyre::Result<i32> {
         let output = output.init();
         let mut metadata_command = MetadataCommand::new();
         metadata_command.cargo_path(cargo_program());
@@ -315,7 +315,7 @@ impl CommandWithBuilder {
         builder: BuilderWithHakariPackage<'_>,
         hakari_output: HakariOutputOptions,
         output: OutputContext,
-    ) -> Result<i32> {
+    ) -> eyre::Result<i32> {
         let hakari_package = builder.hakari_package();
 
         match self {
@@ -472,7 +472,7 @@ struct PackageSelection {
 
 impl PackageSelection {
     /// Converts this selection into a `PackageSet`.
-    fn to_package_set<'g>(&self, graph: &'g PackageGraph) -> Result<PackageSet<'g>> {
+    fn to_package_set<'g>(&self, graph: &'g PackageGraph) -> eyre::Result<PackageSet<'g>> {
         if !self.packages.is_empty() {
             Ok(graph.resolve_workspace_names(&self.packages)?)
         } else {
@@ -823,7 +823,10 @@ impl ExcludedBy {
     }
 }
 
-fn cwd_rel_to_workspace_rel(path: &Utf8Path, workspace_root: &Utf8Path) -> Result<Utf8PathBuf> {
+fn cwd_rel_to_workspace_rel(
+    path: &Utf8Path,
+    workspace_root: &Utf8Path,
+) -> eyre::Result<Utf8PathBuf> {
     let abs_path = if path.is_absolute() {
         path.to_owned()
     } else {
@@ -844,7 +847,7 @@ fn write_to_cargo_toml(
     new_contents: &str,
     diff: bool,
     output: OutputContext,
-) -> Result<i32> {
+) -> eyre::Result<i32> {
     if diff {
         let patch = existing_toml.diff_toml(new_contents);
         if patch.hunks().is_empty() {
@@ -877,8 +880,8 @@ fn apply_on_dialog(
     yes: bool,
     ops: &WorkspaceOps<'_, '_>,
     output: &OutputContext,
-    after: impl FnOnce() -> Result<()>,
-) -> Result<i32> {
+    after: impl FnOnce() -> eyre::Result<()>,
+) -> eyre::Result<i32> {
     let mut display = ops.display();
     if output.color.is_enabled() {
         display.colorize();
