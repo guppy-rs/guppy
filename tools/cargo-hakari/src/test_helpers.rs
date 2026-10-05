@@ -7,14 +7,17 @@ use crate::{
 };
 use camino::Utf8Path;
 use fixtures::json::JsonFixture;
-use std::sync::Arc;
+#[cfg(windows)]
+use std::os::windows::ffi::OsStringExt;
 #[cfg(unix)]
 use std::{
+    ffi::OsStr,
     fs,
-    os::unix::{fs::PermissionsExt, process::ExitStatusExt},
+    os::unix::{ffi::OsStrExt, fs::PermissionsExt, process::ExitStatusExt},
     path::Path,
     process::ExitStatus,
 };
+use std::{ffi::OsString, path::PathBuf, sync::Arc};
 
 pub(crate) fn output_context() -> OutputContext {
     OutputContext {
@@ -51,4 +54,19 @@ pub(crate) fn exit_status(code: u8) -> ExitStatus {
 pub(crate) fn write_executable_script(path: &Path, contents: &str) {
     fs::write(path, contents).expect("wrote script");
     fs::set_permissions(path, fs::Permissions::from_mode(0o755)).expect("made script executable");
+}
+
+#[cfg(unix)]
+pub(crate) fn non_utf8_path() -> PathBuf {
+    // 0xff is invalid UTF-8.
+    let path: OsString = OsStr::from_bytes(b"/workspace/\xff").to_owned();
+    PathBuf::from(path)
+}
+
+#[cfg(windows)]
+pub(crate) fn non_utf8_path() -> PathBuf {
+    let mut wide: Vec<u16> = "C:\\workspace\\".encode_utf16().collect();
+    // An unpaired surrogate is invalid UTF-8.
+    wide.push(0xd800);
+    PathBuf::from(OsString::from_wide(&wide))
 }
