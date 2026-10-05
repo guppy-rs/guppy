@@ -1,0 +1,12 @@
+failed to read Hakari config at /workspace/.config/hakari.toml
+  caused by:
+  - TOML parse error at line 2, column 12
+      |
+    2 | resolver = 2
+      |            ^
+    invalid type: integer `2`, expected a string
+
+  - first paragraph
+
+    second paragraph
+  - single-line cause

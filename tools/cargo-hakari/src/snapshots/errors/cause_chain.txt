@@ -1,0 +1,5 @@
+failed to read Hakari config at /workspace/.config/hakari.toml
+  caused by:
+  - outermost cause
+  - middle cause
+  - innermost cause

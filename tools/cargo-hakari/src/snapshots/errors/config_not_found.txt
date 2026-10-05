@@ -1,0 +1,3 @@
+no Hakari config found at any of these paths:
+  - /workspace/.config/hakari.toml
+  - /workspace/.guppy/hakari.toml

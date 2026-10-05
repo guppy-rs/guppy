@@ -403,7 +403,7 @@ impl CommandWithBuilder {
                 }
 
                 apply_on_dialog(dry_run, yes, &ops, &output, || {
-                    regenerate_lockfile(output.clone())
+                    Ok(regenerate_lockfile(output.clone())?)
                 })
             }
             CommandWithBuilder::RemoveDeps {
@@ -418,7 +418,7 @@ impl CommandWithBuilder {
                 }
 
                 apply_on_dialog(dry_run, yes, &ops, &output, || {
-                    regenerate_lockfile(output.clone())
+                    Ok(regenerate_lockfile(output.clone())?)
                 })
             }
             CommandWithBuilder::Explain {
