@@ -9,7 +9,6 @@ use hakari::{
     summaries::HakariConfig,
 };
 use indenter::{Format, indented};
-use log::error;
 use owo_colors::OwoColorize;
 use std::{
     error::Error,
@@ -206,8 +205,11 @@ impl ExpectedError {
         }
     }
 
+    /// Displays the error to stderr.
+    ///
+    /// This is not subject to `RUST_LOG` and is always displayed.
     pub fn display_to_stderr(&self, output: &OutputContext) {
-        error!("{}", self.report(&output.styles));
+        output.display_fatal_error(self.report(&output.styles));
     }
 
     fn report<'a>(&'a self, styles: &'a Styles) -> ErrorReport<'a> {

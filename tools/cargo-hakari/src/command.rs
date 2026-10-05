@@ -62,11 +62,19 @@ pub struct Args {
 }
 
 impl Args {
+    /// Initializes output.
+    ///
+    /// Call this once at the start of the process. Panics if already
+    /// initialized.
+    pub fn init_output(&self) -> OutputContext {
+        self.global.output.init()
+    }
+
     /// Executes the command.
     ///
     /// Returns the exit status, or an error on failure.
-    pub fn exec(self) -> Result<i32> {
-        self.command.exec(self.global.output)
+    pub fn exec(self, output: OutputContext) -> Result<i32> {
+        self.command.exec(output)
     }
 }
 
@@ -110,8 +118,7 @@ enum Command {
 }
 
 impl Command {
-    fn exec(self, output: OutputOpts) -> Result<i32> {
-        let output = output.init();
+    fn exec(self, output: OutputContext) -> Result<i32> {
         let mut metadata_command = MetadataCommand::new();
         metadata_command.cargo_path(cargo_program());
         let package_graph = metadata_command
@@ -1515,8 +1522,8 @@ mod tests {
         assert_eq!(error_current_dir, &non_utf8_path());
     }
 
-    // write_status a workspace-hack Cargo.toml with an empty generated section
-    // to a new temporary directory, and returns its path.
+    /// Creates a workspace-hack Cargo.toml with an empty generated section to a
+    /// new temporary directory, and returns its path.
     fn temp_hakari_cargo_toml() -> (TempDir, Utf8PathBuf) {
         let dir = TempDir::new().expect("created temp dir");
         let toml_path =
