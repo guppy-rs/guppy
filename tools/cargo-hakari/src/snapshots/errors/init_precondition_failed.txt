@@ -1,0 +1,3 @@
+IO error while accessing /workspace/workspace-hack
+  caused by:
+  - permission denied

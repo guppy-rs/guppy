@@ -4,14 +4,14 @@
 use crate::{
     builder::{BuilderWithHakariPackage, make_builder_and_output},
     cargo_cli::cargo_program,
-    errors::{ExpectedError, Result},
+    errors::{ExpectedError, InitError, Result},
     helpers::regenerate_lockfile,
     output::{OutputContext, OutputOpts, Styles},
     publish::publish_hakari,
 };
 use camino::{Utf8Path, Utf8PathBuf};
 use clap::Parser;
-use color_eyre::eyre::{self, WrapErr, bail};
+use color_eyre::eyre::{self, WrapErr};
 use guppy::{
     MetadataCommand, PackageId, Version,
     graph::{PackageGraph, PackageSet},
@@ -25,7 +25,12 @@ use hakari::{
 use iddqd::{IdOrdItem, IdOrdMap, id_upcast};
 use log::{error, info};
 use owo_colors::OwoColorize;
-use std::{collections::BTreeMap, convert::TryFrom, fmt, io, path::PathBuf};
+use std::{
+    collections::BTreeMap,
+    convert::TryFrom,
+    fmt, io,
+    path::{PathBuf, StripPrefixError},
+};
 
 /// The comment to add to the top of the config file.
 pub static CONFIG_COMMENT: &str = r#"# This file contains settings for `cargo hakari`.
@@ -122,17 +127,23 @@ impl Command {
                 dry_run,
                 yes,
             } => {
-                let package_name = init_package_name(package_name.as_deref(), &path)?;
+                let package_name = init_package_name(package_name.as_deref(), &path)
+                    .map_err(|error| ExpectedError::InitFailed { error })?;
 
                 let workspace_path =
-                    cwd_rel_to_workspace_rel(&path, package_graph.workspace().root())?;
+                    cwd_rel_to_workspace_rel(&path, package_graph.workspace().root())
+                        .map_err(|error| ExpectedError::InitFailed { error })?;
 
                 let mut init = HakariInit::new(&package_graph, package_name, &workspace_path)
-                    .with_context(|| "error initializing Hakari package")?;
+                    .map_err(|error| ExpectedError::InitFailed {
+                        error: InitError::PreconditionFailed { error },
+                    })?;
                 init.set_cargo_toml_comment(CARGO_TOML_COMMENT);
                 if !skip_config {
                     init.set_config(DEFAULT_CONFIG_PATH.as_ref(), CONFIG_COMMENT)
-                        .with_context(|| "error initializing Hakari package")?;
+                        .map_err(|error| ExpectedError::InitFailed {
+                            error: InitError::PreconditionFailed { error },
+                        })?;
                 }
 
                 let ops = init.make_ops();
@@ -826,12 +837,14 @@ impl ExcludedBy {
 fn init_package_name<'a>(
     package_name: Option<&'a str>,
     path: &'a Utf8Path,
-) -> eyre::Result<&'a str> {
+) -> Result<&'a str, InitError> {
     match package_name {
         Some(name) => Ok(name),
         None => match path.file_name() {
             Some(name) => Ok(name),
-            None => bail!("invalid path {}", path),
+            None => Err(InitError::PathMissingFileName {
+                crate_path: path.to_owned(),
+            }),
         },
     }
 }
@@ -839,27 +852,32 @@ fn init_package_name<'a>(
 fn cwd_rel_to_workspace_rel(
     path: &Utf8Path,
     workspace_root: &Utf8Path,
-) -> eyre::Result<Utf8PathBuf> {
+) -> Result<Utf8PathBuf, InitError> {
     let abs_path = if path.is_absolute() {
         path.to_owned()
     } else {
         resolve_against_current_dir(std::env::current_dir(), path)?
     };
 
-    abs_path
-        .strip_prefix(workspace_root)
-        .map(|p| p.to_owned())
-        .with_context(|| format!("path {abs_path} is not inside workspace root {workspace_root}"))
+    match abs_path.strip_prefix(workspace_root) {
+        Ok(workspace_path) => Ok(workspace_path.to_owned()),
+        Err(StripPrefixError { .. }) => Err(InitError::PathOutsideWorkspace {
+            crate_path: abs_path,
+            workspace_root: workspace_root.to_owned(),
+        }),
+    }
 }
 
 /// Resolves a path against the current directory.
 fn resolve_against_current_dir(
     current_dir: io::Result<PathBuf>,
     path: &Utf8Path,
-) -> eyre::Result<Utf8PathBuf> {
-    let current_dir = current_dir.with_context(|| "could not access current dir")?;
+) -> Result<Utf8PathBuf, InitError> {
+    let current_dir = current_dir.map_err(|error| InitError::CurrentDirAccessFailed { error })?;
     let mut abs_path =
-        Utf8PathBuf::try_from(current_dir).with_context(|| "current dir is invalid UTF-8")?;
+        Utf8PathBuf::try_from(current_dir).map_err(|error| InitError::CurrentDirNotUtf8 {
+            current_dir: error.into_path_buf(),
+        })?;
     abs_path.push(path);
     Ok(abs_path)
 }
@@ -1365,7 +1383,10 @@ mod tests {
         for path in ["", "..", "crates/..", "/"] {
             let error = init_package_name(None, Utf8Path::new(path))
                 .expect_err("the path doesn't end in a directory name");
-            assert_eq!(error.to_string(), format!("invalid path {path}"));
+            let InitError::PathMissingFileName { crate_path } = &error else {
+                panic!("expected PathMissingFileName for {path:?}, found {error:?}");
+            };
+            assert_eq!(crate_path, Utf8Path::new(path));
         }
     }
 
@@ -1404,11 +1425,15 @@ mod tests {
         for (path, abs_path) in outside {
             let error = cwd_rel_to_workspace_rel(&path, &workspace_root)
                 .expect_err("the path is outside the workspace root");
-            assert_eq!(
-                error.to_string(),
-                format!("path {abs_path} is not inside workspace root {workspace_root}"),
-                "the path in the error is absolute",
-            );
+            let InitError::PathOutsideWorkspace {
+                crate_path,
+                workspace_root: error_workspace_root,
+            } = &error
+            else {
+                panic!("expected PathOutsideWorkspace for {path}, found {error:?}");
+            };
+            assert_eq!(crate_path, &abs_path, "the path in the error is absolute");
+            assert_eq!(error_workspace_root, &workspace_root);
         }
     }
 
@@ -1421,14 +1446,19 @@ mod tests {
             path,
         )
         .expect_err("the current directory is not accessible");
-        assert_eq!(error.to_string(), "could not access current dir");
-        let io_error = error
-            .downcast_ref::<io::Error>()
-            .expect("the I/O error is kept as the cause");
+        let InitError::CurrentDirAccessFailed { error: io_error } = &error else {
+            panic!("expected CurrentDirAccessFailed, found {error:?}");
+        };
         assert_eq!(io_error.kind(), io::ErrorKind::PermissionDenied);
 
         let error = resolve_against_current_dir(Ok(non_utf8_path()), path)
             .expect_err("the current directory is not UTF-8");
-        assert_eq!(error.to_string(), "current dir is invalid UTF-8");
+        let InitError::CurrentDirNotUtf8 {
+            current_dir: error_current_dir,
+        } = &error
+        else {
+            panic!("expected CurrentDirNotUtf8, found {error:?}");
+        };
+        assert_eq!(error_current_dir, &non_utf8_path());
     }
 }

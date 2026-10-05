@@ -1,0 +1,1 @@
+path 'crates/..' doesn't end in a directory name, so cargo hakari can't derive a package name from it

@@ -3,7 +3,10 @@
 
 use crate::output::{OutputContext, Styles};
 use camino::Utf8PathBuf;
-use hakari::{cli_ops::ApplyError, summaries::HakariConfig};
+use hakari::{
+    cli_ops::{self, ApplyError},
+    summaries::HakariConfig,
+};
 use indenter::{Format, indented};
 use log::error;
 use owo_colors::OwoColorize;
@@ -11,6 +14,7 @@ use std::{
     error::Error,
     fmt::{self, Write as _},
     io,
+    path::PathBuf,
     process::ExitStatus,
     str::FromStr,
 };
@@ -93,6 +97,9 @@ pub enum ExpectedError {
         #[source]
         error: guppy::Error,
     },
+    /// `cargo hakari init` failed.
+    #[error(transparent)]
+    InitFailed { error: InitError },
     #[error(
         "failed to remove the dependency on {hakari_package_name} from \
          {package_name} before publishing"
@@ -146,6 +153,7 @@ impl ExpectedError {
             | Self::LockfileUpdateFailed { .. }
             | Self::WorkspacePackageResolveFailed { .. }
             | Self::PackageGraphBuildFailed { .. }
+            | Self::InitFailed { .. }
             | Self::PublishDepRemoveFailed { .. }
             | Self::PublishDepRestoreFailed { .. }
             | Self::PublishExecFailed { .. }
@@ -163,6 +171,46 @@ impl ExpectedError {
             styles,
         }
     }
+}
+
+/// The reason why `cargo hakari init` failed.
+///
+/// Part of [`ExpectedError::InitFailed`]. Not to be confused with
+/// [`hakari::cli_ops::InitError`].
+#[derive(Debug, Error)]
+pub enum InitError {
+    /// No package name was provided and the path doesn't end in a filename.
+    #[error(
+        "path '{crate_path}' doesn't end in a directory name, so cargo hakari \
+         can't derive a package name from it"
+    )]
+    PathMissingFileName {
+        /// The path as provided on the command line.
+        crate_path: Utf8PathBuf,
+    },
+    /// Accessing the current directory failed.
+    #[error("failed to access the current directory")]
+    CurrentDirAccessFailed {
+        /// The underlying error.s
+        #[source]
+        error: io::Error,
+    },
+    /// The current directory was invalid UTF-8.
+    #[error("current directory {} is not valid UTF-8", .current_dir.display())]
+    CurrentDirNotUtf8 {
+        /// The current directory path.
+        current_dir: PathBuf,
+    },
+    /// The provided path is outside the workspace.
+    #[error("path {crate_path} is not inside workspace root {workspace_root}")]
+    PathOutsideWorkspace {
+        /// The absolute version of the path as provided on the command line.
+        crate_path: Utf8PathBuf,
+        workspace_root: Utf8PathBuf,
+    },
+    /// Hakari failed to initialize a workspace-hack crate.
+    #[error(transparent)]
+    PreconditionFailed { error: cli_ops::InitError },
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -255,6 +303,9 @@ impl fmt::Display for ErrorReport<'_> {
             ExpectedError::PackageGraphBuildFailed { error: _ } => {
                 f.write_str("failed to build package graph")?;
             }
+            ExpectedError::InitFailed { error } => {
+                write_init_error(f, error)?;
+            }
             ExpectedError::PublishDepRemoveFailed {
                 package_name,
                 hakari_package_name,
@@ -326,6 +377,41 @@ impl fmt::Display for ErrorReport<'_> {
     }
 }
 
+fn write_init_error(f: &mut fmt::Formatter<'_>, error: &InitError) -> fmt::Result {
+    match error {
+        InitError::PathMissingFileName { crate_path } => {
+            write!(
+                f,
+                "path '{crate_path}' doesn't end in a directory name, so \
+                 cargo hakari can't derive a package name from it",
+            )
+        }
+        InitError::CurrentDirAccessFailed { error: _ } => {
+            f.write_str("failed to access the current directory")
+        }
+        InitError::CurrentDirNotUtf8 { current_dir } => {
+            write!(
+                f,
+                "current directory {} is invalid UTF-8",
+                current_dir.display(),
+            )
+        }
+        InitError::PathOutsideWorkspace {
+            crate_path,
+            workspace_root,
+        } => {
+            write!(
+                f,
+                "path {crate_path} is not inside workspace root \
+                 {workspace_root}",
+            )
+        }
+        InitError::PreconditionFailed { error } => {
+            write!(f, "{error}")
+        }
+    }
+}
+
 fn write_hint(f: &mut fmt::Formatter<'_>, hint: impl fmt::Display) -> fmt::Result {
     write!(f, "\n(hint: {hint})")
 }
@@ -367,7 +453,7 @@ fn join_paths(paths: &[Utf8PathBuf]) -> String {
 mod tests {
     use super::*;
     #[cfg(unix)]
-    use crate::test_helpers::{exit_status, reverse_dep_builder};
+    use crate::test_helpers::{exit_status, non_utf8_path, reverse_dep_builder};
     use snapbox::{Data, assert_data_eq, file};
 
     #[derive(Debug, Error)]
@@ -530,6 +616,54 @@ mod tests {
                 exit_code: 1,
             },
             Example {
+                error: ExpectedError::InitFailed {
+                    error: InitError::PathMissingFileName {
+                        crate_path: "crates/..".into(),
+                    },
+                },
+                report: file!["snapshots/errors/init_path_missing_file_name.txt"],
+                one_line: "path 'crates/..' doesn't end in a directory name, so cargo hakari \
+                           can't derive a package name from it",
+                exit_code: 1,
+            },
+            Example {
+                error: ExpectedError::InitFailed {
+                    error: InitError::CurrentDirAccessFailed {
+                        error: io::Error::new(io::ErrorKind::NotFound, "directory not found"),
+                    },
+                },
+                report: file!["snapshots/errors/current_dir_access_failed.txt"],
+                one_line: "failed to access the current directory",
+                exit_code: 1,
+            },
+            Example {
+                error: ExpectedError::InitFailed {
+                    error: InitError::PathOutsideWorkspace {
+                        crate_path: "/elsewhere/workspace-hack".into(),
+                        workspace_root: "/workspace".into(),
+                    },
+                },
+                report: file!["snapshots/errors/init_path_outside_workspace.txt"],
+                one_line: "path /elsewhere/workspace-hack is not inside workspace root /workspace",
+                exit_code: 1,
+            },
+            Example {
+                error: ExpectedError::InitFailed {
+                    error: InitError::PreconditionFailed {
+                        error: cli_ops::InitError::Io {
+                            path: "/workspace/workspace-hack".into(),
+                            error: io::Error::new(
+                                io::ErrorKind::PermissionDenied,
+                                "permission denied",
+                            ),
+                        },
+                    },
+                },
+                report: file!["snapshots/errors/init_precondition_failed.txt"],
+                one_line: "IO error while accessing /workspace/workspace-hack",
+                exit_code: 1,
+            },
+            Example {
                 error: ExpectedError::PublishExecFailed {
                     package_name: "hrd-member-normal".to_owned(),
                     command: "/opt/rust/bin/cargo publish --dry-run --allow-dirty".to_owned(),
@@ -554,6 +688,16 @@ mod tests {
                 report: file!["snapshots/errors/lockfile_update_failed.txt"],
                 one_line: "failed to update Cargo.lock: `/opt/rust/bin/cargo tree` failed with \
                            exit status: 101",
+                exit_code: 1,
+            },
+            Example {
+                error: ExpectedError::InitFailed {
+                    error: InitError::CurrentDirNotUtf8 {
+                        current_dir: non_utf8_path(),
+                    },
+                },
+                report: file!["snapshots/errors/current_dir_not_utf8.txt"],
+                one_line: "current directory /workspace/\u{fffd} is not valid UTF-8",
                 exit_code: 1,
             },
             Example {
