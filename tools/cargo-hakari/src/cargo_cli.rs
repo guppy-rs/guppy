@@ -83,23 +83,11 @@ impl<'a> CargoCli<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::output::{Color, Styles};
-    use std::sync::Arc;
+    use crate::test_helpers::output_context;
     #[cfg(unix)]
-    use std::{
-        fs,
-        os::unix::{ffi::OsStringExt, fs::PermissionsExt},
-        path::Path,
-    };
-
-    fn output_context() -> OutputContext {
-        OutputContext {
-            quiet: false,
-            verbose: false,
-            color: Color::Never,
-            styles: Arc::new(Styles::default()),
-        }
-    }
+    use crate::test_helpers::write_executable_script;
+    #[cfg(unix)]
+    use std::{fs, os::unix::ffi::OsStringExt, path::Path};
 
     #[test]
     fn display_command_shows_program() {
@@ -140,10 +128,7 @@ mod tests {
 
     #[cfg(unix)]
     fn write_fake_cargo(path: &Path, label: &str) {
-        fs::write(path, format!("#!/bin/sh\necho \"{label}: $*\"\n"))
-            .expect("wrote fake cargo script");
-        fs::set_permissions(path, fs::Permissions::from_mode(0o755))
-            .expect("made fake cargo script executable");
+        write_executable_script(path, &format!("#!/bin/sh\necho \"{label}: $*\"\n"));
     }
 
     // Unix only because Windows PATH lookup needs a real .exe.

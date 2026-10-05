@@ -99,7 +99,7 @@ pub(crate) fn make_builder_and_output(
     builder_and_output_from_config(package_graph, &config_path, &contents)
 }
 
-fn builder_and_output_from_config<'g>(
+pub(crate) fn builder_and_output_from_config<'g>(
     package_graph: &'g PackageGraph,
     config_path: &Utf8Path,
     contents: &str,
@@ -118,6 +118,7 @@ fn builder_and_output_from_config<'g>(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::test_helpers::reverse_dep_builder;
     use fixtures::json::{JsonFixture, METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK};
     use guppy::PackageId;
 
@@ -178,10 +179,7 @@ mod tests {
 
     #[test]
     fn hakari_package_accessors_do_not_panic() {
-        let (builder, _) = resolve_reverse_dep_config(
-            "hakari-package = \"hrd-workspace-hack\"\nresolver = \"2\"\n",
-        )
-        .expect("config with hakari-package resolves");
+        let builder = reverse_dep_builder();
         let workspace = builder.graph().resolve_workspace();
 
         builder.manage_dep_ops(&workspace);
