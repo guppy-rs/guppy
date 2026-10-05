@@ -1,0 +1,1 @@
+path /elsewhere/workspace-hack is not inside workspace root /workspace
