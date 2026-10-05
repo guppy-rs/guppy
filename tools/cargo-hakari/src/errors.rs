@@ -3,7 +3,7 @@
 
 use crate::output::{OutputContext, Styles};
 use camino::Utf8PathBuf;
-use hakari::summaries::HakariConfig;
+use hakari::{cli_ops::ApplyError, summaries::HakariConfig};
 use indenter::{Format, indented};
 use log::error;
 use owo_colors::OwoColorize;
@@ -76,6 +76,54 @@ pub enum ExpectedError {
         /// The exit status (this is never a success).
         exit_status: ExitStatus,
     },
+    /// A package name given on the command line could not be resolved to a
+    /// workspace member.
+    ///
+    /// Transparent because guppy's message already names the package.
+    #[error(transparent)]
+    WorkspacePackageResolveFailed {
+        /// The underlying error.
+        error: guppy::Error,
+    },
+    #[error(
+        "failed to remove the dependency on {hakari_package_name} from \
+         {package_name} before publishing"
+    )]
+    PublishDepRemoveFailed {
+        /// The package being published and whose manifest was being edited.
+        package_name: String,
+        hakari_package_name: String,
+        #[source]
+        error: ApplyError,
+    },
+    #[error(
+        "failed to re-add the dependency on {hakari_package_name} to \
+         {package_name} after removing it for publishing"
+    )]
+    PublishDepRestoreFailed {
+        /// The package being published and whose manifest was being edited.
+        package_name: String,
+        hakari_package_name: String,
+        #[source]
+        error: ApplyError,
+    },
+    #[error("failed to publish {package_name}: could not run `{command}`")]
+    PublishExecFailed {
+        package_name: String,
+        /// The full command line (see `CargoCli::display_command`).
+        command: String,
+        /// The underlying error.
+        #[source]
+        error: io::Error,
+    },
+    #[error("failed to publish {package_name}: `{command}` failed with {exit_status}")]
+    PublishFailed {
+        package_name: String,
+        /// The full command line (see `CargoCli::display_command`).
+        command: String,
+        /// The exit status (this is never a success).
+        exit_status: ExitStatus,
+    },
 }
 
 impl ExpectedError {
@@ -87,7 +135,12 @@ impl ExpectedError {
             | Self::ConfigResolveFailed { .. }
             | Self::HakariPackageNotSet { .. }
             | Self::LockfileUpdateExecFailed { .. }
-            | Self::LockfileUpdateFailed { .. } => ERROR_EXIT_CODE,
+            | Self::LockfileUpdateFailed { .. }
+            | Self::WorkspacePackageResolveFailed { .. }
+            | Self::PublishDepRemoveFailed { .. }
+            | Self::PublishDepRestoreFailed { .. }
+            | Self::PublishExecFailed { .. }
+            | Self::PublishFailed { .. } => ERROR_EXIT_CODE,
         }
     }
 
@@ -187,6 +240,74 @@ impl fmt::Display for ErrorReport<'_> {
                     command.style(styles.command),
                 )?;
             }
+            ExpectedError::WorkspacePackageResolveFailed { error } => {
+                write!(f, "{error}")?;
+            }
+            ExpectedError::PublishDepRemoveFailed {
+                package_name,
+                hakari_package_name,
+                error: _,
+            } => {
+                write!(
+                    f,
+                    "failed to remove the dependency on {} from {} before \
+                     publishing",
+                    hakari_package_name.style(styles.package_name),
+                    package_name.style(styles.package_name),
+                )?;
+            }
+            ExpectedError::PublishDepRestoreFailed {
+                package_name,
+                hakari_package_name,
+                error: _,
+            } => {
+                write!(
+                    f,
+                    "failed to re-add the dependency on {} to {} after \
+                     removing it for publishing",
+                    hakari_package_name.style(styles.package_name),
+                    package_name.style(styles.package_name),
+                )?;
+
+                // manage-deps only adds the dependency to crates the config
+                // doesn't exclude, while publish removes and re-adds it for any
+                // that has it -- hence the "unless the Hakari config excludes
+                // ...".
+                write_hint(
+                    f,
+                    format_args!(
+                        "after fixing the cause, run \
+                         `cargo hakari manage-deps -p {}` to add it back, \
+                         unless the Hakari config excludes {}",
+                        package_name.style(styles.package_name),
+                        package_name.style(styles.package_name),
+                    ),
+                )?;
+            }
+            ExpectedError::PublishExecFailed {
+                package_name,
+                command,
+                error: _,
+            } => {
+                write!(
+                    f,
+                    "failed to publish {}: could not run `{}`",
+                    package_name.style(styles.package_name),
+                    command.style(styles.command),
+                )?;
+            }
+            ExpectedError::PublishFailed {
+                package_name,
+                command,
+                exit_status,
+            } => {
+                write!(
+                    f,
+                    "failed to publish {}: `{}` failed with {exit_status}",
+                    package_name.style(styles.package_name),
+                    command.style(styles.command),
+                )?;
+            }
         }
 
         write_causes(f, self.error.source())
@@ -233,7 +354,7 @@ fn join_paths(paths: &[Utf8PathBuf]) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_helpers::exit_status;
+    use crate::test_helpers::{exit_status, reverse_dep_builder};
     use snapbox::{Data, assert_data_eq, file};
 
     #[derive(Debug, Error)]
@@ -286,6 +407,40 @@ mod tests {
     fn lockfile_update_failed() -> ExpectedError {
         ExpectedError::LockfileUpdateFailed {
             command: "/opt/rust/bin/cargo tree".to_owned(),
+            exit_status: exit_status(101),
+        }
+    }
+
+    /// Synthesizes an [`ApplyError`] for use in tests.
+    fn apply_error() -> ApplyError {
+        let builder = reverse_dep_builder();
+        let workspace = builder.graph().resolve_workspace();
+        builder
+            .remove_dep_ops(&workspace, false)
+            .apply()
+            .expect_err("the fixture's workspace root doesn't exist")
+    }
+
+    fn publish_dep_remove_failed() -> ExpectedError {
+        ExpectedError::PublishDepRemoveFailed {
+            package_name: "hrd-member-normal".to_owned(),
+            hakari_package_name: "hrd-workspace-hack".to_owned(),
+            error: apply_error(),
+        }
+    }
+
+    fn publish_dep_restore_failed() -> ExpectedError {
+        ExpectedError::PublishDepRestoreFailed {
+            package_name: "hrd-member-normal".to_owned(),
+            hakari_package_name: "hrd-workspace-hack".to_owned(),
+            error: apply_error(),
+        }
+    }
+
+    fn publish_failed() -> ExpectedError {
+        ExpectedError::PublishFailed {
+            package_name: "hrd-member-normal".to_owned(),
+            command: "/opt/rust/bin/cargo publish --dry-run --allow-dirty".to_owned(),
             exit_status: exit_status(101),
         }
     }
@@ -389,6 +544,105 @@ mod tests {
     #[test]
     fn lockfile_update_failed_exit_code() {
         assert_eq!(lockfile_update_failed().process_exit_code(), 1);
+    }
+
+    #[test]
+    fn report_workspace_package_resolve_failed() {
+        let error = ExpectedError::WorkspacePackageResolveFailed {
+            error: guppy::Error::UnknownWorkspaceName("nope".to_owned()),
+        };
+        assert_report_snapshot(
+            &error,
+            file!["snapshots/errors/workspace_package_resolve_failed.txt"],
+        );
+        assert_eq!(error.to_string(), "unknown workspace package name: nope");
+        assert_eq!(error.process_exit_code(), 1);
+    }
+
+    // (This is Unix-only because the cause is an OS error, which
+    // Windows would word differently.)
+    #[cfg(unix)]
+    #[test]
+    fn report_publish_dep_remove_failed() {
+        assert_report_snapshot(
+            &publish_dep_remove_failed(),
+            file!["snapshots/errors/publish_dep_remove_failed.txt"],
+        );
+    }
+
+    #[test]
+    fn publish_dep_remove_failed_one_line_and_exit_code() {
+        let error = publish_dep_remove_failed();
+        assert_eq!(
+            error.to_string(),
+            "failed to remove the dependency on hrd-workspace-hack from \
+             hrd-member-normal before publishing",
+        );
+        assert_eq!(error.process_exit_code(), 1);
+    }
+
+    // (This is Unix-only because the cause is an OS error, which
+    // Windows would word differently.)
+    #[cfg(unix)]
+    #[test]
+    fn report_publish_dep_restore_failed() {
+        assert_report_snapshot(
+            &publish_dep_restore_failed(),
+            file!["snapshots/errors/publish_dep_restore_failed.txt"],
+        );
+    }
+
+    #[test]
+    fn publish_dep_restore_failed_one_line_and_exit_code() {
+        let error = publish_dep_restore_failed();
+        assert_eq!(
+            error.to_string(),
+            "failed to re-add the dependency on hrd-workspace-hack to \
+             hrd-member-normal after removing it for publishing",
+        );
+        assert_eq!(error.process_exit_code(), 1);
+    }
+
+    #[test]
+    fn report_publish_exec_failed() {
+        let error = ExpectedError::PublishExecFailed {
+            package_name: "hrd-member-normal".to_owned(),
+            command: "/opt/rust/bin/cargo publish --dry-run --allow-dirty".to_owned(),
+            error: io::Error::new(io::ErrorKind::NotFound, "program not found"),
+        };
+        assert_report_snapshot(&error, file!["snapshots/errors/publish_exec_failed.txt"]);
+        assert_eq!(
+            error.to_string(),
+            "failed to publish hrd-member-normal: could not run \
+             `/opt/rust/bin/cargo publish --dry-run --allow-dirty`",
+        );
+        assert_eq!(error.process_exit_code(), 1);
+    }
+
+    // (This is Unix-only because the exit status is reported slightly
+    // differently on Windows.)
+    #[cfg(unix)]
+    #[test]
+    fn report_publish_failed() {
+        assert_report_snapshot(
+            &publish_failed(),
+            file!["snapshots/errors/publish_failed.txt"],
+        );
+    }
+
+    #[test]
+    fn publish_failed_one_line_and_exit_code() {
+        let error = publish_failed();
+        assert_eq!(
+            error.to_string(),
+            format!(
+                "failed to publish hrd-member-normal: \
+                 `/opt/rust/bin/cargo publish --dry-run --allow-dirty` failed \
+                 with {}",
+                exit_status(101),
+            ),
+        );
+        assert_eq!(error.process_exit_code(), 1);
     }
 
     #[test]
