@@ -25,7 +25,7 @@ use hakari::{
 use iddqd::{IdOrdItem, IdOrdMap, id_upcast};
 use log::{error, info};
 use owo_colors::OwoColorize;
-use std::{collections::BTreeMap, convert::TryFrom, fmt};
+use std::{collections::BTreeMap, convert::TryFrom, fmt, io, path::PathBuf};
 
 /// The comment to add to the top of the config file.
 pub static CONFIG_COMMENT: &str = r#"# This file contains settings for `cargo hakari`.
@@ -122,13 +122,7 @@ impl Command {
                 dry_run,
                 yes,
             } => {
-                let package_name = match package_name.as_deref() {
-                    Some(name) => name,
-                    None => match path.file_name() {
-                        Some(name) => name,
-                        None => bail!("invalid path {}", path),
-                    },
-                };
+                let package_name = init_package_name(package_name.as_deref(), &path)?;
 
                 let workspace_path =
                     cwd_rel_to_workspace_rel(&path, package_graph.workspace().root())?;
@@ -829,6 +823,19 @@ impl ExcludedBy {
     }
 }
 
+fn init_package_name<'a>(
+    package_name: Option<&'a str>,
+    path: &'a Utf8Path,
+) -> eyre::Result<&'a str> {
+    match package_name {
+        Some(name) => Ok(name),
+        None => match path.file_name() {
+            Some(name) => Ok(name),
+            None => bail!("invalid path {}", path),
+        },
+    }
+}
+
 fn cwd_rel_to_workspace_rel(
     path: &Utf8Path,
     workspace_root: &Utf8Path,
@@ -836,16 +843,25 @@ fn cwd_rel_to_workspace_rel(
     let abs_path = if path.is_absolute() {
         path.to_owned()
     } else {
-        let cwd = std::env::current_dir().with_context(|| "could not access current dir")?;
-        let mut cwd = Utf8PathBuf::try_from(cwd).with_context(|| "current dir is invalid UTF-8")?;
-        cwd.push(path);
-        cwd
+        resolve_against_current_dir(std::env::current_dir(), path)?
     };
 
     abs_path
         .strip_prefix(workspace_root)
         .map(|p| p.to_owned())
         .with_context(|| format!("path {abs_path} is not inside workspace root {workspace_root}"))
+}
+
+/// Resolves a path against the current directory.
+fn resolve_against_current_dir(
+    current_dir: io::Result<PathBuf>,
+    path: &Utf8Path,
+) -> eyre::Result<Utf8PathBuf> {
+    let current_dir = current_dir.with_context(|| "could not access current dir")?;
+    let mut abs_path =
+        Utf8PathBuf::try_from(current_dir).with_context(|| "current dir is invalid UTF-8")?;
+    abs_path.push(path);
+    Ok(abs_path)
 }
 
 fn write_to_cargo_toml(
@@ -928,6 +944,7 @@ fn apply_on_dialog(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::test_helpers::non_utf8_path;
     use fixtures::json::{
         JsonFixture, METADATA_HAKARI_REVERSE_DEP_LEAF, METADATA_HAKARI_REVERSE_DEP_MEMBER_FEATURES,
         METADATA_HAKARI_REVERSE_DEP_MEMBER_NORMAL, METADATA_HAKARI_REVERSE_DEP_NORMAL_ON_HACK,
@@ -1318,5 +1335,100 @@ mod tests {
             };
             assert_eq!(name, unknown);
         }
+    }
+
+    fn current_dir() -> Utf8PathBuf {
+        let current_dir = std::env::current_dir().expect("current directory is accessible");
+        Utf8PathBuf::try_from(current_dir).expect("current directory is UTF-8")
+    }
+
+    #[test]
+    fn init_package_name_explicit_or_from_path() {
+        // With an explicit name the path is not consulted, so it need not end
+        // in a name.
+        let cases = [
+            (Some("explicit"), "crates/from-path", "explicit"),
+            (Some("explicit"), "..", "explicit"),
+            (None, "from-path", "from-path"),
+            (None, "crates/from-path", "from-path"),
+            (None, "crates/from-path/", "from-path"),
+        ];
+        for (package_name, path, expected) in cases {
+            assert_eq!(
+                init_package_name(package_name, Utf8Path::new(path))
+                    .expect("a name is given, or the path ends in a directory name"),
+                expected,
+                "package name for {package_name:?} and {path:?}",
+            );
+        }
+
+        for path in ["", "..", "crates/..", "/"] {
+            let error = init_package_name(None, Utf8Path::new(path))
+                .expect_err("the path doesn't end in a directory name");
+            assert_eq!(error.to_string(), format!("invalid path {path}"));
+        }
+    }
+
+    #[test]
+    fn cwd_rel_to_workspace_rel_inside_and_outside() {
+        let current_dir = current_dir();
+        let workspace_root = current_dir.join("workspace");
+        let relative = Utf8Path::new("crates").join("workspace-hack");
+
+        // Test that relative paths are resolved against the current directory.
+        let inside = [
+            // (path, workspace root, expected workspace path)
+            (
+                workspace_root.join(&relative),
+                &workspace_root,
+                relative.clone(),
+            ),
+            (workspace_root.clone(), &workspace_root, Utf8PathBuf::new()),
+            (relative.clone(), &current_dir, relative.clone()),
+        ];
+        for (path, root, expected) in inside {
+            assert_eq!(
+                cwd_rel_to_workspace_rel(&path, root)
+                    .expect("the path is inside the workspace root"),
+                expected,
+                "workspace path of {path} in {root}",
+            );
+        }
+
+        let sibling = current_dir.join("workspace-other").join("workspace-hack");
+        let outside = [
+            // (path, absolute path for the error)
+            (sibling.clone(), sibling),
+            (relative.clone(), current_dir.join(&relative)),
+        ];
+        for (path, abs_path) in outside {
+            let error = cwd_rel_to_workspace_rel(&path, &workspace_root)
+                .expect_err("the path is outside the workspace root");
+            assert_eq!(
+                error.to_string(),
+                format!("path {abs_path} is not inside workspace root {workspace_root}"),
+                "the path in the error is absolute",
+            );
+        }
+    }
+
+    #[test]
+    fn resolve_against_current_dir_failures() {
+        let path = Utf8Path::new("workspace-hack");
+
+        let error = resolve_against_current_dir(
+            Err(io::Error::from(io::ErrorKind::PermissionDenied)),
+            path,
+        )
+        .expect_err("the current directory is not accessible");
+        assert_eq!(error.to_string(), "could not access current dir");
+        let io_error = error
+            .downcast_ref::<io::Error>()
+            .expect("the I/O error is kept as the cause");
+        assert_eq!(io_error.kind(), io::ErrorKind::PermissionDenied);
+
+        let error = resolve_against_current_dir(Ok(non_utf8_path()), path)
+            .expect_err("the current directory is not UTF-8");
+        assert_eq!(error.to_string(), "current dir is invalid UTF-8");
     }
 }
