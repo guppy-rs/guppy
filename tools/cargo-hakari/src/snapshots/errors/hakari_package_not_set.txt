@@ -1,0 +1,3 @@
+`hakari-package` is not set in /workspace/.config/hakari.toml, so cargo hakari can't tell which crate is the workspace-hack
+(hint: set `hakari-package` to that crate's name, for example `hakari-package = "workspace-hack"`)
+(hint: if that crate doesn't exist yet, run `cargo hakari init --skip-config <path>` first)

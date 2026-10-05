@@ -1,0 +1,8 @@
+failed to deserialize Hakari config at /workspace/.config/hakari.toml
+  caused by:
+  - TOML parse error at line 2, column 14
+      |
+    2 | resolver = "2
+      |              ^
+    invalid basic string, expected `"`
+

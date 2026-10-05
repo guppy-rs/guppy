@@ -1,9 +1,11 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
-use crate::helpers::read_config_contents;
+use crate::{
+    errors::{ExpectedError, Result},
+    helpers::read_config_contents,
+};
 use camino::Utf8Path;
-use color_eyre::eyre::{Result, WrapErr, bail};
 use guppy::graph::{PackageGraph, PackageMetadata, PackageSet};
 use hakari::{
     CargoTomlError, Hakari, HakariBuilder, HakariCargoToml, HakariOutputOptions,
@@ -20,17 +22,21 @@ pub(crate) struct BuilderWithHakariPackage<'g> {
 }
 
 impl<'g> BuilderWithHakariPackage<'g> {
-    fn from_summary(graph: &'g PackageGraph, summary: &HakariBuilderSummary) -> Result<Self> {
-        let builder = summary.to_hakari_builder(graph)?;
+    fn from_summary(
+        graph: &'g PackageGraph,
+        summary: &HakariBuilderSummary,
+        config_path: &Utf8Path,
+    ) -> Result<Self> {
+        let builder = summary.to_hakari_builder(graph).map_err(|error| {
+            ExpectedError::ConfigResolveFailed {
+                config_path: config_path.to_owned(),
+                error: Box::new(error),
+            }
+        })?;
         let Some(&hakari_package) = builder.hakari_package() else {
-            bail!(
-                "`hakari-package` is not set, so cargo hakari can't tell which \
-                 crate is the workspace-hack\n\
-                 (hint: set `hakari-package` to that crate's name, for example \
-                 `hakari-package = \"workspace-hack\"`)\n\
-                 (hint: if that crate doesn't exist yet, run \
-                 `cargo hakari init --skip-config <path>` first)"
-            );
+            return Err(ExpectedError::HakariPackageNotSet {
+                config_path: config_path.to_owned(),
+            });
         };
         Ok(Self {
             builder,
@@ -93,8 +99,7 @@ pub(crate) fn make_builder_and_output(
     let (config_path, contents) = read_config_contents(
         package_graph.workspace().root(),
         [DEFAULT_CONFIG_PATH, FALLBACK_CONFIG_PATH],
-    )
-    .wrap_err("error reading Hakari config")?;
+    )?;
 
     builder_and_output_from_config(package_graph, &config_path, &contents)
 }
@@ -104,12 +109,16 @@ pub(crate) fn builder_and_output_from_config<'g>(
     config_path: &Utf8Path,
     contents: &str,
 ) -> Result<(BuilderWithHakariPackage<'g>, HakariOutputOptions)> {
-    let config: HakariConfig = contents
-        .parse()
-        .wrap_err_with(|| format!("error deserializing Hakari config at {config_path}"))?;
+    let config: HakariConfig =
+        contents
+            .parse()
+            .map_err(|error| ExpectedError::ConfigDeserializeFailed {
+                config_path: config_path.to_owned(),
+                error,
+            })?;
 
-    let builder = BuilderWithHakariPackage::from_summary(package_graph, &config.builder)
-        .wrap_err_with(|| format!("error resolving Hakari config at {config_path}"))?;
+    let builder =
+        BuilderWithHakariPackage::from_summary(package_graph, &config.builder, config_path)?;
     let hakari_output = config.output.to_options();
 
     Ok((builder, hakari_output))
@@ -122,47 +131,67 @@ mod tests {
     use fixtures::json::{JsonFixture, METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK};
     use guppy::PackageId;
 
+    const CONFIG_PATH: &str = "/workspace/custom/hakari.toml";
+
     fn resolve_reverse_dep_config(
         contents: &str,
     ) -> Result<(BuilderWithHakariPackage<'static>, HakariOutputOptions)> {
         builder_and_output_from_config(
             JsonFixture::metadata_hakari_reverse_dep().graph(),
-            Utf8Path::new(".config/hakari.toml"),
+            Utf8Path::new(CONFIG_PATH),
             contents,
         )
     }
 
     #[test]
     fn config_without_hakari_package_is_rejected() {
-        let err = resolve_reverse_dep_config("resolver = \"2\"\n")
+        let error = resolve_reverse_dep_config("resolver = \"2\"\n")
             .expect_err("config without hakari-package is rejected");
-        let messages: Vec<String> = err.chain().map(|cause| cause.to_string()).collect();
-        assert_eq!(
-            messages,
-            [
-                "error resolving Hakari config at .config/hakari.toml",
-                "`hakari-package` is not set, so cargo hakari can't tell which \
-                 crate is the workspace-hack\n\
-                 (hint: set `hakari-package` to that crate's name, for example \
-                 `hakari-package = \"workspace-hack\"`)\n\
-                 (hint: if that crate doesn't exist yet, run \
-                 `cargo hakari init --skip-config <path>` first)",
-            ],
-        );
+        let ExpectedError::HakariPackageNotSet { config_path } = &error else {
+            panic!("expected HakariPackageNotSet, found {error:?}");
+        };
+        assert_eq!(config_path, Utf8Path::new(CONFIG_PATH));
     }
 
     #[test]
     fn config_with_unknown_hakari_package_is_rejected() {
-        let err = resolve_reverse_dep_config("hakari-package = \"nope\"\nresolver = \"2\"\n")
+        let error = resolve_reverse_dep_config("hakari-package = \"nope\"\nresolver = \"2\"\n")
             .expect_err("config with unknown hakari-package is rejected");
-        let messages: Vec<String> = err.chain().map(|cause| cause.to_string()).collect();
-        assert_eq!(
-            messages,
-            [
-                "error resolving Hakari config at .config/hakari.toml",
-                "unknown workspace package name: nope",
-            ],
-        );
+        let ExpectedError::ConfigResolveFailed {
+            config_path,
+            error: guppy_error,
+        } = &error
+        else {
+            panic!("expected ConfigResolveFailed, found {error:?}");
+        };
+        assert_eq!(config_path, Utf8Path::new(CONFIG_PATH));
+        let guppy::Error::UnknownWorkspaceName(name) = guppy_error.as_ref() else {
+            panic!("expected UnknownWorkspaceName, found {guppy_error:?}");
+        };
+        assert_eq!(name, "nope");
+    }
+
+    #[test]
+    fn config_that_does_not_deserialize_is_rejected() {
+        for contents in [
+            // Not valid TOML.
+            "resolver = \n",
+            // Valid TOML, but resolver has the wrong type.
+            "resolver = 2\n",
+            // Valid TOML, but the required resolver is missing.
+            "",
+        ] {
+            let error = resolve_reverse_dep_config(contents)
+                .expect_err("config that doesn't deserialize is rejected");
+            let ExpectedError::ConfigDeserializeFailed {
+                config_path,
+                error: _,
+            } = &error
+            else {
+                panic!("expected ConfigDeserializeFailed for {contents:?}, found {error:?}");
+            };
+            assert_eq!(config_path, Utf8Path::new(CONFIG_PATH));
+        }
     }
 
     #[test]
