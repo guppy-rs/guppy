@@ -101,6 +101,41 @@ pub enum ExpectedError {
     /// `cargo hakari init` failed.
     #[error(transparent)]
     InitFailed { error: InitError },
+    /// Applying changes to the workspace during `cargo hakari init` failed.
+    ///
+    /// The steps are not rolled back, so the workspace might be in an
+    /// intermediate state.
+    #[error("failed to initialize workspace-hack crate {package_name}")]
+    InitApplyFailed {
+        package_name: String,
+        #[source]
+        error: ApplyError,
+    },
+    /// Applying changes to the workspace during `cargo hakari manage-deps` failed.
+    ///
+    /// The steps are not rolled back.
+    #[error("failed to update dependencies on {hakari_package_name} in workspace crates")]
+    ManageDepsApplyFailed {
+        hakari_package_name: String,
+        #[source]
+        error: ApplyError,
+    },
+    /// Applying changes to the workspace during `cargo hakari remove-deps` failed.
+    ///
+    /// The steps are not rolled back.
+    #[error("failed to remove dependencies on {hakari_package_name} from workspace crates")]
+    RemoveDepsApplyFailed {
+        hakari_package_name: String,
+        #[source]
+        error: ApplyError,
+    },
+    /// The "proceed?" prompt could not be shown or answered, for example
+    /// because stderr is not a terminal.
+    #[error("failed to read confirmation")]
+    ConfirmReadFailed {
+        #[source]
+        error: dialoguer::Error,
+    },
     /// `cargo hakari generate` or `cargo hakari disable` failed to update the
     /// workspace-hack's `Cargo.toml`.
     #[error(transparent)]
@@ -159,6 +194,10 @@ impl ExpectedError {
             | Self::WorkspacePackageResolveFailed { .. }
             | Self::PackageGraphBuildFailed { .. }
             | Self::InitFailed { .. }
+            | Self::InitApplyFailed { .. }
+            | Self::ManageDepsApplyFailed { .. }
+            | Self::RemoveDepsApplyFailed { .. }
+            | Self::ConfirmReadFailed { .. }
             | Self::HakariCargoTomlUpdateFailed { .. }
             | Self::PublishDepRemoveFailed { .. }
             | Self::PublishDepRestoreFailed { .. }
@@ -339,6 +378,44 @@ impl fmt::Display for ErrorReport<'_> {
             }
             ExpectedError::InitFailed { error } => {
                 write_init_error(f, error)?;
+            }
+            ExpectedError::InitApplyFailed {
+                package_name,
+                error: _,
+            } => {
+                write!(
+                    f,
+                    "failed to initialize workspace-hack crate {}",
+                    package_name.style(styles.package_name),
+                )?;
+            }
+            ExpectedError::ManageDepsApplyFailed {
+                hakari_package_name,
+                error: _,
+            } => {
+                write!(
+                    f,
+                    "failed to update dependencies on {} in workspace crates",
+                    hakari_package_name.style(styles.package_name),
+                )?;
+            }
+            ExpectedError::RemoveDepsApplyFailed {
+                hakari_package_name,
+                error: _,
+            } => {
+                write!(
+                    f,
+                    "failed to remove dependencies on {} from workspace crates",
+                    hakari_package_name.style(styles.package_name),
+                )?;
+            }
+            ExpectedError::ConfirmReadFailed { error: _ } => {
+                f.write_str("failed to read confirmation")?;
+                write_hint(
+                    f,
+                    "pass `--yes` to proceed without confirmation, or \
+                     `--dry-run` to only print the operations",
+                )?;
             }
             ExpectedError::HakariCargoTomlUpdateFailed { error } => {
                 write_hakari_cargo_toml_update_error(f, error, styles)?;
@@ -741,6 +818,18 @@ mod tests {
                 exit_code: 1,
             },
             Example {
+                // Dialoguer returns this error when stderr is not a terminal.
+                error: ExpectedError::ConfirmReadFailed {
+                    error: dialoguer::Error::IO(io::Error::new(
+                        io::ErrorKind::NotConnected,
+                        "not a terminal",
+                    )),
+                },
+                report: file!["snapshots/errors/confirm_read_failed.txt"],
+                one_line: "failed to read confirmation",
+                exit_code: 1,
+            },
+            Example {
                 error: ExpectedError::HakariCargoTomlUpdateFailed {
                     error: HakariCargoTomlUpdateError::ContentsGenerate {
                         hakari_package_name: "my-workspace-hack".to_owned(),
@@ -820,6 +909,34 @@ mod tests {
                 },
                 report: file!["snapshots/errors/current_dir_not_utf8.txt"],
                 one_line: "current directory /workspace/\u{fffd} is not valid UTF-8",
+                exit_code: 1,
+            },
+            Example {
+                error: ExpectedError::InitApplyFailed {
+                    package_name: "my-workspace-hack".to_owned(),
+                    error: apply_error(),
+                },
+                report: file!["snapshots/errors/init_apply_failed.txt"],
+                one_line: "failed to initialize workspace-hack crate my-workspace-hack",
+                exit_code: 1,
+            },
+            Example {
+                error: ExpectedError::ManageDepsApplyFailed {
+                    hakari_package_name: "hrd-workspace-hack".to_owned(),
+                    error: apply_error(),
+                },
+                report: file!["snapshots/errors/manage_deps_apply_failed.txt"],
+                one_line: "failed to update dependencies on hrd-workspace-hack in workspace crates",
+                exit_code: 1,
+            },
+            Example {
+                error: ExpectedError::RemoveDepsApplyFailed {
+                    hakari_package_name: "hrd-workspace-hack".to_owned(),
+                    error: apply_error(),
+                },
+                report: file!["snapshots/errors/remove_deps_apply_failed.txt"],
+                one_line: "failed to remove dependencies on hrd-workspace-hack from \
+                           workspace crates",
                 exit_code: 1,
             },
             Example {

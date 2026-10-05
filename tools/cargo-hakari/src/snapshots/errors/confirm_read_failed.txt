@@ -1,0 +1,4 @@
+failed to read confirmation
+(hint: pass `--yes` to proceed without confirmation, or `--dry-run` to only print the operations)
+  caused by:
+  - IO error: not a terminal
