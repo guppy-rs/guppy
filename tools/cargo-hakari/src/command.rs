@@ -4,6 +4,7 @@
 use crate::{
     builder::{BuilderWithHakariPackage, make_builder_and_output},
     cargo_cli::cargo_program,
+    errors::{ExpectedError, Result},
     helpers::regenerate_lockfile,
     output::{OutputContext, OutputOpts, Styles},
     publish::publish_hakari,
@@ -111,7 +112,7 @@ impl Command {
         metadata_command.cargo_path(cargo_program());
         let package_graph = metadata_command
             .build_graph()
-            .context("building package graph failed")?;
+            .map_err(|error| ExpectedError::PackageGraphBuildFailed { error })?;
 
         match self {
             Command::Initialize {
@@ -426,7 +427,10 @@ impl CommandWithBuilder {
             } => {
                 let hakari = builder.compute();
                 let toml_name_map = hakari.toml_name_map();
-                let dep = match CrateLookup::lookup(&hakari, &toml_name_map, &crate_name)? {
+                let lookup = CrateLookup::lookup(&hakari, &toml_name_map, &crate_name).expect(
+                    "package IDs looked up are from the graph the Hakari was computed from",
+                );
+                let dep = match lookup {
                     CrateLookup::Found(entry) => entry,
                     CrateLookup::NotFound(reason) => {
                         error!(
@@ -472,9 +476,11 @@ struct PackageSelection {
 
 impl PackageSelection {
     /// Converts this selection into a `PackageSet`.
-    fn to_package_set<'g>(&self, graph: &'g PackageGraph) -> eyre::Result<PackageSet<'g>> {
+    fn to_package_set<'g>(&self, graph: &'g PackageGraph) -> Result<PackageSet<'g>> {
         if !self.packages.is_empty() {
-            Ok(graph.resolve_workspace_names(&self.packages)?)
+            graph
+                .resolve_workspace_names(&self.packages)
+                .map_err(|error| ExpectedError::WorkspacePackageResolveFailed { error })
         } else {
             Ok(graph.resolve_workspace())
         }
@@ -1276,5 +1282,41 @@ mod tests {
              (hint: check spelling, or regenerate my-workspace-hack with \
              `cargo hakari generate`)",
         );
+    }
+
+    #[test]
+    fn to_package_set_resolves_workspace_names() {
+        let graph = JsonFixture::metadata_hakari_reverse_dep().graph();
+        let to_package_set = |packages: &[&str]| {
+            let packages = packages.iter().map(|&name| name.to_owned()).collect();
+            PackageSelection { packages }.to_package_set(graph)
+        };
+
+        let package_set = to_package_set(&[]).expect("an empty selection is the whole workspace");
+        assert_eq!(package_set.len(), graph.workspace().member_count());
+
+        let package_set = to_package_set(&["hrd-member-normal"])
+            .expect("hrd-member-normal is a workspace member");
+        let package_ids: Vec<&PackageId> = package_set
+            .package_ids(guppy::graph::DependencyDirection::Forward)
+            .collect();
+        assert_eq!(
+            package_ids,
+            [&PackageId::new(METADATA_HAKARI_REVERSE_DEP_MEMBER_NORMAL)],
+        );
+
+        // hrd-leaf is in the graph, but as a third-party package, not as a
+        // workspace member.
+        for unknown in ["nope", "hrd-leaf"] {
+            let error = to_package_set(&["hrd-member-normal", unknown])
+                .expect_err("the name is not a workspace member");
+            let ExpectedError::WorkspacePackageResolveFailed { error: guppy_error } = &error else {
+                panic!("expected WorkspacePackageResolveFailed for {unknown}, found {error:?}");
+            };
+            let guppy::Error::UnknownWorkspaceName(name) = guppy_error else {
+                panic!("expected UnknownWorkspaceName for {unknown}, found {guppy_error:?}");
+            };
+            assert_eq!(name, unknown);
+        }
     }
 }

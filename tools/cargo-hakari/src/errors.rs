@@ -85,6 +85,14 @@ pub enum ExpectedError {
         /// The underlying error.
         error: guppy::Error,
     },
+    /// `cargo metadata` could not be run, or its output could not be turned
+    /// into a package graph.
+    #[error("failed to build package graph")]
+    PackageGraphBuildFailed {
+        /// The underlying error.
+        #[source]
+        error: guppy::Error,
+    },
     #[error(
         "failed to remove the dependency on {hakari_package_name} from \
          {package_name} before publishing"
@@ -137,6 +145,7 @@ impl ExpectedError {
             | Self::LockfileUpdateExecFailed { .. }
             | Self::LockfileUpdateFailed { .. }
             | Self::WorkspacePackageResolveFailed { .. }
+            | Self::PackageGraphBuildFailed { .. }
             | Self::PublishDepRemoveFailed { .. }
             | Self::PublishDepRestoreFailed { .. }
             | Self::PublishExecFailed { .. }
@@ -242,6 +251,9 @@ impl fmt::Display for ErrorReport<'_> {
             }
             ExpectedError::WorkspacePackageResolveFailed { error } => {
                 write!(f, "{error}")?;
+            }
+            ExpectedError::PackageGraphBuildFailed { error: _ } => {
+                f.write_str("failed to build package graph")?;
             }
             ExpectedError::PublishDepRemoveFailed {
                 package_name,
@@ -504,6 +516,17 @@ mod tests {
                 },
                 report: file!["snapshots/errors/workspace_package_resolve_failed.txt"],
                 one_line: "unknown workspace package name: nope",
+                exit_code: 1,
+            },
+            Example {
+                error: ExpectedError::PackageGraphBuildFailed {
+                    error: guppy::Error::CommandError(Box::new(io::Error::new(
+                        io::ErrorKind::NotFound,
+                        "program not found",
+                    ))),
+                },
+                report: file!["snapshots/errors/package_graph_build_failed.txt"],
+                one_line: "failed to build package graph",
                 exit_code: 1,
             },
             Example {

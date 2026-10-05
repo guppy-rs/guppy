@@ -1,0 +1,4 @@
+failed to build package graph
+  caused by:
+  - `cargo metadata` execution failed
+  - program not found
