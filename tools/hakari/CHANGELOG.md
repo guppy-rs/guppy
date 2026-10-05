@@ -3,6 +3,11 @@
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+### Changed
+
+- `cli_ops::ApplyError` now reports what went wrong through
+  a new `ApplyErrorKind` enum.
+
 ## [0.18.0] - 2026-09-19
 
 ### Added

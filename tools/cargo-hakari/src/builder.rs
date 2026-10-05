@@ -46,7 +46,6 @@ impl<'g> BuilderWithHakariPackage<'g> {
         self.hakari_package
     }
 
-    // TODO-RAINCLAUDE: clones: TOML read after compute keeps edit races short.
     pub(crate) fn compute(&self) -> Hakari<'g> {
         self.builder.clone().compute()
     }
