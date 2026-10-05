@@ -354,6 +354,7 @@ fn join_paths(paths: &[Utf8PathBuf]) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[cfg(unix)]
     use crate::test_helpers::{exit_status, reverse_dep_builder};
     use snapbox::{Data, assert_data_eq, file};
 
@@ -388,12 +389,30 @@ mod tests {
         assert_data_eq!(actual, expected.raw());
     }
 
-    fn config_not_found() -> ExpectedError {
-        ExpectedError::ConfigNotFound {
-            paths_tried: vec![
-                "/workspace/.config/hakari.toml".into(),
-                "/workspace/.guppy/hakari.toml".into(),
-            ],
+    struct Example {
+        error: ExpectedError,
+        // What display_to_stderr writes after the `error:` prefix.
+        report: Data,
+        // The Display output (one-line fallback).
+        one_line: &'static str,
+        exit_code: i32,
+    }
+
+    impl Example {
+        fn assert(self) {
+            let Self {
+                error,
+                report,
+                one_line,
+                exit_code,
+            } = self;
+            assert_report_snapshot(&error, report);
+            assert_eq!(error.to_string(), one_line);
+            assert_eq!(
+                error.process_exit_code(),
+                exit_code,
+                "exit code of {error:?}",
+            );
         }
     }
 
@@ -404,14 +423,8 @@ mod tests {
         }
     }
 
-    fn lockfile_update_failed() -> ExpectedError {
-        ExpectedError::LockfileUpdateFailed {
-            command: "/opt/rust/bin/cargo tree".to_owned(),
-            exit_status: exit_status(101),
-        }
-    }
-
     /// Synthesizes an [`ApplyError`] for use in tests.
+    #[cfg(unix)]
     fn apply_error() -> ApplyError {
         let builder = reverse_dep_builder();
         let workspace = builder.graph().resolve_workspace();
@@ -421,228 +434,155 @@ mod tests {
             .expect_err("the fixture's workspace root doesn't exist")
     }
 
-    fn publish_dep_remove_failed() -> ExpectedError {
-        ExpectedError::PublishDepRemoveFailed {
-            package_name: "hrd-member-normal".to_owned(),
-            hakari_package_name: "hrd-workspace-hack".to_owned(),
-            error: apply_error(),
+    fn examples() -> Vec<Example> {
+        vec![
+            Example {
+                error: ExpectedError::ConfigNotFound {
+                    paths_tried: vec![
+                        "/workspace/.config/hakari.toml".into(),
+                        "/workspace/.guppy/hakari.toml".into(),
+                    ],
+                },
+                report: file!["snapshots/errors/config_not_found.txt"],
+                one_line: "no Hakari config found at any of these paths: \
+                           /workspace/.config/hakari.toml, /workspace/.guppy/hakari.toml",
+                exit_code: 1,
+            },
+            Example {
+                error: config_read_failed(io::Error::new(
+                    io::ErrorKind::PermissionDenied,
+                    "permission denied",
+                )),
+                report: file!["snapshots/errors/config_read_failed.txt"],
+                one_line: "failed to read Hakari config at /workspace/.config/hakari.toml",
+                exit_code: 1,
+            },
+            Example {
+                // In these TOML contents, the string on line 2 is not closed.
+                // It spans several lines and ends with a newline.
+                error: ExpectedError::ConfigDeserializeFailed {
+                    config_path: "/workspace/.config/hakari.toml".into(),
+                    error: "hakari-package = \"workspace-hack\"\nresolver = \"2\n"
+                        .parse::<HakariConfig>()
+                        .expect_err("an unterminated string is rejected"),
+                },
+                report: file!["snapshots/errors/config_deserialize_failed.txt"],
+                one_line: "failed to deserialize Hakari config at \
+                           /workspace/.config/hakari.toml",
+                exit_code: 1,
+            },
+            Example {
+                error: ExpectedError::ConfigResolveFailed {
+                    config_path: "/workspace/.config/hakari.toml".into(),
+                    error: Box::new(guppy::Error::UnknownWorkspaceName("nope".to_owned())),
+                },
+                report: file!["snapshots/errors/config_resolve_failed.txt"],
+                one_line: "failed to resolve Hakari config at /workspace/.config/hakari.toml",
+                exit_code: 1,
+            },
+            Example {
+                error: ExpectedError::HakariPackageNotSet {
+                    config_path: "/workspace/.config/hakari.toml".into(),
+                },
+                report: file!["snapshots/errors/hakari_package_not_set.txt"],
+                one_line: "`hakari-package` is not set in /workspace/.config/hakari.toml, \
+                           so cargo hakari can't tell which crate is the workspace-hack",
+                exit_code: 1,
+            },
+            Example {
+                error: ExpectedError::LockfileUpdateExecFailed {
+                    command: "/opt/rust/bin/cargo tree".to_owned(),
+                    error: io::Error::new(io::ErrorKind::NotFound, "program not found"),
+                },
+                report: file!["snapshots/errors/lockfile_update_exec_failed.txt"],
+                one_line: "failed to update Cargo.lock: could not run `/opt/rust/bin/cargo tree`",
+                exit_code: 1,
+            },
+            Example {
+                error: ExpectedError::WorkspacePackageResolveFailed {
+                    error: guppy::Error::UnknownWorkspaceName("nope".to_owned()),
+                },
+                report: file!["snapshots/errors/workspace_package_resolve_failed.txt"],
+                one_line: "unknown workspace package name: nope",
+                exit_code: 1,
+            },
+            Example {
+                error: ExpectedError::PublishExecFailed {
+                    package_name: "hrd-member-normal".to_owned(),
+                    command: "/opt/rust/bin/cargo publish --dry-run --allow-dirty".to_owned(),
+                    error: io::Error::new(io::ErrorKind::NotFound, "program not found"),
+                },
+                report: file!["snapshots/errors/publish_exec_failed.txt"],
+                one_line: "failed to publish hrd-member-normal: could not run \
+                           `/opt/rust/bin/cargo publish --dry-run --allow-dirty`",
+                exit_code: 1,
+            },
+        ]
+    }
+
+    #[cfg(unix)]
+    fn unix_examples() -> Vec<Example> {
+        vec![
+            Example {
+                error: ExpectedError::LockfileUpdateFailed {
+                    command: "/opt/rust/bin/cargo tree".to_owned(),
+                    exit_status: exit_status(101),
+                },
+                report: file!["snapshots/errors/lockfile_update_failed.txt"],
+                one_line: "failed to update Cargo.lock: `/opt/rust/bin/cargo tree` failed with \
+                           exit status: 101",
+                exit_code: 1,
+            },
+            Example {
+                error: ExpectedError::PublishDepRemoveFailed {
+                    package_name: "hrd-member-normal".to_owned(),
+                    hakari_package_name: "hrd-workspace-hack".to_owned(),
+                    error: apply_error(),
+                },
+                report: file!["snapshots/errors/publish_dep_remove_failed.txt"],
+                one_line: "failed to remove the dependency on hrd-workspace-hack from \
+                           hrd-member-normal before publishing",
+                exit_code: 1,
+            },
+            Example {
+                error: ExpectedError::PublishDepRestoreFailed {
+                    package_name: "hrd-member-normal".to_owned(),
+                    hakari_package_name: "hrd-workspace-hack".to_owned(),
+                    error: apply_error(),
+                },
+                report: file!["snapshots/errors/publish_dep_restore_failed.txt"],
+                one_line: "failed to re-add the dependency on hrd-workspace-hack to \
+                           hrd-member-normal after removing it for publishing",
+                exit_code: 1,
+            },
+            Example {
+                error: ExpectedError::PublishFailed {
+                    package_name: "hrd-member-normal".to_owned(),
+                    command: "/opt/rust/bin/cargo publish --dry-run --allow-dirty".to_owned(),
+                    exit_status: exit_status(101),
+                },
+                report: file!["snapshots/errors/publish_failed.txt"],
+                one_line: "failed to publish hrd-member-normal: \
+                           `/opt/rust/bin/cargo publish --dry-run --allow-dirty` failed \
+                           with exit status: 101",
+                exit_code: 1,
+            },
+        ]
+    }
+
+    #[test]
+    fn report_examples() {
+        for example in examples() {
+            example.assert();
         }
     }
 
-    fn publish_dep_restore_failed() -> ExpectedError {
-        ExpectedError::PublishDepRestoreFailed {
-            package_name: "hrd-member-normal".to_owned(),
-            hakari_package_name: "hrd-workspace-hack".to_owned(),
-            error: apply_error(),
+    #[cfg(unix)]
+    #[test]
+    fn report_unix_examples() {
+        for example in unix_examples() {
+            example.assert();
         }
-    }
-
-    fn publish_failed() -> ExpectedError {
-        ExpectedError::PublishFailed {
-            package_name: "hrd-member-normal".to_owned(),
-            command: "/opt/rust/bin/cargo publish --dry-run --allow-dirty".to_owned(),
-            exit_status: exit_status(101),
-        }
-    }
-
-    #[test]
-    fn report_config_not_found() {
-        let error = config_not_found();
-        assert_report_snapshot(&error, file!["snapshots/errors/config_not_found.txt"]);
-        assert_eq!(
-            error.to_string(),
-            "no Hakari config found at any of these paths: \
-             /workspace/.config/hakari.toml, /workspace/.guppy/hakari.toml",
-        );
-        assert_eq!(error.process_exit_code(), 1);
-    }
-
-    #[test]
-    fn report_config_read_failed() {
-        let error = config_read_failed(io::Error::new(
-            io::ErrorKind::PermissionDenied,
-            "permission denied",
-        ));
-        assert_report_snapshot(&error, file!["snapshots/errors/config_read_failed.txt"]);
-        assert_eq!(error.process_exit_code(), 1);
-    }
-
-    #[test]
-    fn report_config_deserialize_failed() {
-        // In these TOML contents, the string on line 2 is not closed. It spans
-        // several lines and ends with a newline.
-        let toml_error = "hakari-package = \"workspace-hack\"\nresolver = \"2\n"
-            .parse::<HakariConfig>()
-            .expect_err("an unterminated string is rejected");
-        let error = ExpectedError::ConfigDeserializeFailed {
-            config_path: "/workspace/.config/hakari.toml".into(),
-            error: toml_error,
-        };
-        assert_report_snapshot(
-            &error,
-            file!["snapshots/errors/config_deserialize_failed.txt"],
-        );
-        assert_eq!(
-            error.to_string(),
-            "failed to deserialize Hakari config at /workspace/.config/hakari.toml",
-        );
-        assert_eq!(error.process_exit_code(), 1);
-    }
-
-    #[test]
-    fn report_config_resolve_failed() {
-        let error = ExpectedError::ConfigResolveFailed {
-            config_path: "/workspace/.config/hakari.toml".into(),
-            error: Box::new(guppy::Error::UnknownWorkspaceName("nope".to_owned())),
-        };
-        assert_report_snapshot(&error, file!["snapshots/errors/config_resolve_failed.txt"]);
-        assert_eq!(
-            error.to_string(),
-            "failed to resolve Hakari config at /workspace/.config/hakari.toml",
-        );
-        assert_eq!(error.process_exit_code(), 1);
-    }
-
-    #[test]
-    fn report_hakari_package_not_set() {
-        let error = ExpectedError::HakariPackageNotSet {
-            config_path: "/workspace/.config/hakari.toml".into(),
-        };
-        assert_report_snapshot(&error, file!["snapshots/errors/hakari_package_not_set.txt"]);
-        assert_eq!(
-            error.to_string(),
-            "`hakari-package` is not set in /workspace/.config/hakari.toml, \
-             so cargo hakari can't tell which crate is the workspace-hack",
-        );
-        assert_eq!(error.process_exit_code(), 1);
-    }
-
-    #[test]
-    fn report_lockfile_update_exec_failed() {
-        let error = ExpectedError::LockfileUpdateExecFailed {
-            command: "/opt/rust/bin/cargo tree".to_owned(),
-            error: io::Error::new(io::ErrorKind::NotFound, "program not found"),
-        };
-        assert_report_snapshot(
-            &error,
-            file!["snapshots/errors/lockfile_update_exec_failed.txt"],
-        );
-        assert_eq!(error.process_exit_code(), 1);
-    }
-
-    // (This is Unix-only because the exit status is reported slightly
-    // differently on Windows.)
-    #[cfg(unix)]
-    #[test]
-    fn report_lockfile_update_failed() {
-        assert_report_snapshot(
-            &lockfile_update_failed(),
-            file!["snapshots/errors/lockfile_update_failed.txt"],
-        );
-    }
-
-    #[test]
-    fn lockfile_update_failed_exit_code() {
-        assert_eq!(lockfile_update_failed().process_exit_code(), 1);
-    }
-
-    #[test]
-    fn report_workspace_package_resolve_failed() {
-        let error = ExpectedError::WorkspacePackageResolveFailed {
-            error: guppy::Error::UnknownWorkspaceName("nope".to_owned()),
-        };
-        assert_report_snapshot(
-            &error,
-            file!["snapshots/errors/workspace_package_resolve_failed.txt"],
-        );
-        assert_eq!(error.to_string(), "unknown workspace package name: nope");
-        assert_eq!(error.process_exit_code(), 1);
-    }
-
-    // (This is Unix-only because the cause is an OS error, which
-    // Windows would word differently.)
-    #[cfg(unix)]
-    #[test]
-    fn report_publish_dep_remove_failed() {
-        assert_report_snapshot(
-            &publish_dep_remove_failed(),
-            file!["snapshots/errors/publish_dep_remove_failed.txt"],
-        );
-    }
-
-    #[test]
-    fn publish_dep_remove_failed_one_line_and_exit_code() {
-        let error = publish_dep_remove_failed();
-        assert_eq!(
-            error.to_string(),
-            "failed to remove the dependency on hrd-workspace-hack from \
-             hrd-member-normal before publishing",
-        );
-        assert_eq!(error.process_exit_code(), 1);
-    }
-
-    // (This is Unix-only because the cause is an OS error, which
-    // Windows would word differently.)
-    #[cfg(unix)]
-    #[test]
-    fn report_publish_dep_restore_failed() {
-        assert_report_snapshot(
-            &publish_dep_restore_failed(),
-            file!["snapshots/errors/publish_dep_restore_failed.txt"],
-        );
-    }
-
-    #[test]
-    fn publish_dep_restore_failed_one_line_and_exit_code() {
-        let error = publish_dep_restore_failed();
-        assert_eq!(
-            error.to_string(),
-            "failed to re-add the dependency on hrd-workspace-hack to \
-             hrd-member-normal after removing it for publishing",
-        );
-        assert_eq!(error.process_exit_code(), 1);
-    }
-
-    #[test]
-    fn report_publish_exec_failed() {
-        let error = ExpectedError::PublishExecFailed {
-            package_name: "hrd-member-normal".to_owned(),
-            command: "/opt/rust/bin/cargo publish --dry-run --allow-dirty".to_owned(),
-            error: io::Error::new(io::ErrorKind::NotFound, "program not found"),
-        };
-        assert_report_snapshot(&error, file!["snapshots/errors/publish_exec_failed.txt"]);
-        assert_eq!(
-            error.to_string(),
-            "failed to publish hrd-member-normal: could not run \
-             `/opt/rust/bin/cargo publish --dry-run --allow-dirty`",
-        );
-        assert_eq!(error.process_exit_code(), 1);
-    }
-
-    // (This is Unix-only because the exit status is reported slightly
-    // differently on Windows.)
-    #[cfg(unix)]
-    #[test]
-    fn report_publish_failed() {
-        assert_report_snapshot(
-            &publish_failed(),
-            file!["snapshots/errors/publish_failed.txt"],
-        );
-    }
-
-    #[test]
-    fn publish_failed_one_line_and_exit_code() {
-        let error = publish_failed();
-        assert_eq!(
-            error.to_string(),
-            format!(
-                "failed to publish hrd-member-normal: \
-                 `/opt/rust/bin/cargo publish --dry-run --allow-dirty` failed \
-                 with {}",
-                exit_status(101),
-            ),
-        );
-        assert_eq!(error.process_exit_code(), 1);
     }
 
     #[test]
