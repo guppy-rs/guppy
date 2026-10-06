@@ -11,14 +11,13 @@ use crate::{
 };
 use camino::{Utf8Path, Utf8PathBuf};
 use clap::Parser;
-use color_eyre::eyre::{self, WrapErr};
 use guppy::{
     MetadataCommand, PackageId, Version,
     graph::{PackageGraph, PackageSet},
 };
 use hakari::{
     DepFormatVersion, Hakari, HakariCargoToml, HakariOutputOptions, TomlNameEntry, TomlOutError,
-    cli_ops::{HakariInit, WorkspaceOps},
+    cli_ops::{ApplyError, HakariInit, WorkspaceOps},
     diffy::PatchFormatter,
     summaries::DEFAULT_CONFIG_PATH,
 };
@@ -66,7 +65,7 @@ impl Args {
     /// Executes the command.
     ///
     /// Returns the exit status, or an error on failure.
-    pub fn exec(self) -> eyre::Result<i32> {
+    pub fn exec(self) -> Result<i32> {
         self.command.exec(self.global.output)
     }
 }
@@ -111,7 +110,7 @@ enum Command {
 }
 
 impl Command {
-    fn exec(self, output: OutputOpts) -> eyre::Result<i32> {
+    fn exec(self, output: OutputOpts) -> Result<i32> {
         let output = output.init();
         let mut metadata_command = MetadataCommand::new();
         metadata_command.cargo_path(cargo_program());
@@ -147,24 +146,34 @@ impl Command {
                 }
 
                 let ops = init.make_ops();
-                apply_on_dialog(dry_run, yes, &ops, &output, || {
-                    let steps = [
-                        format!(
-                            "* configure at {}",
-                            DEFAULT_CONFIG_PATH.style(output.styles.config_path),
-                        ),
-                        format!(
-                            "* run {} to generate contents",
-                            "cargo hakari generate".style(output.styles.command),
-                        ),
-                        format!(
-                            "* run {} to add dependency lines",
-                            "cargo hakari manage-deps".style(output.styles.command),
-                        ),
-                    ];
-                    info!("next steps:\n{}\n", steps.join("\n"));
-                    Ok(())
-                })
+                apply_on_dialog(
+                    dry_run,
+                    yes,
+                    &ops,
+                    &output,
+                    |error| ExpectedError::InitApplyFailed {
+                        package_name: package_name.to_owned(),
+                        error,
+                    },
+                    || {
+                        let steps = [
+                            format!(
+                                "* configure at {}",
+                                DEFAULT_CONFIG_PATH.style(output.styles.config_path),
+                            ),
+                            format!(
+                                "* run {} to generate contents",
+                                "cargo hakari generate".style(output.styles.command),
+                            ),
+                            format!(
+                                "* run {} to add dependency lines",
+                                "cargo hakari manage-deps".style(output.styles.command),
+                            ),
+                        ];
+                        info!("next steps:\n{}\n", steps.join("\n"));
+                        Ok(())
+                    },
+                )
             }
             Command::WithBuilder(cmd) => {
                 let (builder, hakari_output) = make_builder_and_output(&package_graph)?;
@@ -321,7 +330,7 @@ impl CommandWithBuilder {
         builder: BuilderWithHakariPackage<'_>,
         hakari_output: HakariOutputOptions,
         output: OutputContext,
-    ) -> eyre::Result<i32> {
+    ) -> Result<i32> {
         let hakari_package = builder.hakari_package();
 
         match self {
@@ -420,9 +429,17 @@ impl CommandWithBuilder {
                     return Ok(0);
                 }
 
-                apply_on_dialog(dry_run, yes, &ops, &output, || {
-                    Ok(regenerate_lockfile(output.clone())?)
-                })
+                apply_on_dialog(
+                    dry_run,
+                    yes,
+                    &ops,
+                    &output,
+                    |error| ExpectedError::ManageDepsApplyFailed {
+                        hakari_package_name: hakari_package.name().to_owned(),
+                        error,
+                    },
+                    || regenerate_lockfile(output.clone()),
+                )
             }
             CommandWithBuilder::RemoveDeps {
                 packages,
@@ -435,9 +452,17 @@ impl CommandWithBuilder {
                     return Ok(0);
                 }
 
-                apply_on_dialog(dry_run, yes, &ops, &output, || {
-                    Ok(regenerate_lockfile(output.clone())?)
-                })
+                apply_on_dialog(
+                    dry_run,
+                    yes,
+                    &ops,
+                    &output,
+                    |error| ExpectedError::RemoveDepsApplyFailed {
+                        hakari_package_name: hakari_package.name().to_owned(),
+                        error,
+                    },
+                    || regenerate_lockfile(output.clone()),
+                )
             }
             CommandWithBuilder::Explain {
                 dep_name: crate_name,
@@ -479,13 +504,13 @@ impl CommandWithBuilder {
                 let existing_toml = builder
                     .read_toml()
                     .map_err(|error| ExpectedError::HakariCargoTomlUpdateFailed { error })?;
-                Ok(write_to_cargo_toml(
+                write_to_cargo_toml(
                     existing_toml,
                     DISABLE_MESSAGE,
                     diff,
                     hakari_package.name(),
                     output,
-                )?)
+                )
             }
         }
     }
@@ -946,8 +971,9 @@ fn apply_on_dialog(
     yes: bool,
     ops: &WorkspaceOps<'_, '_>,
     output: &OutputContext,
-    after: impl FnOnce() -> eyre::Result<()>,
-) -> eyre::Result<i32> {
+    apply_failed: impl FnOnce(ApplyError) -> ExpectedError,
+    after: impl FnOnce() -> Result<()>,
+) -> Result<i32> {
     let mut display = ops.display();
     if output.color.is_enabled() {
         display.colorize();
@@ -973,11 +999,11 @@ fn apply_on_dialog(
             .default(true)
             .show_default(true)
             .interact()
-            .with_context(|| "error reading input")?
+            .map_err(|error| ExpectedError::ConfirmReadFailed { error })?
     };
 
     if should_apply {
-        ops.apply()?;
+        ops.apply().map_err(apply_failed)?;
         after()?;
         Ok(0)
     } else {
@@ -988,7 +1014,7 @@ fn apply_on_dialog(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::test_helpers::{non_utf8_path, output_context};
+    use crate::test_helpers::{non_utf8_path, output_context, reverse_dep_builder};
     use fixtures::json::{
         JsonFixture, METADATA_HAKARI_REVERSE_DEP_LEAF, METADATA_HAKARI_REVERSE_DEP_MEMBER_FEATURES,
         METADATA_HAKARI_REVERSE_DEP_MEMBER_NORMAL, METADATA_HAKARI_REVERSE_DEP_NORMAL_ON_HACK,
@@ -1566,5 +1592,72 @@ mod tests {
         };
         assert_eq!(error_toml_path, &toml_path);
         assert_eq!(io_error.kind(), io::ErrorKind::NotFound);
+    }
+
+    // The fixture's workspace root is not on disk, so apply stops at its first
+    // step: canonicalizing the root. This fails before any manifest is edited
+    // and before cargo is run.
+    #[test]
+    fn manage_and_remove_deps_apply_failure() {
+        let workspace_root = reverse_dep_builder().graph().workspace().root();
+        let exec_error = |command: CommandWithBuilder| {
+            command
+                .exec(
+                    reverse_dep_builder(),
+                    HakariOutputOptions::new(),
+                    output_context(),
+                )
+                .expect_err("the fixture's workspace root doesn't exist")
+        };
+
+        let error = exec_error(CommandWithBuilder::ManageDeps {
+            packages: PackageSelection { packages: vec![] },
+            dry_run: false,
+            // Yes means that we don't attempt to prompt from the terminal.
+            yes: true,
+        });
+        let ExpectedError::ManageDepsApplyFailed {
+            hakari_package_name,
+            error: apply_error,
+        } = &error
+        else {
+            panic!("expected ManageDepsApplyFailed, found {error:?}");
+        };
+        assert_eq!(hakari_package_name, "hrd-workspace-hack");
+        assert_eq!(apply_error.path(), workspace_root);
+
+        let error = exec_error(CommandWithBuilder::RemoveDeps {
+            packages: PackageSelection { packages: vec![] },
+            dry_run: false,
+            yes: true,
+        });
+        let ExpectedError::RemoveDepsApplyFailed {
+            hakari_package_name,
+            error: apply_error,
+        } = &error
+        else {
+            panic!("expected RemoveDepsApplyFailed, found {error:?}");
+        };
+        assert_eq!(hakari_package_name, "hrd-workspace-hack");
+        assert_eq!(apply_error.path(), workspace_root);
+    }
+
+    #[test]
+    fn apply_on_dialog_dry_run() {
+        let builder = reverse_dep_builder();
+        let workspace = builder.graph().resolve_workspace();
+        let ops = builder.remove_dep_ops(&workspace, false);
+        assert!(!ops.is_empty(), "the fixture has dependencies to remove");
+
+        let exit_code = apply_on_dialog(
+            true,
+            false,
+            &ops,
+            &output_context(),
+            |error| panic!("a dry run doesn't apply operations, but got {error:?}"),
+            || panic!("a dry run doesn't run the follow-up step"),
+        )
+        .expect("a dry run doesn't fail");
+        assert_eq!(exit_code, 1, "operations are pending");
     }
 }
