@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+### Changed
+
+- Error reporting is now significantly better through the use of stronger types throughout hakari (and cargo-hakari).
+
 ### Fixed
 
 - `cargo hakari` commands other than `init` now exit with an error, rather than

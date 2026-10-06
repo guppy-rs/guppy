@@ -3,12 +3,12 @@
 
 use clap::{Parser, ValueEnum};
 use env_logger::fmt::Formatter;
-use log::{Level, LevelFilter, Record};
+use log::{Level, LevelFilter, Log, Record};
 use owo_colors::{OwoColorize, Style};
-use std::{io::Write, sync::Arc};
+use std::{env, fmt, io::Write, sync::Arc};
 use supports_color::Stream;
 
-#[derive(Debug, Parser)]
+#[derive(Clone, Copy, Debug, Parser)]
 #[must_use]
 pub(crate) struct OutputOpts {
     /// Suppress output
@@ -85,6 +85,26 @@ pub struct OutputContext {
     pub(crate) verbose: bool,
     pub(crate) color: Color,
     pub(crate) styles: Arc<Styles>,
+}
+
+impl OutputContext {
+    pub(crate) fn display_fatal_error(&self, report: impl fmt::Display) {
+        // Build our own logger to ensure that RUST_LOG doesn't affect this.
+        let mut builder = env_logger::Builder::new();
+        if let Ok(write_style) = env::var(env_logger::DEFAULT_WRITE_STYLE_ENV) {
+            builder.parse_write_style(&write_style);
+        }
+        let logger = builder
+            .filter_level(LevelFilter::Error)
+            .format(format_fn)
+            .build();
+        logger.log(
+            &Record::builder()
+                .level(Level::Error)
+                .args(format_args!("{report}"))
+                .build(),
+        );
+    }
 }
 
 fn format_fn(f: &mut Formatter, record: &Record<'_>) -> std::io::Result<()> {

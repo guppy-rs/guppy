@@ -36,5 +36,12 @@ fn main() -> Result<()> {
     let _ = enable_ansi_support::enable_ansi_support();
 
     let args = Args::parse_from(args());
-    std::process::exit(args.exec()?)
+    let output = args.init_output();
+    match args.exec(output.clone()) {
+        Ok(code) => std::process::exit(code),
+        Err(error) => {
+            error.display_to_stderr(&output);
+            std::process::exit(error.process_exit_code())
+        }
+    }
 }
