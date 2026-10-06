@@ -1,0 +1,6 @@
+failed to read the generated section of Cargo.toml for my-workspace-hack
+  caused by:
+  - in '/workspace/my-workspace-hack/Cargo.toml', unable to find
+    ### BEGIN HAKARI SECTION
+    ...
+    ### END HAKARI SECTION

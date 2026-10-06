@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 use crate::{
-    errors::{ExpectedError, Result},
+    errors::{ExpectedError, HakariCargoTomlUpdateError, Result},
     helpers::read_config_contents,
 };
 use camino::Utf8Path;
 use guppy::graph::{PackageGraph, PackageMetadata, PackageSet};
 use hakari::{
-    CargoTomlError, Hakari, HakariBuilder, HakariCargoToml, HakariOutputOptions,
+    Hakari, HakariBuilder, HakariCargoToml, HakariOutputOptions,
     cli_ops::WorkspaceOps,
     summaries::{DEFAULT_CONFIG_PATH, FALLBACK_CONFIG_PATH, HakariBuilderSummary, HakariConfig},
     verify::VerifyErrors,
@@ -60,10 +60,14 @@ impl<'g> BuilderWithHakariPackage<'g> {
         self.builder.verify()
     }
 
-    pub(crate) fn read_toml(&self) -> Result<HakariCargoToml, CargoTomlError> {
+    pub(crate) fn read_toml(&self) -> Result<HakariCargoToml, HakariCargoTomlUpdateError> {
         self.builder
             .read_toml()
             .expect("builder has a hakari package, checked at construction")
+            .map_err(|error| HakariCargoTomlUpdateError::Read {
+                hakari_package_name: self.hakari_package.name().to_owned(),
+                error,
+            })
     }
 
     pub(crate) fn manage_dep_ops(&self, workspace_set: &PackageSet<'g>) -> WorkspaceOps<'g, '_> {
@@ -130,6 +134,7 @@ mod tests {
     use crate::test_helpers::reverse_dep_builder;
     use fixtures::json::{JsonFixture, METADATA_HAKARI_REVERSE_DEP_WORKSPACE_HACK};
     use guppy::PackageId;
+    use hakari::CargoTomlError;
 
     const CONFIG_PATH: &str = "/workspace/custom/hakari.toml";
 
@@ -217,5 +222,39 @@ mod tests {
         // The result of `read_toml` doesn't matter because the path
         // (`/Users/fakeuser etc) is likely not on disk (though it might be!)
         let _ = builder.read_toml();
+    }
+
+    #[test]
+    fn read_toml_failure_names_hakari_package() {
+        // The fixture's workspace root is not on disk, so there is no
+        // Cargo.toml to read.
+        let builder = reverse_dep_builder();
+        let error = builder
+            .read_toml()
+            .expect_err("the fixture's workspace root doesn't exist");
+        let HakariCargoTomlUpdateError::Read {
+            hakari_package_name,
+            error: cargo_toml_error,
+        } = &error
+        else {
+            panic!("expected Read, found {error:?}");
+        };
+        assert_eq!(hakari_package_name, "hrd-workspace-hack");
+        let CargoTomlError::Io {
+            toml_path,
+            error: _,
+        } = cargo_toml_error
+        else {
+            panic!("expected Io, found {cargo_toml_error:?}");
+        };
+        assert_eq!(
+            toml_path,
+            &builder
+                .graph()
+                .workspace()
+                .root()
+                .join("workspace-hack")
+                .join("Cargo.toml"),
+        );
     }
 }
