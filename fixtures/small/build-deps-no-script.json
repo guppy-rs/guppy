@@ -1,0 +1,629 @@
+{
+    "packages": [
+        {
+            "name": "libc",
+            "version": "0.2.191",
+            "id": "registry+https://github.com/rust-lang/crates.io-index#libc@0.2.191",
+            "license": "MIT OR Apache-2.0",
+            "license_file": null,
+            "description": "Raw FFI bindings to platform libraries like libc.",
+            "source": "registry+https://github.com/rust-lang/crates.io-index",
+            "dependencies": [
+                {
+                    "name": "rustc-std-workspace-core",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.0.1",
+                    "kind": null,
+                    "rename": null,
+                    "optional": true,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                }
+            ],
+            "targets": [
+                {
+                    "kind": [
+                        "lib"
+                    ],
+                    "crate_types": [
+                        "lib"
+                    ],
+                    "name": "libc",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.191/src/lib.rs",
+                    "edition": "2021",
+                    "doc": true,
+                    "doctest": true,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "test"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "const_fn",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.191/tests/const_fn.rs",
+                    "edition": "2021",
+                    "doc": false,
+                    "doctest": false,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "custom-build"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "build-script-build",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.191/build.rs",
+                    "edition": "2021",
+                    "doc": false,
+                    "doctest": false,
+                    "test": false
+                }
+            ],
+            "features": {
+                "align": [],
+                "const-extern-fn": [],
+                "default": [
+                    "std"
+                ],
+                "extra_traits": [],
+                "rustc-dep-of-std": [
+                    "align",
+                    "rustc-std-workspace-core"
+                ],
+                "rustc-std-workspace-core": [
+                    "dep:rustc-std-workspace-core"
+                ],
+                "std": [],
+                "use_std": [
+                    "std"
+                ]
+            },
+            "manifest_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.191/Cargo.toml",
+            "metadata": {
+                "docs": {
+                    "rs": {
+                        "features": [
+                            "extra_traits"
+                        ],
+                        "default-target": "x86_64-unknown-linux-gnu",
+                        "targets": [
+                            "aarch64-apple-darwin",
+                            "aarch64-pc-windows-msvc",
+                            "aarch64-unknown-linux-gnu",
+                            "i686-unknown-linux-gnu",
+                            "x86_64-pc-windows-gnu",
+                            "x86_64-pc-windows-msvc",
+                            "x86_64-unknown-linux-gnu",
+                            "i686-pc-windows-msvc",
+                            "aarch64-pc-windows-gnullvm",
+                            "aarch64-unknown-linux-musl",
+                            "aarch64-unknown-linux-ohos",
+                            "arm-unknown-linux-gnueabi",
+                            "arm-unknown-linux-gnueabihf",
+                            "armv7-unknown-linux-gnueabihf",
+                            "armv7-unknown-linux-ohos",
+                            "loongarch64-unknown-linux-gnu",
+                            "loongarch64-unknown-linux-musl",
+                            "powerpc-unknown-linux-gnu",
+                            "powerpc64-unknown-linux-gnu",
+                            "powerpc64-unknown-linux-musl",
+                            "powerpc64le-unknown-linux-gnu",
+                            "powerpc64le-unknown-linux-musl",
+                            "riscv64gc-unknown-linux-gnu",
+                            "riscv64gc-unknown-linux-musl",
+                            "s390x-unknown-linux-gnu",
+                            "sparcv9-sun-solaris",
+                            "x86_64-apple-darwin",
+                            "x86_64-pc-solaris",
+                            "x86_64-pc-windows-gnullvm",
+                            "x86_64-unknown-freebsd",
+                            "x86_64-unknown-illumos",
+                            "x86_64-unknown-linux-musl",
+                            "x86_64-unknown-linux-ohos",
+                            "x86_64-unknown-netbsd",
+                            "aarch64-apple-ios",
+                            "aarch64-apple-tvos",
+                            "aarch64-apple-visionos",
+                            "aarch64-apple-watchos",
+                            "aarch64-linux-android",
+                            "aarch64-unknown-fuchsia",
+                            "arm-linux-androideabi",
+                            "arm-unknown-linux-musleabi",
+                            "arm-unknown-linux-musleabihf",
+                            "arm64ec-pc-windows-msvc",
+                            "armv5te-unknown-linux-gnueabi",
+                            "armv5te-unknown-linux-musleabi",
+                            "armv7-linux-androideabi",
+                            "armv7-unknown-linux-musleabihf",
+                            "i586-unknown-linux-gnu",
+                            "i586-unknown-linux-musl",
+                            "i686-linux-android",
+                            "i686-pc-windows-gnu",
+                            "i686-unknown-freebsd",
+                            "i686-unknown-linux-musl",
+                            "nvptx64-nvidia-cuda",
+                            "sparc64-unknown-linux-gnu",
+                            "thumbv7neon-linux-androideabi",
+                            "thumbv7neon-unknown-linux-gnueabihf",
+                            "wasm32-unknown-emscripten",
+                            "wasm32-unknown-unknown",
+                            "wasm32-wasip1",
+                            "wasm32-wasip2",
+                            "x86_64-fortanix-unknown-sgx",
+                            "x86_64-linux-android",
+                            "x86_64-unknown-fuchsia",
+                            "x86_64-unknown-linux-gnux32",
+                            "x86_64-unknown-redox",
+                            "aarch64-unknown-freebsd",
+                            "aarch64-unknown-helenos",
+                            "aarch64-unknown-hermit",
+                            "aarch64-unknown-illumos",
+                            "aarch64-unknown-netbsd",
+                            "aarch64-unknown-qnx",
+                            "aarch64-unknown-openbsd",
+                            "aarch64-unknown-redox",
+                            "aarch64-wrs-vxworks",
+                            "aarch64_be-unknown-linux-gnu",
+                            "aarch64_be-unknown-linux-musl",
+                            "armebv7r-none-eabi",
+                            "armebv7r-none-eabihf",
+                            "armv7-linux-androideabi",
+                            "armv7-wrs-vxworks-eabihf",
+                            "armv7r-none-eabi",
+                            "armv7r-none-eabihf",
+                            "hexagon-unknown-linux-musl",
+                            "i686-unknown-haiku",
+                            "i686-unknown-helenos",
+                            "i686-unknown-netbsd",
+                            "i686-unknown-openbsd",
+                            "i686-wrs-vxworks",
+                            "mips-unknown-linux-gnu",
+                            "mips-unknown-linux-musl",
+                            "mips64-unknown-linux-gnuabi64",
+                            "mips64-unknown-linux-muslabi64",
+                            "mips64el-unknown-linux-gnuabi64",
+                            "mips64el-unknown-linux-muslabi64",
+                            "mipsel-sony-psp",
+                            "mipsel-unknown-linux-gnu",
+                            "mipsel-unknown-linux-musl",
+                            "powerpc-unknown-helenos",
+                            "powerpc-unknown-linux-gnuspe",
+                            "powerpc-unknown-netbsd",
+                            "powerpc-wrs-vxworks",
+                            "powerpc-wrs-vxworks-spe",
+                            "powerpc64-ibm-aix",
+                            "powerpc64-unknown-freebsd",
+                            "powerpc64-unknown-linux-gnu",
+                            "powerpc64-unknown-linux-gnuelfv2",
+                            "powerpc64-wrs-vxworks",
+                            "riscv32-wrs-vxworks",
+                            "riscv32gc-unknown-linux-musl",
+                            "riscv32i-unknown-none-elf",
+                            "riscv32imac-unknown-none-elf",
+                            "riscv32imc-unknown-none-elf",
+                            "riscv64-wrs-vxworks",
+                            "riscv64gc-unknown-freebsd",
+                            "riscv64gc-unknown-hermit",
+                            "riscv64gc-unknown-none-elf",
+                            "riscv64imac-unknown-none-elf",
+                            "s390x-unknown-linux-musl",
+                            "sparc-unknown-linux-gnu",
+                            "sparc64-unknown-helenos",
+                            "sparc64-unknown-netbsd",
+                            "thumbv6m-none-eabi",
+                            "thumbv7em-none-eabi",
+                            "thumbv7em-none-eabihf",
+                            "thumbv7m-none-eabi",
+                            "wasm32-wasip3",
+                            "x86_64-apple-ios",
+                            "x86_64-pc-cygwin",
+                            "x86_64-unknown-dragonfly",
+                            "x86_64-unknown-haiku",
+                            "x86_64-unknown-helenos",
+                            "x86_64-unknown-hermit",
+                            "x86_64-unknown-hurd-gnu",
+                            "x86_64-unknown-l4re-uclibc",
+                            "x86_64-unknown-openbsd",
+                            "x86_64-wrs-vxworks"
+                        ],
+                        "cargo-args": [
+                            "-Zbuild-std=core"
+                        ]
+                    }
+                },
+                "cargo-semver-checks": {
+                    "lints": {
+                        "repr_align_removed": "warn",
+                        "global_value_marked_deprecated": "warn"
+                    }
+                }
+            },
+            "publish": null,
+            "authors": [],
+            "categories": [
+                "external-ffi-bindings",
+                "no-std",
+                "os"
+            ],
+            "keywords": [
+                "libc",
+                "ffi",
+                "bindings",
+                "operating",
+                "system"
+            ],
+            "readme": "README.md",
+            "repository": "https://github.com/rust-lang/libc",
+            "homepage": null,
+            "documentation": null,
+            "edition": "2021",
+            "links": null,
+            "default_run": null,
+            "rust_version": "1.65"
+        },
+        {
+            "name": "main",
+            "version": "0.1.0",
+            "id": "path+file:///home/fakeuser/dev/tmp/test-workspaces/build-deps-no-script/main#0.1.0",
+            "license": null,
+            "license_file": null,
+            "description": null,
+            "source": null,
+            "dependencies": [
+                {
+                    "name": "with-script",
+                    "source": null,
+                    "req": "*",
+                    "kind": null,
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null,
+                    "path": "/home/fakeuser/dev/tmp/test-workspaces/build-deps-no-script/with-script"
+                },
+                {
+                    "name": "libc",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^0.2",
+                    "kind": "build",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": false,
+                    "features": [
+                        "extra_traits"
+                    ],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "memchr",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^2",
+                    "kind": "build",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": false,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                }
+            ],
+            "targets": [
+                {
+                    "kind": [
+                        "lib"
+                    ],
+                    "crate_types": [
+                        "lib"
+                    ],
+                    "name": "main",
+                    "src_path": "/home/fakeuser/dev/tmp/test-workspaces/build-deps-no-script/main/src/lib.rs",
+                    "edition": "2021",
+                    "doc": true,
+                    "doctest": true,
+                    "test": true
+                }
+            ],
+            "features": {},
+            "manifest_path": "/home/fakeuser/dev/tmp/test-workspaces/build-deps-no-script/main/Cargo.toml",
+            "metadata": null,
+            "publish": null,
+            "authors": [],
+            "categories": [],
+            "keywords": [],
+            "readme": null,
+            "repository": null,
+            "homepage": null,
+            "documentation": null,
+            "edition": "2021",
+            "links": null,
+            "default_run": null,
+            "rust_version": null
+        },
+        {
+            "name": "memchr",
+            "version": "2.8.3",
+            "id": "registry+https://github.com/rust-lang/crates.io-index#memchr@2.8.3",
+            "license": "Unlicense OR MIT",
+            "license_file": null,
+            "description": "Provides extremely fast (uses SIMD on x86_64, aarch64 and wasm32) routines for\n1, 2 or 3 byte search and single substring search.\n",
+            "source": "registry+https://github.com/rust-lang/crates.io-index",
+            "dependencies": [
+                {
+                    "name": "rustc-std-workspace-core",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.0.0",
+                    "kind": null,
+                    "rename": "core",
+                    "optional": true,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "log",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^0.4.20",
+                    "kind": null,
+                    "rename": null,
+                    "optional": true,
+                    "uses_default_features": true,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                },
+                {
+                    "name": "quickcheck",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^1.0.3",
+                    "kind": "dev",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": false,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                }
+            ],
+            "targets": [
+                {
+                    "kind": [
+                        "lib"
+                    ],
+                    "crate_types": [
+                        "lib"
+                    ],
+                    "name": "memchr",
+                    "src_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/memchr-2.8.3/src/lib.rs",
+                    "edition": "2021",
+                    "doc": true,
+                    "doctest": true,
+                    "test": true
+                }
+            ],
+            "features": {
+                "alloc": [],
+                "core": [
+                    "dep:core"
+                ],
+                "default": [
+                    "std"
+                ],
+                "libc": [],
+                "logging": [
+                    "dep:log"
+                ],
+                "rustc-dep-of-std": [
+                    "core"
+                ],
+                "std": [
+                    "alloc"
+                ],
+                "use_std": [
+                    "std"
+                ]
+            },
+            "manifest_path": "/opt/cargo/registry/src/github.com-1ecc6299db9ec823/memchr-2.8.3/Cargo.toml",
+            "metadata": {
+                "docs": {
+                    "rs": {
+                        "rustdoc-args": [
+                            "--generate-link-to-definition"
+                        ]
+                    }
+                }
+            },
+            "publish": null,
+            "authors": [
+                "Andrew Gallant <jamslam@gmail.com>",
+                "bluss"
+            ],
+            "categories": [],
+            "keywords": [
+                "memchr",
+                "memmem",
+                "substring",
+                "find",
+                "search"
+            ],
+            "readme": "README.md",
+            "repository": "https://github.com/BurntSushi/memchr",
+            "homepage": "https://github.com/BurntSushi/memchr",
+            "documentation": "https://docs.rs/memchr/",
+            "edition": "2021",
+            "links": null,
+            "default_run": null,
+            "rust_version": "1.61"
+        },
+        {
+            "name": "with-script",
+            "version": "0.1.0",
+            "id": "path+file:///home/fakeuser/dev/tmp/test-workspaces/build-deps-no-script/with-script#0.1.0",
+            "license": null,
+            "license_file": null,
+            "description": null,
+            "source": null,
+            "dependencies": [
+                {
+                    "name": "libc",
+                    "source": "registry+https://github.com/rust-lang/crates.io-index",
+                    "req": "^0.2",
+                    "kind": "build",
+                    "rename": null,
+                    "optional": false,
+                    "uses_default_features": false,
+                    "features": [],
+                    "target": null,
+                    "registry": null
+                }
+            ],
+            "targets": [
+                {
+                    "kind": [
+                        "lib"
+                    ],
+                    "crate_types": [
+                        "lib"
+                    ],
+                    "name": "with_script",
+                    "src_path": "/home/fakeuser/dev/tmp/test-workspaces/build-deps-no-script/with-script/src/lib.rs",
+                    "edition": "2021",
+                    "doc": true,
+                    "doctest": true,
+                    "test": true
+                },
+                {
+                    "kind": [
+                        "custom-build"
+                    ],
+                    "crate_types": [
+                        "bin"
+                    ],
+                    "name": "build-script-build",
+                    "src_path": "/home/fakeuser/dev/tmp/test-workspaces/build-deps-no-script/with-script/build.rs",
+                    "edition": "2021",
+                    "doc": false,
+                    "doctest": false,
+                    "test": false
+                }
+            ],
+            "features": {},
+            "manifest_path": "/home/fakeuser/dev/tmp/test-workspaces/build-deps-no-script/with-script/Cargo.toml",
+            "metadata": null,
+            "publish": null,
+            "authors": [],
+            "categories": [],
+            "keywords": [],
+            "readme": null,
+            "repository": null,
+            "homepage": null,
+            "documentation": null,
+            "edition": "2021",
+            "links": null,
+            "default_run": null,
+            "rust_version": null
+        }
+    ],
+    "workspace_members": [
+        "path+file:///home/fakeuser/dev/tmp/test-workspaces/build-deps-no-script/main#0.1.0",
+        "path+file:///home/fakeuser/dev/tmp/test-workspaces/build-deps-no-script/with-script#0.1.0"
+    ],
+    "workspace_default_members": [
+        "path+file:///home/fakeuser/dev/tmp/test-workspaces/build-deps-no-script/main#0.1.0",
+        "path+file:///home/fakeuser/dev/tmp/test-workspaces/build-deps-no-script/with-script#0.1.0"
+    ],
+    "resolve": {
+        "nodes": [
+            {
+                "id": "registry+https://github.com/rust-lang/crates.io-index#libc@0.2.191",
+                "dependencies": [],
+                "deps": [],
+                "features": [
+                    "extra_traits"
+                ]
+            },
+            {
+                "id": "path+file:///home/fakeuser/dev/tmp/test-workspaces/build-deps-no-script/main#0.1.0",
+                "dependencies": [
+                    "registry+https://github.com/rust-lang/crates.io-index#libc@0.2.191",
+                    "registry+https://github.com/rust-lang/crates.io-index#memchr@2.8.3",
+                    "path+file:///home/fakeuser/dev/tmp/test-workspaces/build-deps-no-script/with-script#0.1.0"
+                ],
+                "deps": [
+                    {
+                        "name": "libc",
+                        "pkg": "registry+https://github.com/rust-lang/crates.io-index#libc@0.2.191",
+                        "dep_kinds": [
+                            {
+                                "kind": "build",
+                                "target": null
+                            }
+                        ]
+                    },
+                    {
+                        "name": "memchr",
+                        "pkg": "registry+https://github.com/rust-lang/crates.io-index#memchr@2.8.3",
+                        "dep_kinds": [
+                            {
+                                "kind": "build",
+                                "target": null
+                            }
+                        ]
+                    },
+                    {
+                        "name": "with_script",
+                        "pkg": "path+file:///home/fakeuser/dev/tmp/test-workspaces/build-deps-no-script/with-script#0.1.0",
+                        "dep_kinds": [
+                            {
+                                "kind": null,
+                                "target": null
+                            }
+                        ]
+                    }
+                ],
+                "features": []
+            },
+            {
+                "id": "registry+https://github.com/rust-lang/crates.io-index#memchr@2.8.3",
+                "dependencies": [],
+                "deps": [],
+                "features": []
+            },
+            {
+                "id": "path+file:///home/fakeuser/dev/tmp/test-workspaces/build-deps-no-script/with-script#0.1.0",
+                "dependencies": [
+                    "registry+https://github.com/rust-lang/crates.io-index#libc@0.2.191"
+                ],
+                "deps": [
+                    {
+                        "name": "libc",
+                        "pkg": "registry+https://github.com/rust-lang/crates.io-index#libc@0.2.191",
+                        "dep_kinds": [
+                            {
+                                "kind": "build",
+                                "target": null
+                            }
+                        ]
+                    }
+                ],
+                "features": []
+            }
+        ],
+        "root": null
+    },
+    "target_directory": "/home/fakeuser/dev/tmp/test-workspaces/build-deps-no-script/target",
+    "build_directory": "/home/fakeuser/dev/tmp/test-workspaces/build-deps-no-script/target",
+    "version": 1,
+    "workspace_root": "/home/fakeuser/dev/tmp/test-workspaces/build-deps-no-script",
+    "metadata": null
+}
