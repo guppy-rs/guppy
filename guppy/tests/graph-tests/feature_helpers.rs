@@ -35,6 +35,10 @@ pub(super) struct CargoResolutionCase {
     /// `cargo build --tests` -- off by default.
     include_dev: bool,
 
+    /// Whether build dependencies of packages without a build script are
+    /// followed, as Cargo's feature resolver does -- off by default.
+    include_build_deps_without_build_script: bool,
+
     /// Features enabled on the initial package.
     ///
     /// `dep:x` features are accepted as valid.
@@ -65,6 +69,7 @@ impl CargoResolutionCase {
             target_platform: LINUX,
             host_platform: LINUX,
             include_dev: false,
+            include_build_deps_without_build_script: false,
             features,
             target_expected: &[],
             host_expected: &[],
@@ -92,6 +97,13 @@ impl CargoResolutionCase {
     pub(super) const fn include_dev(self) -> Self {
         Self {
             include_dev: true,
+            ..self
+        }
+    }
+
+    pub(super) const fn include_build_deps_without_build_script(self) -> Self {
+        Self {
+            include_build_deps_without_build_script: true,
             ..self
         }
     }
@@ -158,6 +170,9 @@ impl CargoResolutionCase {
         cargo_options
             .set_resolver(self.resolver)
             .set_include_dev(self.include_dev)
+            .set_include_build_deps_without_build_script(
+                self.include_build_deps_without_build_script,
+            )
             .set_target_platform(platform(self.target_platform))
             .set_host_platform(platform(self.host_platform));
         feature_set

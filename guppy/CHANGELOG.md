@@ -3,6 +3,17 @@
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+### Added
+
+- `CargoOptions::set_include_build_deps_without_build_script`, which follows
+  the `[build-dependencies]` of packages that have no build script. Cargo
+  compiles nothing for those dependencies and `guppy` continues to leave them
+  out by default, so a package reachable only through one of them is not part
+  of the `CargoSet`. Cargo's feature resolver does activate them, and
+  `cargo tree` lists them; enabling the option reproduces that view. The
+  features such dependencies request of packages that are built anyway were
+  already unified in both modes, as Cargo does.
+
 ## [0.19.1] - 2026-09-24
 
 ### Added

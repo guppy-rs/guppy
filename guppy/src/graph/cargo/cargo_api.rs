@@ -22,6 +22,7 @@ use std::{collections::HashSet, fmt};
 pub struct CargoOptions<'a> {
     pub(crate) resolver: CargoResolverVersion,
     pub(crate) include_dev: bool,
+    pub(crate) include_build_deps_without_build_script: bool,
     pub(crate) initials_platform: InitialsPlatform,
     pub(crate) host_platform: PlatformSpec,
     pub(crate) target_platform: PlatformSpec,
@@ -35,6 +36,7 @@ impl<'a> CargoOptions<'a> {
     ///
     /// * use version 3 of the Cargo resolver
     /// * exclude dev-dependencies
+    /// * leave out the build dependencies of packages that have no build script
     /// * do not build proc macros specified in the query on the target platform
     /// * resolve dependencies assuming any possible host or target platform
     /// * do not omit any packages.
@@ -42,6 +44,7 @@ impl<'a> CargoOptions<'a> {
         Self {
             resolver: CargoResolverVersion::V3,
             include_dev: false,
+            include_build_deps_without_build_script: false,
             initials_platform: InitialsPlatform::Standard,
             host_platform: PlatformSpec::Any,
             target_platform: PlatformSpec::Any,
@@ -65,6 +68,23 @@ impl<'a> CargoOptions<'a> {
     /// The default is false, which matches what a plain `cargo build` does.
     pub fn set_include_dev(&mut self, include_dev: bool) -> &mut Self {
         self.include_dev = include_dev;
+        self
+    }
+
+    /// If set to true, follows the `[build-dependencies]` of packages that have no build script.
+    ///
+    /// Cargo compiles nothing for such dependencies, since there is no build script to link them
+    /// into, and by default `guppy` leaves them out to match: a package reachable only through one
+    /// of them is not part of the `CargoSet`. The features they request of packages that are built
+    /// for other reasons are unified either way, as Cargo does.
+    ///
+    /// Cargo's feature resolver does activate them, and tools built on it such as `cargo tree` list
+    /// them. Setting this to true reproduces that view: the dependencies are included on the host
+    /// platform, with their features, even though Cargo never builds them.
+    ///
+    /// The default is false.
+    pub fn set_include_build_deps_without_build_script(&mut self, include: bool) -> &mut Self {
+        self.include_build_deps_without_build_script = include;
         self
     }
 
@@ -127,6 +147,7 @@ impl<'a> CargoOptions<'a> {
         Ok(CargoOptions {
             resolver: self.resolver,
             include_dev: self.include_dev,
+            include_build_deps_without_build_script: self.include_build_deps_without_build_script,
             initials_platform: self.initials_platform,
             host_platform: self.host_platform.clone(),
             target_platform: self.target_platform.clone(),
@@ -186,6 +207,7 @@ pub struct CargoLinkContext<'a, 'g> {
     platform_spec: &'a PlatformSpec,
     build_dep_platform_spec: &'a PlatformSpec,
     include_dev: bool,
+    include_build_deps_without_build_script: bool,
 }
 
 impl<'a, 'g> CargoLinkContext<'a, 'g> {
@@ -204,6 +226,7 @@ impl<'a, 'g> CargoLinkContext<'a, 'g> {
             platform_spec,
             build_dep_platform_spec,
             include_dev: opts.include_dev,
+            include_build_deps_without_build_script: opts.include_build_deps_without_build_script,
         }
     }
 
@@ -238,9 +261,10 @@ impl<'a, 'g> CargoLinkContext<'a, 'g> {
     }
 
     /// Returns true if build-dependencies of this link may be followed: the
-    /// `from` package has a build script.
+    /// `from` package has a build script, or
+    /// [`CargoOptions::set_include_build_deps_without_build_script`] is set.
     pub fn considers_build_deps(&self, link: &PackageLink<'g>) -> bool {
-        link.from().has_build_script()
+        self.include_build_deps_without_build_script || link.from().has_build_script()
     }
 }
 
