@@ -13,8 +13,11 @@ use guppy::{
     graph::{BuildTargetId, BuildTargetKind, PackageGraph},
     platform::{EnabledTernary, Platform, TargetFeatures},
 };
-use once_cell::sync::{Lazy, OnceCell};
-use std::{collections::BTreeMap, fs};
+use std::{
+    collections::BTreeMap,
+    fs,
+    sync::{LazyLock, OnceLock},
+};
 
 // Metadata along with interesting crate names.
 pub static METADATA1_PATH: &str = "../small/metadata1.json";
@@ -285,7 +288,7 @@ macro_rules! define_fixtures {
             // Access all fixtures.
             pub fn all_fixtures() -> &'static BTreeMap<&'static str, JsonFixture> {
                 // Provide a list of all fixtures.
-                static ALL_FIXTURES: Lazy<BTreeMap<&'static str, JsonFixture>> = Lazy::new(|| {
+                static ALL_FIXTURES: LazyLock<BTreeMap<&'static str, JsonFixture>> = LazyLock::new(|| {
                     let mut map = BTreeMap::new();
 
                     $(map.insert(
@@ -350,7 +353,7 @@ pub struct JsonFixture {
     name: &'static str,
     workspace_path: Utf8PathBuf,
     abs_path: Utf8PathBuf,
-    json_graph: OnceCell<(String, PackageGraph)>,
+    json_graph: OnceLock<(String, PackageGraph)>,
     details: FixtureDetails,
 }
 
@@ -382,7 +385,7 @@ impl JsonFixture {
             name,
             workspace_path,
             abs_path,
-            json_graph: OnceCell::new(),
+            json_graph: OnceLock::new(),
             details,
         }
     }
@@ -568,7 +571,7 @@ impl FixtureDetails {
                 ("yaml-rust", "yaml-rust 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)")
             ];
 
-        static LIB_TYPE: Lazy<Vec<String>> = Lazy::new(|| vec!["lib".into()]);
+        static LIB_TYPE: LazyLock<Vec<String>> = LazyLock::new(|| vec!["lib".into()]);
 
         PackageDetails::new(
             METADATA1_DATATEST,
@@ -2165,10 +2168,10 @@ impl FixtureDetails {
 
         let mut details = AHashMap::new();
 
-        static BIN_CDYLIB_TYPES: Lazy<Vec<String>> =
-            Lazy::new(|| vec!["bin".into(), "cdylib".into()]);
-        static DYLIB_RLIB_TYPES: Lazy<Vec<String>> =
-            Lazy::new(|| vec!["dylib".into(), "rlib".into()]);
+        static BIN_CDYLIB_TYPES: LazyLock<Vec<String>> =
+            LazyLock::new(|| vec!["bin".into(), "cdylib".into()]);
+        static DYLIB_RLIB_TYPES: LazyLock<Vec<String>> =
+            LazyLock::new(|| vec!["dylib".into(), "rlib".into()]);
 
         PackageDetails::new(
             METADATA_BUILD_TARGETS1_TESTCRATE,

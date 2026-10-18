@@ -15,7 +15,6 @@ use ahash::AHashMap;
 use camino::{Utf8Path, Utf8PathBuf};
 use fixedbitset::FixedBitSet;
 use indexmap::{IndexMap, IndexSet};
-use once_cell::sync::OnceCell;
 use petgraph::{
     algo::{DfsSpace, has_path_connecting},
     graph::EdgeReference,
@@ -28,6 +27,7 @@ use std::{
     collections::{BTreeMap, HashSet},
     fmt,
     iter::{self, FromIterator},
+    sync::OnceLock,
 };
 
 use super::feature::{FeatureFilter, FeatureSet};
@@ -43,9 +43,9 @@ pub struct PackageGraph {
     // Source of truth data.
     pub(super) dep_graph: Graph<PackageId, PackageLinkImpl, Directed, PackageIx>,
     // The strongly connected components of the graph, computed on demand.
-    pub(super) sccs: OnceCell<Sccs<PackageIx>>,
+    pub(super) sccs: OnceLock<Sccs<PackageIx>>,
     // Feature graph, computed on demand.
-    pub(super) feature_graph: OnceCell<FeatureGraphImpl>,
+    pub(super) feature_graph: OnceLock<FeatureGraphImpl>,
     // XXX Should this be in an Arc for quick cloning? Not clear how this would work with node
     // filters though.
     pub(super) data: PackageGraphData,
@@ -717,7 +717,7 @@ pub(super) struct WorkspaceImpl {
     pub(super) default_members: Vec<PackageId>,
     // Cache for members by name (only used for proptests)
     #[cfg(feature = "proptest1")]
-    pub(super) name_list: OnceCell<Vec<Box<str>>>,
+    pub(super) name_list: OnceLock<Vec<Box<str>>>,
 }
 
 /// Information about a specific package in a `PackageGraph`.

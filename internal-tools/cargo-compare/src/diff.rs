@@ -10,10 +10,10 @@ use color_eyre::eyre::{Result, bail};
 use diffus::{Diffable, edit};
 use guppy::{PackageId, graph::PackageGraph};
 use itertools::Itertools;
-use once_cell::sync::OnceCell;
 use std::{
     collections::{BTreeMap, BTreeSet},
     fmt,
+    sync::OnceLock,
 };
 
 /// Options for cargo/guppy comparisons.
@@ -67,7 +67,7 @@ impl DiffOpts {
 pub struct TargetHostDiff<'g> {
     pub target_diff: FeatureDiff<'g>,
     pub host_diff: FeatureDiff<'g>,
-    any_diff: OnceCell<bool>,
+    any_diff: OnceLock<bool>,
 }
 
 impl<'g> TargetHostDiff<'g> {
@@ -75,7 +75,7 @@ impl<'g> TargetHostDiff<'g> {
         Self {
             target_diff,
             host_diff,
-            any_diff: OnceCell::new(),
+            any_diff: OnceLock::new(),
         }
     }
 

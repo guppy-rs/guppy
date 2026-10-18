@@ -4,9 +4,8 @@
 use crate::common::GuppyCargoCommon;
 use guppy::graph::{PackageGraph, cargo::CargoResolverVersion};
 use guppy_cmdlib::CargoMetadataOptions;
-use once_cell::sync::Lazy;
 use proptest::prelude::*;
-use std::{env, io::Write, path::Path};
+use std::{env, io::Write, path::Path, sync::LazyLock};
 use tempfile::TempDir;
 
 // ---
@@ -36,7 +35,8 @@ macro_rules! define_fixture {
         copy_dir => $copy_dir: expr,
     ) => {
         pub(crate) fn $name() -> &'static Fixture {
-            static FIXTURE: Lazy<Fixture> = Lazy::new(|| Fixture::new($path, $resolver, $copy_dir));
+            static FIXTURE: LazyLock<Fixture> =
+                LazyLock::new(|| Fixture::new($path, $resolver, $copy_dir));
             &*FIXTURE
         }
     };
@@ -173,8 +173,8 @@ impl Fixture {
         // Large graphs (like cargo-guppy's) can only really do a tiny number of proptests
         // reasonably in debug mode. It would be cool to figure out a way to speed it up (release
         // mode works -- also maybe through parallelization?)
-        static PROPTEST_MULTIPLIER: Lazy<u32> =
-            Lazy::new(|| match env::var("PROPTEST_MULTIPLIER") {
+        static PROPTEST_MULTIPLIER: LazyLock<u32> =
+            LazyLock::new(|| match env::var("PROPTEST_MULTIPLIER") {
                 Ok(multiplier) => multiplier
                     .parse()
                     .expect("PROPTEST_MULTIPLIER is a valid u32"),

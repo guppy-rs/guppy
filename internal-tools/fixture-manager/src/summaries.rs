@@ -11,9 +11,8 @@ use guppy::graph::{
 };
 use guppy_cmdlib::PackagesAndFeatures;
 use hakari::diffy::{PatchFormatter, create_patch};
-use once_cell::sync::Lazy;
 use proptest_ext::ValueGenerator;
-use std::fmt::Write;
+use std::{fmt::Write, sync::LazyLock};
 
 pub struct SummaryContext;
 
@@ -123,7 +122,7 @@ impl<'g> ContextImpl<'g> for SummaryContext {
         existing: Option<&Self::Existing>,
     ) -> String {
         // Need to make this a static to allow lifetimes to work out.
-        static EMPTY_SUMMARY: Lazy<Summary> = Lazy::new(Summary::default);
+        static EMPTY_SUMMARY: LazyLock<Summary> = LazyLock::new(Summary::default);
 
         let existing_summary = match existing {
             Some(existing) => &existing.summary,

@@ -6,9 +6,9 @@ use anyhow::Result;
 use camino::{Utf8Path, Utf8PathBuf};
 use fixtures::json::*;
 use hakari::{Hakari, HakariBuilder, HakariCargoToml, HakariOutputOptions, diffy::PatchFormatter};
-use once_cell::sync::Lazy;
 use proptest::prelude::*;
 use proptest_ext::ValueGenerator;
+use std::sync::LazyLock;
 
 pub struct HakariTomlContext;
 
@@ -85,7 +85,7 @@ impl<'g> ContextImpl<'g> for HakariTomlContext {
         (_, item): &Self::IterItem,
         existing: Option<&Self::Existing>,
     ) -> String {
-        static DEFAULT_EXISTING: Lazy<HakariCargoToml> = Lazy::new(|| {
+        static DEFAULT_EXISTING: LazyLock<HakariCargoToml> = LazyLock::new(|| {
             let contents = format!(
                 "{}{}",
                 HakariCargoToml::BEGIN_SECTION,
