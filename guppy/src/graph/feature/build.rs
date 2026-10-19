@@ -16,10 +16,9 @@ use crate::{
 };
 use ahash::AHashMap;
 use cargo_metadata::DependencyKind;
-use once_cell::sync::OnceCell;
 use petgraph::{prelude::*, visit::IntoEdgeReferences};
 use smallvec::SmallVec;
-use std::iter;
+use std::{iter, sync::OnceLock};
 
 pub(super) type FeaturePetgraph = Graph<FeatureNode, FeatureEdge, Directed, FeatureIx>;
 pub(super) type FeatureEdgeReference<'g> = <&'g FeaturePetgraph as IntoEdgeReferences>::EdgeRef;
@@ -618,7 +617,7 @@ impl FeatureGraphBuildState {
             base_ixs: self.base_ixs,
             map: self.map,
             warnings: self.warnings,
-            sccs: OnceCell::new(),
+            sccs: OnceLock::new(),
             weak: self.weak,
         }
     }

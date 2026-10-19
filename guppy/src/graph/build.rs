@@ -18,7 +18,6 @@ use cargo_metadata::{
 };
 use fixedbitset::FixedBitSet;
 use indexmap::{IndexMap, IndexSet};
-use once_cell::sync::OnceCell;
 use petgraph::prelude::*;
 use semver::Version;
 use smallvec::SmallVec;
@@ -26,6 +25,7 @@ use std::{
     cell::RefCell,
     collections::{BTreeMap, HashSet},
     rc::Rc,
+    sync::OnceLock,
 };
 use target_spec::TargetSpec;
 
@@ -81,8 +81,8 @@ impl PackageGraph {
 
         Ok(Self {
             dep_graph,
-            sccs: OnceCell::new(),
-            feature_graph: OnceCell::new(),
+            sccs: OnceLock::new(),
+            feature_graph: OnceLock::new(),
             data: PackageGraphData {
                 packages,
                 workspace,
@@ -162,7 +162,7 @@ impl WorkspaceImpl {
             members_by_name,
             default_members,
             #[cfg(feature = "proptest1")]
-            name_list: OnceCell::new(),
+            name_list: OnceLock::new(),
         })
     }
 }

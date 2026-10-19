@@ -29,13 +29,13 @@ pub use crate::petgraph_support::dot::DotWrite;
 pub use build_targets::*;
 pub use cycles::*;
 pub use graph_impl::*;
-use once_cell::sync::Lazy;
 use petgraph::graph::IndexType;
 #[cfg(feature = "proptest1")]
 pub use proptest_helpers::*;
 pub use query::*;
 pub use resolve::*;
 use semver::{Version, VersionReq};
+use std::sync::LazyLock;
 
 /// The direction in which to follow dependencies.
 ///
@@ -146,7 +146,7 @@ impl GraphSpec for FeatureGraphSpec {
 // but cargo accepts them.
 // See https://github.com/steveklabnik/semver/issues/98.
 fn cargo_version_matches(req: &VersionReq, version: &Version) -> bool {
-    static MAJOR_WILDCARD: Lazy<VersionReq> = Lazy::new(|| VersionReq::parse("*").unwrap());
+    static MAJOR_WILDCARD: LazyLock<VersionReq> = LazyLock::new(|| VersionReq::parse("*").unwrap());
 
     req == &*MAJOR_WILDCARD || req.matches(version)
 }

@@ -17,14 +17,13 @@ use crate::{
 };
 use ahash::AHashMap;
 use debug_ignore::DebugIgnore;
-use once_cell::sync::OnceCell;
 use petgraph::{
     algo::has_path_connecting,
     prelude::*,
     visit::{EdgeFiltered, IntoNodeReferences},
 };
 use smallvec::SmallVec;
-use std::{fmt, iter, iter::FromIterator};
+use std::{fmt, iter, iter::FromIterator, sync::OnceLock};
 
 // Some general notes about feature graphs:
 //
@@ -687,7 +686,7 @@ pub(in crate::graph) struct FeatureGraphImpl {
     pub(super) map: AHashMap<FeatureNode, FeatureMetadataImpl>,
     pub(super) warnings: Vec<FeatureGraphWarning>,
     // The strongly connected components of the feature graph. Computed on demand.
-    pub(super) sccs: OnceCell<Sccs<FeatureIx>>,
+    pub(super) sccs: OnceLock<Sccs<FeatureIx>>,
     pub(super) weak: WeakDependencies,
 }
 

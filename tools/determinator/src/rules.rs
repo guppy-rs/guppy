@@ -107,9 +107,8 @@
 use crate::errors::RulesError;
 use globset::{Glob, GlobSet, GlobSetBuilder};
 use guppy::graph::{PackageGraph, PackageMetadata, PackageSet, Workspace};
-use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
-use std::fmt;
+use std::{fmt, sync::LazyLock};
 
 /// Rules for the target determinator.
 ///
@@ -190,7 +189,7 @@ The latest version of the default rules is available
     ///
     /// These rules are applied *after* any custom rules, so they can be overridden by custom rules.
     pub fn default_rules() -> &'static DeterminatorRules {
-        static DEFAULT_RULES: Lazy<DeterminatorRules> = Lazy::new(|| {
+        static DEFAULT_RULES: LazyLock<DeterminatorRules> = LazyLock::new(|| {
             DeterminatorRules::parse(DeterminatorRules::DEFAULT_RULES_TOML)
                 .expect("default rules should parse")
         });
