@@ -36,7 +36,7 @@ pub(super) struct CargoResolutionCase {
     include_dev: bool,
 
     /// Whether build dependencies of packages without a build script are
-    /// followed, as Cargo's feature resolver does -- off by default.
+    /// followed -- off by default.
     include_build_deps_without_build_script: bool,
 
     /// Features enabled on the initial package.

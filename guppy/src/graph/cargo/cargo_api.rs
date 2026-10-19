@@ -71,16 +71,39 @@ impl<'a> CargoOptions<'a> {
         self
     }
 
-    /// If set to true, follows the `[build-dependencies]` of packages that have no build script.
+    /// If set to true, follows the `[build-dependencies]` of packages that
+    /// have no build script.
     ///
-    /// Cargo compiles nothing for such dependencies, since there is no build script to link them
-    /// into, and by default `guppy` leaves them out to match: a package reachable only through one
-    /// of them is not part of the `CargoSet`. The features they request of packages that are built
-    /// for other reasons are unified either way, as Cargo does.
+    /// Cargo only compiles build dependencies for a build script, but its
+    /// feature resolver does not check for one. Take the following package:
     ///
-    /// Cargo's feature resolver does activate them, and tools built on it such as `cargo tree` list
-    /// them. Setting this to true reproduces that view: the dependencies are included on the host
-    /// platform, with their features, even though Cargo never builds them.
+    /// ```toml
+    /// [package]
+    /// name = "main"
+    /// # No `build.rs`.
+    ///
+    /// [build-dependencies]
+    /// memchr = "2"
+    /// ```
+    ///
+    /// * `cargo build` never compiles `memchr`.
+    /// * `cargo tree`, `cargo metadata`, `cargo vendor` and `Cargo.lock` all
+    ///   include `memchr`, with its features resolved.
+    ///
+    /// By default `CargoSet` matches `cargo build`: `memchr` is not included,
+    /// and neither is anything only reachable through it. Setting this to true
+    /// matches `cargo metadata`: `memchr` is included on the host platform
+    /// with its features. This is intended for tools that need to account for
+    /// every package Cargo resolves (e.g. vendoring).
+    ///
+    /// Note that this does not change feature resolution. If `memchr` is
+    /// compiled for some other reason (e.g. a different package's build
+    /// script), the features `main` requests for it are enabled regardless of
+    /// this setting.
+    ///
+    /// For details on build dependencies see [Build
+    /// Dependencies](https://doc.rust-lang.org/cargo/reference/build-scripts.html#build-dependencies)
+    /// in the Cargo reference.
     ///
     /// The default is false.
     pub fn set_include_build_deps_without_build_script(&mut self, include: bool) -> &mut Self {
@@ -260,9 +283,13 @@ impl<'a, 'g> CargoLinkContext<'a, 'g> {
         self.include_dev && self.package_context.starts_from_initial(link)
     }
 
-    /// Returns true if build-dependencies of this link may be followed: the
-    /// `from` package has a build script, or
-    /// [`CargoOptions::set_include_build_deps_without_build_script`] is set.
+    /// Returns true if the build dependencies of this link may be followed.
+    ///
+    /// This is the case if any of the following are true:
+    ///
+    /// * The `from` package has a build script.
+    /// * [`CargoOptions::set_include_build_deps_without_build_script`] is set
+    ///   to true.
     pub fn considers_build_deps(&self, link: &PackageLink<'g>) -> bool {
         self.include_build_deps_without_build_script || link.from().has_build_script()
     }

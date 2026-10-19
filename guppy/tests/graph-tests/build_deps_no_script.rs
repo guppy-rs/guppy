@@ -3,13 +3,9 @@
 
 //! Tests for build dependencies declared by a package without a build script.
 //!
-//! Cargo resolves features for such dependencies but never builds them: the
-//! feature resolver does not look for a build script, while the unit graph
-//! only reaches build dependencies through a build script unit. The two halves
-//! are visible separately when another package *with* a build script shares
-//! one of the dependencies.
-//!
-//! The `build-deps-no-script` fixture has two workspace members:
+//! For how Cargo treats these dependencies, see
+//! `CargoOptions::set_include_build_deps_without_build_script`. The
+//! `build-deps-no-script` fixture has two workspace members:
 //!
 //! ```toml
 //! # main/Cargo.toml -- no build.rs.
@@ -25,9 +21,8 @@
 //! libc = { version = "0.2", default-features = false }
 //! ```
 //!
-//! Building `main` compiles libc once, for with-script's build script, with
-//! `extra_traits` unified in from main's declaration. memchr is never
-//! compiled.
+//! Building `main` compiles `libc` once, for `with-script`'s build script,
+//! with `extra_traits` from `main`'s declaration. `memchr` is never compiled.
 
 use crate::feature_helpers::CargoResolutionCase;
 use fixtures::json::{self, JsonFixture};

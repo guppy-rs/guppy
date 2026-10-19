@@ -148,7 +148,11 @@ pub struct CargoSetInputsSummary {
     pub include_dev: bool,
 
     /// Whether the build dependencies of packages without a build script are
-    /// followed, as Cargo's feature resolver does.
+    /// followed.
+    ///
+    /// Cargo never compiles these dependencies, but its feature resolver still
+    /// activates them. For the difference between the two and an example, see
+    /// [`CargoOptions::set_include_build_deps_without_build_script`](crate::graph::cargo::CargoOptions::set_include_build_deps_without_build_script).
     ///
     /// Defaults to false, and is left out of the summary when false.
     #[serde(skip_serializing_if = "is_false", default)]

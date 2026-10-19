@@ -1029,8 +1029,9 @@ impl<'g> PackageMetadata<'g> {
 
     /// Returns true if this package has a build script.
     ///
-    /// Cargo only compiles build dependencies if a build script is set. Its feature resolver
-    /// follows them either way; see
+    /// Cargo only compiles build dependencies if a build script is set. Its
+    /// feature resolver follows them whether this package has a build script
+    /// or not. For more, see
     /// [`CargoOptions::set_include_build_deps_without_build_script`](crate::graph::cargo::CargoOptions::set_include_build_deps_without_build_script).
     ///
     /// For more about build scripts, see [Build
