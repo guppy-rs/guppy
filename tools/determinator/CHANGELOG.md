@@ -3,6 +3,8 @@
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+## [0.13.0] - 2026-10-21
+
 ### Changed
 
 - `Determinator::default_cargo_options` now resolves features with version 3 of
@@ -138,6 +140,7 @@ Initial release.
 * A `Paths0` wrapper to make it easier to retrieve changes from source control.
 
 <!-- next-url -->
+[0.13.0]: https://github.com/guppy-rs/guppy/releases/tag/determinator-0.13.0
 [0.12.0]: https://github.com/guppy-rs/guppy/releases/tag/determinator-0.12.0
 [0.11.0]: https://github.com/guppy-rs/guppy/releases/tag/determinator-0.11.0
 [0.10.0]: https://github.com/guppy-rs/guppy/releases/tag/determinator-0.10.0
