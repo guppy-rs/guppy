@@ -36,7 +36,7 @@ target-lexicon = { version = "0.13.5", features = ["std"] }
 guppy-workspace-hack.workspace = true
 
 [dev-dependencies]
-indoc = "2.0.7"
+indoc = "2.0.8"
 test-case = "3.3.1"
 toml = "1.1.8"
 
