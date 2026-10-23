@@ -541,6 +541,16 @@ mod small {
 
     proptest_suite!(metadata_dep_name_collision);
 
+    // A fixture where a package without a build script declares build
+    // dependencies. See `build_deps_no_script.rs`.
+    #[test]
+    fn metadata_build_deps_no_script() {
+        let metadata_build_deps_no_script = JsonFixture::metadata_build_deps_no_script();
+        metadata_build_deps_no_script.verify();
+    }
+
+    proptest_suite!(metadata_build_deps_no_script);
+
     // Test Windows path handling in fixtures with path dependencies.
     #[test]
     fn metadata_cycle1_windows() {

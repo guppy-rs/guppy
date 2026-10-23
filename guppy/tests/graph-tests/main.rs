@@ -13,6 +13,7 @@ macro_rules! proptest_suite {
 }
 
 mod build_dep_optional;
+mod build_deps_no_script;
 mod cargo_set_tests;
 mod dep_name_collision;
 mod feature_helpers;
