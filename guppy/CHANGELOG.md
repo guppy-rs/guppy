@@ -3,6 +3,13 @@
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+### Added
+
+- `CargoOptions::set_include_build_deps_without_build_script`, which includes
+  the `[build-dependencies]` of packages that have no build script in a
+  `CargoSet`. Cargo never compiles these, but `cargo tree` and `cargo metadata`
+  list them. Off by default; see the method's documentation for details.
+
 ## [0.19.1] - 2026-09-24
 
 ### Added
