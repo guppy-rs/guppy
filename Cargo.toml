@@ -19,7 +19,11 @@ members = [
 ]
 
 [workspace.dependencies]
-ahash = "0.8.12"
+# `runtime-rng` pulls in `getrandom`, which has no backend on
+# `wasm32-unknown-unknown` without JavaScript. The maps in this workspace are
+# internal, so fixed hash keys are fine. `no-rng` acknowledges this and enables
+# the `Default` impl for `RandomState`.
+ahash = { version = "0.8.12", default-features = false, features = ["std", "no-rng"] }
 cargo_metadata = "0.23.1"
 cfg-expr = "0.20.9"
 datatest-stable = { version = "0.3.3", features = ["include-dir"] }

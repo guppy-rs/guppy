@@ -174,3 +174,30 @@ jobs:
           # * Build all targets to ensure examples are built as well.
           args: --target aarch64-unknown-linux-gnu --workspace --exclude cargo-compare --all-targets
       # TODO: run tests somehow? possibly through cross/qemu
+
+  wasm-build:
+    runs-on: ubuntu-latest
+    name: Build for wasm32-unknown-unknown
+    env:
+      RUSTFLAGS: -D warnings
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: dtolnay/rust-toolchain@6bed0761d98439e5a578e2877258200ad565ba87 # stable
+        with:
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@98c8021b550208e191a6a3145459bfc9fb29c4c0 # v2
+      # Only the library crates are expected to build for wasm. The cargo-*
+      # binaries, hakari and determinator shell out to cargo, use threads, or
+      # write to the filesystem, so they are not built here.
+      #
+      # Build packages one by one so that feature unification doesn't hide a
+      # crate that only builds because another one enabled a feature.
+      #
+      # wasm32-unknown-unknown has no source of randomness without JavaScript,
+      # so these builds also check that nothing pulls in getrandom.
+      - name: Build target-spec
+        run: cargo build --target wasm32-unknown-unknown --package target-spec --features custom,summaries
+      - name: Build guppy-summaries
+        run: cargo build --target wasm32-unknown-unknown --package guppy-summaries
+      - name: Build guppy
+        run: cargo build --target wasm32-unknown-unknown --package guppy --features summaries,custom-platforms,rayon1
