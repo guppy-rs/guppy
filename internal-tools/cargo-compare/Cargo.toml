@@ -18,4 +18,4 @@ guppy = { path = "../../guppy" }
 guppy-cmdlib = { path = "../../guppy-cmdlib", features = ["proptest1"] }
 tempfile = "3.27.0"
 pathdiff = "0.2.3"
-proptest = "1.11.0"
+proptest = "1.12.0"
