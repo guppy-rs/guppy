@@ -3,6 +3,12 @@
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+### Added
+
+- `Platform::cfg_text`, which renders the `rustc --print=cfg` output for a
+  platform. This lets tools with their own `cfg()` evaluator skip running
+  `rustc`. See the method's documentation for details.
+
 ## [3.7.0] - 2026-08-25
 
 ### Changed

@@ -250,6 +250,12 @@ impl Triple {
         self.inner.matches(tp)
     }
 
+    /// Returns the target information, if it is known exactly: for
+    /// builtin and custom triples, but not heuristic ones.
+    pub(crate) fn target_info(&self) -> Option<&TargetInfo> {
+        self.inner.target_info()
+    }
+
     #[cfg(feature = "summaries")]
     pub(crate) fn custom_json(&self) -> Option<&str> {
         self.inner.custom_json()
@@ -398,6 +404,15 @@ impl TripleInner {
             #[cfg(feature = "custom-cfg")]
             TripleInner::Custom { target_info, .. } => target_info.matches(tp),
             TripleInner::Lexicon { lexicon_triple, .. } => lexicon_triple.matches(tp),
+        }
+    }
+
+    fn target_info(&self) -> Option<&TargetInfo> {
+        match self {
+            TripleInner::Builtin(target_info) => Some(target_info),
+            #[cfg(feature = "custom-cfg")]
+            TripleInner::Custom { target_info, .. } => Some(target_info),
+            TripleInner::Lexicon { .. } => None,
         }
     }
 

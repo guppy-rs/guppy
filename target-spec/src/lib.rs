@@ -73,6 +73,7 @@
 #![forbid(unsafe_code)]
 #![cfg_attr(doc_cfg, feature(doc_cfg))]
 
+mod cfgs;
 #[cfg(feature = "custom")]
 mod custom;
 #[cfg(feature = "custom-cfg")]
