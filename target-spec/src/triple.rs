@@ -131,7 +131,6 @@ impl Triple {
                 error: error.into(),
             }
         })?;
-        #[cfg(feature = "summaries")]
         let minified_json =
             serde_json::to_string(&target_def).expect("serialization is infallible");
 
@@ -139,7 +138,6 @@ impl Triple {
         Ok(Self {
             inner: TripleInner::Custom {
                 target_info,
-                #[cfg(feature = "summaries")]
                 custom_source: OwnedCustomSource::Json(minified_json),
             },
         })
@@ -162,7 +160,6 @@ impl Triple {
         Ok(Self {
             inner: TripleInner::Custom {
                 target_info: Box::new(target_info),
-                #[cfg(feature = "summaries")]
                 custom_source: OwnedCustomSource::Cfg(cfg_text.to_string()),
             },
         })
@@ -241,7 +238,6 @@ impl Triple {
     /// Returns how a custom platform was defined: via JSON or `cfg`.
     ///
     /// Returns `None` if this is not a custom platform.
-    #[cfg(feature = "summaries")]
     pub fn custom_source(&self) -> Option<CustomSource<'_>> {
         self.inner.custom_source()
     }
@@ -281,9 +277,6 @@ enum TripleInner {
     #[cfg(feature = "custom-cfg")]
     Custom {
         target_info: Box<cfg_expr::targets::TargetInfo>,
-        // The source representation is only needed if summaries
-        // are enabled.
-        #[cfg(feature = "summaries")]
         custom_source: OwnedCustomSource,
     },
 
@@ -294,9 +287,8 @@ enum TripleInner {
     },
 }
 
-/// The source representation of a custom platform, used for
-/// round-tripping through summaries.
-#[cfg(all(feature = "custom-cfg", feature = "summaries"))]
+/// The source representation of a custom platform.
+#[cfg(feature = "custom-cfg")]
 #[derive(Clone, Debug)]
 enum OwnedCustomSource {
     /// Created from target JSON (via `new_custom`).
@@ -402,7 +394,6 @@ impl TripleInner {
         }
     }
 
-    #[cfg(feature = "summaries")]
     fn custom_source(&self) -> Option<CustomSource<'_>> {
         match self {
             TripleInner::Builtin(_) | TripleInner::Lexicon { .. } => None,
@@ -432,7 +423,6 @@ impl TripleInner {
 /// Returned by [`Triple::custom_source`] and [`Platform::custom_source`].
 // NOTE: The variants are not feature-gated so downstream code doesn't have
 // to unnecessarily perform cfg-gating.
-#[cfg(feature = "summaries")]
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[non_exhaustive]
 pub enum CustomSource<'a> {
