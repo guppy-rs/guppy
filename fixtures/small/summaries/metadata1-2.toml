@@ -7,15 +7,15 @@ include-dev = true
 initials-platform = 'host'
 
 [[metadata.host-platform]]
-triple = 'armv7a-kmc-solid_asp3-eabihf'
+triple = 'armv7a-kmc-solid_asp3-eabi'
 target-features = ['avx', 'bmi1', 'sse2']
 
 [[metadata.host-platform]]
-triple = 'arm-unknown-linux-gnueabihf'
+triple = 'arm-unknown-linux-gnueabi'
 target-features = 'unknown'
 
 [[metadata.host-platform]]
-triple = 'mipsisa32r6el-unknown-linux-gnu'
+triple = 'mipsisa64r6-unknown-linux-gnuabi64'
 target-features = 'unknown'
 flags = ['cargo_web']
 

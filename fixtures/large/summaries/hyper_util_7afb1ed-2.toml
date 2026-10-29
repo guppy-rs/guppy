@@ -7,11 +7,11 @@ include-dev = true
 initials-platform = 'proc-macros-on-target'
 
 [[metadata.host-platform]]
-triple = 'armebv7r-none-eabihf'
+triple = 'armebv7r-none-eabi'
 target-features = ['sse']
 
 [[metadata.host-platform]]
-triple = 'armv4t-none-eabi'
+triple = 'armebv7r-none-eabihf'
 target-features = 'unknown'
 
 [metadata.target-platform]

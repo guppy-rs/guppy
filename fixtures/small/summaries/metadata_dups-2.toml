@@ -10,7 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'armv5te-unknown-linux-musleabi'
+triple = 'armv5te-unknown-linux-gnueabi'
 target-features = 'all'
 flags = ['flag-test']
 [[metadata.omitted-packages.ids]]

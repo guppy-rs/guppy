@@ -7,21 +7,21 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [[metadata.host-platform]]
-triple = 'csky-unknown-linux-gnuabiv2hf'
+triple = 'hexagon-unknown-linux-musl'
 target-features = 'unknown'
 
 [[metadata.host-platform]]
-triple = 'thumbv6-none-eabi'
+triple = 'thumbv6m-none-eabi'
 target-features = []
 flags = ['flag-test']
 
 [[metadata.target-platform]]
-triple = 'armv7a-kmc-solid_asp3-eabihf'
+triple = 'armv7a-kmc-solid_asp3-eabi'
 target-features = ['avx2', 'bmi2', 'fma']
 flags = ['abc', 'test-flag']
 
 [[metadata.target-platform]]
-triple = 'riscv64imac-unknown-nuttx-elf'
+triple = 's390x-unknown-linux-gnu'
 target-features = 'unknown'
 flags = ['foo']
 

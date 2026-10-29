@@ -7,12 +7,12 @@ include-dev = true
 initials-platform = 'proc-macros-on-target'
 
 [metadata.host-platform]
-triple = 'armv7-sony-vita-newlibeabihf'
+triple = 'armv7-rtems-eabihf'
 target-features = 'unknown'
 flags = ['cargo_web']
 
 [metadata.target-platform]
-triple = 'armv7a-nuttx-eabihf'
+triple = 'armv7a-nuttx-eabi'
 target-features = 'unknown'
 flags = ['foo', 'test-flag']
 [[metadata.omitted-packages.ids]]

@@ -17,7 +17,7 @@ target-features = 'all'
 flags = ['abc', 'bar']
 
 [[metadata.host-platform]]
-triple = 'riscv64-wrs-vxworks'
+triple = 'riscv64a23-unknown-linux-gnu'
 target-features = ['bmi1', 'sha', 'sse2', 'sse3', 'xsaves']
 
 [[metadata.target-platform]]
@@ -25,7 +25,7 @@ triple = 'x86_64-unknown-linux-gnux32'
 target-features = 'all'
 
 [[metadata.target-platform]]
-triple = 'riscv64gc-unknown-redox'
+triple = 'riscv64im-unknown-none-elf'
 target-features = 'all'
 flags = ['foo']
 

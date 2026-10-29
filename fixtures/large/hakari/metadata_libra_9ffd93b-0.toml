@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '4'
 # workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['thumbv7neon-linux-androideabi', 'riscv32emc-unknown-none-elf', 'powerpc64-ibm-aix']
+# platforms = ['thumbv7m-nuttx-eabi', 'riscv32emc-unknown-none-elf', 'powerpc64-unknown-freebsd']
 #
 # [traversal-excludes]
 # [[final-excludes.ids]]
@@ -518,14 +518,13 @@ version_check-c65f7effa3be6d31 = { package = "version_check", version = "0.1", d
 which = { version = "3", default-features = false }
 zeroize_derive = { version = "1", default-features = false }
 
-[target.thumbv7neon-linux-androideabi.dependencies]
+[target.thumbv7m-nuttx-eabi.dependencies]
 ansi_term-a6292c17cd707f01 = { package = "ansi_term", version = "0.11", default-features = false }
 async-compression = { version = "0.3", default-features = false, features = ["gzip", "stream"] }
 c2-chacha = { version = "0.2", default-features = false, features = ["simd", "std"] }
 crossbeam-queue-c65f7effa3be6d31 = { package = "crossbeam-queue", version = "0.1", default-features = false }
 crossbeam-utils-3b31131e45eafb45 = { package = "crossbeam-utils", version = "0.6" }
 encoding_rs = { version = "0.8", default-features = false }
-get_if_addrs-sys = { version = "0.1", default-features = false }
 hyper-rustls-56bd22fc3884b12 = { package = "hyper-rustls", version = "0.20" }
 hyper-tls = { version = "0.4", default-features = false }
 mio-uds = { version = "0.6", default-features = false }
@@ -545,10 +544,9 @@ tokio-uds = { version = "0.2", default-features = false }
 utf8parse = { version = "0.1", default-features = false }
 void = { version = "1" }
 
-[target.thumbv7neon-linux-androideabi.build-dependencies]
+[target.thumbv7m-nuttx-eabi.build-dependencies]
 ansi_term-a6292c17cd707f01 = { package = "ansi_term", version = "0.11", default-features = false }
 c2-chacha = { version = "0.2", default-features = false, features = ["simd", "std"] }
-gcc = { version = "0.3", default-features = false }
 ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }
 rand_chacha-6f8ce4dd05d13bba = { package = "rand_chacha", version = "0.2", default-features = false, features = ["std"] }
 
@@ -574,7 +572,7 @@ c2-chacha = { version = "0.2", default-features = false, features = ["simd", "st
 ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }
 rand_chacha-6f8ce4dd05d13bba = { package = "rand_chacha", version = "0.2", default-features = false, features = ["std"] }
 
-[target.powerpc64-ibm-aix.dependencies]
+[target.powerpc64-unknown-freebsd.dependencies]
 ansi_term-a6292c17cd707f01 = { package = "ansi_term", version = "0.11", default-features = false }
 async-compression = { version = "0.3", default-features = false, features = ["gzip", "stream"] }
 c2-chacha = { version = "0.2", default-features = false, features = ["simd", "std"] }
@@ -600,7 +598,7 @@ tokio-uds = { version = "0.2", default-features = false }
 utf8parse = { version = "0.1", default-features = false }
 void = { version = "1" }
 
-[target.powerpc64-ibm-aix.build-dependencies]
+[target.powerpc64-unknown-freebsd.build-dependencies]
 ansi_term-a6292c17cd707f01 = { package = "ansi_term", version = "0.11", default-features = false }
 c2-chacha = { version = "0.2", default-features = false, features = ["simd", "std"] }
 ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }

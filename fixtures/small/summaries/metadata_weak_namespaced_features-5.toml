@@ -15,7 +15,7 @@ target-features = ['avx2', 'sse4.1', 'xsavec']
 flags = ['flag-test']
 
 [[metadata.target-platform]]
-triple = 'thumbv6-none-eabi'
+triple = 'thumbv6m-none-eabi'
 target-features = ['sse', 'xsaves']
 flags = ['flag-test', 'foo']
 

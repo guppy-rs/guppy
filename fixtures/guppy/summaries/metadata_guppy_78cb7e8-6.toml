@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'standard'
 
 [[metadata.host-platform]]
-triple = 'i686-wrs-vxworks'
+triple = 'loongarch32-unknown-none'
 target-features = ['aes', 'bmi1', 'xsaves']
 flags = ['bar', 'cargo_web']
 
@@ -31,7 +31,7 @@ target-features = ['sse4.2']
 flags = ['abc', 'foo']
 
 [[metadata.target-platform]]
-triple = 'riscv64gc-unknown-linux-musl'
+triple = 'riscv64gc-unknown-managarm-mlibc'
 target-features = ['avx', 'sha']
 flags = ['abc', 'test-flag']
 

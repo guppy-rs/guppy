@@ -22,7 +22,7 @@ target-features = 'all'
 flags = ['foo', 'test-flag']
 
 [[metadata.target-platform]]
-triple = 'armv7-unknown-linux-uclibceabi'
+triple = 'armv7-unknown-linux-ohos'
 target-features = 'all'
 flags = ['cargo_web']
 [[metadata.omitted-packages.ids]]

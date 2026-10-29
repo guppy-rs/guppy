@@ -7,16 +7,16 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [[metadata.host-platform]]
-triple = 'armv7a-kmc-solid_asp3-eabihf'
+triple = 'armv7a-kmc-solid_asp3-eabi'
 target-features = 'unknown'
 
 [[metadata.host-platform]]
-triple = 'x86_64-uwp-windows-gnu'
+triple = 'x86_64-unknown-uefi'
 target-features = 'all'
 flags = ['bar']
 
 [[metadata.host-platform]]
-triple = 'aarch64-unknown-none-softfloat'
+triple = 'aarch64-unknown-none'
 target-features = ['rdrand', 'sse', 'sse4.1', 'sse4.2', 'xsave', 'xsaves']
 flags = ['flag-test', 'foo']
 
@@ -2085,10 +2085,3 @@ version = '3.1.0'
 crates-io = true
 status = 'transitive'
 features = []
-
-[[host-package]]
-name = 'winapi'
-version = '0.3.8'
-crates-io = true
-status = 'transitive'
-features = ['errhandlingapi', 'fileapi', 'handleapi', 'std', 'winbase', 'winerror']

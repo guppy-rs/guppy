@@ -7,16 +7,16 @@ include-dev = true
 initials-platform = 'proc-macros-on-target'
 
 [[metadata.host-platform]]
-triple = 'x86_64-pc-windows-gnullvm'
+triple = 'x86_64-pc-windows-gnu'
 target-features = 'unknown'
 flags = ['cargo_web', 'flag-test']
 
 [[metadata.host-platform]]
-triple = 's390x-unknown-none-softfloat'
+triple = 'sparc-unknown-linux-gnu'
 target-features = ['bmi1', 'fma', 'sha', 'ssse3', 'xsavec']
 
 [[metadata.host-platform]]
-triple = 'aarch64-unknown-uefi'
+triple = 'aarch64-unknown-trusty'
 target-features = ['bmi2', 'xsave']
 flags = ['bar', 'foo']
 

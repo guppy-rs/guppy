@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '4'
 # workspace-hack-line-style = 'full'
-# platforms = ['powerpc-unknown-linux-gnu', 'riscv64gc-unknown-hermit', 'hexagon-unknown-qurt']
+# platforms = ['powerpc-unknown-linux-gnuspe', 'riscv64gc-unknown-linux-gnu', 'i386-apple-ios']
 # [[traversal-excludes.ids]]
 # name = 'base64'
 # version = '0.21.7'
@@ -52,12 +52,17 @@ once_cell = { version = "1", default-features = false, features = ["std"] }
 [build-dependencies]
 hex = { version = "0.4", default-features = false, features = ["std"] }
 
-[target.powerpc-unknown-linux-gnu.dependencies]
+[target.powerpc-unknown-linux-gnuspe.dependencies]
 anyhow = { version = "1", default-features = false, features = ["std"] }
 fnv = { version = "1", default-features = false, features = ["std"] }
 percent-encoding = { version = "2", default-features = false, features = ["std"] }
 
-[target.hexagon-unknown-qurt.dependencies]
+[target.riscv64gc-unknown-linux-gnu.dependencies]
+anyhow = { version = "1", default-features = false, features = ["std"] }
+fnv = { version = "1", default-features = false, features = ["std"] }
+percent-encoding = { version = "2", default-features = false, features = ["std"] }
+
+[target.i386-apple-ios.dependencies]
 percent-encoding = { version = "2", default-features = false, features = ["std"] }
 
 ### END HAKARI SECTION

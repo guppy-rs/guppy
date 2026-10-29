@@ -19,7 +19,7 @@ target-features = ['avx', 'sse2', 'xsave', 'xsaveopt']
 flags = ['flag-test', 'foo']
 
 [[metadata.target-platform]]
-triple = 'sparc64-unknown-helenos'
+triple = 'sparc64-unknown-linux-gnu'
 target-features = ['avx2', 'rdrand', 'sse', 'sse3']
 flags = ['bar', 'foo']
 [[metadata.omitted-packages.ids]]

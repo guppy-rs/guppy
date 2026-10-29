@@ -15,7 +15,7 @@ triple = 'i686-linux-android'
 target-features = 'all'
 
 [[metadata.target-platform]]
-triple = 'aarch64-unknown-none-softfloat'
+triple = 'aarch64-unknown-none'
 target-features = 'unknown'
 [[metadata.omitted-packages.ids]]
 name = 'arc-swap'

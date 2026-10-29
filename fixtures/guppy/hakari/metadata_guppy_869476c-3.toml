@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '1'
 # workspace-hack-line-style = 'full'
-# platforms = ['mips-unknown-linux-gnu', 'i686-uwp-windows-gnu']
+# platforms = ['mips-unknown-linux-musl', 'i686-uwp-windows-gnu']
 # [[traversal-excludes.ids]]
 # name = 'cc'
 # version = '1.0.61'
@@ -53,7 +53,7 @@ proc-macro2 = { version = "1", features = ["proc-macro"] }
 quote = { version = "1", features = ["proc-macro"] }
 syn = { version = "1", features = ["clone-impls", "derive", "full", "parsing", "printing", "proc-macro", "quote", "visit"] }
 
-[target.mips-unknown-linux-gnu.dependencies]
+[target.mips-unknown-linux-musl.dependencies]
 libc = { version = "0.2", features = ["std"] }
 
 [target.i686-uwp-windows-gnu.dependencies]

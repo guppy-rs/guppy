@@ -10,11 +10,11 @@ initials-platform = 'host'
 spec = 'always'
 
 [[metadata.target-platform]]
-triple = 'arm64_32-apple-watchos'
+triple = 'arm-unknown-linux-musleabihf'
 target-features = 'all'
 
 [[metadata.target-platform]]
-triple = 'armv7-unknown-netbsd-eabihf'
+triple = 'armv7-unknown-linux-uclibceabihf'
 target-features = ['bmi1', 'sha', 'xsave', 'xsaveopt']
 flags = ['abc']
 [[metadata.omitted-packages.ids]]

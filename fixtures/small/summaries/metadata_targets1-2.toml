@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'host'
 
 [[metadata.host-platform]]
-triple = 'armv7a-nuttx-eabi'
+triple = 'armv7a-none-eabihf'
 target-features = ['aes', 'bmi1']
 flags = ['cargo_web']
 
@@ -17,7 +17,7 @@ target-features = 'all'
 flags = ['cargo_web']
 
 [metadata.target-platform]
-triple = 'armebv7r-none-eabi'
+triple = 'armeb-unknown-linux-gnueabi'
 target-features = 'unknown'
 flags = ['flag-test']
 

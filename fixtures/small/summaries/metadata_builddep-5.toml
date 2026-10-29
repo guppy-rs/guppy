@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'riscv32imac-unknown-xous-elf'
+triple = 'riscv32imafc-esp-espidf'
 target-features = 'all'
 flags = ['flag-test', 'test-flag']
 [[metadata.omitted-packages.ids]]

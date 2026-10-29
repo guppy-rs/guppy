@@ -7,16 +7,16 @@ include-dev = true
 initials-platform = 'standard'
 
 [[metadata.host-platform]]
-triple = 'loongarch64-unknown-linux-ohos'
+triple = 'loongarch64-unknown-none'
 target-features = 'unknown'
 
 [[metadata.host-platform]]
-triple = 'x86_64-unknown-netbsd'
+triple = 'x86_64-unknown-motor'
 target-features = ['aes', 'bmi2', 'fma', 'sha', 'sse2', 'xsaveopt']
 flags = ['bar']
 
 [[metadata.target-platform]]
-triple = 'arm-linux-androideabi'
+triple = 'amdgcn-amd-amdhsa'
 target-features = 'all'
 flags = ['test-flag']
 

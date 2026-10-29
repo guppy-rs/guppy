@@ -17,7 +17,7 @@ target-features = ['avx', 'bmi1', 'sse']
 flags = ['flag-test', 'foo']
 
 [[metadata.target-platform]]
-triple = 'armv7a-kmc-solid_asp3-eabi'
+triple = 'armv7-wrs-vxworks-eabihf'
 target-features = 'unknown'
 flags = ['abc', 'test-flag']
 

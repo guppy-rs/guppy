@@ -12,12 +12,12 @@ target-features = 'unknown'
 flags = ['flag-test']
 
 [[metadata.target-platform]]
-triple = 'armv7r-none-eabi'
+triple = 'armv7r-none-eabihf'
 target-features = ['sse4.2']
 flags = ['cargo_web', 'test-flag']
 
 [[metadata.target-platform]]
-triple = 'armv5te-unknown-linux-musleabi'
+triple = 'armv5te-unknown-linux-gnueabi'
 target-features = ['sse2']
 
 [[metadata.target-platform]]

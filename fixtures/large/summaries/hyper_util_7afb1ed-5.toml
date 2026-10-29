@@ -7,16 +7,16 @@ include-dev = true
 initials-platform = 'host'
 
 [[metadata.host-platform]]
-triple = 'aarch64-unknown-teeos'
+triple = 'aarch64-unknown-redox'
 target-features = 'all'
 
 [[metadata.host-platform]]
-triple = 'sparc-unknown-linux-gnu'
+triple = 'sparc-unknown-none-elf'
 target-features = 'unknown'
 flags = ['abc', 'flag-test']
 
 [metadata.target-platform]
-triple = 'powerpc-unknown-linux-gnuspe'
+triple = 'powerpc-unknown-linux-musl'
 target-features = 'all'
 
 [[metadata.features-only]]

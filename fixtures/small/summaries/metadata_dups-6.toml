@@ -17,7 +17,7 @@ target-features = ['rdrand', 'sha']
 flags = ['foo']
 
 [[metadata.target-platform]]
-triple = 'thumbv7a-pc-windows-msvc'
+triple = 'thumbv7a-uwp-windows-msvc'
 target-features = 'unknown'
 flags = ['flag-test']
 

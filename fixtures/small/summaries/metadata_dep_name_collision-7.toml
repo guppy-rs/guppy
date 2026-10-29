@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [[metadata.host-platform]]
-triple = 'riscv32im-unknown-none-elf'
+triple = 'riscv32ima-unknown-none-elf'
 target-features = 'all'
 
 [[metadata.host-platform]]

@@ -11,7 +11,7 @@ triple = 'mips-mti-none-elf'
 target-features = 'all'
 
 [[metadata.host-platform]]
-triple = 'armv7-wrs-vxworks-eabihf'
+triple = 'armv7-unknown-trusty'
 target-features = 'unknown'
 flags = ['flag-test']
 

@@ -17,7 +17,7 @@ target-features = 'unknown'
 flags = ['abc']
 
 [[metadata.target-platform]]
-triple = 'aarch64_be-unknown-linux-musl'
+triple = 'aarch64_be-unknown-linux-gnu_ilp32'
 target-features = ['aes', 'avx', 'fma', 'sse4.2', 'xsaveopt', 'xsaves']
 flags = ['abc']
 

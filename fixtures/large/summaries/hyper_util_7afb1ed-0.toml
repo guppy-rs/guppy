@@ -10,7 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'x86_64-pc-solaris'
+triple = 'x86_64-pc-qnx'
 target-features = []
 flags = ['abc', 'test-flag']
 [[metadata.omitted-packages.ids]]

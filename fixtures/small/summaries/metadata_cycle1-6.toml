@@ -7,12 +7,12 @@ include-dev = true
 initials-platform = 'standard'
 
 [[metadata.host-platform]]
-triple = 'armv7-unknown-linux-gnueabihf'
+triple = 'armv7-unknown-linux-gnueabi'
 target-features = 'unknown'
 flags = ['foo']
 
 [[metadata.host-platform]]
-triple = 'thumbv8m.main-none-eabi'
+triple = 'thumbv8m.base-nuttx-eabi'
 target-features = 'unknown'
 flags = ['abc']
 
@@ -26,7 +26,7 @@ target-features = 'unknown'
 flags = ['bar', 'cargo_web']
 
 [[metadata.target-platform]]
-triple = 'riscv64gc-unknown-nuttx-elf'
+triple = 'riscv64gc-unknown-openbsd'
 target-features = 'unknown'
 
 [[metadata.target-platform]]

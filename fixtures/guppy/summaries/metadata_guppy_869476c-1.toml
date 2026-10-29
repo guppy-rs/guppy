@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [[metadata.host-platform]]
-triple = 'thumbv5te-none-eabi'
+triple = 'thumbv6-none-eabi'
 target-features = ['avx', 'bmi2', 'rdrand', 'sse', 'sse2']
 flags = ['test-flag']
 
@@ -16,7 +16,7 @@ triple = 'x86_64-oe-linux-gnu'
 target-features = 'all'
 
 [metadata.target-platform]
-triple = 'armv5te-unknown-linux-musleabi'
+triple = 'armv5te-unknown-linux-gnueabi'
 target-features = 'unknown'
 flags = ['abc', 'test-flag']
 [[metadata.omitted-packages.ids]]

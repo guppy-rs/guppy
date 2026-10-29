@@ -8,11 +8,11 @@ initials-platform = 'proc-macros-on-target'
 host-platform = []
 
 [[metadata.target-platform]]
-triple = 'riscv64gc-unknown-fuchsia'
+triple = 'riscv64gc-unknown-hermit'
 target-features = 'unknown'
 
 [[metadata.target-platform]]
-triple = 'riscv64gc-unknown-redox'
+triple = 'riscv64im-unknown-none-elf'
 target-features = ['sse4.2']
 flags = ['flag-test']
 

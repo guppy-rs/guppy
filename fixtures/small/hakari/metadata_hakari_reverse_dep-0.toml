@@ -8,7 +8,7 @@
 # output-single-feature = false
 # dep-format-version = '4'
 # workspace-hack-line-style = 'full'
-# platforms = ['aarch64-uwp-windows-msvc', 'x86_64-apple-ios-macabi', 'i686-unknown-freebsd']
+# platforms = ['aarch64-unknown-uefi', 'x86_64-apple-ios-macabi', 'i686-unknown-haiku']
 # [[traversal-excludes.ids]]
 # name = 'hrd-cfg-on-hack'
 # version = '0.1.0'

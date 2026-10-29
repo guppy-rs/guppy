@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'standard'
 
 [[metadata.host-platform]]
-triple = 'amdgcn-amd-amdhsa'
+triple = 'aarch64v8r-unknown-none-softfloat'
 target-features = 'all'
 
 [[metadata.host-platform]]
@@ -16,7 +16,7 @@ target-features = 'all'
 flags = ['test-flag']
 
 [[metadata.target-platform]]
-triple = 'riscv32-wrs-vxworks'
+triple = 'riscv32e-unknown-none-elf'
 target-features = ['sse2']
 
 [[metadata.target-platform]]
@@ -25,7 +25,7 @@ target-features = 'all'
 flags = ['cargo_web']
 
 [[metadata.target-platform]]
-triple = 'm68k-unknown-linux-gnu'
+triple = 'm68k-unknown-none-elf'
 target-features = 'unknown'
 flags = ['test-flag']
 [[metadata.omitted-packages.ids]]

@@ -8,12 +8,12 @@ initials-platform = 'standard'
 host-platform = []
 
 [[metadata.target-platform]]
-triple = 'sparc64-unknown-helenos'
+triple = 'sparc64-unknown-linux-gnu'
 target-features = 'unknown'
 flags = ['bar', 'flag-test']
 
 [[metadata.target-platform]]
-triple = 'i686-apple-darwin'
+triple = 'i686-linux-android'
 target-features = 'all'
 flags = ['flag-test']
 

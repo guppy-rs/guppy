@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '1'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['mipsel-unknown-netbsd', 'aarch64-unknown-uefi', 'riscv32ima-unknown-none-elf']
+# platforms = ['mipsel-unknown-netbsd', 'aarch64-unknown-trusty', 'riscv32ima-unknown-none-elf']
 # [[traversal-excludes.ids]]
 # name = 'libra-crypto-derive'
 # version = '0.1.0'
@@ -568,7 +568,7 @@ c2-chacha = { version = "0.2", default-features = false, features = ["simd", "st
 ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }
 rand_chacha-6f8ce4dd05d13bba = { package = "rand_chacha", version = "0.2", default-features = false, features = ["std"] }
 
-[target.aarch64-unknown-uefi.dependencies]
+[target.aarch64-unknown-trusty.dependencies]
 ansi_term-a6292c17cd707f01 = { package = "ansi_term", version = "0.11", default-features = false }
 async-compression = { version = "0.3", default-features = false, features = ["bytes", "flate2", "gzip", "stream"] }
 c2-chacha = { version = "0.2", default-features = false, features = ["simd", "std"] }
@@ -584,7 +584,7 @@ rustls-native-certs = { version = "0.3", default-features = false }
 tokio-rustls-594e8ee84c453af0 = { package = "tokio-rustls", version = "0.13", default-features = false }
 tokio-tls = { version = "0.3", default-features = false }
 
-[target.aarch64-unknown-uefi.build-dependencies]
+[target.aarch64-unknown-trusty.build-dependencies]
 ansi_term-a6292c17cd707f01 = { package = "ansi_term", version = "0.11", default-features = false }
 c2-chacha = { version = "0.2", default-features = false, features = ["simd", "std"] }
 ppv-lite86 = { version = "0.2", default-features = false, features = ["simd", "std"] }

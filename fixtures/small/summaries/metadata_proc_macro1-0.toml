@@ -7,12 +7,12 @@ include-dev = true
 initials-platform = 'proc-macros-on-target'
 
 [[metadata.host-platform]]
-triple = 'riscv32emc-unknown-none-elf'
+triple = 'riscv32gc-unknown-linux-gnu'
 target-features = 'unknown'
 flags = ['flag-test']
 
 [[metadata.host-platform]]
-triple = 'riscv32-wrs-vxworks'
+triple = 'riscv32e-unknown-none-elf'
 target-features = 'all'
 
 [[metadata.host-platform]]

@@ -11,7 +11,7 @@ triple = 'i686-unknown-hurd-gnu'
 target-features = ['bmi2', 'sse', 'xsave']
 
 [[metadata.target-platform]]
-triple = 'aarch64v8r-unknown-none-softfloat'
+triple = 'aarch64v8r-unknown-none'
 target-features = ['bmi2', 'sha', 'sse3', 'sse4.1', 'xsaves']
 flags = ['abc', 'cargo_web']
 

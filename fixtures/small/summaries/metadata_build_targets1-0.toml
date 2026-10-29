@@ -10,7 +10,7 @@ initials-platform = 'host'
 spec = 'always'
 
 [[metadata.target-platform]]
-triple = 's390x-unknown-linux-gnu'
+triple = 's390x-unknown-linux-musl'
 target-features = ['avx', 'avx2', 'bmi2', 'xsavec']
 flags = ['test-flag']
 
@@ -20,7 +20,7 @@ target-features = 'unknown'
 flags = ['foo']
 
 [[metadata.target-platform]]
-triple = 'i586-unknown-linux-gnu'
+triple = 'i586-unknown-linux-musl'
 target-features = 'all'
 
 [[metadata.features-only]]

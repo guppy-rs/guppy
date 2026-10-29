@@ -10,17 +10,17 @@ initials-platform = 'standard'
 spec = 'always'
 
 [[metadata.target-platform]]
-triple = 'armv6-none-eabi'
+triple = 'armv5te-unknown-linux-uclibceabi'
 target-features = 'unknown'
 flags = ['test-flag']
 
 [[metadata.target-platform]]
-triple = 'armv7-wrs-vxworks-eabihf'
+triple = 'armv7-unknown-trusty'
 target-features = 'unknown'
 flags = ['test-flag']
 
 [[metadata.target-platform]]
-triple = 'aarch64-unknown-linux-gnu'
+triple = 'aarch64-unknown-l4re-uclibc'
 target-features = ['aes', 'xsaveopt']
 [[metadata.omitted-packages.ids]]
 name = 'bit-vec'
