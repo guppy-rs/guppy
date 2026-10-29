@@ -140,7 +140,7 @@ impl Triple {
             inner: TripleInner::Custom {
                 target_info,
                 #[cfg(feature = "summaries")]
-                custom_source: CustomSource::Json(minified_json),
+                custom_source: OwnedCustomSource::Json(minified_json),
             },
         })
     }
@@ -163,7 +163,7 @@ impl Triple {
             inner: TripleInner::Custom {
                 target_info: Box::new(target_info),
                 #[cfg(feature = "summaries")]
-                custom_source: CustomSource::Cfg(cfg_text.to_string()),
+                custom_source: OwnedCustomSource::Cfg(cfg_text.to_string()),
             },
         })
     }
@@ -231,8 +231,19 @@ impl Triple {
     /// This is always available, but if neither the `custom` nor
     /// `custom-cfg` feature is turned on, this always returns
     /// false.
+    ///
+    /// To tell apart JSON and `rustc --print=cfg` platforms, use
+    /// [`Triple::custom_source`].
     pub fn is_custom(&self) -> bool {
         self.inner.is_custom()
+    }
+
+    /// Returns how a custom platform was defined: via JSON or `cfg`.
+    ///
+    /// Returns `None` if this is not a custom platform.
+    #[cfg(feature = "summaries")]
+    pub fn custom_source(&self) -> Option<CustomSource<'_>> {
+        self.inner.custom_source()
     }
 
     /// Evaluates this triple against the given platform.
@@ -248,16 +259,6 @@ impl Triple {
     #[inline]
     pub(crate) fn matches(&self, tp: &TargetPredicate) -> bool {
         self.inner.matches(tp)
-    }
-
-    #[cfg(feature = "summaries")]
-    pub(crate) fn custom_json(&self) -> Option<&str> {
-        self.inner.custom_json()
-    }
-
-    #[cfg(feature = "summaries")]
-    pub(crate) fn custom_cfg_text(&self) -> Option<&str> {
-        self.inner.custom_cfg_text()
     }
 }
 
@@ -283,7 +284,7 @@ enum TripleInner {
         // The source representation is only needed if summaries
         // are enabled.
         #[cfg(feature = "summaries")]
-        custom_source: CustomSource,
+        custom_source: OwnedCustomSource,
     },
 
     /// Fall back to the lexicon representation.
@@ -297,7 +298,7 @@ enum TripleInner {
 /// round-tripping through summaries.
 #[cfg(all(feature = "custom-cfg", feature = "summaries"))]
 #[derive(Clone, Debug)]
-pub(crate) enum CustomSource {
+enum OwnedCustomSource {
     /// Created from target JSON (via `new_custom`).
     #[cfg(feature = "custom")]
     Json(String),
@@ -402,28 +403,15 @@ impl TripleInner {
     }
 
     #[cfg(feature = "summaries")]
-    pub(crate) fn custom_json(&self) -> Option<&str> {
+    fn custom_source(&self) -> Option<CustomSource<'_>> {
         match self {
             TripleInner::Builtin(_) | TripleInner::Lexicon { .. } => None,
             #[cfg(feature = "custom-cfg")]
-            TripleInner::Custom { custom_source, .. } => match custom_source {
+            TripleInner::Custom { custom_source, .. } => Some(match custom_source {
                 #[cfg(feature = "custom")]
-                CustomSource::Json(json) => Some(json),
-                CustomSource::Cfg(_) => None,
-            },
-        }
-    }
-
-    #[cfg(feature = "summaries")]
-    pub(crate) fn custom_cfg_text(&self) -> Option<&str> {
-        match self {
-            TripleInner::Builtin(_) | TripleInner::Lexicon { .. } => None,
-            #[cfg(feature = "custom-cfg")]
-            TripleInner::Custom { custom_source, .. } => match custom_source {
-                #[cfg(feature = "custom")]
-                CustomSource::Json(_) => None,
-                CustomSource::Cfg(cfg_text) => Some(cfg_text),
-            },
+                OwnedCustomSource::Json(json) => CustomSource::Json(json),
+                OwnedCustomSource::Cfg(cfg_text) => CustomSource::Cfg(cfg_text),
+            }),
         }
     }
 
@@ -437,6 +425,26 @@ impl TripleInner {
             TripleInner::Lexicon { triple_str, .. } => TripleInnerProjected::Lexicon(triple_str),
         }
     }
+}
+
+/// The method by which a custom platform was defined.
+///
+/// Returned by [`Triple::custom_source`] and [`Platform::custom_source`].
+// NOTE: The variants are not feature-gated so downstream code doesn't have
+// to unnecessarily perform cfg-gating.
+#[cfg(feature = "summaries")]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[non_exhaustive]
+pub enum CustomSource<'a> {
+    /// Target JSON from [`Platform::new_custom`].
+    ///
+    /// The JSON is re-serialized by target-spec, so it is potentially normalized.
+    ///
+    /// This variant can only be returned when the `custom` feature is enabled.
+    Json(&'a str),
+
+    /// `rustc --print=cfg` output, from [`Platform::new_custom_cfg`].
+    Cfg(&'a str),
 }
 
 /// This implementation is used for trait impls.

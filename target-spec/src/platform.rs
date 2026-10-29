@@ -1,6 +1,8 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
+#[cfg(feature = "summaries")]
+use crate::CustomSource;
 use crate::{Error, Triple};
 use std::{borrow::Cow, collections::BTreeSet, ops::Deref};
 
@@ -238,8 +240,19 @@ impl Platform {
     /// This is always available, but if neither the `custom` nor
     /// `custom-cfg` feature is turned on, this always returns
     /// false.
+    ///
+    /// To tell apart custom JSON and `rustc --print=cfg` platforms, use
+    /// [`Self::custom_source`].
     pub fn is_custom(&self) -> bool {
         self.triple.is_custom()
+    }
+
+    /// Returns how a custom platform was defined: via JSON or `cfg`.
+    ///
+    /// Returns `None` if this is not a custom platform.
+    #[cfg(feature = "summaries")]
+    pub fn custom_source(&self) -> Option<CustomSource<'_>> {
+        self.triple.custom_source()
     }
 
     /// Returns the underlying [`Triple`].
@@ -250,16 +263,6 @@ impl Platform {
     /// Returns the set of target features for this platform.
     pub fn target_features(&self) -> &TargetFeatures {
         &self.target_features
-    }
-
-    #[cfg(feature = "summaries")]
-    pub(crate) fn custom_json(&self) -> Option<&str> {
-        self.triple.custom_json()
-    }
-
-    #[cfg(feature = "summaries")]
-    pub(crate) fn custom_cfg_text(&self) -> Option<&str> {
-        self.triple.custom_cfg_text()
     }
 }
 

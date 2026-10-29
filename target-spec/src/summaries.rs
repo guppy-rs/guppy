@@ -8,7 +8,7 @@
 //!
 //! Summaries require the `summaries` feature to be enabled.
 
-use crate::{Error, Platform, TargetFeatures};
+use crate::{CustomSource, Error, Platform, TargetFeatures};
 use serde::{Deserialize, Serialize};
 use std::{borrow::Cow, collections::BTreeSet};
 
@@ -110,10 +110,15 @@ impl PlatformSummary {
 
     /// Creates a new `PlatformSummary` instance from a platform.
     pub fn from_platform(platform: &Platform) -> Self {
+        let (custom_json, custom_cfg) = match platform.custom_source() {
+            None => (None, None),
+            Some(CustomSource::Json(json)) => (Some(json.to_owned()), None),
+            Some(CustomSource::Cfg(cfg_text)) => (None, Some(cfg_text.to_owned())),
+        };
         Self {
             triple: platform.triple_str().to_string(),
-            custom_json: platform.custom_json().map(|s| s.to_owned()),
-            custom_cfg: platform.custom_cfg_text().map(|s| s.to_owned()),
+            custom_json,
+            custom_cfg,
             target_features: TargetFeaturesSummary::new(platform.target_features()),
             flags: platform.flags().map(|flag| flag.to_string()).collect(),
         }
@@ -477,6 +482,14 @@ mod tests {
                 .unwrap_or_else(|err| panic!("serialized input: {input} is valid: {err}"));
             assert_eq!(actual, actual_2, "for input: {input}");
 
+            if actual.platform.custom_json.is_none() && actual.platform.custom_cfg.is_none() {
+                let platform = actual
+                    .platform
+                    .to_platform()
+                    .unwrap_or_else(|err| panic!("for input {input}, platform is valid: {err}"));
+                assert_eq!(platform.custom_source(), None, "for input: {input}");
+            }
+
             // Check that custom JSON functionality works.
             if actual.platform.custom_json.is_some() {
                 #[cfg(feature = "custom")]
@@ -486,6 +499,26 @@ mod tests {
                         .to_platform()
                         .expect("custom platform parsed successfully");
                     assert!(platform.is_custom(), "this is a custom platform");
+                    match platform.custom_source() {
+                        Some(CustomSource::Json(json)) => {
+                            let reparsed = Platform::new_custom(
+                                platform.triple_str().to_owned(),
+                                json,
+                                platform.target_features().clone(),
+                            )
+                            .expect("custom source JSON is valid");
+                            assert_eq!(reparsed, platform, "for input: {input}");
+                        }
+                        other => panic!("for input {input}, expected JSON source, found {other:?}"),
+                    }
+                    assert_eq!(
+                        platform
+                            .to_summary()
+                            .to_platform()
+                            .expect("summary round-trips"),
+                        platform,
+                        "for input: {input}"
+                    );
                 }
 
                 #[cfg(not(feature = "custom"))]
@@ -512,6 +545,18 @@ mod tests {
                         .to_platform()
                         .expect("custom cfg platform parsed successfully");
                     assert!(platform.is_custom(), "this is a custom platform");
+                    assert_eq!(
+                        platform.custom_source(),
+                        Some(CustomSource::Cfg(
+                            actual
+                                .platform
+                                .custom_cfg
+                                .as_deref()
+                                .expect("checked above")
+                        )),
+                        "for input: {input}"
+                    );
+                    assert_eq!(platform.to_summary(), actual.platform, "for input: {input}");
                 }
 
                 #[cfg(not(feature = "custom-cfg"))]
