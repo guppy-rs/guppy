@@ -3,6 +3,10 @@
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+### Added
+
+- With the `summaries` feature, `Platform::custom_source` and `Triple::custom_source` return how a custom platform was defined: target JSON or `rustc --print=cfg` output.
+
 ## [3.7.0] - 2026-08-25
 
 ### Changed
