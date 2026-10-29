@@ -415,7 +415,7 @@ mod tests {
             },
         ));
 
-        let custom_json = r#"{"arch":"x86_64","target-pointer-width":"64","llvm-target":"x86_64-unknown-haiku","data-layout":"e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16:32:64-S128","os":"haiku","abi":null,"env":null,"vendor":null,"families":[],"endian":"little","min-atomic-width":null,"max-atomic-width":64,"panic-strategy":"unwind"}"#;
+        let custom_json = r#"{"arch":"x86_64","target-pointer-width":"64","llvm-target":"x86_64-unknown-haiku","data-layout":"e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16:32:64-S128","os":"haiku","abi":null,"env":null,"vendor":null,"target-family":["unix"],"target-endian":"little","min-atomic-width":null,"max-atomic-width":64,"panic-strategy":"unwind"}"#;
         let toml = format!(
             r#"platform = {{ triple = "x86_64-unknown-haiku", custom-json = '{custom_json}' }}"#
         );
@@ -425,6 +425,42 @@ mod tests {
             PlatformSummary {
                 triple: "x86_64-unknown-haiku".into(),
                 custom_json: Some(custom_json.to_owned()),
+                custom_cfg: None,
+                target_features: TargetFeaturesSummary::Unknown,
+                flags: BTreeSet::new(),
+            },
+        ));
+
+        let custom_json_pretty = indoc::indoc! {r#"
+            {
+              "arch": "x86_64",
+              "cpu": "x86-64",
+              "data-layout": "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-i128:128-f80:128-n8:16:32:64-S128",
+              "dynamic-linking": true,
+              "env": "gnu",
+              "executables": true,
+              "features": "+sse2,+fxsr",
+              "linker-flavor": "gnu-cc",
+              "llvm-target": "x86_64-unknown-linux-gnu",
+              "max-atomic-width": 64,
+              "os": "linux",
+              "target-family": [
+                "unix"
+              ],
+              "target-pointer-width": 64
+            }
+        "#};
+        let toml_json_pretty = format!(
+            "[platform]\n\
+             triple = \"my-custom-x86_64\"\n\
+             custom-json = '''\n\
+             {custom_json_pretty}'''"
+        );
+        valid.push((
+            &toml_json_pretty,
+            PlatformSummary {
+                triple: "my-custom-x86_64".into(),
+                custom_json: Some(custom_json_pretty.to_owned()),
                 custom_cfg: None,
                 target_features: TargetFeaturesSummary::Unknown,
                 flags: BTreeSet::new(),
@@ -499,18 +535,18 @@ mod tests {
                         .to_platform()
                         .expect("custom platform parsed successfully");
                     assert!(platform.is_custom(), "this is a custom platform");
-                    match platform.custom_source() {
-                        Some(CustomSource::Json(json)) => {
-                            let reparsed = Platform::new_custom(
-                                platform.triple_str().to_owned(),
-                                json,
-                                platform.target_features().clone(),
-                            )
-                            .expect("custom source JSON is valid");
-                            assert_eq!(reparsed, platform, "for input: {input}");
-                        }
-                        other => panic!("for input {input}, expected JSON source, found {other:?}"),
-                    }
+                    assert_eq!(
+                        platform.custom_source(),
+                        Some(CustomSource::Json(
+                            actual
+                                .platform
+                                .custom_json
+                                .as_deref()
+                                .expect("checked above")
+                        )),
+                        "for input: {input}"
+                    );
+                    assert_eq!(platform.to_summary(), actual.platform, "for input: {input}");
                     assert_eq!(
                         platform
                             .to_summary()
