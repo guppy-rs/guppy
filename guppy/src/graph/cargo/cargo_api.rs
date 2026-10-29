@@ -22,6 +22,7 @@ use std::{collections::HashSet, fmt};
 pub struct CargoOptions<'a> {
     pub(crate) resolver: CargoResolverVersion,
     pub(crate) include_dev: bool,
+    pub(crate) include_build_deps_without_build_script: bool,
     pub(crate) initials_platform: InitialsPlatform,
     pub(crate) host_platform: PlatformSpec,
     pub(crate) target_platform: PlatformSpec,
@@ -35,6 +36,7 @@ impl<'a> CargoOptions<'a> {
     ///
     /// * use version 3 of the Cargo resolver
     /// * exclude dev-dependencies
+    /// * leave out the build dependencies of packages that have no build script
     /// * do not build proc macros specified in the query on the target platform
     /// * resolve dependencies assuming any possible host or target platform
     /// * do not omit any packages.
@@ -42,6 +44,7 @@ impl<'a> CargoOptions<'a> {
         Self {
             resolver: CargoResolverVersion::V3,
             include_dev: false,
+            include_build_deps_without_build_script: false,
             initials_platform: InitialsPlatform::Standard,
             host_platform: PlatformSpec::Any,
             target_platform: PlatformSpec::Any,
@@ -65,6 +68,46 @@ impl<'a> CargoOptions<'a> {
     /// The default is false, which matches what a plain `cargo build` does.
     pub fn set_include_dev(&mut self, include_dev: bool) -> &mut Self {
         self.include_dev = include_dev;
+        self
+    }
+
+    /// If set to true, follows the `[build-dependencies]` of packages that
+    /// have no build script.
+    ///
+    /// Cargo only compiles build dependencies for a build script, but its
+    /// feature resolver does not check for one. Take the following package:
+    ///
+    /// ```toml
+    /// [package]
+    /// name = "main"
+    /// # No `build.rs`.
+    ///
+    /// [build-dependencies]
+    /// memchr = "2"
+    /// ```
+    ///
+    /// * `cargo build` never compiles `memchr`.
+    /// * `cargo tree`, `cargo metadata`, `cargo vendor` and `Cargo.lock` all
+    ///   include `memchr`, with its features resolved.
+    ///
+    /// By default `CargoSet` matches `cargo build`: `memchr` is not included,
+    /// and neither is anything only reachable through it. Setting this to true
+    /// matches `cargo metadata`: `memchr` is included on the host platform
+    /// with its features. This is intended for tools that need to account for
+    /// every package Cargo resolves (e.g. vendoring).
+    ///
+    /// Note that this does not change feature resolution. If `memchr` is
+    /// compiled for some other reason (e.g. a different package's build
+    /// script), the features `main` requests for it are enabled regardless of
+    /// this setting.
+    ///
+    /// For details on build dependencies see [Build
+    /// Dependencies](https://doc.rust-lang.org/cargo/reference/build-scripts.html#build-dependencies)
+    /// in the Cargo reference.
+    ///
+    /// The default is false.
+    pub fn set_include_build_deps_without_build_script(&mut self, include: bool) -> &mut Self {
+        self.include_build_deps_without_build_script = include;
         self
     }
 
@@ -127,6 +170,7 @@ impl<'a> CargoOptions<'a> {
         Ok(CargoOptions {
             resolver: self.resolver,
             include_dev: self.include_dev,
+            include_build_deps_without_build_script: self.include_build_deps_without_build_script,
             initials_platform: self.initials_platform,
             host_platform: self.host_platform.clone(),
             target_platform: self.target_platform.clone(),
@@ -186,6 +230,7 @@ pub struct CargoLinkContext<'a, 'g> {
     platform_spec: &'a PlatformSpec,
     build_dep_platform_spec: &'a PlatformSpec,
     include_dev: bool,
+    include_build_deps_without_build_script: bool,
 }
 
 impl<'a, 'g> CargoLinkContext<'a, 'g> {
@@ -204,6 +249,7 @@ impl<'a, 'g> CargoLinkContext<'a, 'g> {
             platform_spec,
             build_dep_platform_spec,
             include_dev: opts.include_dev,
+            include_build_deps_without_build_script: opts.include_build_deps_without_build_script,
         }
     }
 
@@ -237,10 +283,15 @@ impl<'a, 'g> CargoLinkContext<'a, 'g> {
         self.include_dev && self.package_context.starts_from_initial(link)
     }
 
-    /// Returns true if build-dependencies of this link may be followed: the
-    /// `from` package has a build script.
+    /// Returns true if the build dependencies of this link may be followed.
+    ///
+    /// This is the case if any of the following are true:
+    ///
+    /// * The `from` package has a build script.
+    /// * [`CargoOptions::set_include_build_deps_without_build_script`] is set
+    ///   to true.
     pub fn considers_build_deps(&self, link: &PackageLink<'g>) -> bool {
-        link.from().has_build_script()
+        self.include_build_deps_without_build_script || link.from().has_build_script()
     }
 }
 

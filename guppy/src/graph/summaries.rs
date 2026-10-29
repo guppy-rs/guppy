@@ -147,6 +147,17 @@ pub struct CargoSetInputsSummary {
     /// Whether dev-dependencies are included.
     pub include_dev: bool,
 
+    /// Whether the build dependencies of packages without a build script are
+    /// followed.
+    ///
+    /// Cargo never compiles these dependencies, but its feature resolver still
+    /// activates them. For the difference between the two and an example, see
+    /// [`CargoOptions::set_include_build_deps_without_build_script`](crate::graph::cargo::CargoOptions::set_include_build_deps_without_build_script).
+    ///
+    /// Defaults to false, and is left out of the summary when false.
+    #[serde(skip_serializing_if = "is_false", default)]
+    pub include_build_deps_without_build_script: bool,
+
     /// The platform for which the initials are specified.
     #[serde(flatten)]
     pub initials_platform: InitialsPlatformSummary,
@@ -166,6 +177,10 @@ pub struct CargoSetInputsSummary {
     /// The packages that formed the features-only set.
     #[serde(skip_serializing_if = "Vec::is_empty", default)]
     pub features_only: Vec<FeaturesOnlySummary>,
+}
+
+fn is_false(value: &bool) -> bool {
+    !*value
 }
 
 impl CargoSetInputsSummary {
@@ -197,6 +212,7 @@ impl CargoSetInputsSummary {
         Ok(Self {
             resolver: opts.resolver,
             include_dev: opts.include_dev,
+            include_build_deps_without_build_script: opts.include_build_deps_without_build_script,
             initials_platform: InitialsPlatformSummary::V2 {
                 initials_platform: opts.initials_platform,
             },
@@ -225,6 +241,9 @@ impl CargoSetInputsSummary {
         options
             .set_resolver(self.resolver)
             .set_include_dev(self.include_dev)
+            .set_include_build_deps_without_build_script(
+                self.include_build_deps_without_build_script,
+            )
             .set_initials_platform(self.initials_platform.into())
             .set_host_platform(self.host_platform.to_platform_spec().map_err(|error| {
                 Error::InvalidPlatformSpecSummary {

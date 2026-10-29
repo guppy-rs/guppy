@@ -225,7 +225,8 @@ impl<'g> CargoSetBuildState<'g> {
 
             // Dev-dependencies are only considered if `from` is an initial.
             let consider_dev = cargo_cx.considers_dev_deps(&link);
-            // Build dependencies are only considered if there's a build script.
+            // Build dependencies are only considered if there's a build script, unless
+            // `CargoOptions::set_include_build_deps_without_build_script` says otherwise.
             let consider_build = cargo_cx.considers_build_deps(&link);
 
             let mut follow_target =
