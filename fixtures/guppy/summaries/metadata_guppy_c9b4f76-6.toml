@@ -11,7 +11,7 @@ triple = 'x86_64-unknown-uefi'
 target-features = 'all'
 
 [[metadata.host-platform]]
-triple = 'aarch64-unknown-teeos'
+triple = 'aarch64-unknown-redox'
 target-features = 'unknown'
 flags = ['cargo_web']
 

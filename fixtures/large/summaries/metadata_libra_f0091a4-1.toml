@@ -8,7 +8,7 @@ initials-platform = 'host'
 target-platform = []
 
 [[metadata.host-platform]]
-triple = 'mipsel-unknown-linux-musl'
+triple = 'mipsel-unknown-linux-uclibc'
 target-features = ['avx', 'sse3']
 flags = ['bar']
 
@@ -17,7 +17,7 @@ triple = 'thumbv8m.base-nuttx-eabi'
 target-features = 'all'
 
 [[metadata.host-platform]]
-triple = 'riscv32emc-unknown-none-elf'
+triple = 'riscv32gc-unknown-linux-gnu'
 target-features = 'all'
 flags = ['abc', 'test-flag']
 [[metadata.omitted-packages.ids]]

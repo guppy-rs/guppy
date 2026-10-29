@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'armv6k-nintendo-3ds'
+triple = 'armv6-unknown-netbsd-eabihf'
 target-features = ['ssse3']
 flags = ['bar', 'flag-test']
 [[metadata.omitted-packages.ids]]

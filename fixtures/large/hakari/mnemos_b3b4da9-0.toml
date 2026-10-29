@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '4'
 # workspace-hack-line-style = 'full'
-# platforms = ['aarch64-unknown-freebsd', 'm68k-unknown-none-elf', 'arm64e-apple-darwin']
+# platforms = ['aarch64-unknown-freebsd', 'm68k-unknown-none-elf', 'arm64_32-apple-watchos']
 # [[traversal-excludes.ids]]
 # name = 'trust-dns-proto'
 # version = '0.22.0'
@@ -1184,9 +1184,7 @@ tokio-rustls = { version = "0.24" }
 trust-dns-resolver = { version = "0.22" }
 webpki-roots-2ffb4c3fe830441c = { package = "webpki-roots", version = "0.25", default-features = false }
 
-[target.arm64e-apple-darwin.dependencies]
-CoreFoundation-sys = { version = "0.1", default-features = false }
-IOKit-sys = { version = "0.1", default-features = false }
+[target.arm64_32-apple-watchos.dependencies]
 async-executor = { version = "1", default-features = false }
 async-global-executor = { version = "2" }
 async-io = { version = "1", default-features = false }
@@ -1194,31 +1192,27 @@ async-process = { version = "1", default-features = false }
 async-task = { version = "4" }
 atomic-waker = { version = "1", default-features = false }
 blocking = { version = "1", default-features = false }
-core-foundation = { version = "0.9", default-features = false, features = ["mac_os_10_7_support"] }
-core-foundation-sys = { version = "0.8", default-features = false, features = ["mac_os_10_7_support"] }
 errno = { version = "0.3", default-features = false }
+foreign-types = { version = "0.3", default-features = false }
+foreign-types-shared = { version = "0.1", default-features = false }
 futures-lite = { version = "1" }
 iana-time-zone = { version = "0.1", default-features = false, features = ["fallback"] }
 libc = { version = "0.2", default-features = false, features = ["use_std"] }
-mach-6f8ce4dd05d13bba = { package = "mach", version = "0.2" }
-mach-c65f7effa3be6d31 = { package = "mach", version = "0.1", default-features = false }
-mach2 = { version = "0.4" }
 memoffset-3b31131e45eafb45 = { package = "memoffset", version = "0.6" }
 nix-2b5c6dc72f624058 = { package = "nix", version = "0.23", default-features = false }
 nix-2f80eeee3b1b6c7e = { package = "nix", version = "0.26", default-features = false, features = ["dir", "ioctl", "poll", "signal", "term"] }
+openssl = { version = "0.10", features = ["vendored"] }
+openssl-probe = { version = "0.1", default-features = false }
+openssl-sys = { version = "0.9", default-features = false, features = ["vendored"] }
 parking = { version = "2", default-features = false }
 polling = { version = "2" }
 rustix-d736d0ac4424f0f1 = { package = "rustix", version = "0.37", features = ["fs", "termios"] }
-security-framework = { version = "2" }
-security-framework-sys = { version = "2" }
 signal-hook = { version = "0.3" }
 signal-hook-registry = { version = "1", default-features = false }
 static_assertions = { version = "1", default-features = false }
 waker-fn = { version = "1", default-features = false }
 
-[target.arm64e-apple-darwin.build-dependencies]
-CoreFoundation-sys = { version = "0.1", default-features = false }
-IOKit-sys = { version = "0.1", default-features = false }
+[target.arm64_32-apple-watchos.build-dependencies]
 ahash = { version = "0.8" }
 arc-swap = { version = "1", default-features = false }
 async-executor = { version = "1", default-features = false }
@@ -1235,8 +1229,6 @@ bytesize = { version = "1" }
 cargo = { version = "0.72", default-features = false, features = ["vendored-openssl"] }
 cargo-util = { version = "0.2", default-features = false }
 clru = { version = "0.6", default-features = false }
-core-foundation = { version = "0.9", default-features = false, features = ["mac_os_10_7_support"] }
-core-foundation-sys = { version = "0.8", default-features = false, features = ["mac_os_10_7_support"] }
 cpufeatures = { version = "0.2", default-features = false }
 crates-io = { version = "0.37", default-features = false }
 crypto-bigint = { version = "0.5", default-features = false, features = ["generic-array", "rand_core", "zeroize"] }
@@ -1255,7 +1247,6 @@ ff = { version = "0.13", default-features = false, features = ["alloc"] }
 fiat-crypto = { version = "0.1", default-features = false }
 foreign-types = { version = "0.3", default-features = false }
 foreign-types-shared = { version = "0.1", default-features = false }
-fsevent-sys = { version = "4", default-features = false }
 git2 = { version = "0.17" }
 git2-curl = { version = "0.18", default-features = false }
 gix = { version = "0.44", default-features = false, features = ["blocking-http-transport-curl", "progress-tree"] }
@@ -1322,9 +1313,6 @@ libnghttp2-sys = { version = "0.1", default-features = false }
 libssh2-sys = { version = "0.3", default-features = false }
 linked-hash-map = { version = "0.5", default-features = false }
 lru-cache = { version = "0.1", default-features = false }
-mach-6f8ce4dd05d13bba = { package = "mach", version = "0.2" }
-mach-c65f7effa3be6d31 = { package = "mach", version = "0.1", default-features = false }
-mach2 = { version = "0.4" }
 match_cfg = { version = "0.1" }
 maybe-async = { version = "0.2", features = ["is_sync"] }
 memoffset-3b31131e45eafb45 = { package = "memoffset", version = "0.6" }
@@ -1334,6 +1322,7 @@ num_threads = { version = "0.1", default-features = false }
 opener = { version = "0.5", default-features = false }
 openssl = { version = "0.10", features = ["vendored"] }
 openssl-macros = { version = "0.1", default-features = false }
+openssl-probe = { version = "0.1", default-features = false }
 openssl-src = { version = "111" }
 openssl-sys = { version = "0.9", default-features = false, features = ["vendored"] }
 ordered-float = { version = "2" }
@@ -1355,8 +1344,6 @@ rustix-d585fab2519d2d1 = { package = "rustix", version = "0.38", features = ["te
 rustix-d736d0ac4424f0f1 = { package = "rustix", version = "0.37", features = ["fs", "termios"] }
 rustls-pemfile = { version = "1", default-features = false }
 sec1 = { version = "0.7", features = ["pem", "std", "subtle"] }
-security-framework = { version = "2" }
-security-framework-sys = { version = "2" }
 serde-value = { version = "0.7", default-features = false }
 sha1_smol = { version = "1", default-features = false }
 shell-escape = { version = "0.1", default-features = false }

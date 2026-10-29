@@ -13,7 +13,7 @@ target-features = 'all'
 flags = ['foo', 'test-flag']
 
 [[metadata.target-platform]]
-triple = 's390x-unknown-linux-musl'
+triple = 's390x-unknown-none-softfloat'
 target-features = ['sse2', 'sse4.2', 'xsavec']
 flags = ['cargo_web']
 [[metadata.omitted-packages.ids]]

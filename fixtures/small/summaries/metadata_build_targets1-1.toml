@@ -10,7 +10,7 @@ initials-platform = 'standard'
 spec = 'always'
 
 [[metadata.target-platform]]
-triple = 'wasm32-wasip1'
+triple = 'wasm32-wali-linux-musl'
 target-features = 'all'
 
 [[metadata.target-platform]]

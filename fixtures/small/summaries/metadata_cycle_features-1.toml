@@ -11,16 +11,16 @@ triple = 's390x-unknown-linux-musl'
 target-features = ['aes', 'avx2', 'bmi2', 'rdrand', 'sse2', 'xsave']
 
 [[metadata.host-platform]]
-triple = 'powerpc-unknown-linux-musl'
+triple = 'powerpc-unknown-linux-muslspe'
 target-features = ['sha', 'sse3', 'sse4.1', 'xsaveopt']
 
 [[metadata.host-platform]]
-triple = 'riscv64gc-unknown-fuchsia'
+triple = 'riscv64gc-unknown-hermit'
 target-features = 'all'
 flags = ['abc']
 
 [[metadata.target-platform]]
-triple = 'i586-unknown-redox'
+triple = 'i686-apple-darwin'
 target-features = 'unknown'
 
 [[metadata.target-platform]]

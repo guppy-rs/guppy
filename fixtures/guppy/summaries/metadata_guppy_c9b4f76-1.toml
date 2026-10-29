@@ -20,7 +20,7 @@ target-features = 'unknown'
 flags = ['abc', 'foo']
 
 [[metadata.target-platform]]
-triple = 'thumbv7a-uwp-windows-msvc'
+triple = 'thumbv7a-vex-v5'
 target-features = 'unknown'
 flags = ['flag-test', 'foo']
 
@@ -315,13 +315,6 @@ status = 'transitive'
 features = ['std']
 
 [[target-package]]
-name = 'output_vt100'
-version = '0.1.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
 name = 'ppv-lite86'
 version = '0.2.9'
 crates-io = true
@@ -422,23 +415,9 @@ crates-io = true
 status = 'transitive'
 features = []
 
-[[target-package]]
-name = 'winapi'
-version = '0.3.9'
-crates-io = true
-status = 'transitive'
-features = ['consoleapi', 'errhandlingapi', 'fileapi', 'handleapi', 'minwinbase', 'minwindef', 'ntdef', 'processenv', 'profileapi', 'std', 'sysinfoapi', 'timezoneapi', 'winbase', 'wincon', 'winerror', 'winnt', 'winuser']
-
 [[host-package]]
 name = 'autocfg'
 version = '1.0.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'ctor'
-version = '0.1.16'
 crates-io = true
 status = 'transitive'
 features = []

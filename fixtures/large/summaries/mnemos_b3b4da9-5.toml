@@ -7,7 +7,7 @@ include-dev = false
 initials-platform = 'host'
 
 [[metadata.host-platform]]
-triple = 'x86_64-unknown-linux-gnumsan'
+triple = 'x86_64-unknown-linux-gnuasan'
 target-features = 'unknown'
 
 [[metadata.host-platform]]
@@ -16,7 +16,7 @@ target-features = ['bmi2', 'sse', 'sse3', 'ssse3', 'xsaveopt', 'xsaves']
 flags = ['abc', 'cargo_web']
 
 [[metadata.host-platform]]
-triple = 'loongarch64-unknown-none-softfloat'
+triple = 'm68k-unknown-linux-gnu'
 target-features = 'unknown'
 flags = ['foo']
 

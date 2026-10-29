@@ -11,12 +11,12 @@ triple = 'aarch64-apple-watchos-sim'
 target-features = []
 
 [[metadata.host-platform]]
-triple = 's390x-unknown-linux-gnu'
+triple = 's390x-unknown-linux-musl'
 target-features = 'all'
 flags = ['flag-test', 'test-flag']
 
 [[metadata.host-platform]]
-triple = 'loongarch64-unknown-none'
+triple = 'loongarch64-unknown-none-softfloat'
 target-features = 'unknown'
 flags = ['flag-test']
 
@@ -31,7 +31,7 @@ target-features = 'unknown'
 flags = ['bar']
 
 [[metadata.target-platform]]
-triple = 'm68k-unknown-linux-gnu'
+triple = 'm68k-unknown-none-elf'
 target-features = ['aes', 'avx2', 'bmi1', 'bmi2', 'fma', 'xsaveopt']
 flags = ['bar']
 

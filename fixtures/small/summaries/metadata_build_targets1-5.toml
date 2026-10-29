@@ -7,12 +7,12 @@ include-dev = false
 initials-platform = 'standard'
 
 [[metadata.host-platform]]
-triple = 'riscv64imac-unknown-none-elf'
+triple = 'riscv64imac-unknown-nuttx-elf'
 target-features = ['fma', 'sha', 'sse4.1', 'xsave']
 flags = ['foo']
 
 [[metadata.host-platform]]
-triple = 'aarch64v8r-unknown-none'
+triple = 'aarch64_be-unknown-none-softfloat'
 target-features = 'unknown'
 flags = ['flag-test']
 
@@ -21,7 +21,7 @@ triple = 'aarch64-apple-darwin'
 target-features = 'unknown'
 
 [metadata.target-platform]
-triple = 'armv7-wrs-vxworks-eabihf'
+triple = 'armv7-unknown-trusty'
 target-features = 'all'
 flags = ['test-flag']
 [[metadata.omitted-packages.ids]]

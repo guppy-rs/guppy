@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '2'
 # workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['loongarch64-unknown-linux-musl', 'thumbv7a-none-eabihf']
+# platforms = ['loongarch64-unknown-linux-ohos', 'thumbv7a-nuttx-eabi']
 # [[traversal-excludes.ids]]
 # name = 'hostuser'
 # version = '0.1.0'

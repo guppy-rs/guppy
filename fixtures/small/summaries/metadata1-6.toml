@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'standard'
 
 [[metadata.host-platform]]
-triple = 'sparc-unknown-linux-gnu'
+triple = 'sparc-unknown-none-elf'
 target-features = 'all'
 flags = ['abc']
 
@@ -17,12 +17,12 @@ target-features = 'unknown'
 flags = ['foo', 'test-flag']
 
 [[metadata.target-platform]]
-triple = 'aarch64-unknown-linux-pauthtest'
+triple = 'aarch64-unknown-linux-ohos'
 target-features = 'unknown'
 flags = ['flag-test']
 
 [[metadata.target-platform]]
-triple = 'riscv64a23-unknown-linux-gnu'
+triple = 'riscv64gc-unknown-freebsd'
 target-features = ['bmi2', 'sha', 'xsave']
 [[metadata.omitted-packages.ids]]
 name = 'bitflags'

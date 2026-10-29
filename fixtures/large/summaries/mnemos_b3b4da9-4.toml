@@ -7,20 +7,20 @@ include-dev = true
 initials-platform = 'standard'
 
 [[metadata.host-platform]]
-triple = 'wasm32v1-none'
+triple = 'wasm32-wasip3'
 target-features = 'unknown'
 
 [[metadata.host-platform]]
-triple = 'powerpc-unknown-helenos'
+triple = 'powerpc-unknown-linux-gnu'
 target-features = 'all'
 flags = ['test-flag']
 
 [[metadata.target-platform]]
-triple = 'aarch64-unknown-netbsd'
+triple = 'aarch64-unknown-managarm-mlibc'
 target-features = []
 
 [[metadata.target-platform]]
-triple = 'riscv32ima-unknown-none-elf'
+triple = 'riscv32imac-esp-espidf'
 target-features = 'unknown'
 flags = ['foo']
 
@@ -2009,6 +2009,13 @@ version = '0.2.147'
 crates-io = true
 status = 'transitive'
 features = ['default', 'extra_traits', 'std']
+
+[[host-package]]
+name = 'linux-raw-sys'
+version = '0.3.8'
+crates-io = true
+status = 'transitive'
+features = ['general', 'ioctl', 'no_std']
 
 [[host-package]]
 name = 'memchr'

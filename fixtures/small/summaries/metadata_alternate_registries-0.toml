@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'host'
 
 [[metadata.host-platform]]
-triple = 'aarch64-unknown-managarm-mlibc'
+triple = 'aarch64-unknown-linux-pauthtest'
 target-features = 'all'
 
 [[metadata.host-platform]]

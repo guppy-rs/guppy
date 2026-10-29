@@ -8,15 +8,15 @@ initials-platform = 'host'
 target-platform = []
 
 [[metadata.host-platform]]
-triple = 'hexagon-unknown-linux-musl'
+triple = 'hexagon-unknown-none-elf'
 target-features = 'unknown'
 
 [[metadata.host-platform]]
-triple = 'armv7-linux-androideabi'
+triple = 'armv6k-nintendo-3ds'
 target-features = 'unknown'
 
 [[metadata.host-platform]]
-triple = 'arm64ec-pc-windows-msvc'
+triple = 'arm64e-apple-tvos'
 target-features = 'unknown'
 flags = ['abc', 'foo']
 [[metadata.omitted-packages.ids]]
@@ -1408,13 +1408,6 @@ status = 'transitive'
 features = []
 
 [[host-package]]
-name = 'kernel32-sys'
-version = '0.2.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
 name = 'libc'
 version = '0.2.62'
 crates-io = true
@@ -1464,7 +1457,7 @@ version = '0.5.6'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'getrandom', 'libc', 'mach_o_sys', 'use_os', 'winapi']
-optional-deps = ['getrandom', 'libc', 'winapi']
+optional-deps = ['getrandom', 'libc']
 
 [[host-package]]
 name = 'mime'
@@ -1493,13 +1486,6 @@ version = '0.6.19'
 crates-io = true
 status = 'transitive'
 features = ['default', 'with-deprecated']
-
-[[host-package]]
-name = 'miow'
-version = '0.2.1'
-crates-io = true
-status = 'transitive'
-features = []
 
 [[host-package]]
 name = 'multimap'
@@ -2383,55 +2369,6 @@ features = []
 [[host-package]]
 name = 'which'
 version = '2.0.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'winapi'
-version = '0.2.8'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'winapi'
-version = '0.3.8'
-crates-io = true
-status = 'transitive'
-features = ['consoleapi', 'errhandlingapi', 'fileapi', 'handleapi', 'impl-debug', 'impl-default', 'knownfolders', 'libloaderapi', 'memoryapi', 'minwinbase', 'minwindef', 'ntdef', 'ntsecapi', 'ntstatus', 'objbase', 'processenv', 'processthreadsapi', 'profileapi', 'shlobj', 'std', 'sysinfoapi', 'timezoneapi', 'winbase', 'wincon', 'winerror', 'winnt', 'winreg', 'winsock2', 'winuser', 'ws2def', 'ws2ipdef', 'ws2tcpip']
-
-[[host-package]]
-name = 'winapi-build'
-version = '0.1.1'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'winapi-util'
-version = '0.1.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'wincolor'
-version = '1.0.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'winreg'
-version = '0.6.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[host-package]]
-name = 'ws2_32-sys'
-version = '0.2.1'
 crates-io = true
 status = 'transitive'
 features = []

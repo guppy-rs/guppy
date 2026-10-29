@@ -10,7 +10,7 @@ initials-platform = 'host'
 spec = 'always'
 
 [[metadata.target-platform]]
-triple = 'armv6-none-eabihf'
+triple = 'armv6-none-eabi'
 target-features = 'all'
 
 [[metadata.target-platform]]
@@ -18,7 +18,7 @@ triple = 's390x-unknown-none-softfloat'
 target-features = 'all'
 
 [[metadata.target-platform]]
-triple = 'arm64ec-pc-windows-msvc'
+triple = 'arm64e-apple-tvos'
 target-features = []
 flags = ['abc']
 [[metadata.omitted-packages.ids]]

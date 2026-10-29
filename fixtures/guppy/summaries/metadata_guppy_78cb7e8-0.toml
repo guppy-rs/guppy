@@ -11,7 +11,7 @@ triple = 'loongarch64-unknown-linux-ohos'
 target-features = 'unknown'
 
 [[metadata.host-platform]]
-triple = 'aarch64-unknown-teeos'
+triple = 'aarch64-unknown-redox'
 target-features = 'all'
 
 [[metadata.host-platform]]

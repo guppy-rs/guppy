@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '1'
 # workspace-hack-line-style = 'workspace-dotted'
-# platforms = ['armv7-sony-vita-newlibeabihf', 'i686-pc-windows-gnullvm']
+# platforms = ['armv7-rtems-eabihf', 'i686-pc-windows-gnullvm']
 # [[traversal-excludes.ids]]
 # name = 'adler2'
 # version = '2.0.1'

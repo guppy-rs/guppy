@@ -7,7 +7,7 @@
 # output-single-feature = false
 # dep-format-version = '3'
 # workspace-hack-line-style = 'full'
-# platforms = ['x86_64-unknown-none', 's390x-unknown-none-softfloat']
+# platforms = ['x86_64-unknown-none', 'sparc-unknown-linux-gnu']
 # [[traversal-excludes.ids]]
 # name = 'commoncrypto-sys'
 # version = '0.2.0'
@@ -54,6 +54,12 @@ serde_json = { version = "1", features = ["raw_value"] }
 proc-macro2 = { version = "1" }
 quote = { version = "1" }
 syn = { version = "1", features = ["full", "visit"] }
+
+[target.sparc-unknown-linux-gnu.dependencies]
+libc = { version = "0.2" }
+
+[target.sparc-unknown-linux-gnu.build-dependencies]
+libc = { version = "0.2" }
 
 ### END HAKARI SECTION
 

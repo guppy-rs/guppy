@@ -17,7 +17,7 @@ target-features = 'unknown'
 flags = ['bar', 'flag-test']
 
 [[metadata.target-platform]]
-triple = 'riscv32im-risc0-zkvm-elf'
+triple = 'riscv32im-unknown-none-elf'
 target-features = ['fma', 'rdrand', 'sha', 'sse4.2', 'ssse3']
 
 [[metadata.target-platform]]

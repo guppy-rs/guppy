@@ -7,12 +7,12 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [[metadata.host-platform]]
-triple = 'i686-pc-windows-msvc'
+triple = 'i686-unknown-freebsd'
 target-features = ['bmi1', 'sse', 'sse4.2']
 flags = ['abc']
 
 [[metadata.host-platform]]
-triple = 'armv7-linux-androideabi'
+triple = 'armv6k-nintendo-3ds'
 target-features = ['sse', 'sse3', 'sse4.1', 'xsave']
 flags = ['flag-test', 'test-flag']
 

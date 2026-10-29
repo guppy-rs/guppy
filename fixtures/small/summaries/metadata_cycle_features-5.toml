@@ -8,11 +8,11 @@ initials-platform = 'standard'
 target-platform = []
 
 [[metadata.host-platform]]
-triple = 'riscv64-oe-linux-gnu'
+triple = 'riscv64-wrs-vxworks'
 target-features = ['bmi1', 'rdrand', 'sha', 'sse2']
 
 [[metadata.host-platform]]
-triple = 'powerpc64-unknown-linux-gnuelfv2'
+triple = 'powerpc64-unknown-linux-musl'
 target-features = 'unknown'
 flags = ['cargo_web']
 

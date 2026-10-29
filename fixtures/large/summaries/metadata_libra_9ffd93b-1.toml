@@ -7,12 +7,12 @@ include-dev = false
 initials-platform = 'proc-macros-on-target'
 
 [[metadata.host-platform]]
-triple = 'sparc64-unknown-netbsd'
+triple = 'sparc64-unknown-openbsd'
 target-features = 'unknown'
 flags = ['cargo_web']
 
 [[metadata.host-platform]]
-triple = 'aarch64-unknown-linux-musl'
+triple = 'aarch64-unknown-linux-gnu_ilp32'
 target-features = 'unknown'
 flags = ['flag-test', 'test-flag']
 
@@ -22,7 +22,7 @@ target-features = 'all'
 flags = ['test-flag']
 
 [[metadata.target-platform]]
-triple = 'riscv32gc-unknown-linux-gnu'
+triple = 'riscv32gc-unknown-linux-musl'
 target-features = ['bmi1']
 flags = ['abc', 'test-flag']
 

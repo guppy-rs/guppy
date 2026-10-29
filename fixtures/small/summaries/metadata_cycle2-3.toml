@@ -8,7 +8,7 @@ initials-platform = 'host'
 target-platform = []
 
 [[metadata.host-platform]]
-triple = 'thumbv4t-none-eabi'
+triple = 'thumbv5te-none-eabi'
 target-features = ['sse3']
 flags = ['abc', 'test-flag']
 

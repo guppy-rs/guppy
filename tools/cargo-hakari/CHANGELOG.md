@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- Builtin targets updated to Rust 1.99.
 - Error reporting is now significantly better through the use of stronger types throughout hakari (and cargo-hakari).
 
 ### Fixed

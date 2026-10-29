@@ -7,16 +7,16 @@ include-dev = true
 initials-platform = 'standard'
 
 [[metadata.host-platform]]
-triple = 'hexagon-unknown-linux-musl'
+triple = 'hexagon-unknown-none-elf'
 target-features = 'unknown'
 flags = ['flag-test']
 
 [[metadata.host-platform]]
-triple = 'mips-unknown-linux-uclibc'
+triple = 'mips64-openwrt-linux-musl'
 target-features = 'unknown'
 
 [[metadata.host-platform]]
-triple = 'mips64el-unknown-linux-muslabi64'
+triple = 'mipsel-mti-none-elf'
 target-features = ['avx', 'sse4.1', 'sse4.2']
 flags = ['flag-test']
 

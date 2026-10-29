@@ -7,7 +7,7 @@
 # output-single-feature = true
 # dep-format-version = '1'
 # workspace-hack-line-style = 'version-only'
-# platforms = ['riscv32gc-unknown-linux-gnu', 'aarch64-unknown-uefi', 'riscv32emc-unknown-none-elf']
+# platforms = ['riscv32gc-unknown-linux-gnu', 'aarch64-unknown-trusty', 'riscv32gc-unknown-linux-gnu']
 # [[traversal-excludes.ids]]
 # name = 'fixture-manager'
 # version = '0.1.0'

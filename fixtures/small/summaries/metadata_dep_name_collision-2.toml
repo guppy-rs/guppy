@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'standard'
 
 [metadata.host-platform]
-triple = 'i586-unknown-redox'
+triple = 'i686-apple-darwin'
 target-features = ['fma', 'sse3', 'xsave', 'xsavec', 'xsaves']
 
 [[metadata.target-platform]]
@@ -16,7 +16,7 @@ target-features = 'all'
 flags = ['abc', 'bar']
 
 [[metadata.target-platform]]
-triple = 'aarch64-unknown-qnx'
+triple = 'aarch64-unknown-openbsd'
 target-features = 'unknown'
 
 [[metadata.features-only]]

@@ -7,6 +7,10 @@
 
 - With the `summaries` feature, `Platform::custom_source` and `Triple::custom_source` return how a custom platform was defined: target JSON or `rustc --print=cfg` output.
 
+### Changed
+
+- Updated `cfg-expr` to version 0.20.10, updating builtin targets to Rust 1.99.
+
 ## [3.7.0] - 2026-08-25
 
 ### Changed

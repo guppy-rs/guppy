@@ -7,7 +7,7 @@ include-dev = true
 initials-platform = 'proc-macros-on-target'
 
 [[metadata.host-platform]]
-triple = 'powerpc-unknown-helenos'
+triple = 'powerpc-unknown-linux-gnu'
 target-features = 'all'
 flags = ['cargo_web', 'test-flag']
 
@@ -25,7 +25,7 @@ triple = 'riscv32i-unknown-none-elf'
 target-features = 'unknown'
 
 [[metadata.target-platform]]
-triple = 'mipsel-unknown-netbsd'
+triple = 'mipsel-unknown-none'
 target-features = 'unknown'
 flags = ['abc', 'bar']
 

@@ -12,7 +12,7 @@ triple = 'aarch64-apple-tvos'
 target-features = 'unknown'
 
 [[metadata.target-platform]]
-triple = 'x86_64-unknown-hurd-gnu'
+triple = 'x86_64-unknown-hermit'
 target-features = 'all'
 flags = ['test-flag']
 [[metadata.omitted-packages.ids]]

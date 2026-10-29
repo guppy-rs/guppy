@@ -10,7 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'any'
 
 [metadata.target-platform]
-triple = 'thumbv7a-nuttx-eabihf'
+triple = 'thumbv7a-pc-windows-msvc'
 target-features = 'all'
 flags = ['cargo_web', 'test-flag']
 [[metadata.omitted-packages.ids]]
@@ -139,7 +139,7 @@ version = '2.33.3'
 crates-io = true
 status = 'direct'
 features = ['ansi_term', 'atty', 'color', 'default', 'strsim', 'suggestions', 'vec_map']
-optional-deps = ['ansi_term', 'atty', 'strsim', 'vec_map']
+optional-deps = ['atty', 'strsim', 'vec_map']
 
 [[target-package]]
 name = 'dialoguer'
@@ -332,7 +332,7 @@ version = '0.4.19'
 crates-io = true
 status = 'transitive'
 features = ['clock', 'default', 'libc', 'oldtime', 'std', 'time', 'winapi']
-optional-deps = ['libc', 'time']
+optional-deps = ['libc', 'time', 'winapi']
 
 [[target-package]]
 name = 'combine'
@@ -347,7 +347,7 @@ version = '0.11.3'
 crates-io = true
 status = 'transitive'
 features = ['ansi-parsing', 'default', 'regex', 'unicode-width', 'winapi-util', 'windows-console-colors']
-optional-deps = ['regex', 'unicode-width']
+optional-deps = ['regex', 'unicode-width', 'winapi-util']
 
 [[target-package]]
 name = 'difference'
@@ -362,6 +362,13 @@ version = '1.6.1'
 crates-io = true
 status = 'transitive'
 features = ['use_std']
+
+[[target-package]]
+name = 'encode_unicode'
+version = '0.3.6'
+crates-io = true
+status = 'transitive'
+features = ['default', 'std']
 
 [[target-package]]
 name = 'fnv'
@@ -441,6 +448,13 @@ status = 'transitive'
 features = ['std']
 
 [[target-package]]
+name = 'output_vt100'
+version = '0.1.2'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[target-package]]
 name = 'ppv-lite86'
 version = '0.2.9'
 crates-io = true
@@ -460,7 +474,7 @@ version = '0.7.3'
 crates-io = true
 status = 'transitive'
 features = ['alloc', 'default', 'getrandom', 'getrandom_package', 'libc', 'std']
-optional-deps = ['getrandom_package', 'libc']
+optional-deps = ['getrandom_package']
 
 [[target-package]]
 name = 'rand_chacha'
@@ -549,13 +563,6 @@ status = 'transitive'
 features = []
 
 [[target-package]]
-name = 'termios'
-version = '0.3.2'
-crates-io = true
-status = 'transitive'
-features = []
-
-[[target-package]]
 name = 'textwrap'
 version = '0.11.0'
 crates-io = true
@@ -604,6 +611,20 @@ crates-io = true
 status = 'transitive'
 features = []
 
+[[target-package]]
+name = 'winapi'
+version = '0.3.9'
+crates-io = true
+status = 'transitive'
+features = ['consoleapi', 'errhandlingapi', 'fileapi', 'handleapi', 'minwinbase', 'minwindef', 'ntdef', 'processenv', 'profileapi', 'std', 'sysinfoapi', 'timezoneapi', 'winbase', 'wincon', 'winerror', 'winnt', 'winuser']
+
+[[target-package]]
+name = 'winapi-util'
+version = '0.1.5'
+crates-io = true
+status = 'transitive'
+features = []
+
 [[host-package]]
 name = 'proptest-derive'
 version = '0.2.0'
@@ -614,6 +635,13 @@ features = []
 [[host-package]]
 name = 'autocfg'
 version = '1.0.1'
+crates-io = true
+status = 'transitive'
+features = []
+
+[[host-package]]
+name = 'ctor'
+version = '0.1.16'
 crates-io = true
 status = 'transitive'
 features = []

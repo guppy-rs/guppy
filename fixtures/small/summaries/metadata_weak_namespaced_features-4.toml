@@ -11,12 +11,12 @@ triple = 'loongarch64-unknown-linux-gnu'
 target-features = 'unknown'
 
 [[metadata.host-platform]]
-triple = 'hexagon-unknown-linux-musl'
+triple = 'hexagon-unknown-none-elf'
 target-features = 'all'
 flags = ['abc']
 
 [[metadata.host-platform]]
-triple = 'riscv32gc-unknown-linux-gnu'
+triple = 'riscv32gc-unknown-linux-musl'
 target-features = 'unknown'
 flags = ['cargo_web', 'foo']
 
@@ -26,12 +26,12 @@ target-features = ['avx2', 'bmi1', 'fma', 'sse3', 'sse4.1']
 flags = ['foo']
 
 [[metadata.target-platform]]
-triple = 'mips-unknown-linux-musl'
+triple = 'mips-unknown-linux-uclibc'
 target-features = 'unknown'
 flags = ['test-flag']
 
 [[metadata.target-platform]]
-triple = 'arm64e-apple-darwin'
+triple = 'arm64_32-apple-watchos'
 target-features = 'unknown'
 [[metadata.omitted-packages.ids]]
 name = 'pathdiff'

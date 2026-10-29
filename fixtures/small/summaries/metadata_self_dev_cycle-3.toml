@@ -17,7 +17,7 @@ target-features = 'unknown'
 flags = ['test-flag']
 
 [metadata.target-platform]
-triple = 'armv5te-unknown-linux-uclibceabi'
+triple = 'armv5te-unknown-linux-musleabi'
 target-features = []
 flags = ['bar', 'cargo_web']
 [[metadata.omitted-packages.ids]]

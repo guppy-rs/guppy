@@ -15,7 +15,7 @@ target-features = 'all'
 flags = ['flag-test', 'test-flag']
 
 [[metadata.target-platform]]
-triple = 'mipsel-unknown-none'
+triple = 'mipsisa32r6-unknown-linux-gnu'
 target-features = 'all'
 
 [[metadata.target-platform]]

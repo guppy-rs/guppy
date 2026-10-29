@@ -10,12 +10,12 @@ initials-platform = 'standard'
 spec = 'any'
 
 [[metadata.target-platform]]
-triple = 'armv7a-kmc-solid_asp3-eabihf'
+triple = 'armv7a-kmc-solid_asp3-eabi'
 target-features = 'all'
 flags = ['abc']
 
 [[metadata.target-platform]]
-triple = 'aarch64-unknown-nuttx'
+triple = 'aarch64-unknown-nto-qnx710_iosock'
 target-features = ['sse4.2', 'xsave', 'xsaveopt']
 flags = ['abc']
 

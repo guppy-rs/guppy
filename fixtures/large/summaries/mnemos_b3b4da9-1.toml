@@ -16,7 +16,7 @@ target-features = 'all'
 flags = ['abc', 'test-flag']
 
 [metadata.target-platform]
-triple = 'i586-unknown-netbsd'
+triple = 'i586-unknown-redox'
 target-features = ['aes', 'fma', 'rdrand', 'ssse3']
 flags = ['bar', 'foo']
 [[metadata.omitted-packages.ids]]

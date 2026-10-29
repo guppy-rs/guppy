@@ -10,7 +10,7 @@ initials-platform = 'proc-macros-on-target'
 spec = 'always'
 
 [metadata.target-platform]
-triple = 'thumbv7a-none-eabi'
+triple = 'thumbv7a-none-eabihf'
 target-features = 'unknown'
 flags = ['bar']
 [[metadata.omitted-packages.ids]]

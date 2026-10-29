@@ -8,7 +8,7 @@ initials-platform = 'proc-macros-on-target'
 target-platform = []
 
 [metadata.host-platform]
-triple = 'aarch64-unknown-nto-qnx700'
+triple = 'aarch64-unknown-none-softfloat'
 target-features = 'all'
 [[metadata.omitted-packages.ids]]
 name = 'lazy_static'

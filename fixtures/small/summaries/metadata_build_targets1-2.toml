@@ -12,7 +12,7 @@ target-features = ['bmi1', 'fma']
 flags = ['test-flag']
 
 [[metadata.host-platform]]
-triple = 'msp430-none-elf'
+triple = 'nvptx64-nvidia-cuda'
 target-features = 'all'
 flags = ['flag-test']
 

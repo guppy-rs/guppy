@@ -10,7 +10,7 @@ initials-platform = 'host'
 spec = 'any'
 
 [[metadata.target-platform]]
-triple = 'arm-unknown-linux-gnueabi'
+triple = 'arm-linux-androideabi'
 target-features = ['sse4.2', 'xsave', 'xsaveopt']
 flags = ['bar', 'foo']
 

@@ -11,7 +11,7 @@ triple = 'thumbv6-none-eabi'
 target-features = ['avx', 'avx2', 'sha', 'sse3', 'sse4.1', 'ssse3', 'xsaveopt']
 
 [[metadata.host-platform]]
-triple = 'i686-unknown-netbsd'
+triple = 'i686-unknown-openbsd'
 target-features = 'unknown'
 flags = ['foo', 'test-flag']
 
@@ -20,17 +20,17 @@ triple = 'x86_64-apple-ios'
 target-features = 'unknown'
 
 [[metadata.target-platform]]
-triple = 'x86_64-apple-ios'
+triple = 'x86_64-apple-darwin'
 target-features = ['xsaveopt']
 flags = ['foo', 'test-flag']
 
 [[metadata.target-platform]]
-triple = 'riscv32im-unknown-none-elf'
+triple = 'riscv32ima-unknown-none-elf'
 target-features = ['avx', 'avx2', 'rdrand', 'sha', 'sse4.2', 'xsaveopt']
 flags = ['test-flag']
 
 [[metadata.target-platform]]
-triple = 'i686-unknown-linux-musl'
+triple = 'i686-unknown-netbsd'
 target-features = ['bmi2', 'sha', 'sse4.2', 'xsave', 'xsaves']
 [[metadata.omitted-packages.ids]]
 name = 'ctor'
