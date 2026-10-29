@@ -3,6 +3,8 @@
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+## [3.8.0] - 2026-10-29
+
 ### Added
 
 - `Platform::custom_source` and `Triple::custom_source` return how a custom platform was defined: target JSON or `rustc --print=cfg` output.
@@ -445,6 +447,7 @@ This was mistakenly published and was yanked.
 - Initial release.
 
 <!-- next-url -->
+[3.8.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.8.0
 [3.7.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.7.0
 [3.6.0]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.6.0
 [3.5.7]: https://github.com/guppy-rs/guppy/releases/tag/target-spec-3.5.7
