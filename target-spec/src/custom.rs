@@ -8,9 +8,9 @@ use std::borrow::Cow;
 use cfg_expr::targets::{
     Abi, Arch, Env, Families, Family, HasAtomic, HasAtomics, Os, TargetInfo, Triple, Vendor,
 };
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
-#[derive(Clone, Debug, Deserialize, Serialize, Eq, Hash, Ord, PartialEq, PartialOrd)]
+#[derive(Clone, Debug, Deserialize, Eq, Hash, Ord, PartialEq, PartialOrd)]
 #[serde(rename_all = "kebab-case")]
 pub(crate) struct TargetDefinition {
     // TODO: it would be nice to use target-spec-json for this, but that has a
@@ -99,7 +99,7 @@ impl TargetDefinition {
 }
 
 mod target_pointer_width {
-    use serde::{Deserializer, Serializer};
+    use serde::Deserializer;
 
     pub(super) fn deserialize<'de, D>(deserializer: D) -> Result<u8, D::Error>
     where
@@ -137,19 +137,9 @@ mod target_pointer_width {
 
         deserializer.deserialize_any(PointerWidthVisitor)
     }
-
-    pub(super) fn serialize<S>(value: &u8, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        // Should change this in the future to serialize as an integer?
-        serializer.serialize_str(&value.to_string())
-    }
 }
 
-#[derive(
-    Copy, Clone, Debug, Deserialize, Serialize, Default, Eq, Hash, Ord, PartialEq, PartialOrd,
-)]
+#[derive(Copy, Clone, Debug, Deserialize, Default, Eq, Hash, Ord, PartialEq, PartialOrd)]
 #[serde(rename_all = "kebab-case")]
 enum Endian {
     #[default]
@@ -193,11 +183,6 @@ mod tests {
             // Just make sure this doesn't panic. (If this becomes fallible in the future, then this
             // shouldn't return an error either.)
             target_def.clone().into_target_info(triple.clone().into());
-            let json =
-                serde_json::to_string(&target_def).expect("target def serialized successfully");
-            eprintln!("* minified json: {json}");
-            let target_def_2 = serde_json::from_str(&json).expect("target def 2 deserialized");
-            assert_eq!(target_def, target_def_2, "matches");
 
             // Do some spot checks for things like big-endian targets.
             if triple.starts_with("powerpc-") || triple.starts_with("powerpc64-") {

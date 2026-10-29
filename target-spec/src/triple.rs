@@ -131,14 +131,12 @@ impl Triple {
                 error: error.into(),
             }
         })?;
-        let minified_json =
-            serde_json::to_string(&target_def).expect("serialization is infallible");
 
         let target_info = Box::new(target_def.into_target_info(triple_str));
         Ok(Self {
             inner: TripleInner::Custom {
                 target_info,
-                custom_source: OwnedCustomSource::Json(minified_json),
+                custom_source: OwnedCustomSource::Json(json.to_owned()),
             },
         })
     }
@@ -427,8 +425,6 @@ impl TripleInner {
 #[non_exhaustive]
 pub enum CustomSource<'a> {
     /// Target JSON from [`Platform::new_custom`].
-    ///
-    /// The JSON is re-serialized by target-spec, so it is potentially normalized.
     ///
     /// This variant can only be returned when the `custom` feature is enabled.
     Json(&'a str),

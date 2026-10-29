@@ -10,6 +10,7 @@
 ### Changed
 
 - Updated `cfg-expr` to version 0.20.10, updating builtin targets to Rust 1.99.
+- With the `summaries` feature, `PlatformSummary::from_platform` now stores custom target JSON exactly as it was passed into `Platform::new_custom`. Previously, target-spec stored a re-serialized form.
 
 ## [3.7.0] - 2026-08-25
 
