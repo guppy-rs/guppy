@@ -1,0 +1,49 @@
+# This summary was @generated. To regenerate, run:
+#   cargo run -p fixture-manager -- generate-summaries --fixture metadata_build_deps_no_script
+
+[metadata]
+resolver = '3'
+include-dev = true
+initials-platform = 'proc-macros-on-target'
+
+[metadata.host-platform]
+spec = 'any'
+
+[metadata.target-platform]
+spec = 'always'
+[[metadata.omitted-packages.ids]]
+name = 'main'
+version = '0.1.0'
+workspace-path = 'main'
+
+[[metadata.omitted-packages.ids]]
+name = 'memchr'
+version = '2.8.3'
+crates-io = true
+
+[[metadata.features-only]]
+name = 'main'
+version = '0.1.0'
+workspace-path = 'main'
+features = []
+
+[[target-package]]
+name = 'main'
+version = '0.1.0'
+workspace-path = 'main'
+status = 'initial'
+features = []
+
+[[target-package]]
+name = 'with-script'
+version = '0.1.0'
+workspace-path = 'with-script'
+status = 'workspace'
+features = []
+
+[[host-package]]
+name = 'libc'
+version = '0.2.191'
+crates-io = true
+status = 'direct'
+features = ['extra_traits']

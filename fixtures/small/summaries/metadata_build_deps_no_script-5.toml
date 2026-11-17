@@ -1,0 +1,50 @@
+# This summary was @generated. To regenerate, run:
+#   cargo run -p fixture-manager -- generate-summaries --fixture metadata_build_deps_no_script
+
+[metadata]
+resolver = '2'
+include-dev = true
+initials-platform = 'proc-macros-on-target'
+target-platform = []
+
+[[metadata.host-platform]]
+triple = 'armv7-unknown-linux-musleabi'
+target-features = 'all'
+flags = ['bar']
+
+[[metadata.host-platform]]
+triple = 'riscv64-wrs-vxworks'
+target-features = 'unknown'
+
+[[metadata.features-only]]
+name = 'main'
+version = '0.1.0'
+workspace-path = 'main'
+features = []
+
+[[metadata.features-only]]
+name = 'with-script'
+version = '0.1.0'
+workspace-path = 'with-script'
+features = []
+
+[[target-package]]
+name = 'main'
+version = '0.1.0'
+workspace-path = 'main'
+status = 'initial'
+features = []
+
+[[target-package]]
+name = 'with-script'
+version = '0.1.0'
+workspace-path = 'with-script'
+status = 'initial'
+features = []
+
+[[host-package]]
+name = 'libc'
+version = '0.2.191'
+crates-io = true
+status = 'direct'
+features = ['extra_traits']

@@ -1,0 +1,43 @@
+# This summary was @generated. To regenerate, run:
+#   cargo run -p fixture-manager -- generate-summaries --fixture metadata_build_deps_no_script
+
+[metadata]
+resolver = '2'
+include-dev = true
+initials-platform = 'host'
+
+[metadata.host-platform]
+spec = 'always'
+
+[[metadata.target-platform]]
+triple = 'armv6k-nintendo-3ds'
+target-features = 'all'
+flags = ['foo']
+
+[[metadata.target-platform]]
+triple = 'x86_64-unknown-netbsd'
+target-features = 'unknown'
+flags = ['abc']
+[[metadata.omitted-packages.ids]]
+name = 'libc'
+version = '0.2.191'
+crates-io = true
+
+[[metadata.omitted-packages.ids]]
+name = 'memchr'
+version = '2.8.3'
+crates-io = true
+
+[[host-package]]
+name = 'main'
+version = '0.1.0'
+workspace-path = 'main'
+status = 'initial'
+features = []
+
+[[host-package]]
+name = 'with-script'
+version = '0.1.0'
+workspace-path = 'with-script'
+status = 'initial'
+features = []

@@ -169,6 +169,16 @@ pub static METADATA_WEAK_NAMESPACED_ARRAYVEC: &str =
 pub static METADATA_WEAK_NAMESPACED_TINYVEC: &str =
     "tinyvec 1.5.1 (registry+https://github.com/rust-lang/crates.io-index)";
 
+pub static METADATA_BUILD_DEPS_NO_SCRIPT_PATH: &str = "../small/build-deps-no-script.json";
+pub static METADATA_BUILD_DEPS_NO_SCRIPT_MAIN: &str =
+    "path+file:///home/fakeuser/dev/tmp/test-workspaces/build-deps-no-script/main#0.1.0";
+pub static METADATA_BUILD_DEPS_NO_SCRIPT_WITH_SCRIPT: &str =
+    "path+file:///home/fakeuser/dev/tmp/test-workspaces/build-deps-no-script/with-script#0.1.0";
+pub static METADATA_BUILD_DEPS_NO_SCRIPT_LIBC: &str =
+    "registry+https://github.com/rust-lang/crates.io-index#libc@0.2.191";
+pub static METADATA_BUILD_DEPS_NO_SCRIPT_MEMCHR: &str =
+    "registry+https://github.com/rust-lang/crates.io-index#memchr@2.8.3";
+
 pub static METADATA_DEP_NAME_COLLISION_PATH: &str = "../small/dep-name-collision.json";
 pub static METADATA_DEP_NAME_COLLISION_MAIN: &str =
     "path+file:///home/fakeuser/dev/tmp/test-workspaces/dep-name-collision/main#0.1.0";
@@ -338,6 +348,7 @@ define_fixtures! {
     metadata_alternate_registries => METADATA_ALTERNATE_REGISTRIES_PATH,
     metadata_weak_namespaced_features => METADATA_WEAK_NAMESPACED_FEATURES_PATH,
     metadata_dep_name_collision => METADATA_DEP_NAME_COLLISION_PATH,
+    metadata_build_deps_no_script => METADATA_BUILD_DEPS_NO_SCRIPT_PATH,
     metadata_libra => METADATA_LIBRA_PATH,
     metadata_libra_f0091a4 => METADATA_LIBRA_F0091A4_PATH,
     metadata_libra_9ffd93b => METADATA_LIBRA_9FFD93B_PATH,
@@ -2252,6 +2263,11 @@ impl FixtureDetails {
     }
 
     pub(crate) fn metadata_dep_name_collision() -> Self {
+        let details = AHashMap::new();
+        Self::new(details)
+    }
+
+    pub(crate) fn metadata_build_deps_no_script() -> Self {
         let details = AHashMap::new();
         Self::new(details)
     }
