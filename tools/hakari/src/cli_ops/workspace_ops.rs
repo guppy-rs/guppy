@@ -129,6 +129,7 @@ impl<'g> WorkspaceOp<'g, '_> {
                         name,
                         version,
                         &crate_path,
+                        canonical_workspace_root,
                         *dep_format,
                         *line_style,
                         package,
@@ -280,6 +281,7 @@ impl<'g> WorkspaceOp<'g, '_> {
         name: &str,
         version: &Version,
         crate_path: &Utf8Path,
+        canonical_workspace_root: &Utf8Path,
         dep_format: DepFormatVersion,
         line_style: WorkspaceHackLineStyle,
         package: PackageMetadata<'g>,
@@ -287,13 +289,22 @@ impl<'g> WorkspaceOp<'g, '_> {
         let manifest_path = package.manifest_path();
         let mut doc = read_toml(manifest_path)?;
 
-        let package_path = package
-            .source()
-            .workspace_path()
-            .expect("package should be in workspace");
-        // Find the location of the new path (relative) with respect to the package path.
-        let path = pathdiff::diff_utf8_paths(crate_path, package_path)
-            .expect("both new_path and package_path are relative");
+        // Find the location of the new path with respect to the package's own
+        // directory, using absolute canonical paths for both. A member that
+        // names its root through `package.workspace` sits outside the
+        // workspace root, so its workspace-relative path begins with `..`,
+        // which pathdiff cannot use as a base.
+        let package_dir = manifest_path
+            .parent()
+            .expect("manifest path should have a parent");
+        let canonical_package_dir = package_dir.canonicalize_utf8().map_err(|error| {
+            ApplyError::new(package_dir, ApplyErrorKind::CanonicalizePath { error })
+        })?;
+        let path = pathdiff::diff_utf8_paths(
+            canonical_workspace_root.join(crate_path),
+            &canonical_package_dir,
+        )
+        .expect("both paths are absolute");
 
         let path_table = Self::inline_table_for_add(version, dep_format, line_style, &path);
 

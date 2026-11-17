@@ -8,6 +8,14 @@
 - `cli_ops::ApplyError` now reports what went wrong through
   a new `ApplyErrorKind` enum.
 
+### Fixed
+
+- `WorkspaceOps::apply` no longer panics for a workspace member whose `members`
+  entry begins with `..`, placing its directory beside the workspace root
+  rather than under it. The path to the workspace-hack crate is now computed
+  from canonical absolute paths; the path written for members under the root is
+  unchanged.
+
 ## [0.18.0] - 2026-09-19
 
 ### Added
