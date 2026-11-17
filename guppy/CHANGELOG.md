@@ -3,6 +3,12 @@
 <!-- next-header -->
 ## Unreleased - ReleaseDate
 
+### Changed
+
+- `ahash` is depended on without its `runtime-rng` feature, so guppy builds for
+  `wasm32-unknown-unknown` without `getrandom`'s JavaScript backend. guppy's hash
+  maps are internal to it and now use fixed keys.
+
 ## [0.19.1] - 2026-09-24
 
 ### Added

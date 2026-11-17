@@ -7,6 +7,8 @@
 
 - `cli_ops::ApplyError` now reports what went wrong through
   a new `ApplyErrorKind` enum.
+- `ahash` is depended on without its `runtime-rng` feature, so hakari no longer
+  pulls in `getrandom`. Hash maps now use fixed keys.
 
 ## [0.18.0] - 2026-09-19
 
