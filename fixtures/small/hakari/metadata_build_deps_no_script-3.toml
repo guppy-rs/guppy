@@ -1,0 +1,27 @@
+# This file is @generated. To regenerate, run:
+#    cargo run -p fixture-manager -- generate-hakari --fixture metadata_build_deps_no_script
+
+### BEGIN HAKARI SECTION
+# resolver = '2'
+# unify-target-host = 'none'
+# output-single-feature = false
+# dep-format-version = '4'
+# workspace-hack-line-style = 'full'
+# platforms = ['powerpc64le-unknown-freebsd', 'riscv32im-unknown-none-elf']
+# [[traversal-excludes.ids]]
+# name = 'main'
+# version = '0.1.0'
+# workspace-path = 'main'
+#
+# [[traversal-excludes.ids]]
+# name = 'with-script'
+# version = '0.1.0'
+# workspace-path = 'with-script'
+# [[final-excludes.ids]]
+# name = 'main'
+# version = '0.1.0'
+# workspace-path = 'main'
+
+### END HAKARI SECTION
+
+# This part of the file should be preserved at the end.
