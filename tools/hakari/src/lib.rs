@@ -127,6 +127,10 @@
 //!
 //! These features will be added as time permits.
 
+// Referenced so that Cargo's unused_dependencies lint sees the workspace-hack
+// dependency as used.
+use guppy_workspace_hack as _;
+
 mod cargo_toml;
 #[cfg(feature = "cli-support")]
 pub mod cli_ops;

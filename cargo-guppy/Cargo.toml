@@ -21,3 +21,6 @@ serde = { version = "1.0.229", features = ["derive"] }
 serde_json = "1.0.154"
 toml_edit = "0.25.17"
 guppy-workspace-hack.workspace = true
+
+[lints]
+workspace = true

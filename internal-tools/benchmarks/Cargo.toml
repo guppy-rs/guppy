@@ -17,3 +17,6 @@ criterion = "0.8.2"
 [[bench]]
 name = "package_graph"
 harness = false
+
+[lints]
+workspace = true

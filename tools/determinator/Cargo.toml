@@ -51,3 +51,6 @@ guppy-workspace-hack.workspace = true
 [dev-dependencies]
 fixtures = { path = "../../fixtures" }
 cfg-if = "1.0.5"
+
+[lints]
+workspace = true

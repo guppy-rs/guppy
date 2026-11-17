@@ -234,6 +234,10 @@
 //!   option, or
 //! * there is a bugfix involved.
 
+// Referenced so that Cargo's unused_dependencies lint sees the workspace-hack
+// dependency as used.
+use guppy_workspace_hack as _;
+
 mod builder;
 mod cargo_cli;
 mod command;

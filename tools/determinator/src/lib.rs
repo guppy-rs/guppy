@@ -244,6 +244,10 @@
 //! This determinator is inspired by, and shares its name with, the target determinator used in
 //! Facebook's main source repository.
 
+// Referenced so that Cargo's unused_dependencies lint sees the workspace-hack
+// dependency as used.
+use guppy_workspace_hack as _;
+
 mod determinator;
 pub mod errors;
 mod paths0;

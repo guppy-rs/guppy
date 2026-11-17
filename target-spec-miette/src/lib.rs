@@ -22,6 +22,10 @@
 #![forbid(unsafe_code)]
 #![cfg_attr(doc_cfg, feature(doc_cfg))]
 
+// Referenced so that Cargo's unused_dependencies lint sees the workspace-hack
+// dependency as used.
+use guppy_workspace_hack as _;
+
 #[cfg(feature = "fixtures")]
 pub mod fixtures;
 mod imp;

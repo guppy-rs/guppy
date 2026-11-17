@@ -5,6 +5,10 @@
 //!
 //! This library allows translating command-line arguments into guppy's data structures.
 
+// Referenced so that Cargo's unused_dependencies lint sees the workspace-hack
+// dependency as used.
+use guppy_workspace_hack as _;
+
 #[cfg(feature = "proptest1")]
 pub mod proptest;
 

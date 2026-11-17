@@ -18,3 +18,6 @@ guppy-workspace-hack.workspace = true
 
 [features]
 proptest1 = ["proptest", "guppy/proptest1"]
+
+[lints]
+workspace = true
