@@ -18,3 +18,6 @@ hakari = { path = "../../tools/hakari", features = ["cli-support", "proptest1"] 
 proptest = "1.11.0"
 proptest-ext = { path = "../proptest-ext" }
 guppy-workspace-hack.workspace = true
+
+[lints]
+workspace = true

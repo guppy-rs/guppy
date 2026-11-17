@@ -1,6 +1,10 @@
 // Copyright (c) The cargo-guppy Contributors
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
+// Referenced so that Cargo's unused_dependencies lint sees the workspace-hack
+// dependency as used.
+use guppy_workspace_hack as _;
+
 use proptest::{
     strategy::{Strategy, ValueTree},
     test_runner::{Config, RngAlgorithm, TestRng, TestRunner},

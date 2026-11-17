@@ -92,6 +92,10 @@
 #![warn(missing_docs)]
 #![cfg_attr(doc_cfg, feature(doc_cfg))]
 
+// Referenced so that Cargo's unused_dependencies lint sees the workspace-hack
+// dependency as used.
+use guppy_workspace_hack as _;
+
 #[macro_use]
 mod macros;
 

@@ -85,3 +85,7 @@ bitflags = { version = "2.13.1", default-features = false, features = ["std"] }
 windows-sys = { version = "0.61.2", features = ["Win32_Security", "Win32_Storage_FileSystem", "Win32_System_Console", "Win32_System_Pipes", "Win32_System_SystemInformation", "Win32_UI_Input_KeyboardAndMouse"] }
 
 ### END HAKARI SECTION
+
+# Not inheriting workspace lints here since this is an empty crate.
+[lints.cargo]
+unused_dependencies = "allow"

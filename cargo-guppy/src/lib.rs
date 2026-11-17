@@ -36,6 +36,10 @@
 //!
 //! * `mv`: move crates to a new location in a workspace, updating paths along the way
 
+// Referenced so that Cargo's unused_dependencies lint sees the workspace-hack
+// dependency as used.
+use guppy_workspace_hack as _;
+
 mod core;
 mod diff;
 mod mv;
